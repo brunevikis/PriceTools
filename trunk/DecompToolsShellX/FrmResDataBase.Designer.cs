@@ -56,15 +56,32 @@ namespace Compass.DecompToolsShellX
             this.label6 = new System.Windows.Forms.Label();
             this.textEna = new System.Windows.Forms.TextBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.btn_buscarPrevs = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.dtp_buscaPrevs = new System.Windows.Forms.DateTimePicker();
+            this.label8 = new System.Windows.Forms.Label();
+            this.Rv_numPrevs = new System.Windows.Forms.NumericUpDown();
+            this.lv_resPrevs = new System.Windows.Forms.ListView();
+            this.Id_col = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.dt_entradaCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Rev_col = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cam_col = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.mes_col = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ano_col = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ofc_col = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btn_MostrarPrevs = new System.Windows.Forms.Button();
+            this.checkAll_PrevsBusca = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Rv_Num)).BeginInit();
+            this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabControl3.SuspendLayout();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rvNumEna)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Rv_numPrevs)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -206,6 +223,14 @@ namespace Compass.DecompToolsShellX
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.checkAll_PrevsBusca);
+            this.tabPage3.Controls.Add(this.btn_MostrarPrevs);
+            this.tabPage3.Controls.Add(this.lv_resPrevs);
+            this.tabPage3.Controls.Add(this.btn_buscarPrevs);
+            this.tabPage3.Controls.Add(this.label7);
+            this.tabPage3.Controls.Add(this.dtp_buscaPrevs);
+            this.tabPage3.Controls.Add(this.label8);
+            this.tabPage3.Controls.Add(this.Rv_numPrevs);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -348,6 +373,125 @@ namespace Compass.DecompToolsShellX
             this.tabPage6.Text = "Buscar";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
+            // btn_buscarPrevs
+            // 
+            this.btn_buscarPrevs.Location = new System.Drawing.Point(305, 18);
+            this.btn_buscarPrevs.Name = "btn_buscarPrevs";
+            this.btn_buscarPrevs.Size = new System.Drawing.Size(75, 31);
+            this.btn_buscarPrevs.TabIndex = 17;
+            this.btn_buscarPrevs.Text = "Buscar";
+            this.btn_buscarPrevs.UseVisualStyleBackColor = true;
+            this.btn_buscarPrevs.Click += new System.EventHandler(this.btn_buscarPrevs_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(15, 31);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(51, 13);
+            this.label7.TabIndex = 16;
+            this.label7.Text = "Mês/Ano";
+            // 
+            // dtp_buscaPrevs
+            // 
+            this.dtp_buscaPrevs.Checked = false;
+            this.dtp_buscaPrevs.CustomFormat = "MM/yyyy";
+            this.dtp_buscaPrevs.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtp_buscaPrevs.Location = new System.Drawing.Point(72, 25);
+            this.dtp_buscaPrevs.Name = "dtp_buscaPrevs";
+            this.dtp_buscaPrevs.ShowCheckBox = true;
+            this.dtp_buscaPrevs.Size = new System.Drawing.Size(81, 20);
+            this.dtp_buscaPrevs.TabIndex = 15;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(184, 31);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 13);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "RV";
+            // 
+            // Rv_numPrevs
+            // 
+            this.Rv_numPrevs.Location = new System.Drawing.Point(226, 25);
+            this.Rv_numPrevs.Name = "Rv_numPrevs";
+            this.Rv_numPrevs.Size = new System.Drawing.Size(52, 20);
+            this.Rv_numPrevs.TabIndex = 13;
+            // 
+            // lv_resPrevs
+            // 
+            this.lv_resPrevs.CheckBoxes = true;
+            this.lv_resPrevs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Id_col,
+            this.dt_entradaCol,
+            this.Rev_col,
+            this.cam_col,
+            this.mes_col,
+            this.ano_col,
+            this.ofc_col});
+            this.lv_resPrevs.FullRowSelect = true;
+            this.lv_resPrevs.GridLines = true;
+            this.lv_resPrevs.HideSelection = false;
+            this.lv_resPrevs.Location = new System.Drawing.Point(6, 87);
+            this.lv_resPrevs.Name = "lv_resPrevs";
+            this.lv_resPrevs.Size = new System.Drawing.Size(766, 240);
+            this.lv_resPrevs.TabIndex = 18;
+            this.lv_resPrevs.UseCompatibleStateImageBehavior = false;
+            this.lv_resPrevs.View = System.Windows.Forms.View.Details;
+            // 
+            // Id_col
+            // 
+            this.Id_col.Text = "Id";
+            this.Id_col.Width = 52;
+            // 
+            // dt_entradaCol
+            // 
+            this.dt_entradaCol.Text = "Data de inserção";
+            this.dt_entradaCol.Width = 111;
+            // 
+            // Rev_col
+            // 
+            this.Rev_col.Text = "Revisão";
+            // 
+            // cam_col
+            // 
+            this.cam_col.Text = "Caminho";
+            this.cam_col.Width = 320;
+            // 
+            // mes_col
+            // 
+            this.mes_col.Text = "Mês";
+            // 
+            // ano_col
+            // 
+            this.ano_col.Text = "Ano";
+            // 
+            // ofc_col
+            // 
+            this.ofc_col.Text = "oficial";
+            // 
+            // btn_MostrarPrevs
+            // 
+            this.btn_MostrarPrevs.Location = new System.Drawing.Point(697, 333);
+            this.btn_MostrarPrevs.Name = "btn_MostrarPrevs";
+            this.btn_MostrarPrevs.Size = new System.Drawing.Size(75, 31);
+            this.btn_MostrarPrevs.TabIndex = 19;
+            this.btn_MostrarPrevs.Text = "Mostrar";
+            this.btn_MostrarPrevs.UseVisualStyleBackColor = true;
+            this.btn_MostrarPrevs.Click += new System.EventHandler(this.btn_MostrarPrevs_Click);
+            // 
+            // checkAll_PrevsBusca
+            // 
+            this.checkAll_PrevsBusca.AutoSize = true;
+            this.checkAll_PrevsBusca.Location = new System.Drawing.Point(624, 64);
+            this.checkAll_PrevsBusca.Name = "checkAll_PrevsBusca";
+            this.checkAll_PrevsBusca.Size = new System.Drawing.Size(148, 17);
+            this.checkAll_PrevsBusca.TabIndex = 20;
+            this.checkAll_PrevsBusca.Text = "Marcar/Desmarcar Todos";
+            this.checkAll_PrevsBusca.UseVisualStyleBackColor = true;
+            this.checkAll_PrevsBusca.CheckedChanged += new System.EventHandler(this.checkAll_PrevsBusca_CheckedChanged);
+            // 
             // FrmResDataBase
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -362,11 +506,14 @@ namespace Compass.DecompToolsShellX
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Rv_Num)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabControl3.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rvNumEna)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Rv_numPrevs)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -400,5 +547,20 @@ namespace Compass.DecompToolsShellX
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textEna;
         private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.Button btn_buscarPrevs;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.DateTimePicker dtp_buscaPrevs;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown Rv_numPrevs;
+        private System.Windows.Forms.Button btn_MostrarPrevs;
+        private System.Windows.Forms.ListView lv_resPrevs;
+        private System.Windows.Forms.ColumnHeader Id_col;
+        private System.Windows.Forms.ColumnHeader dt_entradaCol;
+        private System.Windows.Forms.ColumnHeader Rev_col;
+        private System.Windows.Forms.ColumnHeader cam_col;
+        private System.Windows.Forms.ColumnHeader mes_col;
+        private System.Windows.Forms.ColumnHeader ano_col;
+        private System.Windows.Forms.ColumnHeader ofc_col;
+        private System.Windows.Forms.CheckBox checkAll_PrevsBusca;
     }
 }

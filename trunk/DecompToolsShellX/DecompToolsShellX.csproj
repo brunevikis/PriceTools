@@ -126,6 +126,12 @@
     <Compile Include="DecodessCortes.Designer.cs">
       <DependentUpon>DecodessCortes.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmDataBaseViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDataBaseViewer.Designer.cs">
+      <DependentUpon>FrmDataBaseViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmDessemTools.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,6 +254,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DecodessCortes.resx">
       <DependentUpon>DecodessCortes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmDataBaseViewer.resx">
+      <DependentUpon>FrmDataBaseViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmDessemTools.resx">
       <DependentUpon>FrmDessemTools.cs</DependentUpon>

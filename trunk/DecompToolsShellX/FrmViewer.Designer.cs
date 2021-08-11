@@ -27,9 +27,9 @@
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.tabControl2.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -89,6 +89,18 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(754, 36);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.LightSalmon;
+            this.label3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(505, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(156, 19);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "RESULTADO DESSEM";
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -112,18 +124,6 @@
             this.label1.Size = new System.Drawing.Size(158, 19);
             this.label1.TabIndex = 0;
             this.label1.Text = "RESULTADO DECOMP";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.LightSalmon;
-            this.label3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(505, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(156, 19);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "RESULTADO DESSEM";
             // 
             // FormViewer
             // 
