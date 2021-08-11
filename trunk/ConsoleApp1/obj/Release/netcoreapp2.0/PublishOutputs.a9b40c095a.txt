@@ -1,0 +1,5 @@
+C:\Development\price_tools\trunk\ConsoleApp1\bin\Debug\netcoreapp2.0\publish\Functions.cs
+C:\Development\price_tools\trunk\ConsoleApp1\bin\Debug\netcoreapp2.0\publish\TrataInviab.dll
+C:\Development\price_tools\trunk\ConsoleApp1\bin\Debug\netcoreapp2.0\publish\TrataInviab.deps.json
+C:\Development\price_tools\trunk\ConsoleApp1\bin\Debug\netcoreapp2.0\publish\TrataInviab.runtimeconfig.json
+C:\Development\price_tools\trunk\ConsoleApp1\bin\Debug\netcoreapp2.0\publish\TrataInviab.pdb

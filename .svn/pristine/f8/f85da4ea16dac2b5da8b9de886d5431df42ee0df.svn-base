@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ConsoleApp1": {
+      "commandName": "Project",
+      "commandLineArgs": "1",
+      "workingDirectory": "L:\\teste_bruno\\202111_RHE"
+    }
+  }
+}

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Resultados_CPASModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="EnaDiaria">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="id_Ena" Type="Int32" Nullable="false" />
+    <Property Name="tipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="regiao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="dataEna" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Ena" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+    <NavigationProperty Name="EnaReg" Relationship="Self.FK_EnaDiaria_EnaReg" FromRole="EnaDiaria" ToRole="EnaReg" />
+  </EntityType>
+  <EntityType Name="EnaReg">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="dt_entrada" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="tipo_rodada" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="RV" Type="Int32" Nullable="false" />
+    <Property Name="mês" Type="Int32" Nullable="false" />
+    <Property Name="ano" Type="Int32" Nullable="false" />
+    <Property Name="caminho" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="oficial" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="EnaDiaria" Relationship="Self.FK_EnaDiaria_EnaReg" FromRole="EnaReg" ToRole="EnaDiaria" />
+    <NavigationProperty Name="EnaSemanal" Relationship="Self.FK_EnaSemanal_EnaReg" FromRole="EnaReg" ToRole="EnaSemanal" />
+  </EntityType>
+  <EntityType Name="EnaSemanal">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="id_Ena" Type="Int32" Nullable="false" />
+    <Property Name="tipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="regiao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="dataInicio" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="dataFim" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Ena" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+    <NavigationProperty Name="EnaReg" Relationship="Self.FK_EnaSemanal_EnaReg" FromRole="EnaSemanal" ToRole="EnaReg" />
+  </EntityType>
+  <Association Name="FK_EnaDiaria_EnaReg">
+    <End Role="EnaReg" Type="Self.EnaReg" Multiplicity="1" />
+    <End Role="EnaDiaria" Type="Self.EnaDiaria" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EnaReg">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="EnaDiaria">
+        <PropertyRef Name="id_Ena" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EnaSemanal_EnaReg">
+    <End Role="EnaReg" Type="Self.EnaReg" Multiplicity="1" />
+    <End Role="EnaSemanal" Type="Self.EnaSemanal" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EnaReg">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="EnaSemanal">
+        <PropertyRef Name="id_Ena" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Resultados_CPASEntitiesEnas" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="EnaDiaria" EntityType="Self.EnaDiaria" />
+    <EntitySet Name="EnaReg" EntityType="Self.EnaReg" />
+    <EntitySet Name="EnaSemanal" EntityType="Self.EnaSemanal" />
+    <AssociationSet Name="FK_EnaDiaria_EnaReg" Association="Self.FK_EnaDiaria_EnaReg">
+      <End Role="EnaReg" EntitySet="EnaReg" />
+      <End Role="EnaDiaria" EntitySet="EnaDiaria" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EnaSemanal_EnaReg" Association="Self.FK_EnaSemanal_EnaReg">
+      <End Role="EnaReg" EntitySet="EnaReg" />
+      <End Role="EnaSemanal" EntitySet="EnaSemanal" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

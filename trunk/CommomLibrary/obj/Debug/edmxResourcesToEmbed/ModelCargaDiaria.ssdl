@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="IPDOModelCargaDiaria.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Carga_Diaria">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Data" Type="datetime" Nullable="false" />
+    <Property Name="Hora" Type="int" Nullable="false" />
+    <Property Name="Submercado" Type="int" Nullable="false" />
+    <Property Name="Previsto" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="Verificado" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="Desvio" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="Data_Update" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityContainer Name="IPDOModelCargaDiariaStoreContainer">
+    <EntitySet Name="Carga_Diaria" EntityType="Self.Carga_Diaria" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Compass.DecompToolsShellX
+{
+    public partial class FrmDataDessemDp : Form
+    {
+        public FrmDataDessemDp()
+        {
+            InitializeComponent();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnOk_Click(object sender, EventArgs e)
+        {
+            List<DateTime> listDE = new List<DateTime> { 
+                this.dateDE1.Value,
+                this.dateDE2.Value,
+                this.dateDE3.Value,
+                this.dateDE4.Value,
+                this.dateDE5.Value,
+                this.dateDE6.Value,
+                this.dateDE7.Value
+            };
+
+            List<DateTime> listPARA = new List<DateTime> {
+                this.datePARA1.Value,
+                this.datePARA2.Value,
+                this.datePARA3.Value,
+                this.datePARA4.Value,
+                this.datePARA5.Value,
+                this.datePARA6.Value,
+                this.datePARA7.Value
+            };
+           
+            Program.CarregaCargaDiaria(listDE, listPARA);
+            this.Close();
+        }
+
+       
+        
+    }
+}

@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{064676F5-68FC-43EE-875F-512E6B61D64C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Compass.ExcelTools</RootNamespace>
+    <AssemblyName>Compass.ExcelTools</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helper.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SelectFileTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SelectFileTextBox.designer.cs">
+      <DependentUpon>SelectFileTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SelectFolderTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SelectFolderTextBox.designer.cs">
+      <DependentUpon>SelectFolderTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Templates\BaseWorkbook.cs" />
+    <Compile Include="Templates\WorkbookAcomph.cs" />
+    <Compile Include="Templates\WorkbookPrevsCenariosMen.cs" />
+    <Compile Include="Templates\WorkbookDiagramaOper.cs" />
+    <Compile Include="Templates\WorkbookMensal.cs" />
+    <Compile Include="Templates\WorkbookSensibilidade.cs" />
+    <Compile Include="Templates\Infosheet.cs" />
+    <Compile Include="Templates\RvxPlus1Configsheet.cs" />
+    <Compile Include="Templates\WorkbookPrevsCenarios.cs" />
+    <Compile Include="Templates\WorkbookRdh.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommomLibrary\CommomLibrary.csproj">
+      <Project>{688f6c4c-2a2f-4d3b-9e47-0dcb4d4fb597}</Project>
+      <Name>CommomLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Templates\Coleta_Dados.xlsm" />
+    <None Include="Templates\gerador_xml_REE_VAZPAST.xltm" />
+    <None Include="Templates\Gera_e_Avalia_Cenarios_Men_Sem.xltm" />
+    <None Include="Templates\Mensal5.xltm" />
+    <None Include="Templates\Mensal6.xltm" />
+    <None Include="Templates\Projeto_Diagrama.xltx" />
+    <None Include="Templates\SensibilidadeDecomp.xltx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectFileTextBox.resx">
+      <DependentUpon>SelectFileTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectFolderTextBox.resx">
+      <DependentUpon>SelectFolderTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\searchfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folderarrow.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

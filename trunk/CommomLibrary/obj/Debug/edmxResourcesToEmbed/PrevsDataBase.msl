@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Resultados_CPAS_PrevsModelStoreContainer" CdmEntityContainer="Resultados_CPASEntitiesPrevs">
+    <EntitySetMapping Name="PrevsDados">
+      <EntityTypeMapping TypeName="Resultados_CPAS_PrevsModel.PrevsDados">
+        <MappingFragment StoreEntitySet="PrevsDados">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="id_prevs" ColumnName="id_prevs" />
+          <ScalarProperty Name="posto" ColumnName="posto" />
+          <ScalarProperty Name="sem1" ColumnName="sem1" />
+          <ScalarProperty Name="sem2" ColumnName="sem2" />
+          <ScalarProperty Name="sem3" ColumnName="sem3" />
+          <ScalarProperty Name="sem4" ColumnName="sem4" />
+          <ScalarProperty Name="sem5" ColumnName="sem5" />
+          <ScalarProperty Name="sem6" ColumnName="sem6" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PrevsReg">
+      <EntityTypeMapping TypeName="Resultados_CPAS_PrevsModel.PrevsReg">
+        <MappingFragment StoreEntitySet="PrevsReg">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="dt_entrada" ColumnName="dt_entrada" />
+          <ScalarProperty Name="rev" ColumnName="rev" />
+          <ScalarProperty Name="caminho" ColumnName="caminho" />
+          <ScalarProperty Name="mes" ColumnName="mes" />
+          <ScalarProperty Name="ano" ColumnName="ano" />
+          <ScalarProperty Name="oficial" ColumnName="oficial" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="IPDOModelCargaDiariaStoreContainer" CdmEntityContainer="IPDOEntitiesCargaDiaria">
+    <EntitySetMapping Name="Carga_Diaria">
+      <EntityTypeMapping TypeName="IPDOModelCargaDiaria.Carga_Diaria">
+        <MappingFragment StoreEntitySet="Carga_Diaria">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Data" ColumnName="Data" />
+          <ScalarProperty Name="Hora" ColumnName="Hora" />
+          <ScalarProperty Name="Submercado" ColumnName="Submercado" />
+          <ScalarProperty Name="Previsto" ColumnName="Previsto" />
+          <ScalarProperty Name="Verificado" ColumnName="Verificado" />
+          <ScalarProperty Name="Desvio" ColumnName="Desvio" />
+          <ScalarProperty Name="Data_Update" ColumnName="Data_Update" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

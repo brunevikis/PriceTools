@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="IPDOModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="ACOMPH">
+    <Key>
+      <PropertyRef Name="Data" />
+      <PropertyRef Name="Posto" />
+    </Key>
+    <Property Name="Data" Type="datetime" Nullable="false" />
+    <Property Name="Posto" Type="int" Nullable="false" />
+    <Property Name="Vaz_nat" Type="int" Nullable="false" />
+    <Property Name="Vaz_Inc" Type="int" Nullable="false" />
+    <Property Name="Reserv" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+    <Property Name="Data_Update" Type="datetime" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'IPDO.dbo.CONSULTA_VAZAO_NAT' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityContainer Name="IPDOModelStoreContainer">
+    <EntitySet Name="ACOMPH" EntityType="Self.ACOMPH" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

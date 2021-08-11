@@ -1,0 +1,9 @@
+C:\Development\price_tools\trunk\DeployActions\bin\Release\Compass.DeployActions.dll
+C:\Development\price_tools\trunk\DeployActions\bin\Release\Compass.DeployActions.pdb
+C:\Development\price_tools\trunk\DeployActions\bin\Release\Microsoft.VisualStudio.Tools.Applications.Runtime.dll
+C:\Development\price_tools\trunk\DeployActions\bin\Release\Microsoft.VisualStudio.Tools.Applications.ServerDocument.dll
+C:\Development\price_tools\trunk\DeployActions\obj\Release\DeployActions.csprojAssemblyReference.cache
+C:\Development\price_tools\trunk\DeployActions\obj\Release\DeployActions.csproj.CoreCompileInputs.cache
+C:\Development\price_tools\trunk\DeployActions\obj\Release\DeployActions.csproj.CopyComplete
+C:\Development\price_tools\trunk\DeployActions\obj\Release\Compass.DeployActions.dll
+C:\Development\price_tools\trunk\DeployActions\obj\Release\Compass.DeployActions.pdb

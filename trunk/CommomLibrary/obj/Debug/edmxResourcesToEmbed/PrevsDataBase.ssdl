@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Resultados_CPAS_PrevsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="PrevsDados">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_prevs" Type="int" Nullable="false" />
+    <Property Name="posto" Type="int" Nullable="false" />
+    <Property Name="sem1" Type="int" Nullable="false" />
+    <Property Name="sem2" Type="int" Nullable="false" />
+    <Property Name="sem3" Type="int" Nullable="false" />
+    <Property Name="sem4" Type="int" Nullable="false" />
+    <Property Name="sem5" Type="int" Nullable="false" />
+    <Property Name="sem6" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="PrevsReg">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="dt_entrada" Type="datetime" Nullable="false" />
+    <Property Name="rev" Type="int" Nullable="false" />
+    <Property Name="caminho" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="mes" Type="int" Nullable="false" />
+    <Property Name="ano" Type="int" Nullable="false" />
+    <Property Name="oficial" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_PrevsDados_Prevs1">
+    <End Role="PrevsReg" Type="Self.PrevsReg" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="PrevsDados" Type="Self.PrevsDados" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PrevsReg">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="PrevsDados">
+        <PropertyRef Name="id_prevs" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Resultados_CPAS_PrevsModelStoreContainer">
+    <EntitySet Name="PrevsDados" EntityType="Self.PrevsDados" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PrevsReg" EntityType="Self.PrevsReg" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_PrevsDados_Prevs1" Association="Self.FK_PrevsDados_Prevs1">
+      <End Role="PrevsReg" EntitySet="PrevsReg" />
+      <End Role="PrevsDados" EntitySet="PrevsDados" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

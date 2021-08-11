@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="IPDOModelPLDLimites" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="PLD_LIMITES">
+    <Key>
+      <PropertyRef Name="Id" />
+      <PropertyRef Name="Ano" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Ano" Type="Int32" Nullable="false" />
+    <Property Name="PLD_Min" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="PLD_MaxEst" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="PLD_MaxHr" Type="Decimal" Precision="18" Scale="2" />
+  </EntityType>
+  <EntityContainer Name="IPDOEntitiesPLDLimites" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="PLD_LIMITES" EntityType="Self.PLD_LIMITES" />
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ConsoleApp1": {
+      "commandName": "Project",
+      "commandLineArgs": "1",
+      "workingDirectory": "L:\\6_decomp\\03_Casos\\2021_06\\21-06-01\\rv1\\20210601_CV_PSAT_test_dadgerBruno"
+    }
+  }
+}

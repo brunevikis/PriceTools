@@ -1,0 +1,72 @@
+C:\Development\price_tools\ExcelTools\bin\Debug\Compass.ExcelTools.dll
+C:\Development\price_tools\ExcelTools\bin\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools\ExcelTools\bin\Debug\Compass.CommomLibrary.dll
+C:\Development\price_tools\ExcelTools\bin\Debug\EntityFramework.dll
+C:\Development\price_tools\ExcelTools\bin\Debug\System.ValueTuple.dll
+C:\Development\price_tools\ExcelTools\bin\Debug\Compass.CommomLibrary.pdb
+C:\Development\price_tools\ExcelTools\bin\Debug\Compass.CommomLibrary.dll.config
+C:\Development\price_tools\ExcelTools\bin\Debug\EntityFramework.xml
+C:\Development\price_tools\ExcelTools\bin\Debug\System.ValueTuple.xml
+C:\Development\price_tools\ExcelTools\obj\Debug\ExcelTools.csprojAssemblyReference.cache
+C:\Development\price_tools\ExcelTools\obj\Debug\Compass.ExcelTools.Properties.Resources.resources
+C:\Development\price_tools\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFileTextBox.resources
+C:\Development\price_tools\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFolderTextBox.resources
+C:\Development\price_tools\ExcelTools\obj\Debug\ExcelTools.csproj.GenerateResource.cache
+C:\Development\price_tools\ExcelTools\obj\Debug\ExcelTools.csproj.CoreCompileInputs.cache
+C:\Development\price_tools\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete
+C:\Development\price_tools\ExcelTools\obj\Debug\Compass.ExcelTools.dll
+C:\Development\price_tools\ExcelTools\obj\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\Compass.ExcelTools.dll
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.dll
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\EntityFramework.dll
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\System.ValueTuple.dll
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.pdb
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.dll.config
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\EntityFramework.xml
+C:\Development\price_tools - desenv\trunk\ExcelTools\bin\Debug\System.ValueTuple.xml
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\ExcelTools.csprojAssemblyReference.cache
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.Properties.Resources.resources
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFileTextBox.resources
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFolderTextBox.resources
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.GenerateResource.cache
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CoreCompileInputs.cache
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.dll
+C:\Development\price_tools - desenv\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.pdb
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\Compass.ExcelTools.dll
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\Compass.ExcelTools.pdb
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.dll
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\EntityFramework.dll
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\System.ValueTuple.dll
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.pdb
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.dll.config
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\EntityFramework.xml
+C:\Development\FARIA\price_tools\trunk\ExcelTools\bin\Debug\System.ValueTuple.xml
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csprojAssemblyReference.cache
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.Properties.Resources.resources
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFileTextBox.resources
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFolderTextBox.resources
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.GenerateResource.cache
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CoreCompileInputs.cache
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.dll
+C:\Development\FARIA\price_tools\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\Compass.ExcelTools.dll
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.dll
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\EntityFramework.dll
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\System.ValueTuple.dll
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.pdb
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\Compass.CommomLibrary.dll.config
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\EntityFramework.xml
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\System.ValueTuple.xml
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.Properties.Resources.resources
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFileTextBox.resources
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\Compass.DecompTools.Forms.Componentes.SelectFolderTextBox.resources
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.GenerateResource.cache
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CoreCompileInputs.cache
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.dll
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.AssemblyReference.cache

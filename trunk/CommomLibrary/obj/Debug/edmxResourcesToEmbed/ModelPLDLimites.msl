@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="IPDOModelPLDLimitesStoreContainer" CdmEntityContainer="IPDOEntitiesPLDLimites">
+    <EntitySetMapping Name="PLD_LIMITES">
+      <EntityTypeMapping TypeName="IPDOModelPLDLimites.PLD_LIMITES">
+        <MappingFragment StoreEntitySet="PLD_LIMITES">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Ano" ColumnName="Ano" />
+          <ScalarProperty Name="PLD_Min" ColumnName="PLD_Min" />
+          <ScalarProperty Name="PLD_MaxEst" ColumnName="PLD_MaxEst" />
+          <ScalarProperty Name="PLD_MaxHr" ColumnName="PLD_MaxHr" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

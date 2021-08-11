@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Resultados_CPASModelStoreContainer" CdmEntityContainer="Resultados_CPASEntitiesEnas">
+    <EntitySetMapping Name="EnaDiaria">
+      <EntityTypeMapping TypeName="Resultados_CPASModel.EnaDiaria">
+        <MappingFragment StoreEntitySet="EnaDiaria">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="id_Ena" ColumnName="id_Ena" />
+          <ScalarProperty Name="tipo" ColumnName="tipo" />
+          <ScalarProperty Name="regiao" ColumnName="regiao" />
+          <ScalarProperty Name="dataEna" ColumnName="dataEna" />
+          <ScalarProperty Name="Ena" ColumnName="Ena" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EnaReg">
+      <EntityTypeMapping TypeName="Resultados_CPASModel.EnaReg">
+        <MappingFragment StoreEntitySet="EnaReg">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="dt_entrada" ColumnName="dt_entrada" />
+          <ScalarProperty Name="tipo_rodada" ColumnName="tipo_rodada" />
+          <ScalarProperty Name="RV" ColumnName="RV" />
+          <ScalarProperty Name="mês" ColumnName="mês" />
+          <ScalarProperty Name="ano" ColumnName="ano" />
+          <ScalarProperty Name="caminho" ColumnName="caminho" />
+          <ScalarProperty Name="oficial" ColumnName="oficial" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EnaSemanal">
+      <EntityTypeMapping TypeName="Resultados_CPASModel.EnaSemanal">
+        <MappingFragment StoreEntitySet="EnaSemanal">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="id_Ena" ColumnName="id_Ena" />
+          <ScalarProperty Name="tipo" ColumnName="tipo" />
+          <ScalarProperty Name="regiao" ColumnName="regiao" />
+          <ScalarProperty Name="dataInicio" ColumnName="dataInicio" />
+          <ScalarProperty Name="dataFim" ColumnName="dataFim" />
+          <ScalarProperty Name="Ena" ColumnName="Ena" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

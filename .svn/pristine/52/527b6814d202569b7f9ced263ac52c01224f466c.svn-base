@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{688F6C4C-2A2F-4D3B-9E47-0DCB4D4FB597}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Compass.CommomLibrary</RootNamespace>
+    <AssemblyName>Compass.CommomLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools.Excel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ACOMPH.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AdtermDat\AdtermDat.cs" />
+    <Compile Include="Areacont\Area.cs" />
+    <Compile Include="Areacont\Areacont.cs" />
+    <Compile Include="Areacont\Usina.cs" />
+    <Compile Include="BaseDeck.cs" />
+    <Compile Include="BaseRegister.cs" />
+    <Compile Include="Carga_Diaria.cs">
+      <DependentUpon>ModelCargaDiaria.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigDat\ConfigDat.cs" />
+    <Compile Include="ConfigDat\Data.cs" />
+    <Compile Include="ConfigDat\Dia.cs" />
+    <Compile Include="ConftDat\ConftDat.cs" />
+    <Compile Include="ConfhdDat\ConfhdDat.cs" />
+    <Compile Include="CadTermDat\CadTermDat.cs" />
+    <Compile Include="ClastDat\ClastDat.cs" />
+    <Compile Include="ConsultaNwd\ConsultaNwd.cs" />
+    <Compile Include="AgrintDat\AgrintDat.cs" />
+    <Compile Include="Cotasr\Cot.cs" />
+    <Compile Include="Cotasr\Cotasr.cs" />
+    <Compile Include="Dadger\Rhc.cs" />
+    <Compile Include="Dadger\Ri.cs" />
+    <Compile Include="Dadvaz\Dadvaz.cs" />
+    <Compile Include="Dadvaz\Data.cs" />
+    <Compile Include="Dadvaz\DiaInicial.cs" />
+    <Compile Include="Dadvaz\Vazoes.cs" />
+    <Compile Include="DecodessArq\Arqs.cs" />
+    <Compile Include="DecodessArq\DecodessArq.cs" />
+    <Compile Include="Deflant\Def.cs" />
+    <Compile Include="Deflant\Deflant.cs" />
+    <Compile Include="DessemArq\Darq.cs" />
+    <Compile Include="DessemArq\DessemArq.cs" />
+    <Compile Include="Dessem\Deck.cs" />
+    <Compile Include="Dsvagua\Dsv.cs" />
+    <Compile Include="Dsvagua\Dsvagua.cs" />
+    <Compile Include="EntdadosDat\Ac.cs" />
+    <Compile Include="EntdadosDat\Ag.cs" />
+    <Compile Include="EntdadosDat\Cd.cs" />
+    <Compile Include="EntdadosDat\CIce.cs" />
+    <Compile Include="EntdadosDat\Cr.cs" />
+    <Compile Include="EntdadosDat\Da.cs" />
+    <Compile Include="EntdadosDat\De.cs" />
+    <Compile Include="EntdadosDat\Df.cs" />
+    <Compile Include="EntdadosDat\Dp.cs" />
+    <Compile Include="EntdadosDat\EntdadosDat.cs" />
+    <Compile Include="EntdadosDat\Ez.cs" />
+    <Compile Include="EntdadosDat\Fp.cs" />
+    <Compile Include="EntdadosDat\Gp.cs" />
+    <Compile Include="EntdadosDat\Ia.cs" />
+    <Compile Include="EntdadosDat\It.cs" />
+    <Compile Include="EntdadosDat\Me.cs" />
+    <Compile Include="EntdadosDat\Meta.cs" />
+    <Compile Include="EntdadosDat\Mh.cs" />
+    <Compile Include="EntdadosDat\Mt.cs" />
+    <Compile Include="EntdadosDat\NI.cs" />
+    <Compile Include="EntdadosDat\Pd.cs" />
+    <Compile Include="EntdadosDat\Pp.cs" />
+    <Compile Include="EntdadosDat\Pq.cs" />
+    <Compile Include="EntdadosDat\Ps.cs" />
+    <Compile Include="EntdadosDat\R11.cs" />
+    <Compile Include="EntdadosDat\Rd.cs" />
+    <Compile Include="EntdadosDat\Ree.cs" />
+    <Compile Include="EntdadosDat\Rhe.cs" />
+    <Compile Include="EntdadosDat\Ri.cs" />
+    <Compile Include="EntdadosDat\Rivar.cs" />
+    <Compile Include="EntdadosDat\Rs.cs" />
+    <Compile Include="EntdadosDat\Secr.cs" />
+    <Compile Include="EntdadosDat\Sh.cs" />
+    <Compile Include="EntdadosDat\Sist.cs" />
+    <Compile Include="EntdadosDat\Sp.cs" />
+    <Compile Include="EntdadosDat\Tf.cs" />
+    <Compile Include="EntdadosDat\Tm.cs" />
+    <Compile Include="EntdadosDat\Tviag.cs" />
+    <Compile Include="EntdadosDat\Tx.cs" />
+    <Compile Include="EntdadosDat\Uh.cs" />
+    <Compile Include="EntdadosDat\Usie.cs" />
+    <Compile Include="EntdadosDat\Ut.cs" />
+    <Compile Include="EntdadosDat\Ve.cs" />
+    <Compile Include="EntdadosDat\Vm.cs" />
+    <Compile Include="EntdadosDat\Vr.cs" />
+    <Compile Include="GhminDat\GhminDat.cs" />
+    <Compile Include="Interfaces.cs" />
+    <Compile Include="Model1.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="ModelCargaDiaria.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelCargaDiaria.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ModelCargaDiaria.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelCargaDiaria.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ModelCargaDiaria.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelCargaDiaria.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="ModelPLDLimites.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelPLDLimites.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ModelPLDLimites.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelPLDLimites.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ModelPLDLimites.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelPLDLimites.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Operuh\Operuh.cs" />
+    <Compile Include="Operuh\Rhest.cs" />
+    <Compile Include="Operut\Init.cs" />
+    <Compile Include="Operut\Oper.cs" />
+    <Compile Include="Operut\Operut.cs" />
+    <Compile Include="PldDessem\PldDessem.cs" />
+    <Compile Include="PLD_LIMITES.cs">
+      <DependentUpon>ModelPLDLimites.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PostoRegressao.cs" />
+    <Compile Include="PrevsDados.cs">
+      <DependentUpon>PrevsDataBase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PrevsDataBase.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrevsDataBase.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PrevsDataBase.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrevsDataBase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PrevsDataBase.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrevsDataBase.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="PrevsReg.cs">
+      <DependentUpon>PrevsDataBase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Propagacao.cs" />
+    <Compile Include="PtoperDat\Ptoper.cs" />
+    <Compile Include="PtoperDat\PtoperDat.cs" />
+    <Compile Include="ReDat\ReDat.cs" />
+    <Compile Include="C_AdicDat\Mer.cs" />
+    <Compile Include="C_AdicDat\C_AdicDat.cs" />
+    <Compile Include="Inviab\Inviab.cs" />
+    <Compile Include="Dadger\Rq.cs" />
+    <Compile Include="Dadger\Ti.cs" />
+    <Compile Include="Dadger\Ia.cs" />
+    <Compile Include="ExphDat\ExphDat.cs" />
+    <Compile Include="Dadger\Cd.cs" />
+    <Compile Include="Dadger\Rha.cs" />
+    <Compile Include="Dadger\It.cs" />
+    <Compile Include="Dadger\Pq.cs" />
+    <Compile Include="Dadger\Others.cs" />
+    <Compile Include="ParpDat\Parp.cs" />
+    <Compile Include="PatamarDat\DuracaoBlock.cs" />
+    <Compile Include="PatamarDat\NumPat.cs" />
+    <Compile Include="PatamarDat\PatamarDat.cs" />
+    <Compile Include="Pmo\Ree.cs" />
+    <Compile Include="Pmo\Mercado.cs" />
+    <Compile Include="Pmo\Deficit.cs" />
+    <Compile Include="Pmo\GtermBlock.cs" />
+    <Compile Include="Pmo\Eaf.cs" />
+    <Compile Include="Pmo\Pmo.cs" />
+    <Compile Include="DgerNwd\EafPrev.cs" />
+    <Compile Include="DgerNwd\Eaf.cs" />
+    <Compile Include="DgerNwd\Def.cs" />
+    <Compile Include="DgerNwd\DgerNwd.cs" />
+    <Compile Include="Dadger\Fc.cs" />
+    <Compile Include="DgerDat\DgerDat.cs" />
+    <Compile Include="DgerNwd\Arm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DgerNwd\Gnl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExptDat\ExptDat.cs" />
+    <Compile Include="ModifDatNW\ModifDat.cs" />
+    <Compile Include="Pmo\Earmi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrevcenDat\PrevcenDat.cs" />
+    <Compile Include="Previvaz\CasoDat.cs" />
+    <Compile Include="Previvaz\Deck.cs" />
+    <Compile Include="Previvaz\Inp.cs" />
+    <Compile Include="Previvaz\Str.cs" />
+    <Compile Include="ReeDat\ReeDat.cs" />
+    <Compile Include="Regressao.cs" />
+    <Compile Include="Relato\RelatoTHMenBlock.cs" />
+    <Compile Include="Relato\RelatoDadosMercadoBlock.cs" />
+    <Compile Include="Relato\RelatoRestricaoBlock.cs" />
+    <Compile Include="Relato\RelatoBalEneBlock.cs" />
+    <Compile Include="Renovaveis\Eolica.cs" />
+    <Compile Include="Renovaveis\EolicaBarra.cs" />
+    <Compile Include="Renovaveis\EolicaGeracao.cs" />
+    <Compile Include="Renovaveis\EolicaSubm.cs" />
+    <Compile Include="Renovaveis\Renovaveis.cs" />
+    <Compile Include="Respot\Lm.cs" />
+    <Compile Include="Respot\Respot.cs" />
+    <Compile Include="Respot\Rp.cs" />
+    <Compile Include="TermDat\TermDat.cs" />
+    <Compile Include="ManuttDat\ManuttDat.cs" />
+    <Compile Include="Dadger\Mt.cs" />
+    <Compile Include="Dadger\Mp.cs" />
+    <Compile Include="Dadger\Ea.cs" />
+    <Compile Include="DeckFile.cs" />
+    <Compile Include="Ipdo\BalancoDetalhadoBlock.cs" />
+    <Compile Include="Ipdo\EnergiaBlock.cs" />
+    <Compile Include="Ipdo\GerTermicaBlock.cs" />
+    <Compile Include="Ipdo\Ipdo.cs" />
+    <Compile Include="Ipdo\BalancoBlock.cs" />
+    <Compile Include="Relato\RelatoPotenciaDispBlock.cs" />
+    <Compile Include="Relato\RelatoOpsTermBlock.cs" />
+    <Compile Include="Relato\RelatoCmoBlock.cs" />
+    <Compile Include="Relato\Relato.cs" />
+    <Compile Include="Relato\RelatoOpsBlock.cs" />
+    <Compile Include="Relato\RelatoVolUtilBlock.cs" />
+    <Compile Include="Tools.cs" />
+    <Compile Include="Vazpast\Vaz.cs" />
+    <Compile Include="Vazpast\Vazpast.cs" />
+    <Compile Include="Dadger\Es.cs" />
+    <Compile Include="Dadger\Qi.cs" />
+    <Compile Include="Dadger\Vi.cs" />
+    <Compile Include="MltDat\MltDat.cs" />
+    <Compile Include="ModifDat\ModifDat.cs" />
+    <Compile Include="PostosDat\Postos.cs" />
+    <Compile Include="PostosDat\PostosDat.cs" />
+    <Compile Include="Dadger\Ez.cs" />
+    <Compile Include="Decomp\ConfigH.cs" />
+    <Compile Include="Prevs\Prev.cs" />
+    <Compile Include="Prevs\Prevs.cs" />
+    <Compile Include="Dadger\Ac.cs" />
+    <Compile Include="Dadger\Me.cs" />
+    <Compile Include="Dadger\Rhe.cs" />
+    <Compile Include="Dadger\Ve.cs" />
+    <Compile Include="Dadger\Fd.cs" />
+    <Compile Include="Dadger\Dummy.cs" />
+    <Compile Include="Dadger\Ue.cs" />
+    <Compile Include="Dadger\Sb.cs" />
+    <Compile Include="Dadger\Rhv.cs" />
+    <Compile Include="Dadger\Dp.cs" />
+    <Compile Include="Dadger\Rhq.cs" />
+    <Compile Include="Dadger\Te.cs" />
+    <Compile Include="Dadger\Ct.cs" />
+    <Compile Include="Dadger\Dadger.cs" />
+    <Compile Include="Dadgnl\Tg.cs" />
+    <Compile Include="Dadgnl\Gs.cs" />
+    <Compile Include="Dadgnl\Nl.cs" />
+    <Compile Include="Dadgnl\Dadgnl.cs" />
+    <Compile Include="Dadgnl\Gl.cs" />
+    <Compile Include="Decomp\CasoFile.cs" />
+    <Compile Include="Decomp\Deck.cs" />
+    <Compile Include="DocumentFactory.cs" />
+    <Compile Include="Eafpast\Eaf.cs" />
+    <Compile Include="Eafpast\Eafpast.cs" />
+    <Compile Include="HidrDat\Hidr.cs" />
+    <Compile Include="HidrDat\HidrDat.cs" />
+    <Compile Include="Newave\Deck.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Dadger\Uh.cs" />
+    <Compile Include="SistemaDat\Peq.cs" />
+    <Compile Include="SistemaDat\Mer.cs" />
+    <Compile Include="SistemaDat\Int.cs" />
+    <Compile Include="SistemaDat\Def.cs" />
+    <Compile Include="SistemaDat\SistemaDat.cs" />
+    <Compile Include="SistemaDat\Pat.cs" />
+    <Compile Include="VazoesC\VazoesC.cs" />
+    <Compile Include="weolDados.cs" />
+    <Compile Include="weolGeracao.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Model1.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="Model1.edmx.diagram">
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </None>
+    <EntityDeploy Include="ModelCargaDiaria.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelCargaDiaria.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="ModelCargaDiaria.edmx.diagram">
+      <DependentUpon>ModelCargaDiaria.edmx</DependentUpon>
+    </None>
+    <EntityDeploy Include="ModelPLDLimites.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelPLDLimites.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="ModelPLDLimites.edmx.diagram">
+      <DependentUpon>ModelPLDLimites.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+    <EntityDeploy Include="PrevsDataBase.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>PrevsDataBase.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="PrevsDataBase.edmx.diagram">
+      <DependentUpon>PrevsDataBase.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Model1.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Model1.Context.cs</LastGenOutput>
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Content>
+    <Content Include="Model1.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.cs</LastGenOutput>
+    </Content>
+    <Content Include="ModelCargaDiaria.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelCargaDiaria.edmx</DependentUpon>
+      <LastGenOutput>ModelCargaDiaria.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="ModelCargaDiaria.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelCargaDiaria.edmx</DependentUpon>
+      <LastGenOutput>ModelCargaDiaria.cs</LastGenOutput>
+    </Content>
+    <Content Include="ModelPLDLimites.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelPLDLimites.edmx</DependentUpon>
+      <LastGenOutput>ModelPLDLimites.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="ModelPLDLimites.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelPLDLimites.edmx</DependentUpon>
+      <LastGenOutput>ModelPLDLimites.cs</LastGenOutput>
+    </Content>
+    <Content Include="PrevsDataBase.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PrevsDataBase.edmx</DependentUpon>
+      <LastGenOutput>PrevsDataBase.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="PrevsDataBase.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PrevsDataBase.edmx</DependentUpon>
+      <LastGenOutput>PrevsDataBase.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

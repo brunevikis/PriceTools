@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Resultados_CPAS_PrevsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="PrevsDados">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_prevs" Type="int" Nullable="false" />
+          <Property Name="posto" Type="int" Nullable="false" />
+          <Property Name="sem1" Type="int" Nullable="false" />
+          <Property Name="sem2" Type="int" Nullable="false" />
+          <Property Name="sem3" Type="int" Nullable="false" />
+          <Property Name="sem4" Type="int" Nullable="false" />
+          <Property Name="sem5" Type="int" Nullable="false" />
+          <Property Name="sem6" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PrevsReg">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dt_entrada" Type="datetime" Nullable="false" />
+          <Property Name="rev" Type="int" Nullable="false" />
+          <Property Name="caminho" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="mes" Type="int" Nullable="false" />
+          <Property Name="ano" Type="int" Nullable="false" />
+          <Property Name="oficial" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_PrevsDados_Prevs1">
+          <End Role="PrevsReg" Type="Self.PrevsReg" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PrevsDados" Type="Self.PrevsDados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrevsReg">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PrevsDados">
+              <PropertyRef Name="id_prevs" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Resultados_CPAS_PrevsModelStoreContainer">
+          <EntitySet Name="PrevsDados" EntityType="Self.PrevsDados" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PrevsReg" EntityType="Self.PrevsReg" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_PrevsDados_Prevs1" Association="Self.FK_PrevsDados_Prevs1">
+            <End Role="PrevsReg" EntitySet="PrevsReg" />
+            <End Role="PrevsDados" EntitySet="PrevsDados" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Resultados_CPAS_PrevsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="PrevsDados">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_prevs" Type="Int32" Nullable="false" />
+          <Property Name="posto" Type="Int32" Nullable="false" />
+          <Property Name="sem1" Type="Int32" Nullable="false" />
+          <Property Name="sem2" Type="Int32" Nullable="false" />
+          <Property Name="sem3" Type="Int32" Nullable="false" />
+          <Property Name="sem4" Type="Int32" Nullable="false" />
+          <Property Name="sem5" Type="Int32" Nullable="false" />
+          <Property Name="sem6" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PrevsReg" Relationship="Self.FK_PrevsDados_Prevs1" FromRole="PrevsDados" ToRole="PrevsReg" />
+        </EntityType>
+        <EntityType Name="PrevsReg">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dt_entrada" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="rev" Type="Int32" Nullable="false" />
+          <Property Name="caminho" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="mes" Type="Int32" Nullable="false" />
+          <Property Name="ano" Type="Int32" Nullable="false" />
+          <Property Name="oficial" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PrevsDados" Relationship="Self.FK_PrevsDados_Prevs1" FromRole="PrevsReg" ToRole="PrevsDados" />
+        </EntityType>
+        <Association Name="FK_PrevsDados_Prevs1">
+          <End Role="PrevsReg" Type="Self.PrevsReg" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PrevsDados" Type="Self.PrevsDados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrevsReg">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PrevsDados">
+              <PropertyRef Name="id_prevs" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Resultados_CPASEntitiesPrevs" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="PrevsDados" EntityType="Self.PrevsDados" />
+          <EntitySet Name="PrevsReg" EntityType="Self.PrevsReg" />
+          <AssociationSet Name="FK_PrevsDados_Prevs1" Association="Self.FK_PrevsDados_Prevs1">
+            <End Role="PrevsReg" EntitySet="PrevsReg" />
+            <End Role="PrevsDados" EntitySet="PrevsDados" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Resultados_CPAS_PrevsModelStoreContainer" CdmEntityContainer="Resultados_CPASEntitiesPrevs">
+          <EntitySetMapping Name="PrevsDados">
+            <EntityTypeMapping TypeName="Resultados_CPAS_PrevsModel.PrevsDados">
+              <MappingFragment StoreEntitySet="PrevsDados">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_prevs" ColumnName="id_prevs" />
+                <ScalarProperty Name="posto" ColumnName="posto" />
+                <ScalarProperty Name="sem1" ColumnName="sem1" />
+                <ScalarProperty Name="sem2" ColumnName="sem2" />
+                <ScalarProperty Name="sem3" ColumnName="sem3" />
+                <ScalarProperty Name="sem4" ColumnName="sem4" />
+                <ScalarProperty Name="sem5" ColumnName="sem5" />
+                <ScalarProperty Name="sem6" ColumnName="sem6" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PrevsReg">
+            <EntityTypeMapping TypeName="Resultados_CPAS_PrevsModel.PrevsReg">
+              <MappingFragment StoreEntitySet="PrevsReg">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="dt_entrada" ColumnName="dt_entrada" />
+                <ScalarProperty Name="rev" ColumnName="rev" />
+                <ScalarProperty Name="caminho" ColumnName="caminho" />
+                <ScalarProperty Name="mes" ColumnName="mes" />
+                <ScalarProperty Name="ano" ColumnName="ano" />
+                <ScalarProperty Name="oficial" ColumnName="oficial" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

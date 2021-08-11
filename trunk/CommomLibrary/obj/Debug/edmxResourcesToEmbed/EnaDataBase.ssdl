@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Resultados_CPASModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="EnaDiaria">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_Ena" Type="int" Nullable="false" />
+    <Property Name="tipo" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="regiao" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="dataEna" Type="datetime" Nullable="false" />
+    <Property Name="Ena" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+  </EntityType>
+  <EntityType Name="EnaReg">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="dt_entrada" Type="datetime" Nullable="false" />
+    <Property Name="tipo_rodada" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="RV" Type="int" Nullable="false" />
+    <Property Name="mês" Type="int" Nullable="false" />
+    <Property Name="ano" Type="int" Nullable="false" />
+    <Property Name="caminho" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="oficial" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="EnaSemanal">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_Ena" Type="int" Nullable="false" />
+    <Property Name="tipo" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="regiao" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="dataInicio" Type="datetime" Nullable="false" />
+    <Property Name="dataFim" Type="datetime" Nullable="false" />
+    <Property Name="Ena" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_EnaDiaria_EnaReg">
+    <End Role="EnaReg" Type="Self.EnaReg" Multiplicity="1" />
+    <End Role="EnaDiaria" Type="Self.EnaDiaria" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EnaReg">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="EnaDiaria">
+        <PropertyRef Name="id_Ena" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EnaSemanal_EnaReg">
+    <End Role="EnaReg" Type="Self.EnaReg" Multiplicity="1" />
+    <End Role="EnaSemanal" Type="Self.EnaSemanal" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EnaReg">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="EnaSemanal">
+        <PropertyRef Name="id_Ena" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Resultados_CPASModelStoreContainer">
+    <EntitySet Name="EnaDiaria" EntityType="Self.EnaDiaria" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EnaReg" EntityType="Self.EnaReg" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EnaSemanal" EntityType="Self.EnaSemanal" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_EnaDiaria_EnaReg" Association="Self.FK_EnaDiaria_EnaReg">
+      <End Role="EnaReg" EntitySet="EnaReg" />
+      <End Role="EnaDiaria" EntitySet="EnaDiaria" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EnaSemanal_EnaReg" Association="Self.FK_EnaSemanal_EnaReg">
+      <End Role="EnaReg" EntitySet="EnaReg" />
+      <End Role="EnaSemanal" EntitySet="EnaSemanal" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
