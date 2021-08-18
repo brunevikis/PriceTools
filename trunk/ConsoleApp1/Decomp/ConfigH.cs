@@ -18,7 +18,9 @@ namespace ConsoleApp1.Decomp
         public IEnumerable<UHE> Usinas { get { return usinas.Where(u => u != null); } }
 
         public List<Tuple<int, int>> index_sistemas;
+        public List<Tuple<int, string>> index_Ree;
         private Dadger.Dadger baseDadger;
+        private EntdadosDat.EntdadosDat baseEntdados;
         private ConfhdDat.ConfhdDat confhdDat;
 
         public BaseDocument baseDoc;
@@ -27,9 +29,75 @@ namespace ConsoleApp1.Decomp
 
         private ConfigH() { }
 
-        /*
+        public void REE_index()
+        {
+            int indx = 0;
+            List<Tuple<int, string>> rees = new List<Tuple<int, string>>();
+            foreach (var item in uhe_ree.Values.Distinct())
+            {
+
+                rees.Add(new Tuple<int, string>(indx, item));
+                indx++;
+            }
+            this.index_Ree = rees;
+        }
+        public ConfigH(EntdadosDat.EntdadosDat baseEntdados, HidrDat.HidrDat baseHidr)
+        {
+            REE_index();
+            this.baseEntdados = (EntdadosDat.EntdadosDat)baseEntdados.Clone();
+            this.baseDoc = this.baseEntdados;
+
+            var sis = new List<Tuple<int, int>>();
+            int id = 0;
+            foreach (var sb in baseEntdados.BlocoSist.Where(x => x.Sigla.Trim() != "FC"))
+            {
+                sis.Add(new Tuple<int, int>(id, sb.Numero));
+                id++;
+            }
+            this.index_sistemas = sis;
+
+
+            var usinas = new UHE[baseHidr.Data.Count + 1];
+            foreach (var item in baseHidr.Data.Where(h => !String.IsNullOrWhiteSpace(h.Usina)))
+            {
+                usinas[item.Cod] = new UHE(item, this);
+            }
+
+            //configurar ficticias
+            var ficts = new List<Tuple<int, int>>();
+
+            foreach (var fict in usinas.Where(u => u != null && u.Jusante.Value != 0)
+                .Where(u => u.Usina.StartsWith("FICT.", StringComparison.OrdinalIgnoreCase))
+                )
+            {
+
+                var usinaReal = usinas.Where(u => u != null).Where(u =>
+                    u.Cod != fict.Cod &&
+                    u.Posto == fict.Posto &&
+                    (u.Jusante == fict.Jusante ||
+                         usinas[fict.Jusante.Value].Usina.StartsWith("FICT.", StringComparison.OrdinalIgnoreCase)
+                    )
+                    ).FirstOrDefault();
+
+                if (usinaReal != null)
+                {
+
+                    ficts.Add(new Tuple<int, int>(usinaReal.Cod, fict.Cod));
+                    fict.IsFict = true;
+                    fict.CodReal = usinaReal.Cod;
+                    usinaReal.CodFicticia = fict.Cod;
+                }
+            }
+
+            this.usinas = usinas;
+
+            loadEntdadosInfo();
+            updateProdTotal65VolUtil();
+        }
         public ConfigH(Dadger.Dadger baseDadger, HidrDat.HidrDat baseHidr)
         {
+            REE_index();
+
             this.baseDadger = (Dadger.Dadger)baseDadger.Clone();
             this.baseDoc = this.baseDadger;
 
@@ -79,78 +147,231 @@ namespace ConsoleApp1.Decomp
             loadDadgerInfo();
             updateProdTotal65VolUtil();
         }
-        */
-        /*
-        public ConfigH(ConfhdDat.ConfhdDat confhdDat, HidrDat.HidrDat baseHidr, ModifDatNW.ModifDatNw modif)
+        
+        //public ConfigH(ConfhdDat.ConfhdDat confhdDat, HidrDat.HidrDat baseHidr, ModifDatNW.ModifDatNw modif)
+        //{
+        //    // TODO: Complete member initialization
+        //    REE_index();
+
+        //    this.confhdDat = (ConfhdDat.ConfhdDat)confhdDat.Clone();
+        //    this.baseDoc = this.confhdDat;
+        //    this.hidr = baseHidr;
+
+        //    var sis = new List<Tuple<int, int>>();
+        //    int id = 0;
+        //    foreach (var ree in new int[] { 1, 2, 3, 4 })
+        //    {
+        //        sis.Add(new Tuple<int, int>(id, ree));
+        //        id++;
+        //    }
+        //    this.index_sistemas = sis;
+
+
+        //    var usinas = new UHE[baseHidr.Data.Count + 1];
+        //    foreach (var item in baseHidr.Data.Where(h => !String.IsNullOrWhiteSpace(h.Usina)))
+        //    {
+        //        usinas[item.Cod] = new UHE(item, this);
+
+        //    }
+
+        //    //configurar ficticias
+        //    var ficts = new List<Tuple<int, int>>();
+        //    foreach (var fict in usinas.Where(u => u != null && u.Jusante.Value != 0)
+        //        .Where(u => u.Usina.StartsWith("FICT.", StringComparison.OrdinalIgnoreCase))
+        //        )
+        //    {
+
+        //        var usinaReal = usinas.Where(u => u != null).Where(u =>
+        //            u.Cod != fict.Cod &&
+        //            u.Posto == fict.Posto &&
+        //            (u.Jusante == fict.Jusante ||
+        //                 usinas[fict.Jusante.Value].Usina.StartsWith("FICT.", StringComparison.OrdinalIgnoreCase)
+        //            )
+        //            ).FirstOrDefault();
+
+        //        if (usinaReal != null)
+        //        {
+
+        //            ficts.Add(new Tuple<int, int>(usinaReal.Cod, fict.Cod));
+        //            fict.IsFict = true;
+        //            fict.CodReal = usinaReal.Cod;
+        //            usinaReal.CodFicticia = fict.Cod;
+        //        }
+        //    }
+
+        //    this.usinas = usinas;
+
+        //    //loadDadgerInfo();
+        //    //updateProdTotal65VolUtil();
+
+        //    //Ler o UH - Volume
+        //    foreach (var uh in confhdDat.Where(x => x.Situacao == "EX" || x.Situacao == "EE"))
+        //    {
+        //        usinas[uh.Cod].VolIni = uh.VolUtil * usinas[uh.Cod].VolUtil / 100f;
+        //        usinas[uh.Cod].InDadger = true;
+        //        usinas[uh.Cod].Ree = uh.REE;
+
+
+        //        if (uh.CodJusante > 0) usinas[uh.Cod].Jusante = uh.CodJusante;
+        //    }
+
+        //    loadModifInfo(modif);
+        //}
+
+
+        public void loadEntdadosInfo()
         {
-            // TODO: Complete member initialization
-            this.confhdDat = (ConfhdDat.ConfhdDat)confhdDat.Clone();
-            this.baseDoc = this.confhdDat;
-            this.hidr = baseHidr;
-
-            var sis = new List<Tuple<int, int>>();
-            int id = 0;
-            foreach (var ree in new int[] { 1, 2, 3, 4 })
+            //Ler informações do dadger e sobrepor as do CadUSH
+            foreach (var ac in baseEntdados.BlocoAc)
             {
-                sis.Add(new Tuple<int, int>(id, ree));
-                id++;
-            }
-            this.index_sistemas = sis;
-
-
-            var usinas = new UHE[baseHidr.Data.Count + 1];
-            foreach (var item in baseHidr.Data.Where(h => !String.IsNullOrWhiteSpace(h.Usina)))
-            {
-                usinas[item.Cod] = new UHE(item, this);
-
-            }
-
-            //configurar ficticias
-            var ficts = new List<Tuple<int, int>>();
-            foreach (var fict in usinas.Where(u => u != null && u.Jusante.Value != 0)
-                .Where(u => u.Usina.StartsWith("FICT.", StringComparison.OrdinalIgnoreCase))
-                )
-            {
-
-                var usinaReal = usinas.Where(u => u != null).Where(u =>
-                    u.Cod != fict.Cod &&
-                    u.Posto == fict.Posto &&
-                    (u.Jusante == fict.Jusante ||
-                         usinas[fict.Jusante.Value].Usina.StartsWith("FICT.", StringComparison.OrdinalIgnoreCase)
-                    )
-                    ).FirstOrDefault();
-
-                if (usinaReal != null)
+                if (ac.Mnemonico == "VOLMAX")
                 {
+                    usinas[ac.Usina].VolMax = (float)ac.P1;
+                }
+                else if (ac.Mnemonico == "VOLMIN")
+                {
+                    usinas[ac.Usina].VolMin = (float)ac.P1;   //Veri                    
+                }
+                else if (ac.Mnemonico == "JUSENA")
+                {
+                    //usinas[ac.Usina].Jusante = ac.P1;  //Veri
+                    usinas[ac.P1].InJusEna = true;
+                    usinas[ac.Usina].JusEna = ac.P1;  //Veri
+                    if (usinas[ac.Usina].CodFicticia.HasValue) usinas[usinas[ac.Usina].CodFicticia.Value].JusEna = ac.P1;
+                }
+                else if (ac.Mnemonico == "JUSMED")
+                {
+                    usinas[ac.Usina].CanalFugaMed = (float)ac.P1;  //veri
+                }
+                else if (ac.Mnemonico == "NUMCON")
+                { //usinas não instaladas
+                    if (ac.P1 == 0)
+                        usinas[ac.Usina].ProdEsp = 0;  //veri                     
+                }
+                else if (ac.Mnemonico == "TIPUSI")
+                {
+                    usinas[ac.Usina].Reg = ac.P1;
+                }
+                else if (ac.Mnemonico == "PROESP")
+                {
+                    usinas[ac.Usina].ProdEsp = (float)ac.P1;
+                }
+                else if (ac.Mnemonico == "TIPERH")
+                {
+                    usinas[ac.Usina].PerdaTipo = ac.P1;
+                }
+                else if (ac.Mnemonico == "PERHID")
+                {
+                    usinas[ac.Usina].PerdaVal = (float)ac.P1;
+                } //else if (ac.Mnemonico == "NUMPOS") {
+                //  usinas[ac.Usina].Posto = (int)ac.P1;
+                //}
+            }
 
-                    ficts.Add(new Tuple<int, int>(usinaReal.Cod, fict.Cod));
-                    fict.IsFict = true;
-                    fict.CodReal = usinaReal.Cod;
-                    usinaReal.CodFicticia = fict.Cod;
+            //checar submotorizacao
+            foreach (var altNumMaq in baseEntdados.BlocoAc
+                .Where(ac => ac.Mnemonico == "NUMMAQ")
+                .GroupBy(ac => ac.Usina))
+            {
+
+                if (altNumMaq.Sum(x => x.P2) < usinas[altNumMaq.Key].NumUnidadeBase)
+                {
+                    usinas[altNumMaq.Key].ProdEsp = 0;  //veri                     
                 }
             }
 
-            this.usinas = usinas;
 
-            //loadDadgerInfo();
-            //updateProdTotal65VolUtil();
 
-            //Ler o UH - Volume
-            foreach (var uh in confhdDat.Where(x => x.Situacao == "EX" || x.Situacao == "EE"))
+            //Para as postos em dois submercados, ler o percentual de limitação do volume
+            foreach (var ez in baseEntdados.BlocoEz)
             {
-                usinas[uh.Cod].VolIni = uh.VolUtil * usinas[uh.Cod].VolUtil / 100f;
-                usinas[uh.Cod].InDadger = true;
-                usinas[uh.Cod].Ree = uh.REE;
+                var usina = usinas[ez[1]];
+                if (usina.CodFicticia.HasValue)
+                {
 
+                    var fic = usinas[usina.CodFicticia.Value];
+                    usina.Ez = fic.Ez = (float)ez[2] / 100f;
 
-                if (uh.CodJusante > 0) usinas[uh.Cod].Jusante = uh.CodJusante;
+                }
             }
 
-            loadModifInfo(modif);
+            //tempo de viagem
+            try
+            {
+                foreach (var vi in baseEntdados.BlocoTviag)
+                {
+                    usinas[vi.Montante].TempoViagem = vi.TempoViag;
+
+                    //var qi = new float?[5];
+                    //var qd = new float?[5];
+
+                    //qd[0] = (float?)vi.Valores[3];
+
+                    //if (vi.Valores[4] != null)
+                    //{
+                    //    qd[1] = (float?)vi.Valores[4];
+                    //    qd[2] = (float?)vi.Valores[5];
+                    //    qd[3] = (float?)vi.Valores[6];
+                    //    qd[4] = (float?)vi.Valores[7];
+                    //}
+                    //else
+                    //{
+                    //    qd[1] =
+                    //    qd[2] =
+                    //    qd[3] =
+                    //    qd[4] = qd[0];
+                    //}
+
+                    //usinas[vi.Usina].VazaoDefluentePassada = qd;
+
+                    //var qiL = baseDadger.BlocoQi.Where(q => q.Usina == vi.Usina).FirstOrDefault();
+
+                    //if (qiL != null)
+                    //{
+                    //    qi[0] = (float)qiL.Valores[2];
+
+
+                    //    if (qiL.Valores[3] != null)
+                    //    {
+                    //        qi[1] = (float)qiL.Valores[3];
+                    //        qi[2] = (float)qiL.Valores[4];
+                    //        qi[3] = (float)qiL.Valores[5];
+                    //        qi[4] = (float)qiL.Valores[6];
+                    //    }
+                    //    else
+                    //    {
+                    //        qi[1] =
+                    //        qi[2] =
+                    //        qi[3] =
+                    //        qi[4] = qi[0];
+                    //    }
+
+
+
+                    //    usinas[vi.Usina].VazaoIncrementalPassada = qi;
+
+                    //}
+                    //else
+                    //    usinas[vi.Usina].VazaoIncrementalPassada = new float?[7] { 0, 0, 0, 0, 0, 0, 0 };
+
+                    //usinas[vi.Usina].VazaoIncremental = new int?[7];
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao carregar os blocos VI e/ou QI", ex);
+            }
+
+            //Ler o UH - Volume
+            foreach (var uh in baseEntdados.BlocoUh)
+            {
+                usinas[uh.Usina].VolIni = uh.VolArm * usinas[uh.Usina].VolUtil / 100f;
+                usinas[uh.Usina].InDadger = true;
+                usinas[uh.Usina].Ree = uh.NumRee;
+
+            }
         }
-        */
-        /*
-        void loadDadgerInfo()
+        public void loadDadgerInfo()
         {
             //Ler informações do dadger e sobrepor as do CadUSH
             foreach (var ac in baseDadger.BlocoAc)
@@ -173,7 +394,9 @@ namespace ConsoleApp1.Decomp
                 else if (ac.Mnemonico == "JUSMED")
                 {
                     if ((ac.Semana.HasValue && ac.Semana.Value == 1) || ac.Mes.Trim() == "")
+
                         usinas[ac.Usina].CanalFugaMed = (float)ac.P1;  //veri
+
                 }
                 else if (ac.Mnemonico == "NUMCON")
                 { //usinas não instaladas
@@ -302,119 +525,119 @@ namespace ConsoleApp1.Decomp
 
             }
         }
-        
-        void loadModifInfo(ModifDatNW.ModifDatNw modif)
-        {
 
-            var inInfo = System.Globalization.NumberFormatInfo.InvariantInfo;
+        //void loadModifInfo(ModifDatNW.ModifDatNw modif)
+        //{
 
-            //Ler informações do dadger e sobrepor as do CadUSH
-            foreach (var ac in modif)
-            {
-                if (ac.Chave == "VOLMAX")
-                {
+        //    var inInfo = System.Globalization.NumberFormatInfo.InvariantInfo;
 
-
-                    if (!usinas[ac.Usina].IsFict)
-                    {
-                        if (ac.NovosValores[1].Contains("%"))
-                        {
-                            var p = float.Parse(ac.NovosValores[0], inInfo);
-                            var vu = usinas[ac.Usina].VolUtil;
-
-                            usinas[ac.Usina].VolMax = (float)vu * p / 100;
-
-                        }
-                        else
-                        {
-                            usinas[ac.Usina].VolMax = float.Parse(ac.NovosValores[0], inInfo);
-                        }
-                    }
-                    else
-                    {
-                        var real = usinas[ac.Usina].CodReal.Value;
-
-                        if (ac.NovosValores[1].Contains("%"))
-                        {
-                            var p = float.Parse(ac.NovosValores[0], inInfo);
-
-                            usinas[ac.Usina].Ez = usinas[real].Ez = p / 100;
-
-                        }
-                        else
-                        {
-                            var vu = usinas[real].VolUtil;
-                            var vm = float.Parse(ac.NovosValores[0], inInfo);
-
-                            usinas[ac.Usina].Ez = usinas[real].Ez = (float)(vm / vu);
-                        }
-
-                    }
+        //    //Ler informações do dadger e sobrepor as do CadUSH
+        //    foreach (var ac in modif)
+        //    {
+        //        if (ac.Chave == "VOLMAX")
+        //        {
 
 
-                }
-                else if (ac.Chave == "VOLMIN")
-                {
-                    if (ac.NovosValores[1].Contains("%"))
-                    {
-                        var p = float.Parse(ac.NovosValores[0], inInfo);
-                        var vu = usinas[ac.Usina].VolUtil;
+        //            if (!usinas[ac.Usina].IsFict)
+        //            {
+        //                if (ac.NovosValores[1].Contains("%"))
+        //                {
+        //                    var p = float.Parse(ac.NovosValores[0], inInfo);
+        //                    var vu = usinas[ac.Usina].VolUtil;
 
-                        usinas[ac.Usina].VolMin = (float)vu * p / 100;
+        //                    usinas[ac.Usina].VolMax = (float)vu * p / 100;
 
-                    }
-                    else
-                    {
-                        usinas[ac.Usina].VolMin = float.Parse(ac.NovosValores[0], inInfo);
-                    }
-                    //} else if (ac.Chave == "CFUGA") {
-                    //    if ((ac.Semana.HasValue && ac.Semana.Value == 1) || ac.Mes.Trim() == "")
-                    //        usinas[ac.Usina].CanalFugaMed = (float)ac.P1;  //veri
-                }
-                else if (ac.Chave == "NUMCNJ")
-                { //usinas não instaladas
-                    if (ac.NovosValores[0] == "0")
-                        usinas[ac.Usina].ProdEsp = 0;  //veri                     
-                    //} else if (ac.Mnemonico == "TIPUSI") {
-                    //    usinas[ac.Usina].Reg = ac.P1;
-                }
-                else if (ac.Chave == "PRODESP")
-                {
-                    usinas[ac.Usina].ProdEsp = float.Parse(ac.NovosValores[0], inInfo);
-                    //} else if (ac.Mnemonico == "TIPERH") {
-                    //    usinas[ac.Usina].PerdaTipo = ac.P1;
-                }
-                else if (ac.Chave == "PERDHIDR")
-                {
-                    usinas[ac.Usina].PerdaVal = float.Parse(ac.NovosValores[0], inInfo);
-                } //else if (ac.Mnemonico == "NUMPOS") {
-                //  usinas[ac.Usina].Posto = (int)ac.P1;
-                //}
-            }
+        //                }
+        //                else
+        //                {
+        //                    usinas[ac.Usina].VolMax = float.Parse(ac.NovosValores[0], inInfo);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                var real = usinas[ac.Usina].CodReal.Value;
 
-            //canaldefuga
-            foreach (var altCfuga in modif
-                .Where(ac => ac.Chave == "CFUGA")
-                .GroupBy(ac => ac.Usina))
-            {
-                usinas[altCfuga.Key].CanalFugaMed = float.Parse(altCfuga.First().NovosValores[2], inInfo);
+        //                if (ac.NovosValores[1].Contains("%"))
+        //                {
+        //                    var p = float.Parse(ac.NovosValores[0], inInfo);
 
-            }
+        //                    usinas[ac.Usina].Ez = usinas[real].Ez = p / 100;
 
-            //checar submotorizacao
-            foreach (var altNumMaq in modif
-                .Where(ac => ac.Chave == "NUMMAQ")
-                .GroupBy(ac => ac.Usina))
-            {
+        //                }
+        //                else
+        //                {
+        //                    var vu = usinas[real].VolUtil;
+        //                    var vm = float.Parse(ac.NovosValores[0], inInfo);
 
-                if (altNumMaq.Sum(x => int.Parse(x.NovosValores[0])) < usinas[altNumMaq.Key].NumUnidadeBase)
-                {
-                    usinas[altNumMaq.Key].ProdEsp = 0;  //veri                     
-                }
-            }
+        //                    usinas[ac.Usina].Ez = usinas[real].Ez = (float)(vm / vu);
+        //                }
 
-        }
-        */
+        //            }
+
+
+        //        }
+        //        else if (ac.Chave == "VOLMIN")
+        //        {
+        //            if (ac.NovosValores[1].Contains("%"))
+        //            {
+        //                var p = float.Parse(ac.NovosValores[0], inInfo);
+        //                var vu = usinas[ac.Usina].VolUtil;
+
+        //                usinas[ac.Usina].VolMin = (float)vu * p / 100;
+
+        //            }
+        //            else
+        //            {
+        //                usinas[ac.Usina].VolMin = float.Parse(ac.NovosValores[0], inInfo);
+        //            }
+        //            //} else if (ac.Chave == "CFUGA") {
+        //            //    if ((ac.Semana.HasValue && ac.Semana.Value == 1) || ac.Mes.Trim() == "")
+        //            //        usinas[ac.Usina].CanalFugaMed = (float)ac.P1;  //veri
+        //        }
+        //        else if (ac.Chave == "NUMCNJ")
+        //        { //usinas não instaladas
+        //            if (ac.NovosValores[0] == "0")
+        //                usinas[ac.Usina].ProdEsp = 0;  //veri                     
+        //            //} else if (ac.Mnemonico == "TIPUSI") {
+        //            //    usinas[ac.Usina].Reg = ac.P1;
+        //        }
+        //        else if (ac.Chave == "PRODESP")
+        //        {
+        //            usinas[ac.Usina].ProdEsp = float.Parse(ac.NovosValores[0], inInfo);
+        //            //} else if (ac.Mnemonico == "TIPERH") {
+        //            //    usinas[ac.Usina].PerdaTipo = ac.P1;
+        //        }
+        //        else if (ac.Chave == "PERDHIDR")
+        //        {
+        //            usinas[ac.Usina].PerdaVal = float.Parse(ac.NovosValores[0], inInfo);
+        //        } //else if (ac.Mnemonico == "NUMPOS") {
+        //        //  usinas[ac.Usina].Posto = (int)ac.P1;
+        //        //}
+        //    }
+
+        //    //canaldefuga
+        //    foreach (var altCfuga in modif
+        //        .Where(ac => ac.Chave == "CFUGA")
+        //        .GroupBy(ac => ac.Usina))
+        //    {
+        //        usinas[altCfuga.Key].CanalFugaMed = float.Parse(altCfuga.First().NovosValores[2], inInfo);
+
+        //    }
+
+        //    //checar submotorizacao
+        //    foreach (var altNumMaq in modif
+        //        .Where(ac => ac.Chave == "NUMMAQ")
+        //        .GroupBy(ac => ac.Usina))
+        //    {
+
+        //        if (altNumMaq.Sum(x => int.Parse(x.NovosValores[0])) < usinas[altNumMaq.Key].NumUnidadeBase)
+        //        {
+        //            usinas[altNumMaq.Key].ProdEsp = 0;  //veri                     
+        //        }
+        //    }
+
+        //}
+
         public void ReloadUH()
         {
             //Ler o UH - Volume
@@ -424,6 +647,15 @@ namespace ConsoleApp1.Decomp
                 foreach (var uh in baseDadger.BlocoUh)
                 {
                     usinas[uh.Usina].VolIni = uh.VolIniPerc * usinas[uh.Usina].VolUtil / 100f;
+                    usinas[uh.Usina].InDadger = true;
+                }
+
+            }
+            else if (baseEntdados != null)
+            {
+                foreach (var uh in baseEntdados.BlocoUh)
+                {
+                    usinas[uh.Usina].VolIni = uh.VolArm * usinas[uh.Usina].VolUtil / 100f;
                     usinas[uh.Usina].InDadger = true;
                 }
 
@@ -469,6 +701,7 @@ namespace ConsoleApp1.Decomp
 
             foreach (UHE usina in usinasTemp.Select(c => c.usina))
             { //  cadUsinas.Where(p => p.jusante == codUsina)) {
+
                 usina.ProdTotal = usina.ProdCalc + prodSom;
                 updateProdTotal(usina.ProdTotal, usina);
                 //System.Diagnostics.Debug.WriteLine(usina.Usina + "\t" + usina.Cod.ToString() + "\t" + usina.ProdTotal + "\t" + usina.EnergiaArmazenada);
@@ -538,6 +771,34 @@ namespace ConsoleApp1.Decomp
             return earmMax;
         }
 
+        public double[] GetEarmsMaxREE()
+        {
+
+
+            //usinas com reservatorio ou com restricao de operação a fio d'agua para 100%
+            //var temp = Usinas.Where(u => !u.IsFict && (u.VolIni > 0 || u.RestricaoVolMax == 0));
+            var temp = Usinas.Where(u => !u.IsFict && u.VolUtil > 0);
+
+            //ComRestricoesDeVolume = false;
+            var currentVols = temp.Select(u => new { u.Cod, u.VolIni }).ToArray();
+            foreach (var uhe in temp)
+            {
+                uhe.VolIni = uhe.VolUtil;
+            }
+
+            var earmMax = GetEarmsREE();
+
+            //if (!keepVolMax) {
+            //    foreach (var uhe in currentVols) {
+            //        usinas[uhe.Cod].VolIni = uhe.VolIni;
+            //    }
+            //}
+
+            //ComRestricoesDeVolume = true;
+
+            return earmMax;
+        }
+
         public double[] GetEarms()
         {
 
@@ -554,6 +815,29 @@ namespace ConsoleApp1.Decomp
             }
 
             return earms;
+        }
+
+        public double[] GetEarmsREE()
+        {
+
+            updateQuedas();
+
+            updateProdTotal();
+
+            var earms = new double[index_Ree.Count];
+
+            for (int x = 0; x < index_Ree.Count; x++)
+            {
+                string REE = index_Ree.Where(i => i.Item1 == x).First().Item2;
+                earms[x] = getEarmREE(REE); ;
+            }
+
+            return earms;
+        }
+        double getEarmREE(string REE)
+        {
+            double valor = Usinas.Where(u => uhe_ree.ContainsKey(u.Cod) && uhe_ree[u.Cod] == REE).Sum(u => u.EnergiaArmazenada);
+            return valor;
         }
 
         double getEarm(int sistema)

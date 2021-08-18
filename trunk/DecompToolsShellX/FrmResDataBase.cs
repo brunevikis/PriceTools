@@ -232,9 +232,9 @@ namespace Compass.DecompToolsShellX
                     prevsIds.Add(Convert.ToInt32(lst.Text));
                 }
 
-                Thread nthread = new Thread(Program.DStools_resultado);
-                nthread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-                nthread.Start(textResul.Text);
+                //Thread nthread = new Thread(Program.DStools_resultado);
+                //nthread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+                //nthread.Start(textResul.Text);
             }
             
         }

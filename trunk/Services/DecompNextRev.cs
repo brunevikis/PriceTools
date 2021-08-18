@@ -1045,7 +1045,7 @@ namespace Compass.Services
 
                 foreach (var num in numRests)
                 {
-                  var cms = dadger.BlocoRhc.Where(x => x is CmLine && x[1] == num).ToList();
+                    var cms = dadger.BlocoRhc.Where(x => x is CmLine && x[1] == num).ToList();
                     foreach (var cm in cms)
                     {
                         if (cm == cms.First())
@@ -1094,9 +1094,9 @@ namespace Compass.Services
                         }
                     }
                 }
-                
+
             }
-           
+
 
             #endregion
 
@@ -1489,6 +1489,286 @@ namespace Compass.Services
 
                 //}
             }
+            //sobrescrever bloco IA com dados das restrições equivalentes
+            var rhestIntercambios = dadger.BlocoRhe.RheGrouped.Where(x => x.Value.Where(y => y is FiLine).ToList().Count() == 1 && x.Value.All(z => !(z is FuLine))).ToList();
+            // intercambio NE-FC
+
+            var restNEFC = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "NE" && y[4] == "FC")).First();
+            var lus = restNEFC.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lus)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "NE" && x.SistemaB == "FC" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[5] = lu[4];
+                    ia2[7] = lu[6];
+                    ia2[9] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[5] = lu[4];
+                    ia[7] = lu[6];
+                    ia[9] = lu[8];
+                }
+            }
+
+            var restFCNE = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "FC" && y[4] == "NE")).First();
+            var lusFCNE = restFCNE.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusFCNE)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "NE" && x.SistemaB == "FC" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[6] = lu[4];
+                    ia2[8] = lu[6];
+                    ia2[10] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[6] = lu[4];
+                    ia[8] = lu[6];
+                    ia[10] = lu[8];
+                }
+            }
+            // intercambio SE-FC
+            var restSEFC = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "SE" && y[4] == "FC")).First();
+            var lusSEFC = restSEFC.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusSEFC)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "SE" && x.SistemaB == "FC" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[5] = lu[4];
+                    ia2[7] = lu[6];
+                    ia2[9] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[5] = lu[4];
+                    ia[7] = lu[6];
+                    ia[9] = lu[8];
+                }
+            }
+
+            var restFCSE = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "FC" && y[4] == "SE")).First();
+            var lusFCSE = restFCSE.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusFCSE)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "SE" && x.SistemaB == "FC" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[6] = lu[4];
+                    ia2[8] = lu[6];
+                    ia2[10] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[6] = lu[4];
+                    ia[8] = lu[6];
+                    ia[10] = lu[8];
+                }
+            }
+            // intercambio SE-IV
+            var restSEIV = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "SE" && y[4] == "IV")).First();
+            var lusSEIV = restSEIV.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusSEIV)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "SE" && x.SistemaB == "IV" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[5] = lu[4];
+                    ia2[7] = lu[6];
+                    ia2[9] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[5] = lu[4];
+                    ia[7] = lu[6];
+                    ia[9] = lu[8];
+                }
+            }
+
+            var restIVSE = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "IV" && y[4] == "SE")).First();
+            var lusIVSE = restIVSE.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusIVSE)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "SE" && x.SistemaB == "IV" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[6] = lu[4];
+                    ia2[8] = lu[6];
+                    ia2[10] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[6] = lu[4];
+                    ia[8] = lu[6];
+                    ia[10] = lu[8];
+                }
+            }
+            // intercambio SE-NE
+            var restSENE = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "SE" && y[4] == "NE")).First();
+            var lusSENE = restSENE.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusSENE)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "SE" && x.SistemaB == "NE" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[5] = lu[4];
+                    ia2[7] = lu[6];
+                    ia2[9] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[5] = lu[4];
+                    ia[7] = lu[6];
+                    ia[9] = lu[8];
+                }
+            }
+
+            var restNESE = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "NE" && y[4] == "SE")).First();
+            var lusNESE = restNESE.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusNESE)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "SE" && x.SistemaB == "NE" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[6] = lu[4];
+                    ia2[8] = lu[6];
+                    ia2[10] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[6] = lu[4];
+                    ia[8] = lu[6];
+                    ia[10] = lu[8];
+                }
+            }
+            // intercambio IV-S
+            var restIVS = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "IV" && y[4] == "S ")).First();
+            var lusIVS = restIVS.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusIVS)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "IV" && x.SistemaB == "S" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[5] = lu[4];
+                    ia2[7] = lu[6];
+                    ia2[9] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[5] = lu[4];
+                    ia[7] = lu[6];
+                    ia[9] = lu[8];
+                }
+            }
+
+            var restSIV = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "S " && y[4] == "IV")).First();
+            var lusSIV = restSIV.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusSIV)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "IV" && x.SistemaB == "S" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[6] = lu[4];
+                    ia2[8] = lu[6];
+                    ia2[10] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[6] = lu[4];
+                    ia[8] = lu[6];
+                    ia[10] = lu[8];
+                }
+            }
+            // intercambio N-SE
+            var restNSE = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "N " && y[4] == "SE")).First();
+            var lusNSE = restNSE.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusNSE)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "N" && x.SistemaB == "SE" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[5] = lu[4];
+                    ia2[7] = lu[6];
+                    ia2[9] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[5] = lu[4];
+                    ia[7] = lu[6];
+                    ia[9] = lu[8];
+                }
+            }
+
+            var restSEN = rhestIntercambios.Where(x => x.Value.Any(y => (y is FiLine) && y[3] == "SE" && y[4] == "N ")).First();
+            var lusSEN = restSEN.Value.Where(x => x is LuLine).ToList();
+            foreach (var lu in lusSEN)
+            {
+                var ia = dadger.BlocoIa.Where(x => x.SistemaA == "N" && x.SistemaB == "SE" && x.Estagio <= lu[2]).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                if (ia.Estagio < lu[2])
+                {
+                    IaLine ia2 = (IaLine)ia.Clone();
+                    ia2[1] = lu[2];
+                    ia2[6] = lu[4];
+                    ia2[8] = lu[6];
+                    ia2[10] = lu[8];
+                    dadger.BlocoIa.InsertAfter(ia, ia2);
+                    ia2 = null;
+                }
+                else
+                {
+                    ia[6] = lu[4];
+                    ia[8] = lu[6];
+                    ia[10] = lu[8];
+                }
+            }
+
             //RHV
             Action<int, int, int> overrideRHV = (_m, _ano, _e) =>
             {
@@ -1628,7 +1908,7 @@ namespace Compass.Services
                             {
 
                                 var countCq = re.Value.Where(y => (y is CqLine)).ToList();
-                                if (RhqP.Usinas != null && countCq.Count() == RhqP.Usinas.Count() || RhqP.Usina == 0 )
+                                if (RhqP.Usinas != null && countCq.Count() == RhqP.Usinas.Count() || RhqP.Usina == 0)
                                 {
                                     re.Value.ToList().ForEach(x => dadger.BlocoRhq.Remove(x));
                                 }
@@ -1654,7 +1934,7 @@ namespace Compass.Services
                         //.Select(x => x.Value).FirstOrDefault();
                         .ToList();
 
-                    
+
 
                     if (!rhq.LimInf1.HasValue && !rhq.LimSup1.HasValue)
                     {
@@ -1711,7 +1991,7 @@ namespace Compass.Services
 
                             if (!rest.Value.Contains(lu)) dadger.BlocoRhq.Add(lu);
                         }
-                        
+
                     }
                     if (rhq.exclui)
                     {
@@ -1727,8 +2007,8 @@ namespace Compass.Services
                             }
                         }
 
-                        
-                       // rests.SelectMany(x => x.Value).ToList().ForEach(x => dadger.BlocoRhq.Remove(x));
+
+                        // rests.SelectMany(x => x.Value).ToList().ForEach(x => dadger.BlocoRhq.Remove(x));
                         rests.Clear();
                     }
 
@@ -2493,8 +2773,8 @@ namespace Compass.Services
 
                             //MIN50 antigo
                             //riTemp[6] = riTemp[8] + 1900;
-                           // riTemp[11] = riTemp[13] + 1900;
-                           // riTemp[16] = riTemp[18] + 1900;
+                            // riTemp[11] = riTemp[13] + 1900;
+                            // riTemp[16] = riTemp[18] + 1900;
 
                             //MIN50 novo
                             riTemp[6] = (riCarga + 1900) / 2;

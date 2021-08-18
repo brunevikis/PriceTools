@@ -42,7 +42,7 @@
     <PublishUrl>C:\Development\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.5.0.231</ApplicationVersion>
+    <ApplicationVersion>1.5.0.232</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -305,6 +305,7 @@
     <None Include="DecompTools_4_TemporaryKey.pfx" />
     <None Include="DecompTools_5_TemporaryKey.pfx" />
     <None Include="DecompTools_6_TemporaryKey.pfx" />
+    <None Include="DecompTools_7_TemporaryKey.pfx" />
     <None Include="DecompTools_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

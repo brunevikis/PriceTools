@@ -77,6 +77,7 @@ C:\Development\price_tools\trunk\Services\bin\Debug\Compass.CommomLibrary.dll
 C:\Development\price_tools\trunk\Services\bin\Debug\Compass.ExcelTools.dll
 C:\Development\price_tools\trunk\Services\bin\Debug\EntityFramework.dll
 C:\Development\price_tools\trunk\Services\bin\Debug\EntityFramework.SqlServer.dll
+C:\Development\price_tools\trunk\Services\bin\Debug\LinuxQueue40.dll
 C:\Development\price_tools\trunk\Services\bin\Debug\System.ValueTuple.dll
 C:\Development\price_tools\trunk\Services\bin\Debug\Compass.CommomLibrary.pdb
 C:\Development\price_tools\trunk\Services\bin\Debug\Compass.CommomLibrary.dll.config
@@ -84,9 +85,8 @@ C:\Development\price_tools\trunk\Services\bin\Debug\Compass.ExcelTools.pdb
 C:\Development\price_tools\trunk\Services\bin\Debug\EntityFramework.xml
 C:\Development\price_tools\trunk\Services\bin\Debug\EntityFramework.SqlServer.xml
 C:\Development\price_tools\trunk\Services\bin\Debug\System.ValueTuple.xml
+C:\Development\price_tools\trunk\Services\obj\Debug\Services.csproj.AssemblyReference.cache
 C:\Development\price_tools\trunk\Services\obj\Debug\Services.csproj.CoreCompileInputs.cache
 C:\Development\price_tools\trunk\Services\obj\Debug\Services.csproj.CopyComplete
 C:\Development\price_tools\trunk\Services\obj\Debug\Compass.Services.dll
 C:\Development\price_tools\trunk\Services\obj\Debug\Compass.Services.pdb
-C:\Development\price_tools\trunk\Services\bin\Debug\LinuxQueue40.dll
-C:\Development\price_tools\trunk\Services\obj\Debug\Services.csproj.AssemblyReference.cache

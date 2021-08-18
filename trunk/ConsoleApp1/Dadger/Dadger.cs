@@ -5,13 +5,13 @@ using System.Text;
 
 namespace ConsoleApp1.Dadger
 {
-    class Dadger : BaseDocument
+    public class Dadger : BaseDocument
     {
 
 
         Dictionary<string, IBlock<BaseLine>> blocos = new Dictionary<string, IBlock<BaseLine>>() {
                     {"TE"               , new DummyBlock()},
-                    {"SB"               , new DummyBlock()},
+                    {"SB"               , new SbBlock()},
                     {"UH"               , new UhBlock()},
                     {"CT"               , new DummyBlock()},
                     {"CI CE"            , new DummyBlock()},
@@ -46,9 +46,9 @@ namespace ConsoleApp1.Dadger
                     {"DF"               , new DummyBlock()},
 
                     {"RE LU FU FT FI FE"   , new RheBlock()},
-                    {"VI"               , new DummyBlock()},
-                    {"QI"               , new DummyBlock()},
-                    {"AC"               , new DummyBlock()},
+                    {"VI"               , new ViBlock()},
+                    {"QI"               , new QiBlock()},
+                    {"AC"               , new AcBlock()},
                     {"RV"               , new DummyBlock()},
 
                     {"FP"               , new DummyBlock()},
@@ -71,7 +71,7 @@ namespace ConsoleApp1.Dadger
 
                     {"TI"               , new TiBlock()},
                     {"RQ"               , new DummyBlock()},
-                    {"EZ"               , new DummyBlock()},
+                    {"EZ"               , new EzBlock()},
                     {"HA LA CA"         , new DummyBlock()},
                     {"HV LV CV"         , new RhvBlock()},
                     {"HQ LQ CQ"         , new RhqBlock()},
@@ -112,7 +112,7 @@ namespace ConsoleApp1.Dadger
         //public MtBlock BlocoMt { get { return (MtBlock)Blocos["MT"]; } }
         //public CtBlock BlocoCT { get { return (CtBlock)Blocos["CT"]; } }
         public UhBlock BlocoUh { get { return (UhBlock)Blocos["UH"]; } set { Blocos["UH"] = value; } }
-        // public AcBlock BlocoAc { get { return (AcBlock)Blocos["AC"]; } }
+        public AcBlock BlocoAc { get { return (AcBlock)Blocos["AC"]; } }
         //public DpBlock BlocoDp
         //{
         //    get { return (DpBlock)Blocos["DP"]; }
@@ -123,15 +123,16 @@ namespace ConsoleApp1.Dadger
         public RhvBlock BlocoRhv { get { return (RhvBlock)Blocos["HV LV CV"]; } }
         public RhqBlock BlocoRhq { get { return (RhqBlock)Blocos["HQ LQ CQ"]; } }
         public RhcBlock BlocoRhc { get { return (RhcBlock)Blocos["HE CM"]; } }
+        public SbBlock BlocoSb { get { return (SbBlock)Blocos["SB"]; } }
 
         //public SbBlock BlocoSb { get { return (SbBlock)Blocos["SB"]; } }
         //public PqBlock BlocoPq { get { return (PqBlock)Blocos["PQ"]; } }
         //public ItBlock BlocoIt { get { return (ItBlock)Blocos["IT"]; } }
         //public IaBlock BlocoIa { get { return (IaBlock)Blocos["IA"]; } }
-        //public EzBlock BlocoEz { get { return (EzBlock)Blocos["EZ"]; } }
+        public EzBlock BlocoEz { get { return (EzBlock)Blocos["EZ"]; } }
         public RheBlock BlocoRhe { get { return (RheBlock)Blocos["RE LU FU FT FI FE"]; } }
-        //public ViBlock BlocoVi { get { return (ViBlock)Blocos["VI"]; } }
-        //public QiBlock BlocoQi { get { return (QiBlock)Blocos["QI"]; } }
+        public ViBlock BlocoVi { get { return (ViBlock)Blocos["VI"]; } }
+        public QiBlock BlocoQi { get { return (QiBlock)Blocos["QI"]; } }
         //public EsBlock BlocoEs { get { return (EsBlock)Blocos["ES"]; } }
         //public EaBlock BlocoEa { get { return (EaBlock)Blocos["EA"]; } }
         public TiBlock BlocoTi { get { return (TiBlock)Blocos["TI"]; } }
