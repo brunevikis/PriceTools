@@ -306,6 +306,7 @@
     <None Include="DecompTools_5_TemporaryKey.pfx" />
     <None Include="DecompTools_6_TemporaryKey.pfx" />
     <None Include="DecompTools_7_TemporaryKey.pfx" />
+    <None Include="DecompTools_8_TemporaryKey.pfx" />
     <None Include="DecompTools_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -378,17 +379,17 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>DecompTools_6_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>DecompTools_8_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>DDB03CF166D8AE5959F91032083E414E7DA9F6B7</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>8FEF0FEEA8E5496D1DC1FDA0829D7625E4EBA719</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>DecompTools_6_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>DecompTools_8_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

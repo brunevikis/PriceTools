@@ -1786,8 +1786,8 @@ namespace Compass.Services
                         else
                         {
                             var restApaga = dadger.BlocoRhv.RhvGrouped
-                            .Where(x => x.Value.Any(y => (y is CvLine) && y[5] == "VARM" && (y[3] == RhvP.Usina || y[1] == RhvP.Restricao)))
-                            //.Select(x => x.Value).FirstOrDefault();
+                            .Where(x => x.Value.Any(y => (y is CvLine) && y[5] == "VARM" && (y[3] == RhvP.Usina || (y[1] == RhvP.Restricao && y[1] != 43))))// a restricao 43 tem que ser tratada a cada mes por conta de ter a proporcionalidade de um jeito que a planilha não consegue escrever
+                            //.Select(x => x.Value).FirstOrDefault();                                                                                       // por tanto ela é resgatada do deck base caso tenha que ser incluida novamente no estudo
                             .ToList();
 
                             restApaga.SelectMany(x => x.Value).ToList().ForEach(x => dadger.BlocoRhv.Remove(x));
@@ -1805,7 +1805,7 @@ namespace Compass.Services
                         //.Select(x => x.Value).FirstOrDefault();
                         .ToList();
 
-                    if (!rhv.LimInf.HasValue && !rhv.LimSup.HasValue)
+                    if (!rhv.LimInf.HasValue && !rhv.LimSup.HasValue && rhv.Restricao != 43)
                     {
 
                         rests.SelectMany(x => x.Value).ToList().ForEach(x => dadger.BlocoRhv.Remove(x));

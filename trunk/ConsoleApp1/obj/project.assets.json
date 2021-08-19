@@ -676,7 +676,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Bruno Araújo\\.nuget\\packages\\": {}
+    "C:\\Users\\Bruno.ENERCORENB05\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -684,11 +684,11 @@
       "projectUniqueName": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj",
       "projectName": "TrataInviab",
       "projectPath": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj",
-      "packagesPath": "C:\\Users\\Bruno Araújo\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Bruno.ENERCORENB05\\.nuget\\packages\\",
       "outputPath": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Bruno Araújo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Bruno.ENERCORENB05\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
