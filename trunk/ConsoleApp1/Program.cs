@@ -113,8 +113,11 @@ namespace ConsoleApp1
                          from inv in inviabilidades.SimulacaoFinal
                          group inv by new { inv.Estagio, inv.RestricaoViolada } into invG
                          select invG.OrderByDescending(x => x.Violacao).First();
+            //para usar o bloco RELATORIO DE VIOLACOES trocar a variavel "s" pela variavel "q"
 
-            foreach (var inviab in s.OrderByDescending(x => x.Estagio))//para usar o bloco RELATORIO DE VIOLACOES trocar a variavel "s" pela variavel "q"
+            var restHqInviavies = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
+
+            foreach (var inviab in s.OrderByDescending(x => x.Estagio))
             {
 
 
@@ -205,21 +208,91 @@ namespace ConsoleApp1
                                     dadger.BlocoRhq.Add(nle125);
                                     le125 = nle125;
                                 }
-                                //
-                                le125[3] = 90;
-                                le125[5] = 90;
-                                le125[7] = 90;
-                                le125[4] = 99999;
-                                le125[6] = 99999;
-                                le125[8] = 99999;
 
-                                if (nivel > 2 && inviab.CodRestricao == 125 && inviab.SupInf == "INF")// só na segunda tentativa e se a violação for na 125
+                                if (rs159.Count() > 0)
+                                {
+                                    var ls159 = rs159.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                                    le159 = ls159.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                    if (le159.Estagio < inviab.Estagio)
+                                    {
+
+                                        var nle159 = le159.Clone();
+                                        nle159.Estagio = inviab.Estagio;
+                                        dadger.BlocoRhq.Add(nle159);
+                                        le159 = nle159;
+                                    }
+                                    if (inviab.CodRestricao == 125 && inviab.SupInf == "SUP")//99999 na 125 e 160 na 159
+                                    {
+                                        var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
+                                        le125[p] = 99999;
+                                        le159[p] = 160;
+                                    }
+                                }
+                                //
+                                //le125[3] = 90;
+                                //le125[5] = 90;
+                                //le125[7] = 90;
+                                //le125[4] = 99999;
+                                //le125[6] = 99999;
+                                //le125[8] = 99999;
+
+                                //if (nivel > 2 && inviab.CodRestricao == 125 && inviab.SupInf == "INF")// só na segunda tentativa e se a violação for na 125
+                                //{//nivel > 2 && inviab.CodRestricao == 125 && inviab.SupInf == "INF"
+                                //    var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
+                                //    double valor = Math.Ceiling(inviab.Violacao);
+                                //    le125[p] = inviab.SupInf == "INF" ? le125[p] - valor : le125[p] + valor;
+
+                                //    if (le125[p] < 0) le125[p] = 0;
+                                //}
+
+                                if (inviab.SupInf == "INF")
                                 {
                                     var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
                                     double valor = Math.Ceiling(inviab.Violacao);
-                                    le125[p] = inviab.SupInf == "INF" ? le125[p] - valor : le125[p] + valor;
 
-                                    if (le125[p] < 0) le125[p] = 0;
+                                    if (restHqInviavies.All(x => x != 125))//caso não exista inviab para rest 125, a rest 125 será decrementada com os valores das rests 102, 116 e 149
+                                    {
+                                        if (inviab.CodRestricao != 159)
+                                        {
+                                            dynamic ledummy;
+                                            IEnumerable<BaseLine> rsdummy;
+                                            rsdummy = dadger.BlocoRhq.Where(x => x.Restricao == inviab.CodRestricao);
+                                            if (rsdummy.Count() > 0)
+                                            {
+                                                var lsdummy = rsdummy.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                                                ledummy = lsdummy.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                                if (ledummy.Estagio < inviab.Estagio)
+                                                {
+
+                                                    var nledummy = ledummy.Clone();
+                                                    nledummy.Estagio = inviab.Estagio;
+                                                    dadger.BlocoRhq.Add(nledummy);
+                                                    ledummy = nledummy;
+                                                }
+
+                                                ledummy[p] = inviab.SupInf == "INF" ? ledummy[p] - valor : ledummy[p] + valor;
+
+                                                if (ledummy[p] < 0) ledummy[p] = 0;
+                                            }
+
+                                        }
+                                       
+                                    }
+                                    else if (inviab.CodRestricao == 125)
+                                    {
+                                        le125[p] = inviab.SupInf == "INF" ? le125[p] - valor : le125[p] + valor;
+
+                                        if (le125[p] < 0) le125[p] = 0;
+                                    }
+                                    
+                                }
+
+                                if (inviab.CodRestricao == 125 && inviab.SupInf == "SUP")//99999 na 125 
+                                {//nivel > 2 && inviab.CodRestricao == 125 && inviab.SupInf == "INF"
+                                    var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
+                                    le125[p] = 99999;
                                 }
                                 //continue;
                             }
@@ -240,9 +313,40 @@ namespace ConsoleApp1
                                 //
                                 if (nivel < 3)
                                 {
-                                    le159[4] = 160;
-                                    le159[6] = 160;
-                                    le159[8] = 160;
+                                    //le159[4] = 160;
+                                    //le159[6] = 160;
+                                    //le159[8] = 160;
+                                    if (inviab.CodRestricao == 159 && inviab.SupInf == "SUP")
+                                    {
+                                        var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
+                                        le159[p] = 160;
+                                        if (rs125.Count() > 0)
+                                        {
+                                            var ls125 = rs125.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                                            le125 = ls125.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                            if (le125.Estagio < inviab.Estagio)
+                                            {
+
+                                                var nle125 = le125.Clone();
+                                                nle125.Estagio = inviab.Estagio;
+                                                dadger.BlocoRhq.Add(nle125);
+                                                le125 = nle125;
+                                            }
+                                            le125[p] = 99999;
+                                            le125[p - 1] = 90;
+                                        }
+                                    }
+
+                                    if (inviab.CodRestricao == 159 && inviab.SupInf == "INF")//
+                                    {
+                                        var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
+                                        double valor = Math.Ceiling(inviab.Violacao);
+                                        le159[p] = inviab.SupInf == "INF" ? le159[p] - valor : le159[p] + valor;
+
+                                        if (le159[p] < 0) le159[p] = 0;
+                                    }
+
                                 }
                                 else
                                 {

@@ -15,7 +15,6 @@ C:\Development\price_tools\trunk\ConsoleApp1\bin\Release\netcoreapp2.0\TrataInvi
 C:\Development\price_tools\trunk\ConsoleApp1\bin\Release\netcoreapp2.0\TrataInviab.runtimeconfig.dev.json
 C:\Development\price_tools\trunk\ConsoleApp1\bin\Release\netcoreapp2.0\TrataInviab.dll
 C:\Development\price_tools\trunk\ConsoleApp1\bin\Release\netcoreapp2.0\TrataInviab.pdb
-C:\Development\price_tools\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.csprojAssemblyReference.cache
 C:\Development\price_tools\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.AssemblyInfoInputs.cache
 C:\Development\price_tools\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.AssemblyInfo.cs
 C:\Development\price_tools\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.csproj.CoreCompileInputs.cache
