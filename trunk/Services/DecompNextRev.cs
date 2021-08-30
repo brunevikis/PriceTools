@@ -1857,22 +1857,52 @@ namespace Compass.Services
                         }
                         else
                         {
-                            var lu = (LvLine)rest.Value.FirstOrDefault(y => (y is LvLine) && y[2] == realestagio)
-                           ?? new LvLine() { Restricao = rest.Value.First().Restricao, Estagio = realestagio }
-                           ;
-                            lu[3] = rhv.LimInf;
-                            lu[4] = rhv.LimSup;
+                            if (rhv.exclui == false)
+                            {
+                                var lu = (LvLine)rest.Value.FirstOrDefault(y => (y is LvLine) && y[2] == realestagio)
+                         ?? new LvLine() { Restricao = rest.Value.First().Restricao, Estagio = realestagio }
+                         ;
+                                lu[3] = rhv.LimInf;
+                                lu[4] = rhv.LimSup;
 
-                            if (!rest.Value.Contains(lu)) dadger.BlocoRhv.Add(lu);
+                                if (!rest.Value.Contains(lu)) dadger.BlocoRhv.Add(lu);
+                            }
+
                         }
 
 
 
                     }
-                    if (rhv.exclui)
+                    if (rhv.exclui && _e == 1)
                     {
                         rests.SelectMany(x => x.Value).ToList().ForEach(x => dadger.BlocoRhv.Remove(x));
                         rests.Clear();
+                    }
+                    else if (rhv.exclui && _e == 2)
+                    {
+                        var Nrests = dadger.BlocoRhv.RhvGrouped
+                        .Where(x => x.Value.Any(y => (y is CvLine) && y[5] == "VARM" && (y[3] == rhv.Usina || y[1] == rhv.Restricao)))
+                        //.Select(x => x.Value).FirstOrDefault();
+                        .ToList();
+                        if (Nrests.Count() > 0)
+                        {
+                            foreach (var rest in Nrests)
+                            {
+                                var lu = (LvLine)rest.Value.FirstOrDefault(y => (y is LvLine) && y[2] == realestagio);
+                                if (lu != null)
+                                {
+                                    dadger.BlocoRhv.Remove(lu);
+                                }
+                                if (rhv.Restricao == 43)
+                                {
+                                    var hv = (HvLine)rest.Value.FirstOrDefault(y => (y is HvLine) && y.Restricao == rhv.Restricao);
+                                    if (hv != null)
+                                    {
+                                        hv[3] = realestagio - 1;// diminui 1 no estagio fim
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             };
