@@ -19,7 +19,7 @@ namespace ConsoleApp1.Dadger
                     //{"ME"               , new MeBlock()},
                     {"ME"               , new DummyBlock()},
                     {"VR"               , new DummyBlock()},
-                    {"DP"               , new DummyBlock()},
+                    {"DP"               , new DpBlock()},
                     {"CD"               , new DummyBlock()},
                     {"TD"               , new DummyBlock()},
                     {"BE"               , new DummyBlock()},
@@ -113,11 +113,11 @@ namespace ConsoleApp1.Dadger
         //public CtBlock BlocoCT { get { return (CtBlock)Blocos["CT"]; } }
         public UhBlock BlocoUh { get { return (UhBlock)Blocos["UH"]; } set { Blocos["UH"] = value; } }
         public AcBlock BlocoAc { get { return (AcBlock)Blocos["AC"]; } }
-        //public DpBlock BlocoDp
-        //{
-        //    get { return (DpBlock)Blocos["DP"]; }
-        //    set { Blocos["DP"] = value; }
-        //}
+        public DpBlock BlocoDp
+        {
+            get { return (DpBlock)Blocos["DP"]; }
+            set { Blocos["DP"] = value; }
+        }
         //public CdBlock BlocoCd { get { return (CdBlock)Blocos["CD"]; } }
         //public RhaBlock BlocoRha { get { return (RhaBlock)Blocos["HA LA CA"]; } }
         public RhvBlock BlocoRhv { get { return (RhvBlock)Blocos["HV LV CV"]; } }

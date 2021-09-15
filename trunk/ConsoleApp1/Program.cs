@@ -96,6 +96,193 @@ namespace ConsoleApp1
             }
         }
 
+        public static List<InviabPon> InviabilidadePonderada(ConsoleApp1.Decomp.Deck deck, IEnumerable<Inviab.InviabFinalLine> s)
+        {
+            List<InviabPon> inviabPons = new List<InviabPon>();
+
+            var dadger = deck[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
+            var estdadger = dadger.BlocoDp.Select(x => x.Estagio).Distinct().ToList();
+            int estagioFinal = estdadger.Max();
+            Dictionary<int, Tuple<double, double, double>> duracoes = new Dictionary<int, Tuple<double, double, double>>();
+
+            foreach (var est in estdadger)
+            {
+                var dpline = dadger.BlocoDp.Where(x => x.Estagio == est).FirstOrDefault();
+
+                if (dpline != null)
+                {
+                    duracoes.Add(est, new Tuple<double, double, double>(dpline.Dura1, dpline.Dura2, dpline.Dura3));
+                }
+            }
+            var restHqInviavies = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
+            var restREInviavies = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
+
+            #region RHQs
+            foreach (var rest in restHqInviavies)
+            {
+                for (int i = 1; i <= estagioFinal; i++)
+                {
+                    double[] violacoes = { 0, 0, 0 };
+
+                    var hqs = s.Where(x => x.TipoRestricao == "RHQ" && x.CodRestricao == rest && x.SupInf == "INF" && x.Estagio == i).ToList();
+                    if (hqs.Count() > 0)
+                    {
+                        foreach (var hq in hqs)
+                        {
+                            switch (hq.Patamar)
+                            {
+                                case 1:
+                                    violacoes[0] = hq.Violacao;
+                                    break;
+                                case 2:
+                                    violacoes[1] = hq.Violacao;
+                                    break;
+                                case 3:
+                                    violacoes[2] = hq.Violacao;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        var duracaoDados = duracoes[i];
+
+                        double mediaPon = (violacoes[0] * duracaoDados.Item1 + violacoes[1] * duracaoDados.Item2 + violacoes[2] * duracaoDados.Item3) / (duracaoDados.Item1 + duracaoDados.Item2 + duracaoDados.Item3);
+                        InviabPon invi = new InviabPon();
+                        invi.tipoRestricao = "RHQ";
+                        invi.limite = "INF";
+                        invi.codRest = rest;
+                        invi.estagio = i;
+                        invi.valorPon = Math.Ceiling(mediaPon);
+
+                        inviabPons.Add(invi);
+                    }
+                }
+
+                for (int i = 1; i <= estagioFinal; i++)
+                {
+                    double[] violacoes = { 0, 0, 0 };
+
+                    var hqs = s.Where(x => x.TipoRestricao == "RHQ" && x.CodRestricao == rest && x.SupInf == "SUP" && x.Estagio == i).ToList();
+                    if (hqs.Count() > 0)
+                    {
+                        foreach (var hq in hqs)
+                        {
+                            switch (hq.Patamar)
+                            {
+                                case 1:
+                                    violacoes[0] = hq.Violacao;
+                                    break;
+                                case 2:
+                                    violacoes[1] = hq.Violacao;
+                                    break;
+                                case 3:
+                                    violacoes[2] = hq.Violacao;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        var duracaoDados = duracoes[i];
+
+                        double mediaPon = (violacoes[0] * duracaoDados.Item1 + violacoes[1] * duracaoDados.Item2 + violacoes[2] * duracaoDados.Item3) / (duracaoDados.Item1 + duracaoDados.Item2 + duracaoDados.Item3);
+                        InviabPon invi = new InviabPon();
+                        invi.tipoRestricao = "RHQ";
+                        invi.limite = "SUP";
+                        invi.codRest = rest;
+                        invi.estagio = i;
+                        invi.valorPon = Math.Ceiling(mediaPon);
+
+                        inviabPons.Add(invi);
+                    }
+                }
+
+            }
+            #endregion
+
+            #region RHE
+
+            foreach (var rest in restREInviavies)
+            {
+                for (int i = 1; i <= estagioFinal; i++)
+                {
+                    double[] violacoes = { 0, 0, 0 };
+
+                    var hqs = s.Where(x => x.TipoRestricao == "RHE" && x.CodRestricao == rest && x.SupInf == "INF" && x.Estagio == i).ToList();
+                    if (hqs.Count() > 0)
+                    {
+                        foreach (var hq in hqs)
+                        {
+                            switch (hq.Patamar)
+                            {
+                                case 1:
+                                    violacoes[0] = hq.Violacao;
+                                    break;
+                                case 2:
+                                    violacoes[1] = hq.Violacao;
+                                    break;
+                                case 3:
+                                    violacoes[2] = hq.Violacao;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        var duracaoDados = duracoes[i];
+
+                        double mediaPon = (violacoes[0] * duracaoDados.Item1 + violacoes[1] * duracaoDados.Item2 + violacoes[2] * duracaoDados.Item3) / (duracaoDados.Item1 + duracaoDados.Item2 + duracaoDados.Item3);
+                        InviabPon invi = new InviabPon();
+                        invi.tipoRestricao = "RHE";
+                        invi.limite = "INF";
+                        invi.codRest = rest;
+                        invi.estagio = i;
+                        invi.valorPon = Math.Ceiling(mediaPon);
+
+                        inviabPons.Add(invi);
+                    }
+                }
+
+                for (int i = 1; i <= estagioFinal; i++)
+                {
+                    double[] violacoes = { 0, 0, 0 };
+
+                    var hqs = s.Where(x => x.TipoRestricao == "RHE" && x.CodRestricao == rest && x.SupInf == "SUP" && x.Estagio == i).ToList();
+                    if (hqs.Count() > 0)
+                    {
+                        foreach (var hq in hqs)
+                        {
+                            switch (hq.Patamar)
+                            {
+                                case 1:
+                                    violacoes[0] = hq.Violacao;
+                                    break;
+                                case 2:
+                                    violacoes[1] = hq.Violacao;
+                                    break;
+                                case 3:
+                                    violacoes[2] = hq.Violacao;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        var duracaoDados = duracoes[i];
+
+                        double mediaPon = (violacoes[0] * duracaoDados.Item1 + violacoes[1] * duracaoDados.Item2 + violacoes[2] * duracaoDados.Item3) / (duracaoDados.Item1 + duracaoDados.Item2 + duracaoDados.Item3);
+                        InviabPon invi = new InviabPon();
+                        invi.tipoRestricao = "RHE";
+                        invi.limite = "SUP";
+                        invi.codRest = rest;
+                        invi.estagio = i;
+                        invi.valorPon = Math.Ceiling(mediaPon);
+
+                        inviabPons.Add(invi);
+                    }
+                }
+
+            }
+            #endregion
+            return inviabPons;
+        }
 
         /// <param name="deck"></param>
         /// <param name="inviabilidades"></param>
@@ -115,10 +302,14 @@ namespace ConsoleApp1
                          select invG.OrderByDescending(x => x.Violacao).First();
             //para usar o bloco RELATORIO DE VIOLACOES trocar a variavel "s" pela variavel "q"
 
-            var restHqInviavies = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
 
+            List<InviabPon> inviabPons = InviabilidadePonderada(deck, s);
+
+            List<Tuple<string, int?, int, string>> restAlterada = new List<Tuple<string, int?, int, string>>();//lista usada para verificar as rest rhq e rhe que ja foram alteradas
+                      //tipo,cod,est,limite
             foreach (var inviab in s.OrderByDescending(x => x.Estagio))
             {
+                var restHqInviavies = s.Where(x => x.TipoRestricao == "RHQ" && x.Estagio == inviab.Estagio).Select(x => x.CodRestricao).Distinct().ToList();
 
 
                 if (inviab.TipoRestricao == "RHE" || inviab.TipoRestricao == "RHQ" || inviab.TipoRestricao == "RHV" || inviab.TipoRestricao == "RHC")
@@ -224,9 +415,15 @@ namespace ConsoleApp1
                                     }
                                     if (inviab.CodRestricao == 125 && inviab.SupInf == "SUP")//99999 na 125 e 160 na 159
                                     {
-                                        var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
-                                        le125[p] = 99999;
-                                        le159[p] = 160;
+                                        //var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
+                                        //le125[p] = 99999;
+                                        //le159[p] = 160;
+                                        le125[4] = 99999;
+                                        le125[6] = 99999;
+                                        le125[8] = 99999;
+                                        le159[4] = 160;
+                                        le159[6] = 160;
+                                        le159[8] = 160;
                                     }
                                 }
                                 //
@@ -249,9 +446,10 @@ namespace ConsoleApp1
                                 if (inviab.SupInf == "INF")
                                 {
                                     var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
-                                    double valor = Math.Ceiling(inviab.Violacao);
+                                    //double valor = Math.Ceiling(inviab.Violacao);
+                                    double valor = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
 
-                                    if (restHqInviavies.All(x => x != 125))//caso não exista inviab para rest 125, a rest 125 será decrementada com os valores das rests 102, 116 e 149
+                                    if (restHqInviavies.All(x => x != 125))//caso não exista inviab para rest 125, as rests 102, 116 e 149 seram decrementadas
                                     {
                                         if (inviab.CodRestricao != 159)
                                         {
@@ -272,27 +470,62 @@ namespace ConsoleApp1
                                                     ledummy = nledummy;
                                                 }
 
-                                                ledummy[p] = inviab.SupInf == "INF" ? ledummy[p] - valor : ledummy[p] + valor;
+                                                if (restAlterada.Count() > 0)
+                                                {
+                                                    var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                                    if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                                    {
+                                                        continue;
+                                                    }
+                                                }
+                                                ledummy[3] = ledummy[3] - valor;
+                                                ledummy[5] = ledummy[5] - valor;
+                                                ledummy[7] = ledummy[7] - valor;
+                                                if (ledummy[3] < 0) ledummy[3] = 0;
+                                                if (ledummy[5] < 0) ledummy[5] = 0;
+                                                if (ledummy[7] < 0) ledummy[7] = 0;
 
-                                                if (ledummy[p] < 0) ledummy[p] = 0;
+                                                restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                                                //ledummy[p] = inviab.SupInf == "INF" ? ledummy[p] - valor : ledummy[p] + valor;
+
+                                                //if (ledummy[p] < 0) ledummy[p] = 0;
                                             }
 
                                         }
-                                       
+
                                     }
                                     else if (inviab.CodRestricao == 125)
                                     {
-                                        le125[p] = inviab.SupInf == "INF" ? le125[p] - valor : le125[p] + valor;
+                                        if (restAlterada.Count() > 0)
+                                        {
+                                            var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                            if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        le125[3] = le125[3] - valor;
+                                        le125[5] = le125[5] - valor;
+                                        le125[7] = le125[7] - valor;
+                                        if (le125[3] < 0) le125[3] = 0;
+                                        if (le125[5] < 0) le125[5] = 0;
+                                        if (le125[7] < 0) le125[7] = 0;
 
-                                        if (le125[p] < 0) le125[p] = 0;
+                                        restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                                        //le125[p] = inviab.SupInf == "INF" ? le125[p] - valor : le125[p] + valor;
+
+                                        //if (le125[p] < 0) le125[p] = 0;
                                     }
-                                    
+
                                 }
 
                                 if (inviab.CodRestricao == 125 && inviab.SupInf == "SUP")//99999 na 125 
                                 {//nivel > 2 && inviab.CodRestricao == 125 && inviab.SupInf == "INF"
                                     var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
-                                    le125[p] = 99999;
+                                    //le125[p] = 99999;
+                                    le125[4] = 99999;
+                                    le125[6] = 99999;
+                                    le125[8] = 99999;
                                 }
                                 //continue;
                             }
@@ -319,7 +552,11 @@ namespace ConsoleApp1
                                     if (inviab.CodRestricao == 159 && inviab.SupInf == "SUP")
                                     {
                                         var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
-                                        le159[p] = 160;
+                                        //le159[p] = 160;
+                                        le159[4] = 160;
+                                        le159[6] = 160;
+                                        le159[8] = 160;
+
                                         if (rs125.Count() > 0)
                                         {
                                             var ls125 = rs125.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
@@ -333,18 +570,42 @@ namespace ConsoleApp1
                                                 dadger.BlocoRhq.Add(nle125);
                                                 le125 = nle125;
                                             }
-                                            le125[p] = 99999;
-                                            le125[p - 1] = 90;
+                                            //le125[p] = 99999;
+                                            le125[4] = 99999;
+                                            le125[6] = 99999;
+                                            le125[8] = 99999;
+                                            //le125[p - 1] = 90;
+                                            le125[3] = 90;
+                                            le125[5] = 90;
+                                            le125[7] = 90;
                                         }
                                     }
 
                                     if (inviab.CodRestricao == 159 && inviab.SupInf == "INF")//
                                     {
                                         var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
-                                        double valor = Math.Ceiling(inviab.Violacao);
-                                        le159[p] = inviab.SupInf == "INF" ? le159[p] - valor : le159[p] + valor;
+                                        //double valor = Math.Ceiling(inviab.Violacao);
+                                        double valor = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
 
-                                        if (le159[p] < 0) le159[p] = 0;
+                                        if (restAlterada.Count() > 0)
+                                        {
+                                            var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                            if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        le159[3] = le159[3] - valor;
+                                        le159[5] = le159[5] - valor;
+                                        le159[7] = le159[7] - valor;
+                                        if (le159[3] < 0) le159[3] = 0;
+                                        if (le159[5] < 0) le159[5] = 0;
+                                        if (le159[7] < 0) le159[7] = 0;
+
+                                        restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                                        //le159[p] = inviab.SupInf == "INF" ? le159[p] - valor : le159[p] + valor;
+
+                                        //if (le159[p] < 0) le159[p] = 0;
                                     }
 
                                 }
@@ -383,11 +644,48 @@ namespace ConsoleApp1
                                 //
                                 var p = 2 * (inviab.Patamar ?? 1) + (inviab.SupInf == "INF" ? 1 : 2);
 
-                                double valor = Math.Ceiling(inviab.Violacao);
+                                //double valor = Math.Ceiling(inviab.Violacao);
+                                double valor = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
 
-                                le162[p] = inviab.SupInf == "INF" ? le162[p] - valor : le162[p] + valor;
+                                if (inviab.SupInf == "INF")
+                                {
+                                    if (restAlterada.Count() > 0)
+                                    {
+                                        var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                        if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                    le162[3] = le162[3] - valor;
+                                    le162[5] = le162[5] - valor;
+                                    le162[7] = le162[7] - valor;
+                                    if (le162[3] < 0) le162[3] = 0;
+                                    if (le162[5] < 0) le162[5] = 0;
+                                    if (le162[7] < 0) le162[7] = 0;
 
-                                if (le162[p] < 0) le162[p] = 0;
+                                    restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                                }
+                                if (inviab.SupInf == "SUP")
+                                {
+                                    if (restAlterada.Count() > 0)
+                                    {
+                                        var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                        if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                    le162[4] = le162[4] + valor;
+                                    le162[6] = le162[6] + valor;
+                                    le162[8] = le162[8] + valor;
+                                    
+
+                                    restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                                }
+                                //le162[p] = inviab.SupInf == "INF" ? le162[p] - valor : le162[p] + valor;
+
+                                //if (le162[p] < 0) le162[p] = 0;
                                 continue;
                             }
 
@@ -421,13 +719,15 @@ namespace ConsoleApp1
                         {
                             valorInviab = Math.Ceiling(inviab.Violacao * 100d) / 100d;
                         }
-                        else if(inviab.TipoRestricao == "RHC")
+                        else if (inviab.TipoRestricao == "RHC")
                         {
-                            valorInviab = Math.Round(Math.Ceiling(inviab.Violacao * 10)/10, 1);//tratamento para sempre arredondar para cima com uma casa decimal 
+                            valorInviab = Math.Round(Math.Ceiling(inviab.Violacao * 10) / 10, 1);//tratamento para sempre arredondar para cima com uma casa decimal 
                         }
                         else
                         {
-                            valorInviab = Math.Ceiling(inviab.Violacao);
+                            //valorInviab = Math.Ceiling(inviab.Violacao);
+                            valorInviab = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
+
                         }
 
 
@@ -450,18 +750,89 @@ namespace ConsoleApp1
                                     le256 = nle256;
                                 }
                                 //
-                                var valorAntigo = le256[i];
+                                //var valorAntigo = le256[i];
+                                var valInfAnt1 = le256[3];
+                                var valInfAnt2 = le256[5];
+                                var valInfAnt3 = le256[7];
 
-                                le256[i] = inviab.SupInf == "INF" ? le256[i] - valorInviab : le[i] + valorInviab;
+                                var valsupAnt1 = le256[4];
+                                var valsupAnt2 = le256[6];
+                                var valsupAnt3 = le256[8];
 
-                                if (le256[i] < 0)
+                                if (inviab.SupInf == "INF")
                                 {
-                                    le256[i] = 0;
-                                    var inviabRestante = valorInviab - valorAntigo;
-                                    le[i] = le[i] - inviabRestante;
+                                    if (restAlterada.Count() > 0)
+                                    {
+                                        var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                        if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                    le256[3] = le256[3] - valorInviab;
+                                    le256[5] = le256[5] - valorInviab;
+                                    le256[7] = le256[7] - valorInviab;
+                                    if (le256[3] < 0)
+                                    {
+                                        le256[3] = 0;
+                                        
+                                        var inviabRestante = valorInviab - valInfAnt1;
+                                        le[3] = le[3] - inviabRestante;
 
-                                    if (le[i] < 0) le[i] = 0;
+                                        if (le[3] < 0) le[3] = 0;
+                                    }
+
+                                    if (le256[5] < 0)
+                                    {
+                                        le256[5] = 0;
+
+                                        var inviabRestante = valorInviab - valInfAnt2;
+                                        le[5] = le[5] - inviabRestante;
+
+                                        if (le[5] < 0) le[5] = 0;
+                                    }
+
+                                    if (le256[7] < 0)
+                                    {
+                                        le256[7] = 0;
+
+                                        var inviabRestante = valorInviab - valInfAnt3;
+                                        le[7] = le[7] - inviabRestante;
+
+                                        if (le[7] < 0) le[7] = 0;
+                                    }
+
+                                    restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
                                 }
+
+                                if (inviab.SupInf == "SUP")
+                                {
+                                    if (restAlterada.Count() > 0)
+                                    {
+                                        var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                        if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                    le[4] = le[4] + valorInviab;
+                                    le[6] = le[6] + valorInviab;
+                                    le[8] = le[8] + valorInviab;
+
+
+                                    restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                                }
+
+                                //le256[i] = inviab.SupInf == "INF" ? le256[i] - valorInviab : le[i] + valorInviab;
+
+                                //if (le256[i] < 0)
+                                //{
+                                //    le256[i] = 0;
+                                //    var inviabRestante = valorInviab - valorAntigo;
+                                //    le[i] = le[i] - inviabRestante;
+
+                                //    if (le[i] < 0) le[i] = 0;
+                                //}
                             }
 
                         }
@@ -473,6 +844,52 @@ namespace ConsoleApp1
                                 if (le[3] < 0) le[3] = 0;
                             }
 
+                        }
+                        else if(inviab.TipoRestricao == "RHE" || inviab.TipoRestricao == "RHQ")
+                        {
+                            if (inviab.SupInf == "INF")
+                            {
+                                if (restAlterada.Count() > 0)
+                                {
+                                    var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                    if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                    {
+                                        continue;
+                                    }
+                                }
+                                le[3] = le[3] - valorInviab;
+                                le[5] = le[5] - valorInviab;
+                                le[7] = le[7] - valorInviab;
+                                if (le[3] < 0) le[3] = 0;
+                                if (le[5] < 0) le[5] = 0;
+                                if (le[7] < 0) le[7] = 0;
+
+                                restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                            }
+                            if (inviab.SupInf == "SUP")
+                            {
+                                if (restAlterada.Count() > 0)
+                                {
+                                    var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                    if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                    {
+                                        continue;
+                                    }
+                                }
+                                le[4] = le[4] + valorInviab;
+                                le[6] = le[6] + valorInviab;
+                                le[8] = le[8] + valorInviab;
+
+
+                                restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+                            }
+
+                            // le[i] =
+                            //inviab.SupInf == "INF"
+                            //? le[i] - valorInviab
+                            //: le[i] + valorInviab;
+
+                            // if (le[i] < 0) le[i] = 0;
                         }
                         else
                         {
