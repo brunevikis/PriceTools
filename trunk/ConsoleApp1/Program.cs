@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ConsoleApp1
@@ -61,6 +62,10 @@ namespace ConsoleApp1
             else if (args[0] == "deflant")
             {
                 TrataDeflant(dir);
+            }
+            else if (args.Count() > 2 && args[0] == "metaencad")
+            {
+                AtingirMetaEncad(dir, args[1], args[2]);
             }
             else
             {
@@ -926,6 +931,73 @@ namespace ConsoleApp1
                 }
 
             }
+        }
+
+        public static void AtingirMetaEncad(string rootPath, string mesAtual, string mesSeguinte)
+        {
+            var DirsDC = Directory.GetDirectories(rootPath, "DC*").ToList();
+            var DirsRV = Directory.GetDirectories(rootPath, "RV*").ToList();
+
+            var todosDirs = DirsDC.Union(DirsRV).ToList();
+
+            if (todosDirs.Count() > 0)
+            {
+                string NewaveAtual = Path.Combine(rootPath, mesAtual);
+                var arqsRees = Directory.GetFiles(NewaveAtual).Where(x => Path.GetFileName(x).ToLower().StartsWith("earmfp0")).ToList();
+                List<Tuple<int, double>> dadosRees = new List<Tuple<int, double>>();
+
+                foreach (var arq in arqsRees)
+                {
+                    int reeNum = Convert.ToInt32(Path.GetFileName(arq).Substring(6, 3));
+                    var linhaMedia = File.ReadAllLines(arq).Where(y => y != "").ToList().Where(x => x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).First().Equals("MEDIA")).First();
+                    string dado = linhaMedia.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList().Where(x => double.TryParse(x, out double v) == true && v != 0).FirstOrDefault();
+                    var isWindowns = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+                    double meta = 0;
+                    if (dado != null)
+                    {
+                        if (isWindowns)
+                        {
+                            meta = Convert.ToDouble(dado.Replace('.', ','));
+
+                        }
+                        else
+                        {
+                            meta = Convert.ToDouble(dado);
+                        }
+                    }
+
+
+                    dadosRees.Add(new Tuple<int, double>(reeNum, meta));
+                }
+
+                foreach (var d in todosDirs)
+                {
+                    var dir = Path.Combine(d, mesSeguinte);
+                    if (Directory.Exists(dir))
+                    {
+                        var deckDC = DeckFactory.CreateDeck(dir) as ConsoleApp1.Decomp.Deck;
+                        var hidrDat = deckDC[ConsoleApp1.Decomp.DeckDocument.hidr].Document as ConsoleApp1.HidrDat.HidrDat;
+                        var dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
+
+                        var configH = new ConsoleApp1.Decomp.ConfigH(dadger, hidrDat);
+                        var earmMeta = configH.ArrangeMeta(dadosRees);
+                        var earmMax = configH.GetEarmsMaxREE();
+                        configH.ReloadUH();
+
+                        Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
+                        configH.baseDoc.SaveToFile();
+
+                        //TODO criar dadger de novo pegar a meta por submercado e atingir meta 
+                    }
+                }
+                //var configH = new Compass.CommomLibrary.Decomp.ConfigH(dadger, hidrDat);
+                //var deckDCBase = DeckFactory.CreateDeck(dc) as Compass.CommomLibrary.Decomp.Deck;
+
+                //var hidrDat = deckDCBase[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
+
+            }
+
         }
 
         public static void TrataDeflant(string path)

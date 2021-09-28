@@ -817,6 +817,20 @@ namespace ConsoleApp1.Decomp
             return earms;
         }
 
+        public double[] ArrangeMeta(List<Tuple<int, double>> dadosRee)
+        {
+            var earms = new double[index_Ree.Count];
+
+            for (int x = 0; x < index_Ree.Count; x++)
+            {
+                string REE = index_Ree.Where(i => i.Item1 == x).First().Item2;
+                int numRee = Convert.ToInt32(REE.Split(' ').First());
+                earms[x] = dadosRee.Where(r => r.Item1 == numRee).First().Item2;
+            }
+
+            return earms;
+        }
+
         public double[] GetEarmsREE()
         {
 
@@ -829,7 +843,7 @@ namespace ConsoleApp1.Decomp
             for (int x = 0; x < index_Ree.Count; x++)
             {
                 string REE = index_Ree.Where(i => i.Item1 == x).First().Item2;
-                earms[x] = getEarmREE(REE); ;
+                earms[x] = getEarmREE(REE); 
             }
 
             return earms;
