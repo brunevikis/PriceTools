@@ -309,6 +309,17 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 var mesEarmFinal = dtEstudo.Month - 1;
 
                                 var earmconfig = configH.ToEarmConfigFile(curvaArmazenamento);
+                                var metaEarmDc = w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray();
+                                List<string> metalines = new List<string>();
+                                metalines.Add("Sistema	Meta (EARM ou %)");
+                                int idx = 0;
+                                foreach (var m in metaEarmDc)
+                                {
+                                    metalines.Add((idx + 1).ToString() + "\t" + (m * 100f).ToString());
+                                    idx++;
+                                }
+                                File.WriteAllLines(Path.Combine(estudoPath, "metasEarm_Sub.txt"), metalines);
+
 
                                 Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
                                 configH.baseDoc.SaveToFile();
@@ -762,6 +773,17 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         var mesEarmFinal = dtEstudo.Month - 1;
 
                         var earmconfig = configH.ToEarmConfigFile(curvaArmazenamento);
+
+                        var metaEarmDc = w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray();
+                        List<string> metalines = new List<string>();
+                        metalines.Add("Sistema	Meta (EARM ou %)");
+                        int indx = 0;
+                        foreach (var m in metaEarmDc)
+                        {
+                            metalines.Add((indx + 1).ToString() + "\t" + (m * 100f).ToString());
+                            indx++;
+                        }
+                        File.WriteAllLines(Path.Combine(estudoPath, "metasEarm_Sub.txt"), metalines);
 
                         Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
 

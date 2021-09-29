@@ -563,23 +563,29 @@ namespace Compass.Services {
 
                     if (!uhe.CodFicticia.HasValue)
                     {
-                        var reeNum = Convert.ToInt32(ConfigH.uhe_ree[uhe.Cod].Split('-').First().Trim());
-                        uhe.VolIni *= fatores[reeNum];
+                        if (uhe.Ree > 0)
+                        {
+                            var reeNum = Convert.ToInt32(ConfigH.uhe_ree[uhe.Cod].Split('-').First().Trim());
+                            uhe.VolIni *= fatores[reeNum];
+                        }
                     }
                     else
                     {
-                        // se influenciar em outro sistema, levar em conta o fator do sistema afetado
-                        // f = ( fs^3 * ff ) ^ (1/4)
-                        var reeNum = Convert.ToInt32(ConfigH.uhe_ree[uhe.Cod].Split('-').First().Trim());
-                        var reeNumFict = Convert.ToInt32(ConfigH.uhe_ree[configH.usinas[uhe.CodFicticia.Value].Cod].Split('-').First().Trim());
+                        if (uhe.Ree > 0)
+                        {
+                            // se influenciar em outro sistema, levar em conta o fator do sistema afetado
+                            // f = ( fs^3 * ff ) ^ (1/4)
+                            var reeNum = Convert.ToInt32(ConfigH.uhe_ree[uhe.Cod].Split('-').First().Trim());
+                            var reeNumFict = Convert.ToInt32(ConfigH.uhe_ree[configH.usinas[uhe.CodFicticia.Value].Cod].Split('-').First().Trim());
 
-                        var f = (float)Math.Pow(fatores[reeNum] *
-                            fatores[reeNum] *
-                            fatores[reeNum] *
-                            fatores[reeNumFict],
-                            1d / 4d);
-                        uhe.VolIni *= f;
-                        //configH.usinas[uhe.CodFicticia.Value].atualizaQueda();
+                            var f = (float)Math.Pow(fatores[reeNum] *
+                                fatores[reeNum] *
+                                fatores[reeNum] *
+                                fatores[reeNumFict],
+                                1d / 4d);
+                            uhe.VolIni *= f;
+                            //configH.usinas[uhe.CodFicticia.Value].atualizaQueda();
+                        }
                     }
                 }
             } while (++itNumber < itMax);

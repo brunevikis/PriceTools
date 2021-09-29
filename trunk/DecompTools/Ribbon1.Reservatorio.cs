@@ -48,7 +48,7 @@ namespace Compass.DecompTools {
 
                 //Se meta for relativa (%) e max não informado, calcular;
                 var earmMax = new double[0];
-                if (earmMeta.All(x => x < 100))
+                if (earmMeta.All(x => x <= 100))
                 {
                     earmMax = info.EarmMaxREE;
                     if (earmMax == null)

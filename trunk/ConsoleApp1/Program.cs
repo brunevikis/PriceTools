@@ -311,7 +311,7 @@ namespace ConsoleApp1
             List<InviabPon> inviabPons = InviabilidadePonderada(deck, s);
 
             List<Tuple<string, int?, int, string>> restAlterada = new List<Tuple<string, int?, int, string>>();//lista usada para verificar as rest rhq e rhe que ja foram alteradas
-                      //tipo,cod,est,limite
+                                                                                                               //tipo,cod,est,limite
             foreach (var inviab in s.OrderByDescending(x => x.Estagio))
             {
                 var restHqInviavies = s.Where(x => x.TipoRestricao == "RHQ" && x.Estagio == inviab.Estagio).Select(x => x.CodRestricao).Distinct().ToList();
@@ -684,7 +684,7 @@ namespace ConsoleApp1
                                     le162[4] = le162[4] + valor;
                                     le162[6] = le162[6] + valor;
                                     le162[8] = le162[8] + valor;
-                                    
+
 
                                     restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
                                 }
@@ -780,7 +780,7 @@ namespace ConsoleApp1
                                     if (le256[3] < 0)
                                     {
                                         le256[3] = 0;
-                                        
+
                                         var inviabRestante = valorInviab - valInfAnt1;
                                         le[3] = le[3] - inviabRestante;
 
@@ -850,7 +850,7 @@ namespace ConsoleApp1
                             }
 
                         }
-                        else if(inviab.TipoRestricao == "RHE" || inviab.TipoRestricao == "RHQ")
+                        else if (inviab.TipoRestricao == "RHE" || inviab.TipoRestricao == "RHQ")
                         {
                             if (inviab.SupInf == "INF")
                             {
@@ -935,6 +935,7 @@ namespace ConsoleApp1
 
         public static void AtingirMetaEncad(string rootPath, string mesAtual, string mesSeguinte)
         {
+            Console.WriteLine($"Iniciando Atingir Meta Encadeada, Newave: {mesAtual}  Decomp: {mesSeguinte} ");
             var DirsDC = Directory.GetDirectories(rootPath, "DC*").ToList();
             var DirsRV = Directory.GetDirectories(rootPath, "RV*").ToList();
 
@@ -943,53 +944,99 @@ namespace ConsoleApp1
             if (todosDirs.Count() > 0)
             {
                 string NewaveAtual = Path.Combine(rootPath, mesAtual);
-                var arqsRees = Directory.GetFiles(NewaveAtual).Where(x => Path.GetFileName(x).ToLower().StartsWith("earmfp0")).ToList();
-                List<Tuple<int, double>> dadosRees = new List<Tuple<int, double>>();
+                var arqsRees = Directory.GetFiles(NewaveAtual).Where(x => Path.GetFileName(x).ToLower().StartsWith("earmfp0")).ToList();//earmfp0
 
-                foreach (var arq in arqsRees)
+
+                if (arqsRees.Count() > 0)
                 {
-                    int reeNum = Convert.ToInt32(Path.GetFileName(arq).Substring(6, 3));
-                    var linhaMedia = File.ReadAllLines(arq).Where(y => y != "").ToList().Where(x => x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).First().Equals("MEDIA")).First();
-                    string dado = linhaMedia.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList().Where(x => double.TryParse(x, out double v) == true && v != 0).FirstOrDefault();
-                    var isWindowns = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                    List<Tuple<int, double>> dadosRees = new List<Tuple<int, double>>();
 
-                    double meta = 0;
-                    if (dado != null)
+                    foreach (var arq in arqsRees)
                     {
-                        if (isWindowns)
+                        int reeNum = Convert.ToInt32(Path.GetFileName(arq).Substring(6, 3));
+                        var linhaMedia = File.ReadAllLines(arq).Where(y => y != "").ToList().Where(x => x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).First().Equals("MEDIA")).First();
+                        string dado = linhaMedia.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList().Where(x => double.TryParse(x, out double v) == true && v != 0).FirstOrDefault();
+                        var isWindowns = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+                        double meta = 0;
+                        if (dado != null)
                         {
-                            meta = Convert.ToDouble(dado.Replace('.', ','));
+                            if (isWindowns)
+                            {
+                                meta = Convert.ToDouble(dado.Replace('.', ','));
+
+                            }
+                            else
+                            {
+                                meta = Convert.ToDouble(dado);
+                            }
+                        }
+
+
+                        dadosRees.Add(new Tuple<int, double>(reeNum, meta));
+                    }
+
+                    foreach (var d in todosDirs)
+                    {
+                        var dir = Path.Combine(d, mesSeguinte);
+                        var fileMeta = Path.Combine(dir, "metasEarm_Sub.txt");
+                        if (Directory.Exists(dir) && File.Exists(fileMeta))
+                        {
+                            File.WriteAllText(Path.Combine(dir, "atingirMetaOK.txt"), "OK");
+                            var deckDC = DeckFactory.CreateDeck(dir) as ConsoleApp1.Decomp.Deck;
+                            var hidrDat = deckDC[ConsoleApp1.Decomp.DeckDocument.hidr].Document as ConsoleApp1.HidrDat.HidrDat;
+                            var dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
+
+                            var configH = new ConsoleApp1.Decomp.ConfigH(dadger, hidrDat);
+                            var earmMeta = configH.ArrangeMeta(dadosRees);
+                            var earmMax = configH.GetEarmsMaxREE();
+                            configH.ReloadUH();
+
+                            Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
+                            configH.baseDoc.SaveToFile(createBackup: true);
+
+                      
+                            var fileMetaLines = File.ReadAllLines(fileMeta).Skip(1).Take(4).ToList();
+                            double[] metaSub = new double[4];
+                            int index;
+                            foreach (var ml in fileMetaLines)
+                            {
+                                var l = ml.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                                var isWindowns = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+                                double meta = 0;
+
+                                if (isWindowns)
+                                {
+                                    meta = Convert.ToDouble(l[1].Replace('.', ','));
+                                    index = Convert.ToInt32(l[0]) - 1;
+                                }
+                                else
+                                {
+                                    meta = Convert.ToDouble(l[1].Replace(',', '.'));
+                                    index = Convert.ToInt32(l[0]) - 1;
+                                }
+
+                                metaSub[index] = meta;
+                            }
+                            dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
+                            var earmSubMax = configH.GetEarmsMax();
+                            configH.ReloadUH();
+                            Reservatorio.SetUHBlock(configH, metaSub, earmSubMax);
+                            configH.baseDoc.SaveToFile(createBackup: true);
+
 
                         }
                         else
                         {
-                            meta = Convert.ToDouble(dado);
+                            Console.WriteLine($"Diretorio: {dir} ou Arquivo: {fileMeta} não encontrados, Atingir Meta Earm para Decomp {mesSeguinte} cancelada!");
                         }
                     }
-
-
-                    dadosRees.Add(new Tuple<int, double>(reeNum, meta));
                 }
-
-                foreach (var d in todosDirs)
+                else
                 {
-                    var dir = Path.Combine(d, mesSeguinte);
-                    if (Directory.Exists(dir))
-                    {
-                        var deckDC = DeckFactory.CreateDeck(dir) as ConsoleApp1.Decomp.Deck;
-                        var hidrDat = deckDC[ConsoleApp1.Decomp.DeckDocument.hidr].Document as ConsoleApp1.HidrDat.HidrDat;
-                        var dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
-
-                        var configH = new ConsoleApp1.Decomp.ConfigH(dadger, hidrDat);
-                        var earmMeta = configH.ArrangeMeta(dadosRees);
-                        var earmMax = configH.GetEarmsMaxREE();
-                        configH.ReloadUH();
-
-                        Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
-                        configH.baseDoc.SaveToFile();
-
-                        //TODO criar dadger de novo pegar a meta por submercado e atingir meta 
-                    }
+                    Console.WriteLine($"Arquivo  do deck newave com dados de armazenamento não encontrados, Atingir Meta Earm para Decomp {mesSeguinte} cancelada!");
                 }
                 //var configH = new Compass.CommomLibrary.Decomp.ConfigH(dadger, hidrDat);
                 //var deckDCBase = DeckFactory.CreateDeck(dc) as Compass.CommomLibrary.Decomp.Deck;
@@ -997,6 +1044,11 @@ namespace ConsoleApp1
                 //var hidrDat = deckDCBase[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
 
             }
+            else
+            {
+                Console.WriteLine($"Nenhum diretorio decomp valido, Atingir Meta Earm para Decomp cancelada!");
+            }
+
 
         }
 
