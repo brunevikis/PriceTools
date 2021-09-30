@@ -745,6 +745,9 @@ namespace Compass.Services
 
                 foreach (var ti in dadger.Blocos["TI"])
                 {
+                    var tiline = ti as TiLine;
+                    var usi = tiline.Usina;
+
                     var val = ti[3];
                     var val2 = ti.Valores.Last(c => c is double);
 
@@ -752,6 +755,32 @@ namespace Compass.Services
                         if (e < mesOperativo.Estagios) ti[2 + e] = val;
                         else if (e == mesOperativo.Estagios) ti[2 + e] = val2;
                         else ti[2 + e] = "";
+                    for (int est = 0; est < 10; est++)
+                    {
+                        if (est < mesOperativo.Estagios)
+                        {
+                            var ano = mesOperativo.Ano;
+                            var mes = mesOperativo.Mes;
+                            var taxaline = w.Taxairris.Where(x => x.Ano == ano && x.Usina == usi).FirstOrDefault();
+                            if (taxaline != null)
+                            {
+                                double taxa = taxaline.TaxaMes[mes - 1];
+                                ti[2 + est] = taxa;
+                            }
+                        }
+                        else if (est == mesOperativo.Estagios)
+                        {
+                            var ano = mesOperativo.AnoSeguinte;
+                            var mes = mesOperativo.MesSeguinte;
+                            var taxaline = w.Taxairris.Where(x => x.Ano == ano && x.Usina == usi).FirstOrDefault();
+                            if (taxaline != null)
+                            {
+                                double taxa = taxaline.TaxaMes[mes - 1];
+                                ti[2 + est] = taxa;
+                            }
+                        }
+                        else ti[2 + est] = "";
+                    }
                 }
             }
 

@@ -298,7 +298,29 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
-        
+        List<TAXIRRI> taxairris = null;
+        public List<TAXIRRI> Taxairris
+        {
+            get
+            {
+                if (taxairris == null)
+                {
+                    taxairris = new List<TAXIRRI>();
+
+                    var ws = Names["_taxaIrri"].Worksheet;
+                    var row = Names["_taxaIrri"].Row;
+                    var col = Names["_taxaIrri"].Column;
+
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        taxairris.Add(new TAXIRRI(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 15]]));
+                    }
+                }
+
+                return taxairris;
+            }
+        }
+
         List<RHV> rhvs = null;
         public List<RHV> Rhvs
         {
@@ -737,6 +759,33 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        public class TAXIRRI
+        {
+            public int Ano { get; set; }
+            public int Usina { get; set; }
+            public double? Taxa { get; set; }
+
+            public double[] TaxaMes = new double[12];
+            public TAXIRRI(Range rng)
+            {
+                if (rng[1, 1].Value is double) Ano = (int)rng[1, 1].Value;
+
+                if (rng[1, 2].Value is double) Usina = (int)rng[1, 2].Value;
+                if (rng[1, 3].Value is double) TaxaMes[0] = rng[1, 3].Value;
+                if (rng[1, 4].Value is double) TaxaMes[1] = rng[1, 4].Value;
+                if (rng[1, 5].Value is double) TaxaMes[2] = rng[1, 5].Value;
+                if (rng[1, 6].Value is double) TaxaMes[3] = rng[1, 6].Value;
+                if (rng[1, 7].Value is double) TaxaMes[4] = rng[1, 7].Value;
+                if (rng[1, 8].Value is double) TaxaMes[5] = rng[1, 8].Value;
+                if (rng[1, 9].Value is double) TaxaMes[6] = rng[1, 9].Value;
+                if (rng[1, 10].Value is double) TaxaMes[7] = rng[1, 10].Value;
+                if (rng[1, 11].Value is double) TaxaMes[8] = rng[1, 11].Value;
+                if (rng[1, 12].Value is double) TaxaMes[9] = rng[1, 12].Value;
+                if (rng[1, 13].Value is double) TaxaMes[10] = rng[1, 13].Value;
+                if (rng[1, 14].Value is double) TaxaMes[11] = rng[1, 14].Value;
+                
+            }
+        }
         public class RHQ
         {
             public int Usina { get; set; }

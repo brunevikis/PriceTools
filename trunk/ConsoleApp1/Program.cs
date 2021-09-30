@@ -982,7 +982,8 @@ namespace ConsoleApp1
                         var fileMeta = Path.Combine(dir, "metasEarm_Sub.txt");
                         if (Directory.Exists(dir) && File.Exists(fileMeta))
                         {
-                            File.WriteAllText(Path.Combine(dir, "atingirMetaOK.txt"), "OK");
+                            File.WriteAllText(Path.Combine(dir, "atingirMetaIniciado.txt"), "OK");
+
                             var deckDC = DeckFactory.CreateDeck(dir) as ConsoleApp1.Decomp.Deck;
                             var hidrDat = deckDC[ConsoleApp1.Decomp.DeckDocument.hidr].Document as ConsoleApp1.HidrDat.HidrDat;
                             var dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
@@ -993,7 +994,7 @@ namespace ConsoleApp1
                             configH.ReloadUH();
 
                             Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
-                            configH.baseDoc.SaveToFile(createBackup: true);
+                            configH.baseDoc.SaveToFile();
 
                       
                             var fileMetaLines = File.ReadAllLines(fileMeta).Skip(1).Take(4).ToList();
@@ -1024,8 +1025,9 @@ namespace ConsoleApp1
                             var earmSubMax = configH.GetEarmsMax();
                             configH.ReloadUH();
                             Reservatorio.SetUHBlock(configH, metaSub, earmSubMax);
-                            configH.baseDoc.SaveToFile(createBackup: true);
+                            configH.baseDoc.SaveToFile();
 
+                            File.WriteAllText(Path.Combine(dir, "atingirMetaFinalizado.txt"), "OK");
 
                         }
                         else
