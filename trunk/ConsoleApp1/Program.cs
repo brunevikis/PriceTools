@@ -158,7 +158,7 @@ namespace ConsoleApp1
                         invi.codRest = rest;
                         invi.estagio = i;
                         invi.valorPon = Math.Ceiling(mediaPon);
-
+                        invi.valorPon = invi.valorPon + 3;
                         inviabPons.Add(invi);
                     }
                 }
@@ -196,6 +196,7 @@ namespace ConsoleApp1
                         invi.codRest = rest;
                         invi.estagio = i;
                         invi.valorPon = Math.Ceiling(mediaPon);
+                        invi.valorPon = invi.valorPon + 3;
 
                         inviabPons.Add(invi);
                     }
@@ -241,6 +242,7 @@ namespace ConsoleApp1
                         invi.codRest = rest;
                         invi.estagio = i;
                         invi.valorPon = Math.Ceiling(mediaPon);
+                        invi.valorPon = invi.valorPon + 3;
 
                         inviabPons.Add(invi);
                     }
@@ -279,6 +281,7 @@ namespace ConsoleApp1
                         invi.codRest = rest;
                         invi.estagio = i;
                         invi.valorPon = Math.Ceiling(mediaPon);
+                        invi.valorPon = invi.valorPon + 3;
 
                         inviabPons.Add(invi);
                     }
@@ -723,16 +726,18 @@ namespace ConsoleApp1
                         if (inviab.TipoRestricao == "RHV")
                         {
                             valorInviab = Math.Ceiling(inviab.Violacao * 100d) / 100d;
+                            valorInviab = valorInviab + 3;
                         }
                         else if (inviab.TipoRestricao == "RHC")
                         {
                             valorInviab = Math.Round(Math.Ceiling(inviab.Violacao * 10) / 10, 1);//tratamento para sempre arredondar para cima com uma casa decimal 
+                            valorInviab = valorInviab + 3;
                         }
                         else
                         {
                             //valorInviab = Math.Ceiling(inviab.Violacao);
                             valorInviab = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
-
+                            valorInviab = valorInviab + 3;
                         }
 
 

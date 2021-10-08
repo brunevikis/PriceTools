@@ -3509,7 +3509,7 @@ namespace Compass.DecompToolsShellX
                 }
 
                 //string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem191412.sh";
-                string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem191413.sh";
+                string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem19024.sh";
 
                 bool status = DessemAutorun(cloneDir, comandoDS);
                 if (status)
@@ -3519,7 +3519,7 @@ namespace Compass.DecompToolsShellX
                         var texto = "Deck DESSEM CCEE agendado para execução!";
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "AUTORUN DESSEM CCEE");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; thamires.baptista@enercore.com.br", "AUTORUN DESSEM CCEE");
 
                     }
                     else
@@ -3539,7 +3539,7 @@ namespace Compass.DecompToolsShellX
                 {
                     var texto = "Erro: " + ex.ToString();
 
-                    Compass.CommomLibrary.Tools.SendMail(texto, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Falha AUTORUN DESSEM CCEE");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; thamires.baptista@enercore.com.br", "Falha AUTORUN DESSEM CCEE");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);
