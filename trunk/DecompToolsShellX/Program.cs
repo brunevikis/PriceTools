@@ -800,7 +800,7 @@ namespace Compass.DecompToolsShellX
                     var frm = new FrmOnsReCcee(cceeDeck);
                     frm.Salvar();
                     //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/newave25.sh");
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/newave27.sh");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/newave270413.sh");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Decomp.Deck && (command.Length > 1 && command[1] == "true"))
                 {
@@ -810,7 +810,7 @@ namespace Compass.DecompToolsShellX
                     var frmCortes = new FrmCortes(new string[] { cceeDeck.BaseFolder });
                     frmCortes.OK(true);
 
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/decomp301Viab.sh preliminar");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/decomp30.16Viab.sh preliminar");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Newave.Deck)
                 {
