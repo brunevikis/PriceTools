@@ -157,12 +157,14 @@ namespace Compass.CommomLibrary {
 
             public GNLResult(object[,] dados)
             {
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+                var style = System.Globalization.NumberStyles.Any;
                 Posto = int.Parse(dados[0, 0].ToString());
                 Sistema = int.Parse(dados[0, 1].ToString());
                 semana = int.Parse(dados[0, 2].ToString());
-                GNL_pat1 = Math.Round(Double.Parse(dados[0, 3].ToString()), 2);
-                GNL_pat2 = Math.Round(Double.Parse(dados[0, 4].ToString()), 2);
-                GNL_pat3 = Math.Round(Double.Parse(dados[0, 5].ToString()), 2);
+                GNL_pat1 = Math.Round(Double.Parse(dados[0, 3].ToString(), Culture.NumberFormat), 2);
+                GNL_pat2 = Math.Round(Double.Parse(dados[0, 4].ToString(), Culture.NumberFormat), 2);
+                GNL_pat3 = Math.Round(Double.Parse(dados[0, 5].ToString(), Culture.NumberFormat), 2);
             }
 
         }
@@ -176,9 +178,10 @@ namespace Compass.CommomLibrary {
 
             public CMO_Mensal(object[,] dados)
             {
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
                 semana = int.Parse(dados[0, 0].ToString());
                 submercado = int.Parse(dados[0, 1].ToString());
-                CMO_Men = Math.Round(Double.Parse(dados[0, 2].ToString()), 2);
+                CMO_Men = Math.Round(Double.Parse(dados[0, 2].ToString(), Culture.NumberFormat), 2);
             }
 
 
@@ -211,20 +214,21 @@ namespace Compass.CommomLibrary {
 
             public PDO_Sist(object[,] dados)
             {
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
                 estagio = int.Parse(dados[0, 0].ToString());
                 submercado = dados[0, 1].ToString();
-                CMO = Math.Round(Double.Parse(dados[0, 2].ToString()), 2);
-                Carga = Math.Round(Double.Parse(dados[0, 3].ToString()), 2);
-                PQ = Math.Round(Double.Parse(dados[0, 4].ToString()), 2);
-                SomaGH = Math.Round(Double.Parse(dados[0, 5].ToString()), 2);
-                SomaGT = Math.Round(Double.Parse(dados[0, 6].ToString()), 2);
-                ConsElev = Math.Round(Double.Parse(dados[0, 7].ToString()), 2);
-                Import = Math.Round(Double.Parse(dados[0, 8].ToString()), 2);
-                Export = Math.Round(Double.Parse(dados[0, 9].ToString()), 2);
-                Saldo = Math.Round(Double.Parse(dados[0, 10].ToString()), 2);
-                GTMin = Math.Round(Double.Parse(dados[0, 11].ToString()), 2);
-                GTMax = Math.Round(Double.Parse(dados[0, 12].ToString()), 2);
-                Earm = Math.Round(Double.Parse(dados[0, 13].ToString()), 2);
+                CMO = Math.Round(Double.Parse(dados[0, 2].ToString(), Culture.NumberFormat), 2);
+                Carga = Math.Round(Double.Parse(dados[0, 3].ToString(), Culture.NumberFormat), 2);
+                PQ = Math.Round(Double.Parse(dados[0, 4].ToString(), Culture.NumberFormat), 2);
+                SomaGH = Math.Round(Double.Parse(dados[0, 5].ToString(), Culture.NumberFormat), 2);
+                SomaGT = Math.Round(Double.Parse(dados[0, 6].ToString(), Culture.NumberFormat), 2);
+                ConsElev = Math.Round(Double.Parse(dados[0, 7].ToString(), Culture.NumberFormat), 2);
+                Import = Math.Round(Double.Parse(dados[0, 8].ToString(), Culture.NumberFormat), 2);
+                Export = Math.Round(Double.Parse(dados[0, 9].ToString(), Culture.NumberFormat), 2);
+                Saldo = Math.Round(Double.Parse(dados[0, 10].ToString(), Culture.NumberFormat), 2);
+                GTMin = Math.Round(Double.Parse(dados[0, 11].ToString(), Culture.NumberFormat), 2);
+                GTMax = Math.Round(Double.Parse(dados[0, 12].ToString(), Culture.NumberFormat), 2);
+                Earm = Math.Round(Double.Parse(dados[0, 13].ToString(), Culture.NumberFormat), 2);
             }
 
 

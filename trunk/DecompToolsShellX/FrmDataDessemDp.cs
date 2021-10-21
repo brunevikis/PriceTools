@@ -36,15 +36,15 @@ namespace Compass.DecompToolsShellX
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             List<Tuple<DateTime, bool, float>> dpDados = new List<Tuple<DateTime, bool, float>> {
-                new Tuple<DateTime, bool, float>(this.dateDE1.Value, this.checkSab.Checked,float.Parse(this.fator1.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE2.Value, this.checkDom.Checked,float.Parse(this.fator2.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE3.Value, this.checkSeg.Checked,float.Parse(this.fator3.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE4.Value, this.checkTer.Checked,float.Parse(this.fator4.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE5.Value, this.checkQua.Checked,float.Parse(this.fator5.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE6.Value, this.checkQui.Checked,float.Parse(this.fator6.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE7.Value, this.checkSex.Checked,float.Parse(this.fator7.Value.ToString().Replace('.', ',')))
+                new Tuple<DateTime, bool, float>(this.dateDE1.Value, this.checkSab.Checked,float.Parse(this.fator1.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE2.Value, this.checkDom.Checked,float.Parse(this.fator2.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE3.Value, this.checkSeg.Checked,float.Parse(this.fator3.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE4.Value, this.checkTer.Checked,float.Parse(this.fator4.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE5.Value, this.checkQua.Checked,float.Parse(this.fator5.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE6.Value, this.checkQui.Checked,float.Parse(this.fator6.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE7.Value, this.checkSex.Checked,float.Parse(this.fator7.Value.ToString().Replace('.', ','),Culture.NumberFormat))
             };
 
             if (atualiza == true)

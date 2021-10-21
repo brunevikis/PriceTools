@@ -642,6 +642,7 @@ Caso os newaves já tenham sido executados, os cortes existentes serão mantidos
 
         private void btnCreateRV0_Click(object sender, RibbonControlEventArgs e)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
             try
             {
@@ -892,7 +893,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             var dispMes = pmoBase.Blocos["GTERM Max"]
                                 .Where(x => x[0] == ut.Usina)
                                 .Select(x => x[(mesOperativo.Ano - x[2]) * 12 + mesOperativo.Mes + 2]).FirstOrDefault(); // Disponibilidade
-                            dispMes = Convert.ToDouble(dispMes);
+                            dispMes = Convert.ToDouble(dispMes, Culture.NumberFormat);
 
                             tgLine[6] = tgLine[9] = tgLine[12] = dispMes;
 

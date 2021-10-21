@@ -147,7 +147,7 @@ namespace Compass.ExcelTools.Templates
         {
             get
             {
-
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
                 var objarr = (object[,])Names["_ve"].Value2;
 
                 var ret = new Dictionary<int, double[]>();
@@ -164,7 +164,7 @@ namespace Compass.ExcelTools.Templates
                         var vol = new double[12];
                         for (int mes = 1; mes <= 12; mes++)
                         {
-                            vol[mes - 1] = Convert.ToDouble(objarr[p, mes + 1]);
+                            vol[mes - 1] = Convert.ToDouble(objarr[p, mes + 1], Culture.NumberFormat);
                         }
 
                         ret.Add(posto, vol);
@@ -231,7 +231,7 @@ namespace Compass.ExcelTools.Templates
         {
             get
             {
-
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
                 if (!Names.ContainsKey("_earm"))
                 {
                     return Cenarios.First().Earm;
@@ -253,7 +253,7 @@ namespace Compass.ExcelTools.Templates
                         var earm = new double[13];
                         for (int mes = 1; mes <= 13; mes++)
                         {
-                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1]);
+                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1], Culture.NumberFormat);
                         }
 
                         ret.Add(cod, earm);
@@ -1101,7 +1101,7 @@ namespace Compass.ExcelTools.Templates
             get
             {
 
-
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
                 dynamic objarr;
                 if (this.Names.ContainsKey("_earm"))
                     objarr = (object[,])Names["_earm"].Value2;
@@ -1122,7 +1122,7 @@ namespace Compass.ExcelTools.Templates
                         var earm = new double[13];
                         for (int mes = 1; mes <= 13; mes++)
                         {
-                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1]);
+                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1], Culture.NumberFormat);
                         }
 
                         ret.Add(cod, earm);

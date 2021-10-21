@@ -434,6 +434,7 @@ namespace Compass.DecompToolsShellX
 
         private void btn_IniciaCarga_Click(object sender, EventArgs e)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             if (textOrigem.Text == "" || !Directory.Exists(textOrigem.Text))
             {
                 string aviso = "Campo origem inválido ou inexistente!";
@@ -443,13 +444,13 @@ namespace Compass.DecompToolsShellX
             }
 
             List<Tuple<DateTime, bool, float>> dpDados = new List<Tuple<DateTime, bool, float>> {
-                new Tuple<DateTime, bool, float>(this.dateDE1.Value, this.checkSab.Checked,float.Parse(this.fator1.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE2.Value, this.checkDom.Checked,float.Parse(this.fator2.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE3.Value, this.checkSeg.Checked,float.Parse(this.fator3.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE4.Value, this.checkTer.Checked,float.Parse(this.fator4.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE5.Value, this.checkQua.Checked,float.Parse(this.fator5.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE6.Value, this.checkQui.Checked,float.Parse(this.fator6.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE7.Value, this.checkSex.Checked,float.Parse(this.fator7.Value.ToString().Replace('.', ',')))
+                new Tuple<DateTime, bool, float>(this.dateDE1.Value, this.checkSab.Checked,float.Parse(this.fator1.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE2.Value, this.checkDom.Checked,float.Parse(this.fator2.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE3.Value, this.checkSeg.Checked,float.Parse(this.fator3.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE4.Value, this.checkTer.Checked,float.Parse(this.fator4.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE5.Value, this.checkQua.Checked,float.Parse(this.fator5.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE6.Value, this.checkQui.Checked,float.Parse(this.fator6.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE7.Value, this.checkSex.Checked,float.Parse(this.fator7.Value.ToString().Replace('.', ','),Culture.NumberFormat))
             };
 
 
@@ -508,6 +509,7 @@ namespace Compass.DecompToolsShellX
 
         private void AjustaCarga(List<Tuple<DateTime, bool, float>> dpDados, string dir, List<string> diaAtualizar)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             DateTime dtDeck = GetDeckDate(dir);
             var entdados = GetEntdados(dir);
 
@@ -527,37 +529,37 @@ namespace Compass.DecompToolsShellX
                 {
                     case DayOfWeek.Saturday:
                         diaAbrev = "SAB";
-                        fator = float.Parse(this.fator1.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator1.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     case DayOfWeek.Sunday:
                         diaAbrev = "DOM";
-                        fator = float.Parse(this.fator2.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator2.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     case DayOfWeek.Monday:
                         diaAbrev = "SEG";
-                        fator = float.Parse(this.fator3.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator3.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     case DayOfWeek.Tuesday:
                         diaAbrev = "TER";
-                        fator = float.Parse(this.fator4.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator4.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     case DayOfWeek.Wednesday:
                         diaAbrev = "QUA";
-                        fator = float.Parse(this.fator5.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator5.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     case DayOfWeek.Thursday:
                         diaAbrev = "QUI";
-                        fator = float.Parse(this.fator6.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator6.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     case DayOfWeek.Friday:
                         diaAbrev = "SEX";
-                        fator = float.Parse(this.fator7.Value.ToString().Replace('.', ','));
+                        fator = float.Parse(this.fator7.Value.ToString().Replace('.', ','), Culture.NumberFormat);
                         break;
 
                     default:
@@ -578,7 +580,7 @@ namespace Compass.DecompToolsShellX
         }
         private void TrataDpDessemTools(string dir)
         {
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var entdados = GetEntdados(dir);
 
             DateTime dataDeck = GetDeckDate(dir);
@@ -644,7 +646,7 @@ namespace Compass.DecompToolsShellX
                     {
                         var dados = dpl.Split(';').ToList();
 
-                        Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2]));
+                        Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2], Culture.NumberFormat));
                         dadosCarga.Add(dad);//submercad,hora,valor
                     }
 
@@ -686,7 +688,7 @@ namespace Compass.DecompToolsShellX
                             {
                                 var Ndados = Ndpl.Split(';').ToList();
 
-                                Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
+                                Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2], Culture.NumberFormat));
                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                             }
                             var intervalosAgruped = Tools.GetIntervalosPatamares(dt);
@@ -779,6 +781,7 @@ namespace Compass.DecompToolsShellX
 
         private void btn_geraGraph_Click(object sender, EventArgs e)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             if (textOrigem.Text == "" || !Directory.Exists(textOrigem.Text))
             {
                 string aviso = "Campo origem inválido ou inexistente!";
@@ -788,13 +791,13 @@ namespace Compass.DecompToolsShellX
             }
 
             List<Tuple<DateTime, bool, float>> dpDados = new List<Tuple<DateTime, bool, float>> {
-                new Tuple<DateTime, bool, float>(this.dateDE1.Value, this.checkSab.Checked,float.Parse(this.fator1.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE2.Value, this.checkDom.Checked,float.Parse(this.fator2.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE3.Value, this.checkSeg.Checked,float.Parse(this.fator3.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE4.Value, this.checkTer.Checked,float.Parse(this.fator4.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE5.Value, this.checkQua.Checked,float.Parse(this.fator5.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE6.Value, this.checkQui.Checked,float.Parse(this.fator6.Value.ToString().Replace('.', ','))),
-                new Tuple<DateTime, bool, float>(this.dateDE7.Value, this.checkSex.Checked,float.Parse(this.fator7.Value.ToString().Replace('.', ',')))
+                new Tuple<DateTime, bool, float>(this.dateDE1.Value, this.checkSab.Checked,float.Parse(this.fator1.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE2.Value, this.checkDom.Checked,float.Parse(this.fator2.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE3.Value, this.checkSeg.Checked,float.Parse(this.fator3.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE4.Value, this.checkTer.Checked,float.Parse(this.fator4.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE5.Value, this.checkQua.Checked,float.Parse(this.fator5.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE6.Value, this.checkQui.Checked,float.Parse(this.fator6.Value.ToString().Replace('.', ','),Culture.NumberFormat)),
+                new Tuple<DateTime, bool, float>(this.dateDE7.Value, this.checkSex.Checked,float.Parse(this.fator7.Value.ToString().Replace('.', ','),Culture.NumberFormat))
             };
 
             foreach (var dp in dpDados)

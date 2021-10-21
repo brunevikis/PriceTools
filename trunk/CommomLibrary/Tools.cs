@@ -7,7 +7,7 @@ namespace Compass.CommomLibrary
 {
     public static class Tools
     {
-        public static void SendMail(string body, string emails = "alex.marques@cpas.com.br; bruno.araujo@cpas.com.br", string subject = "Execução automática")
+        public static void SendMail(string body, string emails = "bruno.araujo@enercore.com.br", string subject = "Execução automática")
         {
 
             System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
@@ -22,7 +22,7 @@ namespace Compass.CommomLibrary
 
             msg.Sender = msg.From = new System.Net.Mail.MailAddress("cpas.robot@gmail.com");
 
-            msg.ReplyToList.Add(new System.Net.Mail.MailAddress("bruno.araujo@cpas.com.br"));
+            msg.ReplyToList.Add(new System.Net.Mail.MailAddress("bruno.araujo@enercore.com.br"));
 
             // var emails = "douglas.canducci@cpas.com.br;pedro.modesto@cpas.com.br;diana.lima@cpas.com.br;natalia.biondo@cpas.com.br;bruno.araujo@cpas.com.br;alex.marques@cpas.com.br";
 

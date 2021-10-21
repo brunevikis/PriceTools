@@ -590,7 +590,8 @@ namespace Compass.CommomLibrary
 
         public string ConvertToString(dynamic value)
         {
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var style = System.Globalization.NumberStyles.Any;
             string strValue;
             if (value != null)
             {
@@ -603,7 +604,7 @@ namespace Compass.CommomLibrary
                         var fmt = Formato.Substring(1).Split('.');
                         int len, dec;
 
-                        if (double.TryParse((string)value.ToString(), out fVal) &&
+                        if (double.TryParse((string)value.ToString(), style, Culture.NumberFormat, out fVal) &&
                             int.TryParse(fmt[0], out len) &&
                             int.TryParse(fmt[1], out dec)
                             )
@@ -639,7 +640,7 @@ namespace Compass.CommomLibrary
                         var efmt = Formato.Substring(1).Split('.');
                         int elen, edec;
 
-                        if (double.TryParse((string)value.ToString(), out eVal) &&
+                        if (double.TryParse((string)value.ToString(), style, Culture.NumberFormat, out eVal) &&
                             int.TryParse(efmt[0], out elen) &&
                             int.TryParse(efmt[1], out edec)
                             )

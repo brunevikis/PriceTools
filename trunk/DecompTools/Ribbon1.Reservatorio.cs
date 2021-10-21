@@ -18,6 +18,8 @@ namespace Compass.DecompTools {
         Compass.CommomLibrary.HidrDat.HidrDat hidr;
         private void btn_AtingirMetaRee_Click(object sender, RibbonControlEventArgs e)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var style = System.Globalization.NumberStyles.Any;
             try
             {
                 var configH = LoadConfigH(null);
@@ -128,7 +130,7 @@ namespace Compass.DecompTools {
 
                                     try
                                     {
-                                        var exist_ve = double.TryParse(ve_uh.Valores[1 + Estagio].ToString(), out valor_ve);
+                                        var exist_ve = double.TryParse(ve_uh.Valores[1 + Estagio].ToString(), style, Culture.NumberFormat, out valor_ve);
 
 
                                         if (exist_ve && valor_ve != 0 && Estagio > 0)
@@ -205,7 +207,8 @@ namespace Compass.DecompTools {
         }
 
         private void btnReservatorio_Click(object sender, RibbonControlEventArgs e) {
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var style = System.Globalization.NumberStyles.Any;
             try {
                 var configH = LoadConfigH(null);
 
@@ -313,7 +316,7 @@ namespace Compass.DecompTools {
 
                                     try
                                     {
-                                        var exist_ve = double.TryParse(ve_uh.Valores[1 + Estagio].ToString(), out valor_ve);
+                                        var exist_ve = double.TryParse(ve_uh.Valores[1 + Estagio].ToString(), style, Culture.NumberFormat, out valor_ve);
 
 
                                         if (exist_ve && valor_ve != 0 && Estagio > 0)

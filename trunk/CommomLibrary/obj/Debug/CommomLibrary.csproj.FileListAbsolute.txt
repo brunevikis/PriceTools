@@ -11,3 +11,4 @@ C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.Co
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.CopyComplete
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\Compass.CommomLibrary.dll
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\Compass.CommomLibrary.pdb
+C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.AssemblyReference.cache

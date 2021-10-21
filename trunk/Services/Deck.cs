@@ -224,6 +224,7 @@ namespace Compass.Services
         /// <param name="cceeDeck"></param>
         public static void Ons2Ccee(Compass.CommomLibrary.Newave.Deck cceeDeck, Compass.CommomLibrary.Newave.Deck deckCCEEAnterior)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             ColetaGtminAgente gtminAgente = null;
 
             if (deckCCEEAnterior[CommomLibrary.Newave.Deck.DeckDocument.cadterm] == null)
@@ -286,7 +287,7 @@ namespace Compass.Services
                             if (data >= dgerData)
                             {
 
-                                var valornovo = double.Parse(mes.resultado);
+                                var valornovo = double.Parse(mes.resultado, Culture.NumberFormat);
                                 var valorantigo = toremove.Where(x => x.DataInicio <= data && x.DataFim >= data)
                                     .FirstOrDefault()?.Valor ?? 0;
 

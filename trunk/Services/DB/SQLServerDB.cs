@@ -94,9 +94,10 @@ namespace Compass.Services.DB
 
         public double GetDouble(string p_strComandoSQL)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             object objScalar = GetScalar(p_strComandoSQL);
             if (objScalar == null) return double.MinValue;
-            return Convert.ToDouble(objScalar);
+            return Convert.ToDouble(objScalar, Culture.NumberFormat);
         }
 
         public DateTime GetDateTime(string p_strComandoSQL)

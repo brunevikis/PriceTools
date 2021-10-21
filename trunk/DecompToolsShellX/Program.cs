@@ -54,6 +54,11 @@ namespace Compass.DecompToolsShellX
             actions.Add("carregarprevs", carregaPrevs);
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase
 
+       //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
+   
+       //< add key = "passwordlogin" value = "Pas5Word" />
+
+
             //convdecodess "L:\teste_decodess\DEC_ONS_052021_RV2_VE"
             //dessemtools "L:\Teste_Dessem\testeresulDessem"
             //uhdessem"L:\7_dessem\DecksDiarios\12_2020\RV3\29_12_2020_16_25_25"
@@ -834,7 +839,7 @@ namespace Compass.DecompToolsShellX
                 {
                     texto = "Deck não reconhecido para a execução por falta de arquivos!";
                 }
-                Compass.CommomLibrary.Tools.SendMail(texto, "alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Falha ao converter deck");
+                Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
 
 
             }
@@ -984,18 +989,20 @@ namespace Compass.DecompToolsShellX
         {
 
             CommomLibrary.PldDessem.PldDessem limites = new CommomLibrary.PldDessem.PldDessem();
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var style = System.Globalization.NumberStyles.Any;
 
             var pldLimitesLines = File.ReadAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PLD_SEMI_HORA.txt").Skip(1).ToList();
             foreach (var line in pldLimitesLines)
             {
+                
                 var dados = line.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
                 if (Convert.ToInt32(dados[0]) == ano)
                 {
-                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','));
-                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','));
-                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','));
-                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','));
+                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','), Culture.NumberFormat);
+                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','), Culture.NumberFormat);
+                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','), Culture.NumberFormat);
+                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','), Culture.NumberFormat);
                     if (limites.PldMin != pldMin || limites.PldMax != pldMax || limites.PldMaxEst != pldMaxEst)
                     {
                         if (System.Windows.Forms.MessageBox.Show("ATENÇÃO!!!\nOs valores informados são diferentes dos padrões.\nDeseja continuar?", "Trata PLD", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
@@ -1058,6 +1065,8 @@ namespace Compass.DecompToolsShellX
         }
         public static void TrataPld(string path, int ano, double pldMin, double pldMax, double pldMaxEst)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var style = System.Globalization.NumberStyles.Any;
             var dir = path;
             var anoPld = ano;
             var limInf = pldMin;
@@ -1081,7 +1090,7 @@ namespace Compass.DecompToolsShellX
                     {
                         if (int.TryParse(campos[0], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out i))
                         {
-                            Tuple<int, string, double> Pld = new Tuple<int, string, double>(i, campos[2].Trim(), Convert.ToDouble(campos[3].Replace('.', ',')));
+                            Tuple<int, string, double> Pld = new Tuple<int, string, double>(i, campos[2].Trim(), Convert.ToDouble(campos[3].Replace('.', ','), Culture.NumberFormat));
                             Plds.Add(Pld);
 
                         }
@@ -1347,6 +1356,8 @@ namespace Compass.DecompToolsShellX
 
         static void atualizaDp(string path)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var style = System.Globalization.NumberStyles.Any;
             string dirAux = string.Empty;
             try
             {
@@ -1448,7 +1459,7 @@ namespace Compass.DecompToolsShellX
                                 {
                                     var dados = dpl.Split(';').ToList();
 
-                                    Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2]));
+                                    Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2], Culture.NumberFormat));
                                     dadosCarga.Add(dad);//submercad,hora,valor
                                 }
                                 string comentarioDP = entdados.BlocoDp.First().Comment;
@@ -1509,7 +1520,7 @@ namespace Compass.DecompToolsShellX
                                             {
                                                 var Ndados = Ndpl.Split(';').ToList();
 
-                                                Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
+                                                Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2], Culture.NumberFormat));
                                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                                             }
                                             var intervalosAgruped = Tools.GetIntervalosPatamares(d);
@@ -1614,7 +1625,7 @@ namespace Compass.DecompToolsShellX
             var command = commands.Split('|');
 
             var path = command[0];
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             if (command.Count() > 1 && command[1] == "true")
             {
                 var ano = DateTime.Today.Year;
@@ -1627,19 +1638,19 @@ namespace Compass.DecompToolsShellX
                     var dados = line.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
                     if (Convert.ToInt32(dados[0]) == ano)
                     {
-                        limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','));
-                        limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','));
-                        limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','));
-                        limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','));
+                        limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','), Culture.NumberFormat);
+                        limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','), Culture.NumberFormat);
+                        limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','), Culture.NumberFormat);
+                        limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','), Culture.NumberFormat);
                     }
                 }
                 if (limites.Ano == 0)
                 {
                     var dados = pldLimitesLines.Last().Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
-                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','));
-                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','));
-                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','));
-                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','));
+                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','), Culture.NumberFormat);
+                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','), Culture.NumberFormat);
+                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','), Culture.NumberFormat);
+                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','), Culture.NumberFormat);
                 }
                 TrataPld(path, limites.Ano, limites.PldMin, limites.PldMax, limites.PldMaxEst);
             }
@@ -1705,6 +1716,7 @@ namespace Compass.DecompToolsShellX
 
         static void GetPDO_OPER(object dirs)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "PDO_OPER_USIH.*|PDO_OPER_USIH.*";//"PDO_OPER_USIH.*|pdo_oper_usih.*"
             ofd.Multiselect = false;
@@ -1716,7 +1728,7 @@ namespace Compass.DecompToolsShellX
                 {
                     var pdoOper = File.ReadAllLines(ofd.FileName);
                     string linhadata = pdoOper.Where(x => x.Contains("Data do Caso")).First();
-                    DateTime dataPdo = Convert.ToDateTime(linhadata.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).Last());
+                    DateTime dataPdo = Convert.ToDateTime(linhadata.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).Last(), Culture.DateTimeFormat);
                     var datarev = dataPdo;
                     if (dataPdo.DayOfWeek == DayOfWeek.Friday)
                     {
@@ -2028,7 +2040,7 @@ namespace Compass.DecompToolsShellX
                         if (command.Count() > 1 && command[1] == "true")
                         {
 
-                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Conversão Decodess");
+                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Conversão Decodess");
 
                         }
                     }
@@ -2047,7 +2059,7 @@ namespace Compass.DecompToolsShellX
                         {
                             texto = "Deck não reconhecido para a execução por falta de arquivos!";
                         }
-                        Compass.CommomLibrary.Tools.SendMail(texto, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Falha na conversão Decodess");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha na conversão Decodess");
                         if (Directory.Exists(cloneDir))
                         {
                             Directory.Delete(cloneDir, true);
@@ -2246,6 +2258,7 @@ namespace Compass.DecompToolsShellX
 
         public static void TrataOperut(string path, DateTime data, DateTime revDate, List<Tuple<string, float>> custoCVU)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             string pastaRec = GetPastaRecente(revDate);
             if (pastaRec != "")
             {
@@ -2323,7 +2336,7 @@ namespace Compass.DecompToolsShellX
 
                                         if (termL != null)
                                         {
-                                            float potMin = float.Parse(termL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[9].Replace('.', ','));
+                                            float potMin = float.Parse(termL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[9].Replace('.', ','), Culture.NumberFormat);
                                             init.Status = 1;
                                             init.Geracao = potMin;
                                         }
@@ -3272,11 +3285,15 @@ namespace Compass.DecompToolsShellX
                         tempArqs = Directory.GetFiles(tempFolder);
                         timeout += 10;
                         Thread.Sleep(10000);
+                        if (tempArqs.Count() >= 35)
+                        {
+                            timeout = 370;
+                        }
                     }
-                    if (timeout >= 360)
-                    {
-                        return;
-                    }
+                    //if (timeout >= 360)
+                    //{
+                    //    return;
+                    //}
                     Thread.Sleep(30000);
 
                     foreach (var temps in tempArqs)
@@ -3323,6 +3340,7 @@ namespace Compass.DecompToolsShellX
 
         public static List<Tuple<string, float>> GetCVU(string dir)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var sumario = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("sumario")).FirstOrDefault();
             List<Tuple<string, float>> CVU = new List<Tuple<string, float>>();
 
@@ -3341,7 +3359,7 @@ namespace Compass.DecompToolsShellX
                             string mediaSub = textoSum[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
                             if (mediaSub.Equals("Med_" + sub))
                             {
-                                float valor = float.Parse(textoSum[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1].Replace('.', ','));
+                                float valor = float.Parse(textoSum[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1].Replace('.', ','), Culture.NumberFormat);
                                 CVU.Add(new Tuple<string, float>(sub, valor));
                                 break;
                             }
@@ -3617,7 +3635,7 @@ namespace Compass.DecompToolsShellX
                     {
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 5000);
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Sucesso ao converter deckDessem");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
                     }
                     else
                     {
@@ -3635,7 +3653,7 @@ namespace Compass.DecompToolsShellX
                     if (command.Count() > 1 && command[1] == "true")
                     {
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Falha ao converter deckDessem");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
                     }
                 }
 
@@ -3650,7 +3668,7 @@ namespace Compass.DecompToolsShellX
                     {
                         texto = "Deck não reconhecido para a execução por falta de arquivos!";
                     }
-                    Compass.CommomLibrary.Tools.SendMail(texto, "carlos.paes@cpas.com.br; thamires.baptista@cpas.com.br; alex.marques@cpas.com.br; bruno.araujo@cpas.com.br; pedro.modesto@cpas.com.br; natalia.biondo@cpas.com.br;", "Falha ao converter deckDessem");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);
@@ -4084,12 +4102,13 @@ namespace Compass.DecompToolsShellX
 
         public static void TrataDP(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             List<Tuple<int, int, int, float>> dadosDP = new List<Tuple<int, int, int, float>>();//subsist,hora,meiahora,valor
             var linhasDPFixo = File.ReadAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\CargaDP_ONS-CCEE.txt").ToList();
             foreach (var linha in linhasDPFixo)
             {
                 var dados = linha.Split('\t').ToList();
-                dadosDP.Add(new Tuple<int, int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), Convert.ToInt32(dados[2]), float.Parse(dados[3].Replace('.', ','))));
+                dadosDP.Add(new Tuple<int, int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), Convert.ToInt32(dados[2]), float.Parse(dados[3].Replace('.', ','), Culture.NumberFormat)));
             }
             string dia = dataEstudo.Day.ToString();
             var entdadosDPs = entdados.BlocoDp.Where(x => x.DiaInic.Trim() == dia).ToList();
@@ -4742,18 +4761,19 @@ namespace Compass.DecompToolsShellX
         //public static void graphDp(object path, object data, bool banco = false, float fator = 1)
         public static void graphDp(object parametros)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             string comandos = (string)parametros;
             var coms = comandos.Split(';').ToList();
 
             if (coms.Count > 2)
             {
-                var frm = new FrmGraphDp(coms[0], Convert.ToDateTime(coms[1]), Convert.ToBoolean(coms[2]), float.Parse(coms[3]));
+                var frm = new FrmGraphDp(coms[0], Convert.ToDateTime(coms[1], Culture.DateTimeFormat), Convert.ToBoolean(coms[2]), float.Parse(coms[3], Culture.NumberFormat));
                 //var frm = new FrmGraphDp((string)path);
                 frm.ShowDialog();
             }
             else
             {
-                var frm = new FrmGraphDp(coms[0], Convert.ToDateTime(coms[1]));
+                var frm = new FrmGraphDp(coms[0], Convert.ToDateTime(coms[1], Culture.DateTimeFormat));
                 //var frm = new FrmGraphDp((string)path);
                 frm.ShowDialog();
             }

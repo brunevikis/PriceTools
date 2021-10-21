@@ -48,10 +48,11 @@ namespace Compass.DecompToolsShellX
 
         private void btnOk_Click(object sender, EventArgs e)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var ano = Convert.ToInt32(this.txtAno.Text);
-            var pldMin = Convert.ToDouble(this.textPLDMIN.Text.Replace('.',','));
-            var pldMax = Convert.ToDouble(this.textPLDMAX.Text.Replace('.', ','));
-            var pldMaxEst = Convert.ToDouble(this.textPLDMAXEST.Text.Replace('.', ','));
+            var pldMin = Convert.ToDouble(this.textPLDMIN.Text.Replace('.',','), Culture.NumberFormat);
+            var pldMax = Convert.ToDouble(this.textPLDMAX.Text.Replace('.', ','), Culture.NumberFormat);
+            var pldMaxEst = Convert.ToDouble(this.textPLDMAXEST.Text.Replace('.', ','), Culture.NumberFormat);
             var dir = this.textDir.Text;
             Program.AtualizarCadastroPLD(dir, ano, pldMin, pldMax, pldMaxEst);
             this.Close();

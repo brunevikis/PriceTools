@@ -18,6 +18,7 @@ namespace Compass.Services
     {
         public static void CriarEntdados(string path, DateTime dataEstudo, DateTime fimrev, Compass.CommomLibrary.EntdadosDat.CiceBlock blocoCICE, List<Tuple<int, float>> dadosRhe)
         {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             string pathBlocos = "H:\\Middle - Preço\\Resultados_Modelos\\DECODESS\\Arquivos_Base\\BlocosFixos";
             //string pathBlocos = "N:\\Middle - Preço\\Resultados_Modelos\\DECODESS\\Arquivos_Base\\BlocosFixos";
             string com = null;
@@ -424,7 +425,7 @@ namespace Compass.Services
             {
                 var dados = dpl.Split(';').ToList();
 
-                Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2]));
+                Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2], Culture.NumberFormat));
                 dadosCarga.Add(dad);//submercad,hora,valor
             }
             string comentarioDP = entdados.BlocoDp.First().Comment;
@@ -485,7 +486,7 @@ namespace Compass.Services
                         {
                             var Ndados = Ndpl.Split(';').ToList();
 
-                            Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
+                            Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2], Culture.NumberFormat));
                             NewdadosCarga.Add(Ndad);//submercad,hora,valor
                         }
                         var intervalosAgruped = Tools.GetIntervalosPatamares(d);
@@ -755,7 +756,7 @@ namespace Compass.Services
         public static void Renovaveis(string path, DateTime dataEstudo, DateTime fimRev)
         {
 
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var inicioRev = fimRev.AddDays(-6);
             var diaInc = inicioRev;
 
@@ -903,7 +904,7 @@ namespace Compass.Services
                             var codrenovavies = line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                             var barra = Convert.ToInt32(line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[3]);
-                            var rateio = Convert.ToDouble(line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[4].Replace('.', ','));
+                            var rateio = Convert.ToDouble(line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[4].Replace('.', ','), Culture.NumberFormat);
                             weoldado.barra = barra;
                             weoldado.codReno = codrenovavies;
                             weoldado.codWeol = nomeCod;
@@ -931,7 +932,7 @@ namespace Compass.Services
 
                         foreach (var item in prevsDados)
                         {
-                            double valor = (Convert.ToDouble(item.Replace('.', ',')) * weold.rateio) / 100;
+                            double valor = (Convert.ToDouble(item.Replace('.', ','), Culture.NumberFormat) * weold.rateio) / 100;
                             prevs.Add(valor);
                         }
                         weolGer.barra = weold.barra;

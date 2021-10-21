@@ -164,13 +164,13 @@ namespace Compass.ExcelTools.Templates {
             get
             {
                 List<Dados_Fixa> vals = new List<Dados_Fixa>();
-                
+                var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
 
                 for (int i = 0; ws.Cells[2 + i, 16].Value != null; i++)
                 {
 
                     var cellValue_Posto = Convert.ToInt32(ws.Cells[2 + i, 16].Value);
-                    var cellValue_Vol = Convert.ToDouble(ws.Cells[2 + i, 17].Value);
+                    var cellValue_Vol = Convert.ToDouble(ws.Cells[2 + i, 17].Value, Culture.NumberFormat);
 
                     vals.Add(new Dados_Fixa(cellValue_Posto, cellValue_Vol));
 
