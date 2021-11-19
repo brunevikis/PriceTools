@@ -97,7 +97,7 @@ namespace Compass.Services.DB
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             object objScalar = GetScalar(p_strComandoSQL);
             if (objScalar == null) return double.MinValue;
-            return Convert.ToDouble(objScalar, Culture.NumberFormat);
+            return Convert.ToDouble(objScalar);
         }
 
         public DateTime GetDateTime(string p_strComandoSQL)

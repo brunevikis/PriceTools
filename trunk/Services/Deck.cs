@@ -287,7 +287,7 @@ namespace Compass.Services
                             if (data >= dgerData)
                             {
 
-                                var valornovo = double.Parse(mes.resultado, Culture.NumberFormat);
+                                var valornovo = double.Parse(mes.resultado);
                                 var valorantigo = toremove.Where(x => x.DataInicio <= data && x.DataFim >= data)
                                     .FirstOrDefault()?.Valor ?? 0;
 

@@ -1247,14 +1247,23 @@ namespace Compass.CommomLibrary.Decomp
                     {
                         return;
                     }
+                    if (travado)
+                    {
+                        volIni = value;
+                        travado = false;
+                    }
+                    else
+                    {
+                        volIni = value;
 
-                    volIni = value;
+                        if (volIni > (VolMaxRestricao ?? VolUtil))
+                            volIni = (VolMaxRestricao ?? VolUtil);
 
-                    if (volIni > (VolMaxRestricao ?? VolUtil))
-                        volIni = (VolMaxRestricao ?? VolUtil);
+                        if (volIni < (VolMinRestricao ?? 0))
+                            volIni = (VolMinRestricao ?? 0);
+                    }
 
-                    if (volIni < (VolMinRestricao ?? 0))
-                        volIni = (VolMinRestricao ?? 0);
+                    
 
                     //if (volIni > VolUtil)
                     //    volIni = VolUtil;
@@ -1266,6 +1275,7 @@ namespace Compass.CommomLibrary.Decomp
             public double VolUtil { get { return VolMax - VolMin; } }
 
             public bool IsFict;
+            public bool travado = false;
             public int? CodReal;
             public int? CodFicticia;
 

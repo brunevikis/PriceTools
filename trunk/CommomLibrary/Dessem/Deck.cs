@@ -269,9 +269,9 @@ namespace Compass.CommomLibrary.Dessem
         public List<Tuple<int, string, double>> TrataPldDessem(List<Result.PDO_Sist> Resu_Sist, decimal? pldMin, decimal? pldMaxHr, decimal? pldMaxEst)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
-            var limInf = Convert.ToDouble(pldMin, Culture.NumberFormat);
-            var limMax = Convert.ToDouble(pldMaxHr, Culture.NumberFormat);
-            var limEst = Convert.ToDouble(pldMaxEst, Culture.NumberFormat);
+            var limInf = Convert.ToDouble(pldMin);
+            var limMax = Convert.ToDouble(pldMaxHr);
+            var limEst = Convert.ToDouble(pldMaxEst);
 
             var submercados = Resu_Sist.Select(x => x.submercado).Distinct().ToList();
 

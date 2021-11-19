@@ -425,7 +425,7 @@ namespace Compass.Services
             {
                 var dados = dpl.Split(';').ToList();
 
-                Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2], Culture.NumberFormat));
+                Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2]));
                 dadosCarga.Add(dad);//submercad,hora,valor
             }
             string comentarioDP = entdados.BlocoDp.First().Comment;
@@ -486,7 +486,7 @@ namespace Compass.Services
                         {
                             var Ndados = Ndpl.Split(';').ToList();
 
-                            Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2], Culture.NumberFormat));
+                            Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
                             NewdadosCarga.Add(Ndad);//submercad,hora,valor
                         }
                         var intervalosAgruped = Tools.GetIntervalosPatamares(d);
@@ -904,7 +904,7 @@ namespace Compass.Services
                             var codrenovavies = line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                             var barra = Convert.ToInt32(line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[3]);
-                            var rateio = Convert.ToDouble(line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[4].Replace('.', ','), Culture.NumberFormat);
+                            var rateio = Convert.ToDouble(line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[4].Replace('.', ','));
                             weoldado.barra = barra;
                             weoldado.codReno = codrenovavies;
                             weoldado.codWeol = nomeCod;
@@ -932,7 +932,7 @@ namespace Compass.Services
 
                         foreach (var item in prevsDados)
                         {
-                            double valor = (Convert.ToDouble(item.Replace('.', ','), Culture.NumberFormat) * weold.rateio) / 100;
+                            double valor = (Convert.ToDouble(item.Replace('.', ',')) * weold.rateio) / 100;
                             prevs.Add(valor);
                         }
                         weolGer.barra = weold.barra;

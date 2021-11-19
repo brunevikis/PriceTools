@@ -1959,7 +1959,7 @@ namespace Compass.Services
                     reg.IdPosto = Convert.ToInt32(l.Split(' ').First());
                     var list = l.Split(' ').ToList();
 
-                    reg.Valor_mensal = list.Select(x => double.Parse(x, Culture.NumberFormat)).ToList();
+                    reg.Valor_mensal = list.Select(x => double.Parse(x)).ToList();
 
                     RegressoesA1.Add(reg);
                 }
@@ -1971,7 +1971,7 @@ namespace Compass.Services
                     regB.IdPosto = Convert.ToInt32(l.Split(' ').First());
                     var list = l.Split(' ').ToList();
 
-                    regB.Valor_mensal = list.Select(x => double.Parse(x, Culture.NumberFormat)).ToList();
+                    regB.Valor_mensal = list.Select(x => double.Parse(x)).ToList();
 
                     RegressoesA0.Add(regB);
                 }
@@ -2419,11 +2419,11 @@ namespace Compass.Services
 
                         if (d == listSem.First())
                         {
-                            mediaTVR = ((diasSemMes * Convert.ToDouble(TVRmeses[semRV0.Month - 1], Culture.NumberFormat)) + (7 - diasSemMes) * Convert.ToDouble(TVRmeses[semRV0.AddMonths(-1).Month - 1], Culture.NumberFormat)) / 7;
+                            mediaTVR = ((diasSemMes * Convert.ToDouble(TVRmeses[semRV0.Month - 1])) + (7 - diasSemMes) * Convert.ToDouble(TVRmeses[semRV0.AddMonths(-1).Month - 1])) / 7;
                         }
                         else
                         {
-                            mediaTVR = ((diasSemMes * Convert.ToDouble(TVRmeses[semRV0.Month - 1], Culture.NumberFormat)) + (7 - diasSemMes) * Convert.ToDouble(TVRmeses[semRV0.AddMonths(1).Month - 1], Culture.NumberFormat)) / 7;
+                            mediaTVR = ((diasSemMes * Convert.ToDouble(TVRmeses[semRV0.Month - 1])) + (7 - diasSemMes) * Convert.ToDouble(TVRmeses[semRV0.AddMonths(1).Month - 1])) / 7;
                         }
                         //for (DateTime dat = dataini; dat <= datafim; dat = dat.AddDays(1))
                         //{

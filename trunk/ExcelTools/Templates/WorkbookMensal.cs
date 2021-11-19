@@ -164,7 +164,7 @@ namespace Compass.ExcelTools.Templates
                         var vol = new double[12];
                         for (int mes = 1; mes <= 12; mes++)
                         {
-                            vol[mes - 1] = Convert.ToDouble(objarr[p, mes + 1], Culture.NumberFormat);
+                            vol[mes - 1] = Convert.ToDouble(objarr[p, mes + 1]);
                         }
 
                         ret.Add(posto, vol);
@@ -253,7 +253,7 @@ namespace Compass.ExcelTools.Templates
                         var earm = new double[13];
                         for (int mes = 1; mes <= 13; mes++)
                         {
-                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1], Culture.NumberFormat);
+                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1]);
                         }
 
                         ret.Add(cod, earm);
@@ -321,6 +321,45 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<FIXARUH> fixaruh = null;
+        public List<FIXARUH> Fixaruh
+        {
+            get
+            {
+                if (fixaruh == null)
+                {
+                    fixaruh = new List<FIXARUH>();
+
+                    var ws = Names["_fixaruh"].Worksheet;
+                    var row = Names["_fixaruh"].Row;
+                    var col = Names["_fixaruh"].Column;
+
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        fixaruh.Add(new FIXARUH(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 16]]));
+                    }
+                }
+
+                return fixaruh;
+            }
+        }
+
+        public class Dados_Fixa
+        {
+            public int Posto { get; set; }
+            public double? Volini { get; set; }
+            public Dados_Fixa(int posto, double? volini)
+            {
+                Posto = posto;
+                Volini = volini <= 1 ? volini * 100 : volini;
+            }
+
+            public Dados_Fixa()
+            {
+
+            }
+
+        }
         List<RHV> rhvs = null;
         public List<RHV> Rhvs
         {
@@ -786,6 +825,35 @@ namespace Compass.ExcelTools.Templates
                 
             }
         }
+
+        public class FIXARUH
+        {
+            public int Ano { get; set; }
+            public int Usina { get; set; }
+
+            public double?[] VolMes = new double?[13];
+            public FIXARUH(Range rng)
+            {
+                if (rng[1, 1].Value is double) Ano = (int)rng[1, 2].Value;
+
+                if (rng[1, 2].Value is double) Usina = (int)rng[1, 1].Value;
+                if (rng[1, 3].Value is double) VolMes[0] = rng[1, 3].Value;
+                if (rng[1, 4].Value is double) VolMes[1] = rng[1, 4].Value;
+                if (rng[1, 5].Value is double) VolMes[2] = rng[1, 5].Value;
+                if (rng[1, 6].Value is double) VolMes[3] = rng[1, 6].Value;
+                if (rng[1, 7].Value is double) VolMes[4] = rng[1, 7].Value;
+                if (rng[1, 8].Value is double) VolMes[5] = rng[1, 8].Value;
+                if (rng[1, 9].Value is double) VolMes[6] = rng[1, 9].Value;
+                if (rng[1, 10].Value is double) VolMes[7] = rng[1, 10].Value;
+                if (rng[1, 11].Value is double) VolMes[8] = rng[1, 11].Value;
+                if (rng[1, 12].Value is double) VolMes[9] = rng[1, 12].Value;
+                if (rng[1, 13].Value is double) VolMes[10] = rng[1, 13].Value;
+                if (rng[1, 14].Value is double) VolMes[11] = rng[1, 14].Value;
+                if (rng[1, 14].Value is double) VolMes[12] = rng[1, 15].Value;
+
+            }
+        }
+
         public class RHQ
         {
             public int Usina { get; set; }
@@ -1122,7 +1190,7 @@ namespace Compass.ExcelTools.Templates
                         var earm = new double[13];
                         for (int mes = 1; mes <= 13; mes++)
                         {
-                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1], Culture.NumberFormat);
+                            earm[mes - 1] = Convert.ToDouble(objarr[p, mes + 1]);
                         }
 
                         ret.Add(cod, earm);

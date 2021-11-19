@@ -387,20 +387,20 @@ namespace Compass.CommomLibrary.Decomp
                             var ne = r[3].Split(' ');
                             var n = r[4].Split(' ');
 
-                            result[1].Ena = float.Parse(se[6], Culture.NumberFormat);
-                            result[2].Ena = float.Parse(s[6], Culture.NumberFormat);
-                            result[3].Ena = float.Parse(ne[6], Culture.NumberFormat);
-                            result[4].Ena = float.Parse(n[6], Culture.NumberFormat);
+                            result[1].Ena = float.Parse(se[6]);
+                            result[2].Ena = float.Parse(s[6]);
+                            result[3].Ena = float.Parse(ne[6]);
+                            result[4].Ena = float.Parse(n[6]);
 
-                            result[1].EnaMLT = float.Parse(se[7].Replace("%", ""), Culture.NumberFormat) / 100;
-                            result[2].EnaMLT = float.Parse(s[7].Replace("%", ""), Culture.NumberFormat) / 100;
-                            result[3].EnaMLT = float.Parse(ne[7].Replace("%", ""), Culture.NumberFormat) / 100;
-                            result[4].EnaMLT = float.Parse(n[7].Replace("%", ""), Culture.NumberFormat) / 100;
+                            result[1].EnaMLT = float.Parse(se[7].Replace("%", "")) / 100;
+                            result[2].EnaMLT = float.Parse(s[7].Replace("%", "")) / 100;
+                            result[3].EnaMLT = float.Parse(ne[7].Replace("%", "")) / 100;
+                            result[4].EnaMLT = float.Parse(n[7].Replace("%", "")) / 100;
 
-                            result[1].EnaSemCV = float.Parse(se[cvIdx], Culture.NumberFormat);
-                            result[2].EnaSemCV = float.Parse(s[cvIdx], Culture.NumberFormat);
-                            result[3].EnaSemCV = float.Parse(ne[cvIdx], Culture.NumberFormat);
-                            result[4].EnaSemCV = float.Parse(n[cvIdx], Culture.NumberFormat);
+                            result[1].EnaSemCV = float.Parse(se[cvIdx]);
+                            result[2].EnaSemCV = float.Parse(s[cvIdx]);
+                            result[3].EnaSemCV = float.Parse(ne[cvIdx]);
+                            result[4].EnaSemCV = float.Parse(n[cvIdx]);
                         }
                     }
                 }

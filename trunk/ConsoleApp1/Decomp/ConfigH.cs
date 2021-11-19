@@ -737,7 +737,22 @@ namespace ConsoleApp1.Decomp
             }
         }
 
+        public class Dados_Fixa
+        {
+            public int Posto { get; set; }
+            public double? Volini { get; set; }
+            public Dados_Fixa(int posto, double? volini)
+            {
+                Posto = posto;
+                Volini = volini <= 1 ? volini * 100 : volini;
+            }
 
+            public Dados_Fixa()
+            {
+
+            }
+
+        }
         /// <summary>
         /// Sets UH to max and calc EARM.
         /// To bring back original values of UH use ReloadUH()
@@ -1261,14 +1276,21 @@ namespace ConsoleApp1.Decomp
                     {
                         return;
                     }
+                    if (travado)
+                    {
+                        volIni = value;
+                    }
+                    else
+                    {
+                        volIni = value;
 
-                    volIni = value;
+                        if (volIni > (VolMaxRestricao ?? VolUtil))
+                            volIni = (VolMaxRestricao ?? VolUtil);
 
-                    if (volIni > (VolMaxRestricao ?? VolUtil))
-                        volIni = (VolMaxRestricao ?? VolUtil);
-
-                    if (volIni < (VolMinRestricao ?? 0))
-                        volIni = (VolMinRestricao ?? 0);
+                        if (volIni < (VolMinRestricao ?? 0))
+                            volIni = (VolMinRestricao ?? 0);
+                    }
+                    
 
                     //if (volIni > VolUtil)
                     //    volIni = VolUtil;
@@ -1279,6 +1301,7 @@ namespace ConsoleApp1.Decomp
             }
             public double VolUtil { get { return VolMax - VolMin; } }
 
+            public bool travado = false;
             public bool IsFict;
             public int? CodReal;
             public int? CodFicticia;

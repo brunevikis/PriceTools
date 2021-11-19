@@ -309,19 +309,70 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 var mesEarmFinal = dtEstudo.Month - 1;
 
                                 var earmconfig = configH.ToEarmConfigFile(curvaArmazenamento);
-                                var metaEarmDc = w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray();
-                                List<string> metalines = new List<string>();
-                                metalines.Add("Sistema	Meta (EARM ou %)");
-                                int idx = 0;
-                                foreach (var m in metaEarmDc)
+
+                                #region Atingir Meta Encad arqs Config
+                                try
                                 {
-                                    metalines.Add((idx + 1).ToString() + "\t" + (m * 100f).ToString());
-                                    idx++;
+                                    if (curvaArmazenamento != null)// grava os dados da curva de armazenamento para ser usado durante o atingir meta
+                                    {
+                                        List<string> curvaTxt = new List<string>();
+                                        curvaTxt.Add("Usina	VolMinRest  VolMaxRest");
+
+                                        foreach (var curva in curvaArmazenamento)
+                                        {
+                                            curvaTxt.Add(curva.Item1.ToString() + "\t" + curva.Item2.ToString() + "\t" + curva.Item3.ToString());
+                                        }
+                                        File.WriteAllLines(Path.Combine(estudoPath, "curvaArmazenamento.txt"), curvaTxt);
+                                    }
+
+                                    var metaEarmDc = w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray();
+                                    List<string> metalines = new List<string>();
+                                    metalines.Add("Sistema	Meta (EARM ou %)");
+                                    int indx = 0;
+                                    foreach (var m in metaEarmDc)
+                                    {
+                                        metalines.Add((indx + 1).ToString() + "\t" + (m * 100f).ToString());
+                                        indx++;
+                                    }
+                                    File.WriteAllLines(Path.Combine(estudoPath, "metasEarm_Sub.txt"), metalines);
+
+                                    List<WorkbookMensal.Dados_Fixa> dadosFixas = new List<WorkbookMensal.Dados_Fixa>();
+
+                                    if (w.Fixaruh.Count() > 0)
+                                    {
+
+                                        var fixarLines = w.Fixaruh.Where(x => x.Ano == mesOperativo.Ano).ToList();
+
+                                        foreach (var fl in fixarLines)
+                                        {
+                                            dadosFixas.Add(new WorkbookMensal.Dados_Fixa(fl.Usina, fl.VolMes[mesEarmFinal]));
+                                        }
+
+                                    }
+                                    if (dadosFixas.Count() > 0)
+                                    {
+                                        List<string> fixaUhTxtLines = new List<string>();
+                                        fixaUhTxtLines.Add("Usina    VolIniPerc %");
+                                        foreach (var df in dadosFixas)
+                                        {
+                                            fixaUhTxtLines.Add(df.Posto.ToString() + "\t" +( df.Volini != null ? df.Volini.ToString() : "null"));
+                                        }
+                                        File.WriteAllLines(Path.Combine(estudoPath, "UhFixados.txt"), fixaUhTxtLines);
+
+                                        Services.Reservatorio.SetUHBlockFixado(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax, dadosFixas);
+                                    }
+                                    else
+                                    {
+                                        Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
+                                    }
+
                                 }
-                                File.WriteAllLines(Path.Combine(estudoPath, "metasEarm_Sub.txt"), metalines);
+                                catch (Exception ex)
+                                {
+                                    ex.ToString();
 
-
-                                Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
+                                }
+                                #endregion
                                 configH.baseDoc.SaveToFile();
 
                                 File.WriteAllText(Path.Combine(estudoPath, "configh.dat"), earmconfig);
@@ -363,7 +414,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                             if (dadgnls.ContainsKey(dtEstudo))
                             {
-                                
+
                                 dadgnl = dadgnls[dtEstudo];
                                 dadgnl.File = Path.Combine(estudoPath, Path.GetFileName(dadgnl.File));
                             }
@@ -407,7 +458,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         .Where(x => x[0] == ut.Usina)
                                         .Select(x => x[(dtEstudo.Year - x[2]) * 12 + dtEstudo.Month + 2]).FirstOrDefault(); // Disponibilidade
 
-                                    
+
                                     //====
                                     foreach (var adt in adterm.Despachos.Where(x => x.String != "            "))
                                     {
@@ -431,7 +482,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     }
                                     else
                                     {
-                                        
+
                                         var alter_dadgnl = testead.Adterm.Where(x => x.Mes == dtEstudo.Month && x.Usina == ut.Usina).ToList();
                                         if (alter_dadgnl.Count() != 0)
                                         {
@@ -441,7 +492,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             tgLine[13] = alter_dadgnl[0].RestricaoP3;
                                             using (TextWriter tw = new StreamWriter(arq, true, Encoding.Default))
                                             {
-                                                
+
                                                 tw.WriteLine(ut.Usina + ";" + dtEstudo.Month + ";" + alter_dadgnl[0].RestricaoP1 + ";" + alter_dadgnl[0].RestricaoP2 + ";" + alter_dadgnl[0].RestricaoP3); //escreve no arquivo novamente                                                
 
                                                 tw.Close();
@@ -482,7 +533,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         .Select(x => x[(dtEstudo.AddMonths(1).Year - x[2]) * 12 + dtEstudo.AddMonths(1).Month + 2]).FirstOrDefault(); // Disponibilidade
 
 
-                                    
+
 
                                     foreach (var adt in adterm.Despachos.Where(x => x.String != "            "))
                                     {
@@ -514,12 +565,12 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             tgLine[13] = alter_dadgnl[0].RestricaoP3;
                                             using (TextWriter tw = new StreamWriter(arq, true, Encoding.Default))
                                             {
-                          
+
                                                 tw.WriteLine(ut.Usina + ";" + dtEstudoSeguinte.Month + ";" + alter_dadgnl[0].RestricaoP1 + ";" + alter_dadgnl[0].RestricaoP2 + ";" + alter_dadgnl[0].RestricaoP3); //escreve no arquivo novamente
 
                                                 tw.Close();
                                             }
-                                            
+
                                         }
                                         else
                                         {
@@ -775,18 +826,70 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                         var earmconfig = configH.ToEarmConfigFile(curvaArmazenamento);
 
-                        var metaEarmDc = w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray();
-                        List<string> metalines = new List<string>();
-                        metalines.Add("Sistema	Meta (EARM ou %)");
-                        int indx = 0;
-                        foreach (var m in metaEarmDc)
-                        {
-                            metalines.Add((indx + 1).ToString() + "\t" + (m * 100f).ToString());
-                            indx++;
-                        }
-                        File.WriteAllLines(Path.Combine(estudoPath, "metasEarm_Sub.txt"), metalines);
 
-                        Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
+                        #region Atingir Meta Encad arqs Config
+                        try
+                        {
+                            if (curvaArmazenamento != null)// grava os dados da curva de armazenamento para ser usado durante o atingir meta
+                            {
+                                List<string> curvaTxt = new List<string>();
+                                curvaTxt.Add("Usina	VolMinRest  VolMaxRest");
+
+                                foreach (var curva in curvaArmazenamento)
+                                {
+                                    curvaTxt.Add(curva.Item1.ToString() + "\t" + curva.Item2.ToString() + "\t" + curva.Item3.ToString());
+                                }
+                                File.WriteAllLines(Path.Combine(estudoPath, "curvaArmazenamento.txt"), curvaTxt);
+                            }
+                            var metaEarmDc = w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray();
+                            List<string> metalines = new List<string>();
+                            metalines.Add("Sistema	Meta (EARM ou %)");
+                            int indx = 0;
+                            foreach (var m in metaEarmDc)
+                            {
+                                metalines.Add((indx + 1).ToString() + "\t" + (m * 100f).ToString());
+                                indx++;
+                            }
+                            File.WriteAllLines(Path.Combine(estudoPath, "metasEarm_Sub.txt"), metalines);
+
+                            List<WorkbookMensal.Dados_Fixa> dadosFixas = new List<WorkbookMensal.Dados_Fixa>();
+
+                            if (w.Fixaruh.Count() > 0)
+                            {
+
+                                var fixarLines = w.Fixaruh.Where(x => x.Ano == mesOperativo.Ano).ToList();
+
+                                foreach (var fl in fixarLines)
+                                {
+                                    dadosFixas.Add(new WorkbookMensal.Dados_Fixa(fl.Usina, fl.VolMes[mesEarmFinal]));
+                                }
+
+                            }
+                            if (dadosFixas.Count() > 0)
+                            {
+                                List<string> fixaUhTxtLines = new List<string>();
+                                fixaUhTxtLines.Add("Usina    VolIniPerc %");
+
+                                foreach (var df in dadosFixas)
+                                {
+                                    fixaUhTxtLines.Add(df.Posto.ToString() + "\t" + df.Volini.ToString());
+                                }
+                                File.WriteAllLines(Path.Combine(estudoPath, "UhFixados.txt"), fixaUhTxtLines);
+
+                                Services.Reservatorio.SetUHBlockFixado(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax, dadosFixas);
+                            }
+                            else
+                            {
+                                Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.ToString();
+
+                        }
+                        #endregion
 
                         //manter restricoes de volume para restringir variacao no atingir meta de armazenamento
                         curvaArmazenamento = dadger.BlocoRhv.RhvGrouped
@@ -893,7 +996,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             var dispMes = pmoBase.Blocos["GTERM Max"]
                                 .Where(x => x[0] == ut.Usina)
                                 .Select(x => x[(mesOperativo.Ano - x[2]) * 12 + mesOperativo.Mes + 2]).FirstOrDefault(); // Disponibilidade
-                            dispMes = Convert.ToDouble(dispMes, Culture.NumberFormat);
+                            dispMes = Convert.ToDouble(dispMes);
 
                             tgLine[6] = tgLine[9] = tgLine[12] = dispMes;
 
@@ -930,7 +1033,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     {
                                         indice = adterm.Despachos.IndexOf(adt);
                                         indice = indice + 1;
-                                        
+
                                         dadosAdt[0] = adterm.Despachos[indice].Lim_P1;
                                         dadosAdt[1] = adterm.Despachos[indice].Lim_P2;
                                         dadosAdt[2] = adterm.Despachos[indice].Lim_P3;
@@ -960,7 +1063,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             {
 
                                 var endSemanaTemp = dtTemp.AddDays(6);
-                                if ( _e > mesOperativo.EstagiosReaisDoMesAtual &&  endSemanaTemp.Day < 7 ) endSemanaTemp = endSemanaTemp.AddDays(-endSemanaTemp.Day);
+                                if (_e > mesOperativo.EstagiosReaisDoMesAtual && endSemanaTemp.Day < 7) endSemanaTemp = endSemanaTemp.AddDays(-endSemanaTemp.Day);
 
 
                                 var semanaOperativaTemp = new SemanaOperativa(dtTemp, endSemanaTemp, patamares2019);
@@ -973,7 +1076,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 int indice;
                                 double[] dadosAdt = new double[3];
 
-                          
+
                                 foreach (var adt in adterm.Despachos.Where(x => x.String != "            "))
                                 {
                                     if (adt.Numero == ut.Usina)

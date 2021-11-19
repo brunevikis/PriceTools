@@ -115,15 +115,15 @@ namespace Compass.ExcelTools.Templates {
             }
             {
                 double val;
-                if (double.TryParse(rng[1, 13].Text, style, Culture.NumberFormat, out val)) Nivel = val;
+                if (double.TryParse(rng[1, 13].Text, out val)) Nivel = val;
             }
             {
                 double val;
-                if (double.TryParse(rng[1, 14].Text, style, Culture.NumberFormat, out val)) VolUtilArm = val > 100 ? 100 : (val < 0 ? 0 : val);
+                if (double.TryParse(rng[1, 14].Text, out val)) VolUtilArm = val > 100 ? 100 : (val < 0 ? 0 : val);
             }
             {
                 double val;
-                if (double.TryParse(rng[1, 15].Text, style, Culture.NumberFormat, out val)) VolEsp = val;
+                if (double.TryParse(rng[1, 15].Text, out val)) VolEsp = val;
             }
         }
 

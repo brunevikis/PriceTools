@@ -998,10 +998,96 @@ namespace ConsoleApp1
                             var earmMax = configH.GetEarmsMaxREE();
                             configH.ReloadUH();
 
-                            Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
+                            List<Tuple<int, double, double>> curvaArmazenamento = null;
+
+                            #region curva de armazenameto
+                            var curvaTxtFile = Path.Combine(dir, "curvaArmazenamento.txt");
+                            if (File.Exists(curvaTxtFile))
+                            {
+                                List<Tuple<int, double, double>> newCurva = new List<Tuple<int, double, double>>();
+                                var isWindowns = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+                                var curvaLines = File.ReadAllLines(curvaTxtFile).Skip(1).Where(x => x != "").ToList();
+                                foreach (var cl in curvaLines)
+                                {
+                                    var ls = cl.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                    double minrest = 0;
+                                    double maxrest = 0;
+                                    int usina = 0;
+                                    if (isWindowns)
+                                    {
+                                        usina = Convert.ToInt32(ls[0]);
+                                        minrest = Convert.ToDouble(ls[1].Replace('.', ','));
+                                        maxrest = Convert.ToDouble(ls[2].Replace('.', ','));
+                                    }
+                                    else
+                                    {
+                                        usina = Convert.ToInt32(ls[0]);
+                                        minrest = Convert.ToDouble(ls[1].Replace(',', '.'));
+                                        maxrest = Convert.ToDouble(ls[2].Replace(',', '.'));
+                                    }
+                                    newCurva.Add(new Tuple<int, double, double>(usina, minrest, maxrest));
+                                }
+                                curvaArmazenamento = newCurva;
+                            }
+                            #endregion
+                            var earmconfig = configH.ToEarmConfigFile(curvaArmazenamento);
+                            List<ConsoleApp1.Decomp.ConfigH.Dados_Fixa> dadosFixas = new List<ConsoleApp1.Decomp.ConfigH.Dados_Fixa>();
+                            #region UH Fixados
+
+                            var UhFixadosTxtFile = Path.Combine(dir, "UhFixados.txt");
+
+                            if (File.Exists(UhFixadosTxtFile))
+                            {
+                                var isWindowns = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                                var fixaLines = File.ReadAllLines(UhFixadosTxtFile).Skip(1).Where(x => x != "").ToList();
+                                foreach (var fl in fixaLines)
+                                {
+                                    var Fs = fl.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                    int usinaUh = 0;
+                                    double? volini;
+
+                                    usinaUh = Convert.ToInt32(Fs[0]);
+                                    if (isWindowns)
+                                    {
+                                        if (Fs[1].Contains("null"))
+                                        {
+                                            volini = null;
+                                        }
+                                        else
+                                        {
+                                            volini = Convert.ToDouble(Fs[1].Replace('.', ','));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Fs[1].Contains("null"))
+                                        {
+                                            volini = null;
+                                        }
+                                        else
+                                        {
+                                            volini = Convert.ToDouble(Fs[1].Replace(',', '.'));
+                                        }
+                                    }
+                                    dadosFixas.Add(new Decomp.ConfigH.Dados_Fixa(usinaUh, volini));
+                                }
+                            }
+
+                            #endregion
+                            if (dadosFixas.Count() > 0)
+                            {
+                                Reservatorio.SetUHBlockREEFixado(configH, earmMeta, earmMax, dadosFixas);
+
+                            }
+                            else
+                            {
+                                Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
+                            }
+
                             configH.baseDoc.SaveToFile();
 
-                      
+
                             var fileMetaLines = File.ReadAllLines(fileMeta).Skip(1).Take(4).ToList();
                             double[] metaSub = new double[4];
                             int index;
@@ -1029,7 +1115,19 @@ namespace ConsoleApp1
                             dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
                             var earmSubMax = configH.GetEarmsMax();
                             configH.ReloadUH();
-                            Reservatorio.SetUHBlock(configH, metaSub, earmSubMax);
+
+                            var earmconfig2 = configH.ToEarmConfigFile(curvaArmazenamento);
+
+                            if (dadosFixas.Count() > 0)
+                            {
+                                Reservatorio.SetUHBlockFixado(configH, metaSub, earmSubMax, dadosFixas);
+                            }
+                            else
+                            {
+                                Reservatorio.SetUHBlock(configH, metaSub, earmSubMax);
+
+                            }
+
                             configH.baseDoc.SaveToFile();
 
                             File.WriteAllText(Path.Combine(dir, "atingirMetaFinalizado.txt"), "OK");

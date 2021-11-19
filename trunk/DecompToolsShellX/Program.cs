@@ -999,10 +999,10 @@ namespace Compass.DecompToolsShellX
                 var dados = line.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
                 if (Convert.ToInt32(dados[0]) == ano)
                 {
-                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','), Culture.NumberFormat);
-                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','), Culture.NumberFormat);
-                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','), Culture.NumberFormat);
-                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','), Culture.NumberFormat);
+                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','));
+                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','));
+                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','));
+                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','));
                     if (limites.PldMin != pldMin || limites.PldMax != pldMax || limites.PldMaxEst != pldMaxEst)
                     {
                         if (System.Windows.Forms.MessageBox.Show("ATENÇÃO!!!\nOs valores informados são diferentes dos padrões.\nDeseja continuar?", "Trata PLD", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
@@ -1090,7 +1090,7 @@ namespace Compass.DecompToolsShellX
                     {
                         if (int.TryParse(campos[0], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out i))
                         {
-                            Tuple<int, string, double> Pld = new Tuple<int, string, double>(i, campos[2].Trim(), Convert.ToDouble(campos[3].Replace('.', ','), Culture.NumberFormat));
+                            Tuple<int, string, double> Pld = new Tuple<int, string, double>(i, campos[2].Trim(), Convert.ToDouble(campos[3].Replace('.', ',')));
                             Plds.Add(Pld);
 
                         }
@@ -1459,7 +1459,7 @@ namespace Compass.DecompToolsShellX
                                 {
                                     var dados = dpl.Split(';').ToList();
 
-                                    Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2], Culture.NumberFormat));
+                                    Tuple<int, int, float> dad = new Tuple<int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), float.Parse(dados[2]));
                                     dadosCarga.Add(dad);//submercad,hora,valor
                                 }
                                 string comentarioDP = entdados.BlocoDp.First().Comment;
@@ -1520,7 +1520,7 @@ namespace Compass.DecompToolsShellX
                                             {
                                                 var Ndados = Ndpl.Split(';').ToList();
 
-                                                Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2], Culture.NumberFormat));
+                                                Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
                                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                                             }
                                             var intervalosAgruped = Tools.GetIntervalosPatamares(d);
@@ -1638,19 +1638,19 @@ namespace Compass.DecompToolsShellX
                     var dados = line.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
                     if (Convert.ToInt32(dados[0]) == ano)
                     {
-                        limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','), Culture.NumberFormat);
-                        limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','), Culture.NumberFormat);
-                        limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','), Culture.NumberFormat);
-                        limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','), Culture.NumberFormat);
+                        limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','));
+                        limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','));
+                        limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','));
+                        limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','));
                     }
                 }
                 if (limites.Ano == 0)
                 {
                     var dados = pldLimitesLines.Last().Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
-                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','), Culture.NumberFormat);
-                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','), Culture.NumberFormat);
-                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','), Culture.NumberFormat);
-                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','), Culture.NumberFormat);
+                    limites.Ano = Convert.ToInt32(dados[0].Replace('.', ','));
+                    limites.PldMin = Convert.ToDouble(dados[1].Replace('.', ','));
+                    limites.PldMax = Convert.ToDouble(dados[2].Replace('.', ','));
+                    limites.PldMaxEst = Convert.ToDouble(dados[3].Replace('.', ','));
                 }
                 TrataPld(path, limites.Ano, limites.PldMin, limites.PldMax, limites.PldMaxEst);
             }
@@ -2336,7 +2336,7 @@ namespace Compass.DecompToolsShellX
 
                                         if (termL != null)
                                         {
-                                            float potMin = float.Parse(termL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[9].Replace('.', ','), Culture.NumberFormat);
+                                            float potMin = float.Parse(termL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[9].Replace('.', ','));
                                             init.Status = 1;
                                             init.Geracao = potMin;
                                         }
@@ -3359,7 +3359,7 @@ namespace Compass.DecompToolsShellX
                             string mediaSub = textoSum[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
                             if (mediaSub.Equals("Med_" + sub))
                             {
-                                float valor = float.Parse(textoSum[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1].Replace('.', ','), Culture.NumberFormat);
+                                float valor = float.Parse(textoSum[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1].Replace('.', ','));
                                 CVU.Add(new Tuple<string, float>(sub, valor));
                                 break;
                             }
@@ -4108,7 +4108,7 @@ namespace Compass.DecompToolsShellX
             foreach (var linha in linhasDPFixo)
             {
                 var dados = linha.Split('\t').ToList();
-                dadosDP.Add(new Tuple<int, int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), Convert.ToInt32(dados[2]), float.Parse(dados[3].Replace('.', ','), Culture.NumberFormat)));
+                dadosDP.Add(new Tuple<int, int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), Convert.ToInt32(dados[2]), float.Parse(dados[3].Replace('.', ','))));
             }
             string dia = dataEstudo.Day.ToString();
             var entdadosDPs = entdados.BlocoDp.Where(x => x.DiaInic.Trim() == dia).ToList();
@@ -4767,7 +4767,7 @@ namespace Compass.DecompToolsShellX
 
             if (coms.Count > 2)
             {
-                var frm = new FrmGraphDp(coms[0], Convert.ToDateTime(coms[1], Culture.DateTimeFormat), Convert.ToBoolean(coms[2]), float.Parse(coms[3], Culture.NumberFormat));
+                var frm = new FrmGraphDp(coms[0], Convert.ToDateTime(coms[1], Culture.DateTimeFormat), Convert.ToBoolean(coms[2]), float.Parse(coms[3]));
                 //var frm = new FrmGraphDp((string)path);
                 frm.ShowDialog();
             }

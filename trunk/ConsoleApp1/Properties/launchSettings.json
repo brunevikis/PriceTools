@@ -2,8 +2,8 @@
   "profiles": {
     "ConsoleApp1": {
       "commandName": "Project",
-      "commandLineArgs": "\"metaencad\" \"202007\" \"202008\"",
-      "workingDirectory": "C:\\Development\\Implementacoes\\testesAtingirencad\\2020_backtest_distribuicao-REE-nw_260721"
+      "commandLineArgs": "\"metaencad\" \"202201\" \"202202\"",
+      "workingDirectory": "C:\\Development\\Implementacoes\\testesAtingirencad\\TesteFixaUHEncad"
     }
   }
 }

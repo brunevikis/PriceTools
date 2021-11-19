@@ -577,9 +577,9 @@ namespace Compass.Services
 
                     try
                     {
-                        ia[5] = Convert.ToDouble(dados.Select(x => x.LimSup1).ToList().FirstOrDefault(), Culture.NumberFormat);
-                        ia[7] = Convert.ToDouble(dados.Select(x => x.LimSup2).ToList().FirstOrDefault(), Culture.NumberFormat);  // ia[5] = valAB;
-                        ia[9] = Convert.ToDouble(dados.Select(x => x.LimSup3).ToList().FirstOrDefault(), Culture.NumberFormat);
+                        ia[5] = Convert.ToDouble(dados.Select(x => x.LimSup1).ToList().FirstOrDefault());
+                        ia[7] = Convert.ToDouble(dados.Select(x => x.LimSup2).ToList().FirstOrDefault());  // ia[5] = valAB;
+                        ia[9] = Convert.ToDouble(dados.Select(x => x.LimSup3).ToList().FirstOrDefault());
                     }
                     catch
                     {
@@ -611,9 +611,9 @@ namespace Compass.Services
                 {
                     var dados = Plan_Rhe.Where(x => x.Mes == mesOperativo.Mes && (x.Estagio == 2 || x.Estagio == null));
                     ia2[1] = mesOperativo.Estagios + 1;
-                    ia2[5] = Convert.ToDouble(dados.Select(x => x.LimSup1).ToList().FirstOrDefault(), Culture.NumberFormat);
-                    ia2[7] = Convert.ToDouble(dados.Select(x => x.LimSup2).ToList().FirstOrDefault(), Culture.NumberFormat);
-                    ia2[9] = Convert.ToDouble(dados.Select(x => x.LimSup3).ToList().FirstOrDefault(), Culture.NumberFormat);
+                    ia2[5] = Convert.ToDouble(dados.Select(x => x.LimSup1).ToList().FirstOrDefault());
+                    ia2[7] = Convert.ToDouble(dados.Select(x => x.LimSup2).ToList().FirstOrDefault());
+                    ia2[9] = Convert.ToDouble(dados.Select(x => x.LimSup3).ToList().FirstOrDefault());
                 }
                 else
                 {
@@ -2888,9 +2888,9 @@ namespace Compass.Services
                                 var Pq2 = Peq_Pat.Where(x => x.Patamar == 2).Select(x => x.Valores[Mes]).FirstOrDefault();
                                 var Pq3 = Peq_Pat.Where(x => x.Patamar == 3).Select(x => x.Valores[Mes]).FirstOrDefault();
 
-                                p1 = p1 + Valor_Sis * Convert.ToDouble(Pq1, Culture.NumberFormat);
-                                p2 = p2 + Valor_Sis * Convert.ToDouble(Pq2, Culture.NumberFormat);
-                                p3 = p3 + Valor_Sis * Convert.ToDouble(Pq3, Culture.NumberFormat);
+                                p1 = p1 + Valor_Sis * Convert.ToDouble(Pq1);
+                                p2 = p2 + Valor_Sis * Convert.ToDouble(Pq2);
+                                p3 = p3 + Valor_Sis * Convert.ToDouble(Pq3);
 
 
                             }
