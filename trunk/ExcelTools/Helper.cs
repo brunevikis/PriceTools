@@ -22,6 +22,27 @@ namespace Compass.ExcelTools {
             return instance;
         }
 
+        public static Microsoft.Office.Interop.Excel.Application StartExcelInvisible()
+        {
+            Microsoft.Office.Interop.Excel.Application instance = null;
+            try
+            {
+                instance = (Microsoft.Office.Interop.Excel.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Excel.Application");
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                instance = new Microsoft.Office.Interop.Excel.Application();
+            }
+            instance.Visible = false;
+            // foreach (Microsoft.Office.Core.COMAddIn CurrAddin in instance.COMAddIns)
+            //    if (CurrAddin.Description == "DecompTools ExcelAddin") {
+            //         CurrAddin.Connect = false;
+            //        CurrAddin.Connect = true;
+            //     }
+
+            return instance;
+        }
+
         public static void Release(object o) {
             System.Runtime.InteropServices.Marshal.ReleaseComObject(o);
         }

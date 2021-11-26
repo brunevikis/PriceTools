@@ -52,11 +52,12 @@ namespace Compass.DecompToolsShellX
             actions.Add("dessemtools", dessemTools);
             actions.Add("previvazlocal", previvazLocal);
             actions.Add("carregarprevs", carregaPrevs);
-            actions.Add("resdatabase", ResDataBaseTools);//resdatabase
+            actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
+            actions.Add("coletalimites", ColetaLimites);
 
-       //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
-   
-       //< add key = "passwordlogin" value = "Pas5Word" />
+            //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
+
+            //< add key = "passwordlogin" value = "Pas5Word" />
 
 
             //convdecodess "L:\teste_decodess\DEC_ONS_052021_RV2_VE"
@@ -995,7 +996,7 @@ namespace Compass.DecompToolsShellX
             var pldLimitesLines = File.ReadAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PLD_SEMI_HORA.txt").Skip(1).ToList();
             foreach (var line in pldLimitesLines)
             {
-                
+
                 var dados = line.Split(new string[] { "\t" }, StringSplitOptions.RemoveEmptyEntries);
                 if (Convert.ToInt32(dados[0]) == ano)
                 {
@@ -1583,6 +1584,191 @@ namespace Compass.DecompToolsShellX
                 MessageBox.Show(texto, "ATENCÃO!");
                 return;
                 //System.Windows.Forms.MessageBox.Show(ex.Message);
+            }
+        }
+
+        static void ColetaLimites(string path)
+        {
+            try
+            {
+
+                string dir;
+                if (Directory.Exists(path))
+                {
+                    dir = path.EndsWith(Path.DirectorySeparatorChar.ToString()) ? path.Remove(path.Length - 1) : path;
+                }
+                else
+                    return;
+
+                var excelname = Path.Combine(dir, "Acompanhamento_Limites_Elétricos.xlsm");//
+               // var template = @"C:\Development\Implementacoes\TESTES_PEGALIMITES\Acompanhamento_Limites_Elétricos.xlsm";
+                var template = @"Z:\cpas_ctl_common\Coleta\Acompanhamento_Limites_Elétricos.xlsm";
+                File.Copy(template, excelname,true);
+                Microsoft.Office.Interop.Excel.Application xlApp = null;
+                xlApp = ExcelTools.Helper.StartExcelInvisible();
+                //xlApp = ExcelTools.Helper.StartExcel();
+                xlApp.DisplayAlerts = false;
+
+                var wbxls = xlApp.Workbooks.Open(excelname);
+                Workbook wb = xlApp.ActiveWorkbook;
+
+                var dirs = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories);
+                foreach (var di in dirs.ToList())
+                {
+                    var relato = Directory.GetFiles(di).Where(x => Path.GetFileName(x).ToLower().Equals("relato.rv0")).FirstOrDefault();
+                    
+                    if (relato != null)
+                    {
+                        string anoMes = di.Split('\\').Last();
+                        string ano = anoMes.Substring(2, 2);
+                        string Mes = "";
+                        switch (anoMes.Substring(4, 2))
+                        {
+                            case "01":
+                                Mes = "JAN";
+                                break;
+                            case "02":
+                                Mes = "FEV";
+                                break;
+                            case "03":
+                                Mes = "MAR";
+                                break;
+                            case "04":
+                                Mes = "ABR";
+                                break;
+                            case "05":
+                                Mes = "MAI";
+                                break;
+                            case "06":
+                                Mes = "JUN";
+                                break;
+                            case "07":
+                                Mes = "JUL";
+                                break;
+                            case "08":
+                                Mes = "AGO";
+                                break;
+                            case "09":
+                                Mes = "SET";
+                                break;
+                            case "10":
+                                Mes = "OUT";
+                                break;
+                            case "11":
+                                Mes = "NOV";
+                                break;
+                            case "12":
+                                Mes = "DEZ";
+                                break;
+                            default:
+                                Mes = "";
+                                break;
+                        }
+                        string NomePlan = "lim_" + Mes + ano;
+
+                        List<string> reealvo = new List<string>();
+                        Sheets lista = wb.Worksheets;
+                        var N_Sheets = lista.Count;
+
+                        Worksheet wsPega = wbxls.Worksheets["Pega_limites"];
+                        Worksheet ws = wbxls.Worksheets[NomePlan];
+                        int idx = 1;
+                        for (int i = 1; i <= N_Sheets; i++)
+                        {
+                            if (wbxls.Worksheets[i] == wsPega)
+                            {
+                                idx = i;
+                                break;
+                            }
+                        }
+                        //wsPega.Copy(wbxls.Worksheets[idx + 1]);
+                        //Worksheet ws = (Worksheet)xlApp.ActiveSheet;
+
+                        //int c = 2;
+                        //for (int r = 4; !string.IsNullOrWhiteSpace(ws.Cells[r, c].Text); r++)
+                        //{
+                        //    reealvo.Add((string)ws.Cells[r, c].Text);
+                        //}
+
+                        int c = 2;
+                        for (int r = 4; !string.IsNullOrWhiteSpace(wsPega.Cells[r, c].Text); r++)
+                        {
+                            reealvo.Add((string)wsPega.Cells[r, c].Text);
+                        }
+                        var relatotxt = File.ReadAllText(relato);
+                        var relatoPartes = relatotxt.Split(new string[] { "Relatorio das Restricoes Eletricas no  Patamar" }, StringSplitOptions.None).Skip(1).Take(3).ToList();
+                        List<Tuple<int, double[]>> dados = new List<Tuple<int, double[]>>();
+                        foreach (var ra in reealvo)
+                        {
+                            int patamar = 1;
+                            int ree = Convert.ToInt32(ra);
+                            double[] limites = new double[6];
+                            foreach (var rp in relatoPartes)
+                            {
+                                int indice = 0;
+                                //var lines = File.ReadAllLines(rp).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();//new string[] { "\r\n", "\n" },
+                                var lines = rp.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
+                                foreach (var l in lines)
+                                {
+                                    var partes = l.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                    if (partes[0] == ra)
+                                    {
+                                        double v;
+                                        limites[patamar + 2] = double.TryParse(partes.Last().Replace('.', ','), out v) ? v : 0;
+                                        indice = lines.IndexOf(l);
+                                        bool ftotal = false;
+                                        while(ftotal == false)
+                                        {
+                                            var npartes = lines[indice +1].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                            if (npartes[0] == "Total")
+                                            {
+                                                double x;
+                                                limites[patamar - 1] = double.TryParse(npartes[1].Replace('.', ','), out x) ? x : 0;
+                                                ftotal = true;
+                                            }
+                                            else
+                                            {
+                                                indice++;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                patamar++;
+                            }
+                            dados.Add(new Tuple<int, double[]>(ree, limites));
+                           
+                        }
+
+                        int row = 4;
+                        foreach (var dad in dados)
+                        {
+                            ws.Cells[row, 2] = dad.Item1;
+                            ws.Cells[row, 3] = dad.Item2[0];
+                            ws.Cells[row, 4] = dad.Item2[1];
+                            ws.Cells[row, 5] = dad.Item2[2];
+                            ws.Cells[row, 6] = dad.Item2[3];
+                            ws.Cells[row, 7] = dad.Item2[4];
+                            ws.Cells[row, 8] = dad.Item2[5];
+                            row++;
+                        }
+                        ws.Name = "lim_" + Mes + ano;//lim_DEZ21
+
+                    }
+                }
+
+                wbxls.Save();
+                wbxls.Close(SaveChanges: false);
+                xlApp.Quit();
+
+                string message = "Coleta concluída com sucesso!";
+                System.Windows.Forms.MessageBox.Show(message);
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+               
             }
         }
         static void uhDessem(string path)

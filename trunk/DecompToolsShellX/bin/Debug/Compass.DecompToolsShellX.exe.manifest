@@ -54,26 +54,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.DecompToolsShellX.exe" size="278528">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.DecompToolsShellX.exe" size="283648">
       <assemblyIdentity name="Compass.DecompToolsShellX" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>pj6hjHWmPtfARLS8l9HOMaueTYg=</dsig:DigestValue>
+        <dsig:DigestValue>6w1xUoj9pBYXAyQrYBprd36o30E=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.ExcelTools.dll" size="198656">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.ExcelTools.dll" size="199168">
       <assemblyIdentity name="Compass.ExcelTools" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>kjNfCEcaClVb7XTyvdKpNk5HVrk=</dsig:DigestValue>
+        <dsig:DigestValue>Et/8zaI8RmOrayIWNzoqdY8IbF0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -85,7 +85,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>5oRI0U8KwO6LULPswO2K/3bOE4Q=</dsig:DigestValue>
+        <dsig:DigestValue>LnGOLRS0j8jZBuH7wf+9Q1x9WYE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

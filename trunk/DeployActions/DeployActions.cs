@@ -162,6 +162,7 @@ namespace Compass.DeployActions
                 {"Dessem Tools", exe + " dessemtools " + "\"%V\""},
                 {"Previvaz Local", exe + " previvazlocal " + "\"%V\""},
                 {"Resultados DataBase", exe + " resdatabase " + "\"%V\""},
+                {"Coletar Limites", exe + " coletalimites " + "\"%V\""},
 
 
             };
