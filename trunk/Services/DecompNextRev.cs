@@ -229,38 +229,39 @@ namespace Compass.Services
             #endregion
 
             #region VR
+            //horario de verão
 
             ((DummyBlock)dadger.Blocos["VR"]).Clear();
-            if (mesOperativo.EstagioInicioHorarioVerao.HasValue)
-            {
-                var vrl = new DummyLine();
-                if (mesOperativo.EstagioInicioHorarioVerao.Value > mesOperativo.Estagios)
-                {
-                    vrl[0] = "VR";
-                    vrl[1] = "  " + mesOperativo.SemanasOperativas.Last().Fim.Month.ToString("00") + "        INI";
-                }
-                else
-                {
-                    vrl[0] = "VR";
-                    vrl[1] = "  " + mesOperativo.Mes.ToString("00") + "   " + (isMensal ? " " : mesOperativo.EstagioInicioHorarioVerao.Value.ToString("0")) + "    INI";
-                }
-                dadger.Blocos["VR"].Add(vrl);
-            }
-            else if (mesOperativo.EstagioFimHorarioVerao.HasValue)
-            {
-                var vrl = new DummyLine();
-                if (mesOperativo.EstagioFimHorarioVerao.Value > mesOperativo.Estagios)
-                {
-                    vrl[0] = "VR";
-                    vrl[1] = "  " + mesOperativo.SemanasOperativas.Last().Fim.Month.ToString("00") + "        FIM";
-                }
-                else
-                {
-                    vrl[0] = "VR";
-                    vrl[1] = "  " + mesOperativo.Mes.ToString("00") + "   " + (isMensal ? " " : mesOperativo.EstagioFimHorarioVerao.Value.ToString("0")) + "    FIM";
-                }
-                dadger.Blocos["VR"].Add(vrl);
-            }
+            //if (mesOperativo.EstagioInicioHorarioVerao.HasValue)
+            //{
+            //    var vrl = new DummyLine();
+            //    if (mesOperativo.EstagioInicioHorarioVerao.Value > mesOperativo.Estagios)
+            //    {
+            //        vrl[0] = "VR";
+            //        vrl[1] = "  " + mesOperativo.SemanasOperativas.Last().Fim.Month.ToString("00") + "        INI";
+            //    }
+            //    else
+            //    {
+            //        vrl[0] = "VR";
+            //        vrl[1] = "  " + mesOperativo.Mes.ToString("00") + "   " + (isMensal ? " " : mesOperativo.EstagioInicioHorarioVerao.Value.ToString("0")) + "    INI";
+            //    }
+            //    dadger.Blocos["VR"].Add(vrl);
+            //}
+            //else if (mesOperativo.EstagioFimHorarioVerao.HasValue)
+            //{
+            //    var vrl = new DummyLine();
+            //    if (mesOperativo.EstagioFimHorarioVerao.Value > mesOperativo.Estagios)
+            //    {
+            //        vrl[0] = "VR";
+            //        vrl[1] = "  " + mesOperativo.SemanasOperativas.Last().Fim.Month.ToString("00") + "        FIM";
+            //    }
+            //    else
+            //    {
+            //        vrl[0] = "VR";
+            //        vrl[1] = "  " + mesOperativo.Mes.ToString("00") + "   " + (isMensal ? " " : mesOperativo.EstagioFimHorarioVerao.Value.ToString("0")) + "    FIM";
+            //    }
+            //    dadger.Blocos["VR"].Add(vrl);
+            //}
 
             #endregion
 

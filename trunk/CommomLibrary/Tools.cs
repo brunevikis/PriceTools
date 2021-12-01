@@ -355,9 +355,9 @@ new DateTime(2033,12,25),
             //                new Tuple<int,int,int>(0,5,19),
             if (patamares2019)
                 horasPatamares = new Tuple<int, int, int>[,] {
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) },
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
                 { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
                 { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
                 { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
@@ -365,13 +365,28 @@ new DateTime(2033,12,25),
                 { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
                 { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
                 { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) }
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) }
             };
             else
                 horasPatamares = new Tuple<int, int, int>[,] {
                            { new Tuple<int,int,int>(3,14,7), new Tuple<int,int,int>(0,5,19) }
                 };
+            
+            //{ new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) }, patamares2021
+            //{ new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
+            //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
+            //    { new Tuple<int, int, int>(10, 06, 08), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(12, 05, 07), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(12, 05, 07), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(12, 05, 07), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(12, 05, 07), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(10, 06, 08), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(10, 06, 08), new Tuple<int, int, int>(00, 04, 20) },
+            //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
+            //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) }
+            
+
 
 
 
@@ -400,16 +415,16 @@ new DateTime(2033,12,25),
                 p2 += pat.Item2;
                 p3 += pat.Item3;
 
-                if (inicioVR.Contains(dt))
-                {
-                    p3--;
-                }
-                else if (fimVR.Contains(dt))
-                {
-                    if (patamares2019) p3++;
-                    else p2++;
+                //if (inicioVR.Contains(dt))
+                //{
+                //    p3--;
+                //}
+                //else if (fimVR.Contains(dt))
+                //{
+                //    if (patamares2019) p3++;
+                //    else p2++;
 
-                }
+                //}
 
             }
 
@@ -435,8 +450,8 @@ new DateTime(2033,12,25),
             };
 
             List<Tuple<int, int>> NOVaMARfer = new List<Tuple<int, int>> {
-                new Tuple<int, int>(1, 20),
-                new Tuple<int, int>(21, 23),
+                new Tuple<int, int>(1, 19),
+                new Tuple<int, int>(20, 23),
                 new Tuple<int, int>(24, 24)
             };
 
@@ -568,7 +583,7 @@ new DateTime(2033,12,25),
                     {16, "LEVE"},
                     {17, "LEVE"},
                     {18, "LEVE"},
-                    {19, "LEVE"},
+                    {19, "MEDIA"},
                     {20, "MEDIA"},
                     {21, "MEDIA"},
                     {22, "MEDIA"},
@@ -941,8 +956,8 @@ new DateTime(2033,12,25),
 
             for (int i = 0; i < mOper.SemanasOperativas.Count; i++)
             {
-                if (Tools.inicioVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioInicioHorarioVerao = i + 1;
-                if (Tools.fimVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioFimHorarioVerao = i + 1;
+                //if (Tools.inicioVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioInicioHorarioVerao = i + 1;
+                //if (Tools.fimVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioFimHorarioVerao = i + 1;
             }
 
 
@@ -999,8 +1014,8 @@ new DateTime(2033,12,25),
 
             for (int i = 0; i < mOper.SemanasOperativas.Count; i++)
             {
-                if (Tools.inicioVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioInicioHorarioVerao = i + 1;
-                if (Tools.fimVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioFimHorarioVerao = i + 1;
+                //if (Tools.inicioVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioInicioHorarioVerao = i + 1;
+                //if (Tools.fimVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioFimHorarioVerao = i + 1;
             }
 
 
@@ -1035,8 +1050,8 @@ new DateTime(2033,12,25),
 
             for (int i = 0; i < mOper.SemanasOperativas.Count; i++)
             {
-                if (Tools.inicioVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioInicioHorarioVerao = i + 1;
-                if (Tools.fimVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioFimHorarioVerao = i + 1;
+                //if (Tools.inicioVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioInicioHorarioVerao = i + 1;
+                //if (Tools.fimVR.Any(x => mOper.SemanasOperativas[i].Inicio <= x && mOper.SemanasOperativas[i].Fim >= x)) mOper.EstagioFimHorarioVerao = i + 1;
             }
 
             return mOper;

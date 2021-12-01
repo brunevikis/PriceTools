@@ -14,6 +14,6 @@
     </vstav3:postActions>  
 
 
-mage -sign DecompTools.dll.manifest -certfile ../../DecompTools_4_TemporaryKey.pfx -pub Compass -Password compass
-mage -update ../../DecompTools.vsto -appmanifest DecompTools.dll.manifest -certfile ../../DecompTools_4_TemporaryKey.pfx -pub Compass -Password compass
+mage -sign DecompTools.dll.manifest -certfile ../../DecompTools_8_TemporaryKey.pfx -pub Compass -Password enercore
+mage -update ../../DecompTools.vsto -appmanifest DecompTools.dll.manifest -certfile ../../DecompTools_8_TemporaryKey.pfx -pub Compass -Password enercore
 copy /Y ..\..\DecompTools.vsto .\
