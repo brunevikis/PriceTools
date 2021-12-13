@@ -24,7 +24,7 @@ namespace Compass.ExcelTools {
 
         public static Microsoft.Office.Interop.Excel.Application StartExcelInvisible()
         {
-            Microsoft.Office.Interop.Excel.Application instance = null;
+            Microsoft.Office.Interop.Excel.Application instance = new Microsoft.Office.Interop.Excel.Application();
             try
             {
                 instance = (Microsoft.Office.Interop.Excel.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Excel.Application");
@@ -33,7 +33,7 @@ namespace Compass.ExcelTools {
             {
                 instance = new Microsoft.Office.Interop.Excel.Application();
             }
-            instance.Visible = false;
+            //instance.Visible = false;
             // foreach (Microsoft.Office.Core.COMAddIn CurrAddin in instance.COMAddIns)
             //    if (CurrAddin.Description == "DecompTools ExcelAddin") {
             //         CurrAddin.Connect = false;

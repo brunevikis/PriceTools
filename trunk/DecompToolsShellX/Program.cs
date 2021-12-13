@@ -1601,12 +1601,15 @@ namespace Compass.DecompToolsShellX
                     return;
 
                 var excelname = Path.Combine(dir, "Acompanhamento_Limites_Elétricos.xlsm");//
-               // var template = @"C:\Development\Implementacoes\TESTES_PEGALIMITES\Acompanhamento_Limites_Elétricos.xlsm";
+                //var template = @"C:\Development\Implementacoes\TESTES_PEGALIMITES\Acompanhamento_Limites_Elétricos.xlsm";
                 var template = @"Z:\cpas_ctl_common\Coleta\Acompanhamento_Limites_Elétricos.xlsm";
                 File.Copy(template, excelname,true);
-                Microsoft.Office.Interop.Excel.Application xlApp = null;
-                xlApp = ExcelTools.Helper.StartExcelInvisible();
+                //Microsoft.Office.Interop.Excel.Application xlApp = null;
+                Microsoft.Office.Interop.Excel.Application xlApp = ExcelTools.Helper.StartExcelInvisible();
+                //xlApp = ExcelTools.Helper.StartExcelInvisible();
                 //xlApp = ExcelTools.Helper.StartExcel();
+                xlApp.AskToUpdateLinks = false;
+
                 xlApp.DisplayAlerts = false;
 
                 var wbxls = xlApp.Workbooks.Open(excelname);
@@ -1759,7 +1762,7 @@ namespace Compass.DecompToolsShellX
 
                 wbxls.Save();
                 wbxls.Close(SaveChanges: false);
-                xlApp.Quit();
+                //xlApp.Quit();
 
                 string message = "Coleta concluída com sucesso!";
                 System.Windows.Forms.MessageBox.Show(message);
