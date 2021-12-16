@@ -315,6 +315,107 @@ namespace ConsoleApp1
 
             List<Tuple<string, int?, int, string>> restAlterada = new List<Tuple<string, int?, int, string>>();//lista usada para verificar as rest rhq e rhe que ja foram alteradas
                                                                                                                //tipo,cod,est,limite
+            #region Duplicar estagios 
+
+                var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
+                var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
+                var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
+            foreach (var hqnum in hqDupList)
+            {
+                IEnumerable<BaseLine> rs;
+                rs = dadger.BlocoRhq.Where(x => x.Restricao == hqnum);
+                if (rs.Count() > 0)
+                {
+                    
+                    var ls = rs.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                    var lhq = rs.Where(x => x is Dadger.HqLine).Select(x => (Dadger.HqLine)x).First();
+                   // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
+                    var lineTarget = lhq.Fim;
+                    for (int i = 1; i <= lineTarget; i++)
+                    {
+                        dynamic les;
+                        dynamic leseguinte;
+                        int estagioSeg = i + 1;
+                        IEnumerable<BaseLine> rse = dadger.BlocoRhq.Where(x => x.Restricao == hqnum);
+                        var lse = rse.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                        les = lse.Where(x => x.Estagio == i).FirstOrDefault();
+                        leseguinte = lse.Where(x => x.Estagio == estagioSeg).FirstOrDefault();
+
+                        if (les != null && leseguinte == null && estagioSeg <= lineTarget)
+                        {
+                            var nles = les.Clone();
+                            nles.Estagio = estagioSeg;
+                            dadger.BlocoRhq.Add(nles);
+                           // les = nles;
+                        }
+                    }
+                }
+            }
+
+            foreach (var renum in reDupList)
+            {
+                IEnumerable<BaseLine> rs;
+                rs = dadger.BlocoRhe.Where(x => x.Restricao == renum);
+                if (rs.Count() > 0)
+                {
+
+                    var ls = rs.Where(x => x is Dadger.LuLine).Select(x => (Dadger.LuLine)x);
+                    var lre = rs.Where(x => x is Dadger.ReLine).Select(x => (Dadger.ReLine)x).First();
+                    //var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
+                    var lineTarget = lre.Fim;
+                    for (int i = 1; i <= lineTarget; i++)
+                    {
+                        dynamic les;
+                        dynamic leseguinte;
+                        int estagioSeg = i + 1;
+                        IEnumerable<BaseLine> rse = dadger.BlocoRhe.Where(x => x.Restricao == renum);
+                        var lse = rse.Where(x => x is Dadger.LuLine).Select(x => (Dadger.LuLine)x);
+                        les = lse.Where(x => x.Estagio == i).FirstOrDefault();
+                        leseguinte = lse.Where(x => x.Estagio == estagioSeg).FirstOrDefault();
+
+                        if (les != null && leseguinte == null && estagioSeg <= lineTarget)
+                        {
+                            var nles = les.Clone();
+                            nles.Estagio = estagioSeg;
+                            dadger.BlocoRhe.Add(nles);
+                            // les = nles;
+                        }
+                    }
+                }
+            }
+
+            foreach (var hvnum in hvDupList)
+            {
+                IEnumerable<BaseLine> rs;
+                rs = dadger.BlocoRhv.Where(x => x.Restricao == hvnum);
+                if (rs.Count() > 0)
+                {
+
+                    var ls = rs.Where(x => x is Dadger.LvLine).Select(x => (Dadger.LvLine)x);
+                    var lhv = rs.Where(x => x is Dadger.HvLine).Select(x => (Dadger.HvLine)x).First();
+                    //var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
+                    var lineTarget = lhv.Fim;
+                    for (int i = 1; i <= lineTarget; i++)
+                    {
+                        dynamic les;
+                        dynamic leseguinte;
+                        int estagioSeg = i + 1;
+                        IEnumerable<BaseLine> rse = dadger.BlocoRhv.Where(x => x.Restricao == hvnum);
+                        var lse = rse.Where(x => x is Dadger.LvLine).Select(x => (Dadger.LvLine)x);
+                        les = lse.Where(x => x.Estagio == i).FirstOrDefault();
+                        leseguinte = lse.Where(x => x.Estagio == estagioSeg).FirstOrDefault();
+
+                        if (les != null && leseguinte == null && estagioSeg <= lineTarget)
+                        {
+                            var nles = les.Clone();
+                            nles.Estagio = estagioSeg;
+                            dadger.BlocoRhv.Add(nles);
+                            // les = nles;
+                        }
+                    }
+                }
+            }
+            #endregion
             foreach (var inviab in s.OrderByDescending(x => x.Estagio))
             {
                 var restHqInviavies = s.Where(x => x.TipoRestricao == "RHQ" && x.Estagio == inviab.Estagio).Select(x => x.CodRestricao).Distinct().ToList();

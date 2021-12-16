@@ -2,8 +2,8 @@
   "profiles": {
     "ConsoleApp1": {
       "commandName": "Project",
-      "commandLineArgs": "\"metaencad\" \"202201\" \"202202\"",
-      "workingDirectory": "C:\\Development\\Implementacoes\\testesAtingirencad\\TesteFixaUHEncad"
+      "commandLineArgs": "1",
+      "workingDirectory": "C:\\Development\\Implementacoes\\202201TESTEinviabEstseguinte"
     }
   }
 }
