@@ -441,6 +441,10 @@ namespace ConsoleApp1
                         dynamic le256;
                         if (inviab.TipoRestricao == "RHE")
                         {
+                            if (nivel < 3)//excecoes pula essas restricoes caso nivel < 2
+                            {
+                               continue;
+                            }
                             var ls = rs.Where(x => x is Dadger.LuLine).Select(x => (Dadger.LuLine)x);
                             le = ls.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                         }
