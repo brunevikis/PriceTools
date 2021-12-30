@@ -701,26 +701,26 @@ namespace Compass.Services
                 inp.SemanaPrevisao = Convert.ToInt32(wb.SemanasPrevs[1, 1]);
                 inp.AnoPrevisao = anoPrev;
 
-
+                var numerosSem = wb.GetSemanaPrevsStr(inp.NumSemanasHist);
                 for (int s = 1; s < 12; s++)
                 {
 
                     if (postosIncrementais.ContainsKey(posto) && (prevsCen1[postosIncrementais[posto].Item2, s + 2] is double && (double)prevsCen1[postosIncrementais[posto].Item2, s + 2] != 0))
                     {
-                        str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])] = (double)prevsCen1[postosIncrementais[posto].Item2, s + 2];//se o posto incremental desse posto conter dados da semana, ele atribui esse dado para o posto(esses processo só acontece da semana rv0 até a atual)
-                        var dd = str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])];
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = (double)prevsCen1[postosIncrementais[posto].Item2, s + 2];//se o posto incremental desse posto conter dados da semana, ele atribui esse dado para o posto(esses processo só acontece da semana rv0 até a atual)
+                        var dd = str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])];
                     }
                     else if (postosIncrementais.ContainsKey(posto) && (prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0))  //só entra nesse if para as semanas previstas,para esse posto que contem posto incremental,a sua vazão da semana prevista sera
                     {                                                                                                                               //igual à sua vazão menos a vazão de seus postos montantes ex: vazão do posto 34 = v34 - (v33-v18-v99-v241-v261)  //OBS: o valor minimo será sempre 12
                         if (posto == 253 || posto == 273 || posto == 271 || posto == 275)//postos tocantins que rodam com a incremental alocada nos postos auxiliares 308~311
                         {
-                            str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])] = (double)prevsCen1[posto, s + 2];
+                            str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = (double)prevsCen1[posto, s + 2];
                         }
                         else
                         {
                             var v = (double)prevsCen1[posto, s + 2]
                             - postosIncrementais[posto].Item1.Sum(pm => (double)prevsCen1[pm, s + 2]);
-                            str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])] = Math.Max(v, 12);
+                            str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = Math.Max(v, 12);
                         }
 
 
@@ -729,24 +729,24 @@ namespace Compass.Services
                     {
                         var v = (double)prevsCen1[239, s + 2] - (double)prevsCen1[237, s + 2];// para o posto 239(ibitinga) sera usado a vazão de ibitinga menoa a vazão de barra bonita(237)
                         if (v < 1) v = 5;                                                     //OBS: o valor minimo sempre sera 5
-                        str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])] = v;
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = v;
                     }
                     else if (posto == 242 && prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0)
                     {
                         var v = (double)prevsCen1[242, s + 2] - (double)prevsCen1[239, s + 2];// para o posto 242(N.Avanhadava) sera usado a vazão de N.Avanhadava menoa a vazão de ibitinga(239)
                         if (v < 1) v = 5;                                                     //OBS: o valor minimo sempre sera 5
-                        str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])] = v;
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = v;
                     }
                     else if (prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0)
                     {
-                        str[inp.AnoPrevisao, Convert.ToInt32(wb.SemanasPrevs[1, s])] = (double)prevsCen1[posto, s + 2];
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = (double)prevsCen1[posto, s + 2];
                     }
                     else
                     {
                         break;
                     }
 
-                    var proxSem = Convert.ToInt32(wb.SemanasPrevs[1, s + 1]);
+                    var proxSem = Convert.ToInt32(numerosSem[1, s + 1]);
 
                     if (proxSem < inp.SemanaPrevisao)    //confere se a proxima semana ainda faz parte do mesmo ano se nao incrementa o ano
                     {
@@ -878,10 +878,15 @@ namespace Compass.Services
             // coloca resultado do previvaz na entrada para calcular postos artificias;
             foreach (var r in results)
             {
+                var numposto = r.Key;
+                var deck = prevDecks.Where(x => x.Posto == numposto.ToString()).First();
+                var inp = deck[CommomLibrary.Previvaz.DeckDocument.inp].Document as CommomLibrary.Previvaz.Inp;
+                var numerosSem = wb.GetSemanaPrevsStr(inp.NumSemanasHist);
+
                 var c = 1;
                 for (; c <= 12; c++)
                 {
-                    if ((int)(double)wb.SemanasPrevs[1, c] == (int)r.Value[3])
+                    if ((int)(double)numerosSem[1, c] == (int)r.Value[3])
                     {
                         c += 2;
                         break;

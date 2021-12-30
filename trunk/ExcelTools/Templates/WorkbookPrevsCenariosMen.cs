@@ -64,6 +64,64 @@ namespace Compass.ExcelTools.Templates
         public object[,] Saida4 { get { return Names["_saida4"].Value; } set { Names["_saida4"].Value = value; } }
         public object[,] Saida5 { get { return Names["_saida5"].Value; } set { Names["_saida5"].Value = value; } }
 
+        public object[,] GetSemanaPrevsStr(int numSemHisto = 52)
+        {
+            var semPlan = Names["_semanasPrevs"].Value;
+            var semPlanAlt = Names["_semanasPrevs"].Value;
+
+            if (numSemHisto == 52)
+            {
+                bool tem53 = false;
+                for (int i = 1; i <= 12; i++)
+                {
+                    if (semPlanAlt[1, i] == 53)
+                    {
+                        tem53 = true;
+                    }
+                }
+                if (tem53 == true)
+                {
+                    for (int i = 1; i <= 12; i++)
+                    {
+                        //double sem = 1;
+                        if (semPlanAlt[1, i] >= 30)
+                        {
+                            semPlanAlt[1, i] = semPlanAlt[1, i] - 1;
+                        }
+                        //else
+                        //{
+                        //    if (semPlanAlt[1,i] <= 1)
+                        //    {
+                        //        semPlanAlt[1, i] = sem;
+                        //    }
+                        //    else
+                        //    {
+                        //        semPlanAlt[1, i] = semPlanAlt[1, i] - 1;
+                        //    }
+                        //}
+                    }
+                }
+                return semPlanAlt;
+            }
+
+            //for (int i = 1; i <= 12; i++)
+            //{
+            //    if (semPlanAlt[1, i] == numSemHisto)
+            //    {
+            //        double sem = 1;
+            //        for (int j = i; j <= 12; j++)
+            //        {
+            //            if (j + 1 <= 12)
+            //            {
+            //                semPlanAlt[1, j + 1] = sem;
+            //                sem++;
+            //            }
+            //        }
+            //    }
+            //}
+            return semPlan;
+        }
+
         public object[,] SemanasPrevs
         {
             get
