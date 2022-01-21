@@ -2,7 +2,7 @@
   "profiles": {
     "ConsoleApp1": {
       "commandName": "Project",
-      "commandLineArgs": "3",
+      "commandLineArgs": "1",
       "workingDirectory": "C:\\Development\\Implementacoes\\202201TESTEinviabEstseguinte"
     }
   }

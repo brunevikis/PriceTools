@@ -317,19 +317,19 @@ namespace ConsoleApp1
                                                                                                                //tipo,cod,est,limite
             #region Duplicar estagios 
 
-                var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
-                var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
-                var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
+            var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
+            var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
+            var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
             foreach (var hqnum in hqDupList)
             {
                 IEnumerable<BaseLine> rs;
                 rs = dadger.BlocoRhq.Where(x => x.Restricao == hqnum);
                 if (rs.Count() > 0)
                 {
-                    
+
                     var ls = rs.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
                     var lhq = rs.Where(x => x is Dadger.HqLine).Select(x => (Dadger.HqLine)x).First();
-                   // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
+                    // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
                     var lineTarget = lhq.Fim;
                     for (int i = 1; i <= lineTarget; i++)
                     {
@@ -346,7 +346,7 @@ namespace ConsoleApp1
                             var nles = les.Clone();
                             nles.Estagio = estagioSeg;
                             dadger.BlocoRhq.Add(nles);
-                           // les = nles;
+                            // les = nles;
                         }
                     }
                 }
@@ -441,7 +441,7 @@ namespace ConsoleApp1
                         dynamic le256;
                         if (inviab.TipoRestricao == "RHE")
                         {
-                           
+
                             var ls = rs.Where(x => x is Dadger.LuLine).Select(x => (Dadger.LuLine)x);
                             le = ls.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                         }
@@ -488,6 +488,67 @@ namespace ConsoleApp1
                             le = ls.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                         }
                         else continue;
+
+                        if (inviab.TipoRestricao == "RHQ" && inviab.CodRestricao == 87 && inviab.SupInf == "SUP")
+                        {
+                            dynamic le125;
+                            dynamic le87;
+                            IEnumerable<BaseLine> rs125;
+                            IEnumerable<BaseLine> rs87;
+                            rs125 = dadger.BlocoRhq.Where(x => x.Restricao == 125);
+                            rs87 = dadger.BlocoRhq.Where(x => x.Restricao == 87);
+
+                            if (rs87.Count() > 0)
+                            {
+                                var ls87 = rs87.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                                le87 = ls87.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                                double valor = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
+
+                                if (le87.Estagio < inviab.Estagio)
+                                {
+
+                                    var nle87 = le87.Clone();
+                                    nle87.Estagio = inviab.Estagio;
+                                    dadger.BlocoRhq.Add(nle87);
+                                    le87 = nle87;
+                                }
+
+                                if (restAlterada.Count() > 0)
+                                {
+                                    var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                                    if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                le87[4] = le87[4] + valor;
+                                le87[6] = le87[6] + valor;
+                                le87[8] = le87[8] + valor;
+
+
+                                restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+
+                            }
+                            if (rs125.Count() > 0)
+                            {
+                                var ls125 = rs125.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                                le125 = ls125.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                if (le125.Estagio < inviab.Estagio)
+                                {
+
+                                    var nle125 = le125.Clone();
+                                    nle125.Estagio = inviab.Estagio;
+                                    dadger.BlocoRhq.Add(nle125);
+                                    le125 = nle125;
+                                }
+                                le125[4] = 99999;
+                                le125[6] = 99999;
+                                le125[8] = 99999;
+                            }
+                            continue;
+                        }
 
                         if (inviab.TipoRestricao == "RHQ" && (inviab.CodRestricao == 116 || inviab.CodRestricao == 149 || inviab.CodRestricao == 159 || inviab.CodRestricao == 102 || inviab.CodRestricao == 125))
                         {
