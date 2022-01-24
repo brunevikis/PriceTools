@@ -46,7 +46,11 @@ namespace ConsoleApp1
 
                 CalcJirauStoAnto(dir);
             }
+            else if (args[0] == "teste")
+            {
 
+                testandoDll(dir);
+            }
             else if (args[0] == "dadgnl")
             {
                 Altera_Dadgnl_Men(dir);
@@ -489,28 +493,31 @@ namespace ConsoleApp1
                         }
                         else continue;
 
-                        if (inviab.TipoRestricao == "RHQ" && inviab.CodRestricao == 87 && inviab.SupInf == "SUP")
+                        if (inviab.TipoRestricao == "RHQ" && inviab.SupInf == "SUP" && (inviab.CodRestricao == 87 || inviab.CodRestricao == 102 || inviab.CodRestricao == 149))//a 116 é só de minimo
                         {
                             dynamic le125;
-                            dynamic le87;
+                           // dynamic le87;
+                            dynamic ledummy;
+                            IEnumerable<BaseLine> rsdummy;
                             IEnumerable<BaseLine> rs125;
-                            IEnumerable<BaseLine> rs87;
+                            //IEnumerable<BaseLine> rs87;
                             rs125 = dadger.BlocoRhq.Where(x => x.Restricao == 125);
-                            rs87 = dadger.BlocoRhq.Where(x => x.Restricao == 87);
+                           // rs87 = dadger.BlocoRhq.Where(x => x.Restricao == 87);
+                            rsdummy = dadger.BlocoRhq.Where(x => x.Restricao == inviab.CodRestricao);
 
-                            if (rs87.Count() > 0)
+                            if (rsdummy.Count() > 0)
                             {
-                                var ls87 = rs87.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
-                                le87 = ls87.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                                var lsdummy = rsdummy.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                                ledummy = lsdummy.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                                 double valor = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
 
-                                if (le87.Estagio < inviab.Estagio)
+                                if (ledummy.Estagio < inviab.Estagio)
                                 {
 
-                                    var nle87 = le87.Clone();
-                                    nle87.Estagio = inviab.Estagio;
-                                    dadger.BlocoRhq.Add(nle87);
-                                    le87 = nle87;
+                                    var nledummy = ledummy.Clone();
+                                    nledummy.Estagio = inviab.Estagio;
+                                    dadger.BlocoRhq.Add(nledummy);
+                                    ledummy = nledummy;
                                 }
 
                                 if (restAlterada.Count() > 0)
@@ -522,14 +529,47 @@ namespace ConsoleApp1
                                     }
                                 }
 
-                                le87[4] = le87[4] + valor;
-                                le87[6] = le87[6] + valor;
-                                le87[8] = le87[8] + valor;
+                                ledummy[4] = ledummy[4] + valor;
+                                ledummy[6] = ledummy[6] + valor;
+                                ledummy[8] = ledummy[8] + valor;
 
 
                                 restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
 
+
                             }
+                            //if (rs87.Count() > 0)
+                            //{
+                            //    var ls87 = rs87.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
+                            //    le87 = ls87.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                            //    double valor = inviabPons.Where(x => x.tipoRestricao == inviab.TipoRestricao && x.estagio == inviab.Estagio && x.limite == inviab.SupInf && x.codRest == inviab.CodRestricao).Select(x => x.valorPon).First();
+
+                            //    if (le87.Estagio < inviab.Estagio)
+                            //    {
+
+                            //        var nle87 = le87.Clone();
+                            //        nle87.Estagio = inviab.Estagio;
+                            //        dadger.BlocoRhq.Add(nle87);
+                            //        le87 = nle87;
+                            //    }
+
+                            //    if (restAlterada.Count() > 0)
+                            //    {
+                            //        var restAlt = restAlterada.Where(x => x.Item1 == inviab.TipoRestricao && x.Item2 == inviab.CodRestricao && x.Item3 == inviab.Estagio && x.Item4 == inviab.SupInf).FirstOrDefault();
+                            //        if (restAlt != null)//ja foi alterda pra este estagio então deve pular
+                            //        {
+                            //            continue;
+                            //        }
+                            //    }
+
+                            //    le87[4] = le87[4] + valor;
+                            //    le87[6] = le87[6] + valor;
+                            //    le87[8] = le87[8] + valor;
+
+
+                            //    restAlterada.Add(new Tuple<string, int?, int, string>(inviab.TipoRestricao, inviab.CodRestricao, inviab.Estagio, inviab.SupInf));
+
+                            //}
                             if (rs125.Count() > 0)
                             {
                                 var ls125 = rs125.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
@@ -1532,6 +1572,13 @@ namespace ConsoleApp1
             deckDecomp[ConsoleApp1.Decomp.DeckDocument.dadger].Document.SaveToFile();
 
         }
+        public static void testandoDll(string dir)
+        {
+            Console.WriteLine("Diretorio: " + dir);
+            Console.WriteLine("Respondendo...");
+            Console.WriteLine("alteracao 87 102 149");
+        }
+
         public static void CalcJirauStoAnto(string dir)
         {
             Console.WriteLine("Curvas cmont x cfuga atualizadas em 11-09-2020");
