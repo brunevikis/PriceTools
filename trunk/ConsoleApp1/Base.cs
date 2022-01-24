@@ -26,6 +26,10 @@ namespace ConsoleApp1
             {
                 doc = BaseDocument.Create<Deflant.Deflant>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
+            else if (fileName.StartsWith("pmo.dat"))
+            {
+                doc = new Pmo.Pmo(filePath);
+            }
             //else if (fileName.Equals("dger.nwd"))
             //{
             //    doc = BaseDocument.Create<DgerNwd.DgerNwd>(System.IO.File.ReadAllText(filePath));

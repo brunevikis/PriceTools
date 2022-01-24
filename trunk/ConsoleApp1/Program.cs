@@ -2501,6 +2501,11 @@ namespace ConsoleApp1
 
             ConsoleApp1.AdtermDat.AdtermDat adterm;
 
+            //var files = Directory.GetFiles(dir).ToList();
+
+            //var pmoFile = files.FirstOrDefault(x => Path.GetFileName(x).Equals("pmo.dat", StringComparison.OrdinalIgnoreCase));
+
+            //var pmo = (ConsoleApp1.Pmo.Pmo)DocumentFactory.Create(pmoFile);
             adterm = deckNWEstudo[ConsoleApp1.Newave.Deck.DeckDocument.adterm].Document as ConsoleApp1.AdtermDat.AdtermDat;
 
             double[] dadosAdt = new double[3];

@@ -30,7 +30,18 @@ namespace ConsoleApp1.Dadger {
             };
 
         public override BaseField[] Campos { get { return UhCampos; } }
-        public double VolIniPerc { get { return this[3] == null ? 0d : (double)this[3]; } set { this[3] = value; } }
+        public double VolIniPerc
+        {
+            get { return this[3] == null ? 0d : (double)this[3]; }
+            set
+            {
+                if (value > 100)
+                {
+                    value = 100.0f;
+                }
+                this[3] = value;
+            }
+        }
         public int Usina { get { return (int)this[1]; } set { this[1] = value; } }
         public int Sistema { get { return (int)this[2]; } set { this[2] = value; } }
 

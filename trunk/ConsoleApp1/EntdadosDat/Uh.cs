@@ -19,7 +19,18 @@ namespace ConsoleApp1.EntdadosDat
         public int Usina { get { return (int)this[1]; } set { this[1] = value; } }
         public string NomeUsina { get { return this[2].ToString(); } set { this[2] = value; } }
         public int NumRee { get { return (int)this[3]; } set { this[3] = value; } }
-        public float VolArm { get { return (float)this[4]; } set { this[4] = value; } }
+        public float VolArm
+        {
+            get { return (float)this[4]; }
+            set
+            {
+                if (value > 100)
+                {
+                    value = 100.0f;
+                }
+                this[4] = value;
+            }
+        }
         public int FlagEvap { get { return (int)this[5]; } set { this[5] = value; } }
         public string DiaInic { get { return this[6].ToString(); } set { this[6] = value; } }
         public int HoraInic { get { return (int)this[7]; } set { this[7] = value; } }
