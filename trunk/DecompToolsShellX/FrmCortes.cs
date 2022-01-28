@@ -76,22 +76,22 @@ namespace Compass.DecompToolsShellX
                 //@"L:\6_decomp\03_Casos\2019_05\deck_newave_2019_05"
                 var path = "";
                 // if (Directory.Exists($@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados"))
-                if (Directory.Exists($@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados"))
+                if (Directory.Exists($@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados"))
                 {
                     //path = $@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados";
-                    path = $@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados";
+                    path = $@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados";
                     //else if (Directory.Exists($@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee"))
                 }
-                else if (Directory.Exists($@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultado"))
+                else if (Directory.Exists($@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultado"))
                 {
                     //path = $@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultados";
-                    path = $@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultado";
+                    path = $@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\NW{datadeck:yyyyMM}-Resultado";
                     //else if (Directory.Exists($@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee"))
                 }
-                else if (Directory.Exists($@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee"))
+                else if (Directory.Exists($@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee"))
                 {
                     //path = $@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee";
-                    path = $@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee";
+                    path = $@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee";
                 }
                 else
                 {
@@ -101,7 +101,7 @@ namespace Compass.DecompToolsShellX
                     {
                         path = nwDir;
                         // nwDir = $@"L:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee ({i++})";
-                        nwDir = $@"Z:\6_decomp\03_Casos\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee ({i++})";
+                        nwDir = $@"X:\AWS\4_curto_prazo\{datadeck:yyyy_MM}\deck_newave_{datadeck:yyyy_MM}_ccee ({i++})";
                     } while (Directory.Exists(nwDir));
                 }
 

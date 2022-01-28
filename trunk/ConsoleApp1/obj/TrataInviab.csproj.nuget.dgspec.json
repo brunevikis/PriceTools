@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj": {}
+    "C:\\Development\\price_toolsVMAlfa\\trunk\\ConsoleApp1\\TrataInviab.csproj": {}
   },
   "projects": {
-    "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj": {
+    "C:\\Development\\price_toolsVMAlfa\\trunk\\ConsoleApp1\\TrataInviab.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj",
+        "projectUniqueName": "C:\\Development\\price_toolsVMAlfa\\trunk\\ConsoleApp1\\TrataInviab.csproj",
         "projectName": "TrataInviab",
-        "projectPath": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj",
+        "projectPath": "C:\\Development\\price_toolsVMAlfa\\trunk\\ConsoleApp1\\TrataInviab.csproj",
         "packagesPath": "C:\\Users\\Bruno.ENERCORENB05\\.nuget\\packages\\",
-        "outputPath": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\obj\\",
+        "outputPath": "C:\\Development\\price_toolsVMAlfa\\trunk\\ConsoleApp1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Bruno.ENERCORENB05\\AppData\\Roaming\\NuGet\\NuGet.Config",

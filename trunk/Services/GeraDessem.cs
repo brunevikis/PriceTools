@@ -1450,7 +1450,7 @@ namespace Compass.Services
             var rev = Tools.GetCurrRev(datVE);
             //Z:\7_dessem\Arquivos_base\2021\02_fev\RV1\20210206
             var mes = Tools.GetMonthNumAbrev(rev.revDate.Month);
-            var dir = $@"Z:\7_dessem\Arquivos_base\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\{dataRef:yyyyMMdd}";
+            var dir = $@"X:\AWS\5_dessem\Arquivos_base\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\{dataRef:yyyyMMdd}";
             if (Directory.Exists(dir))
             {
                 pasta = dir;

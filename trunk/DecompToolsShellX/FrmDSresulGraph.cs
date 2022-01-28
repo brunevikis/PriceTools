@@ -497,7 +497,7 @@ namespace Compass.DecompToolsShellX
         private string GetCommonPath(string[] p)
         {
 
-            if (p.Length < 2) return "Z:\\";
+            if (p.Length < 2) return "X:\\AWS\\";
 
             int idx = -1;
             int mark = 0;

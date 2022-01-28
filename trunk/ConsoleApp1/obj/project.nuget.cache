@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Lm/M0n0Q3ZMSONB1umOn5jvOd4/aFNHHo+B9X3o/APN2mhYvOSUKM1nvHLhWQC6XGUZziHcsrcqN0sFoQ1I6pQ==",
+  "dgSpecHash": "9qfPv8Eh/+B4QomX32YkkXy4XhZ1jrSPjbR3IqVQ7TBnNI3PobUvRQY9sVIT5e49jR52cDiEjcXpZjGjjXZCsw==",
   "success": true,
-  "projectFilePath": "C:\\Development\\price_tools\\trunk\\ConsoleApp1\\TrataInviab.csproj",
+  "projectFilePath": "C:\\Development\\price_toolsVMAlfa\\trunk\\ConsoleApp1\\TrataInviab.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Bruno.ENERCORENB05\\.nuget\\packages\\microsoft.netcore.app\\2.0.0\\microsoft.netcore.app.2.0.0.nupkg.sha512",
     "C:\\Users\\Bruno.ENERCORENB05\\.nuget\\packages\\microsoft.netcore.dotnetapphost\\2.0.0\\microsoft.netcore.dotnetapphost.2.0.0.nupkg.sha512",

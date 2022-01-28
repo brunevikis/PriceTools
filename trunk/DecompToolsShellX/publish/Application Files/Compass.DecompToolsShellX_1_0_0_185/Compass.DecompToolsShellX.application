@@ -7,14 +7,14 @@
     <framework targetVersion="4.0" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Application Files\Compass.DecompToolsShellX_1_0_0_185\Compass.DecompToolsShellX.exe.manifest" size="12027">
+    <dependentAssembly dependencyType="install" codebase="Application Files\Compass.DecompToolsShellX_1_0_0_185\Compass.DecompToolsShellX.exe.manifest" size="12000">
       <assemblyIdentity name="Compass.DecompToolsShellX.exe" version="1.0.0.185" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>G5Pf/jYEqMHCc6MoAmYbJaNCAwg=</dsig:DigestValue>
+        <dsig:DigestValue>EherRjkEF2EgZW5mwyvZXLZhGU0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

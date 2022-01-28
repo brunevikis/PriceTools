@@ -674,7 +674,7 @@ Caso os newaves já tenham sido executados, os cortes existentes serão mantidos
                     == System.Windows.Forms.DialogResult.Yes)
                 {
                     //Services.Linux.Run(w.NewaveBase, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/encad_dc_nw_mensal_3.sh", "EncadeadoMensal-NW+DC", false, false);
-                    Services.Linux.Run(w.NewaveBase, $"/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
+                    Services.Linux.Run(w.NewaveBase, $"/mnt/Fsx/AWS/enercore_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
                     //Services.Linux.Run(w.NewaveBase, $"/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
                 }
 

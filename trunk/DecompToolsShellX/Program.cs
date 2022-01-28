@@ -806,7 +806,7 @@ namespace Compass.DecompToolsShellX
                     var frm = new FrmOnsReCcee(cceeDeck);
                     frm.Salvar();
                     //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/newave25.sh");
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/newave270413.sh");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/mnt/Fsx/AWS/enercore_ctl_common/scripts/newave270416.sh");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Decomp.Deck && (command.Length > 1 && command[1] == "true"))
                 {
@@ -816,7 +816,7 @@ namespace Compass.DecompToolsShellX
                     var frmCortes = new FrmCortes(new string[] { cceeDeck.BaseFolder });
                     frmCortes.OK(true);
 
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/decomp30.16Viab.sh preliminar");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/mnt/Fsx/AWS/enercore_ctl_common/scripts/decomp31Viab.sh preliminar");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Newave.Deck)
                 {
@@ -1602,7 +1602,7 @@ namespace Compass.DecompToolsShellX
 
                 var excelname = Path.Combine(dir, "Acompanhamento_Limites_Elétricos.xlsm");//
                 //var template = @"C:\Development\Implementacoes\TESTES_PEGALIMITES\Acompanhamento_Limites_Elétricos.xlsm";
-                var template = @"Z:\cpas_ctl_common\Coleta\Acompanhamento_Limites_Elétricos.xlsm";
+                var template = @"X:\AWS\enercore_ctl_common\Coleta\Acompanhamento_Limites_Elétricos.xlsm";
                 File.Copy(template, excelname,true);
                 //Microsoft.Office.Interop.Excel.Application xlApp = null;
                 Microsoft.Office.Interop.Excel.Application xlApp = ExcelTools.Helper.StartExcelInvisible();
@@ -3453,7 +3453,8 @@ namespace Compass.DecompToolsShellX
             {
                 var arquivos = Directory.GetFiles(diretorio);
                 var tempFolderCLONE = @"L:\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
-                var tempFolder = @"Z:\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+                //var tempFolder = @"Z:\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+                var tempFolder = @"X:\AWS\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
                 if (Directory.Exists(tempFolder))
                     Directory.Delete(tempFolder, true);
                 Directory.CreateDirectory(tempFolder);
@@ -3464,7 +3465,8 @@ namespace Compass.DecompToolsShellX
                 }
 
                 //if (Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/decodess.sh", "decodess", true, true, "hide"))
-                if (AutorunDecodess(tempFolder, @"/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/decodess.sh"))
+                //if (AutorunDecodess(tempFolder, @"/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/decodess.sh"))
+                if (AutorunDecodess(tempFolder, @"/mnt/Fsx/AWS/enercore_ctl_common/scripts/scripts/decodess.sh"))
                 {
                     int timeout = 0;
                     var tempArqs = Directory.GetFiles(tempFolder);
@@ -3716,7 +3718,7 @@ namespace Compass.DecompToolsShellX
                 }
 
                 //string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem191412.sh";
-                string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem19024.sh";
+                string comandoDS = "/mnt/Fsx/AWS/enercore_ctl_common/scripts/dessem19024.sh";
 
                 bool status = DessemAutorun(cloneDir, comandoDS);
                 if (status)
@@ -4044,7 +4046,7 @@ namespace Compass.DecompToolsShellX
             {
                 for (int i = 1; i <= 10; i++)
                 {
-                    string camDecomp = @"Z:\6_decomp\03_Casos\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                    string camDecomp = @"X:\AWS\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
                     //string camDecomp = @"L:\6_decomp\03_Casos\" + rev.revDate.ToString("yyyy_MM") + "\\teste_bruno\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
 
                     if (Directory.Exists(camDecomp))
@@ -4838,7 +4840,8 @@ namespace Compass.DecompToolsShellX
 
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
-                var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
+                //var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
@@ -4868,7 +4871,8 @@ namespace Compass.DecompToolsShellX
 
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
-                var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
+                //var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
@@ -4902,7 +4906,8 @@ namespace Compass.DecompToolsShellX
 
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
-                var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
+               // var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
@@ -5240,9 +5245,9 @@ namespace Compass.DecompToolsShellX
         }
 
 #if DEBUG
-        public string apiUrl = @"http://azcpspldv02.eastus.cloudapp.azure.com:5014/api/";
+        public string apiUrl = @"http://ec2-44-201-188-49.compute-1.amazonaws.com:5014/api/";
 #else
-        public string apiUrl = @"http://azcpspldv02.eastus.cloudapp.azure.com:5014/api/";
+        public string apiUrl = @"http://ec2-44-201-188-49.compute-1.amazonaws.com:5014/api/";
 #endif
 
         static void setConfigFile()

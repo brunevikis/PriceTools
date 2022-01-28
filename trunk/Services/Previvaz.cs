@@ -613,7 +613,8 @@ namespace Compass.Services
             var anoPrev = wb.AnoAtual;
             var usr = System.Environment.UserName.Replace('.', '_');
             // var tempFolder = @"Z:\previsaopld\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
-            var tempFolder = @"L:\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
+            //var tempFolder = @"L:\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
+            var tempFolder = Path.Combine(wb.Path, "arq_previvaz");
 
             var teste = acompH.GroupBy(ac => new { ac.semana, ac.posto })
                    .Where(ac => ac.Count() >= semanaprevisao).ToList();
@@ -762,8 +763,14 @@ namespace Compass.Services
 
                 prevDeck.CopyFilesToFolder(path);
             }
+            Previvaz previvaz = new Previvaz();
+            Parallel.ForEach(postosPrevivaz, x =>
+            {
+                var path = Path.Combine(tempFolder, x.Key);
+                previvaz.RunPrevivazLocalVM(path);
 
-            Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
+            });
+            //Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
             //                Services.Previvaz.RunOnLinux(tempFolder);
 
             if (encad)
@@ -842,8 +849,13 @@ namespace Compass.Services
 
                 }
 
+                Parallel.ForEach(postosPrevivaz, x =>
+                {
+                    var path_exe = Path.Combine(tempFolder, x.Key);
+                    previvaz.RunPrevivazLocalVM(path_exe);
 
-                Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
+                });
+                //Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
                 //                Services.Previvaz.RunOnLinux(tempFolder);
 
                 //rodadas encadeadas previvaz fimmmm
@@ -1007,15 +1019,15 @@ namespace Compass.Services
                 if (wb.GravarPrevivaz)
                 {
 
-                    var destPath = Path.Combine(wb.Path, "arq_previvaz");
+                    //var destPath = Path.Combine(wb.Path, "arq_previvaz");
 
-                    if (Directory.Exists(destPath))
-                    {
-                        Directory.Delete(destPath, true);
-                    }
+                    //if (Directory.Exists(destPath))
+                    //{
+                    //    Directory.Delete(destPath, true);
+                    //}
 
 
-                    Tools.moveDirectory(tempFolder, destPath);
+                    //Tools.moveDirectory(tempFolder, destPath);
                 }
             }
             catch { }
@@ -1057,7 +1069,60 @@ namespace Compass.Services
                 }
             }
         }
+        public void RunPrevivazLocalVM(string workFolder = null)
+        {
+            if (!System.IO.File.Exists(System.IO.Path.Combine(workFolder, "ENCAD.DAT")))
+            {
+                System.IO.File.WriteAllText(System.IO.Path.Combine(workFolder, "ENCAD.DAT"), "ALGHAO234PGJAGAENCAD");
+            }
+            System.Diagnostics.Process pr = new System.Diagnostics.Process();
 
+            var si = pr.StartInfo;
+
+            si.FileName = @"C:\Sistemas\PREVIVAZ\6.1.0\previvaz.exe";
+
+            si.WorkingDirectory = workFolder;
+
+            si.CreateNoWindow = true;
+            si.UseShellExecute = false;
+
+            pr.StartInfo = si;
+
+            pr.Start();
+
+            pr.WaitForExit();
+
+            var files_posto = System.IO.Directory.GetFiles(workFolder);
+
+
+
+            string[] arq_delete = { "PREVP.DAT", "PREVISAO.DAT", "PREVT.DAT", "RUNSTATE.DAT", "RUNTRACE.DAT", "LIMITES.TXT", "FAIXAS.TXT", ".exc", ".BCX", "_MOD.DAT", ".rel" };
+
+
+
+            foreach (var arq in files_posto)
+            {
+                if (Path.GetFileName(arq).Contains("_fut.DAT"))
+                {
+                    var lines = System.IO.File.ReadAllLines(arq).Count();
+
+                    if (lines != 4)
+                    {
+                        arq_delete[10] = "_fut.DAT";
+                    }
+                }
+                foreach (var del in arq_delete)
+                {
+                    if (Path.GetFileName(arq).Contains(del))
+                    {
+                        System.IO.File.Delete(System.IO.Path.Combine(workFolder, arq));
+                    }
+                }
+
+            }
+
+
+        }
         public void RunPrevivaz(string path)
         {
 

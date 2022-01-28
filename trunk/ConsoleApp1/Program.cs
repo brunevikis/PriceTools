@@ -321,19 +321,19 @@ namespace ConsoleApp1
                                                                                                                //tipo,cod,est,limite
             #region Duplicar estagios 
 
-            var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
-            var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
-            var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
+                var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
+                var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
+                var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
             foreach (var hqnum in hqDupList)
             {
                 IEnumerable<BaseLine> rs;
                 rs = dadger.BlocoRhq.Where(x => x.Restricao == hqnum);
                 if (rs.Count() > 0)
                 {
-
+                    
                     var ls = rs.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
                     var lhq = rs.Where(x => x is Dadger.HqLine).Select(x => (Dadger.HqLine)x).First();
-                    // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
+                   // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
                     var lineTarget = lhq.Fim;
                     for (int i = 1; i <= lineTarget; i++)
                     {
@@ -350,7 +350,7 @@ namespace ConsoleApp1
                             var nles = les.Clone();
                             nles.Estagio = estagioSeg;
                             dadger.BlocoRhq.Add(nles);
-                            // les = nles;
+                           // les = nles;
                         }
                     }
                 }
@@ -445,7 +445,7 @@ namespace ConsoleApp1
                         dynamic le256;
                         if (inviab.TipoRestricao == "RHE")
                         {
-
+                           
                             var ls = rs.Where(x => x is Dadger.LuLine).Select(x => (Dadger.LuLine)x);
                             le = ls.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                         }
@@ -493,16 +493,17 @@ namespace ConsoleApp1
                         }
                         else continue;
 
+
                         if (inviab.TipoRestricao == "RHQ" && inviab.SupInf == "SUP" && (inviab.CodRestricao == 87 || inviab.CodRestricao == 102 || inviab.CodRestricao == 149))//a 116 é só de minimo
                         {
                             dynamic le125;
-                           // dynamic le87;
+                            // dynamic le87;
                             dynamic ledummy;
                             IEnumerable<BaseLine> rsdummy;
                             IEnumerable<BaseLine> rs125;
                             //IEnumerable<BaseLine> rs87;
                             rs125 = dadger.BlocoRhq.Where(x => x.Restricao == 125);
-                           // rs87 = dadger.BlocoRhq.Where(x => x.Restricao == 87);
+                            // rs87 = dadger.BlocoRhq.Where(x => x.Restricao == 87);
                             rsdummy = dadger.BlocoRhq.Where(x => x.Restricao == inviab.CodRestricao);
 
                             if (rsdummy.Count() > 0)
@@ -1473,7 +1474,7 @@ namespace ConsoleApp1
             ///home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/newave27.sh
             var mes = Tools.GetMonthNumAbrev(rev.revDate.Month);
             // var dir = $@"Z:\7_dessem\Arquivos_base\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\{dataRef:yyyyMMdd}";
-            var dir = $@"/home/compass/sacompass/previsaopld/7_dessem/Arquivos_base/{rev.revDate:yyyy}/{mes}/RV{rev.rev}/{dataRef:yyyyMMdd}";
+            var dir = $@"/mnt/Fsx/AWS/5_dessem/Arquivos_base/{rev.revDate:yyyy}/{mes}/RV{rev.rev}/{dataRef:yyyyMMdd}";
             if (Directory.Exists(dir))
             {
                 pasta = dir;
@@ -1572,13 +1573,13 @@ namespace ConsoleApp1
             deckDecomp[ConsoleApp1.Decomp.DeckDocument.dadger].Document.SaveToFile();
 
         }
+
         public static void testandoDll(string dir)
         {
             Console.WriteLine("Diretorio: " + dir);
             Console.WriteLine("Respondendo...");
             Console.WriteLine("alteracao 87 102 149");
         }
-
         public static void CalcJirauStoAnto(string dir)
         {
             Console.WriteLine("Curvas cmont x cfuga atualizadas em 11-09-2020");
@@ -2501,11 +2502,12 @@ namespace ConsoleApp1
 
             ConsoleApp1.AdtermDat.AdtermDat adterm;
 
-            //var files = Directory.GetFiles(dir).ToList();
+            var files = Directory.GetFiles(dir).ToList();
 
-            //var pmoFile = files.FirstOrDefault(x => Path.GetFileName(x).Equals("pmo.dat", StringComparison.OrdinalIgnoreCase));
+            var pmoFile = files.FirstOrDefault(x => Path.GetFileName(x).Equals("pmo.dat", StringComparison.OrdinalIgnoreCase));
 
-            //var pmo = (ConsoleApp1.Pmo.Pmo)DocumentFactory.Create(pmoFile);
+            var pmo = (ConsoleApp1.Pmo.Pmo)DocumentFactory.Create(pmoFile);
+
             adterm = deckNWEstudo[ConsoleApp1.Newave.Deck.DeckDocument.adterm].Document as ConsoleApp1.AdtermDat.AdtermDat;
 
             double[] dadosAdt = new double[3];
