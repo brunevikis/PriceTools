@@ -2503,8 +2503,8 @@ namespace ConsoleApp1
         {
             Console.Write("Rotina de alteração do adterm.dat para:" + dir + ", iniciada!!!");
 
-            // var dataCaso = dir.Split('/').Last();
-            var dataCaso = dir.Split('\\').Last();
+             var dataCaso = dir.Split('/').Last();
+            //var dataCaso = dir.Split('\\').Last();
 
             var dtEstudoAno = Convert.ToInt32(dataCaso.Substring(0, 4));
             var dtEstudoMes = dataCaso.Substring(4, 2);
@@ -2542,14 +2542,14 @@ namespace ConsoleApp1
                     var dt_Ben = dtEstudo.AddMonths(-2);
                     var pasta_ben = dt_Ben.ToString("yyyyMM");
 
-                    //var dir_Partes = dir.Split('/');
-                    var dir_Partes = dir.Split('\\');
+                    var dir_Partes = dir.Split('/');
+                    //var dir_Partes = dir.Split('\\');
                     string dir_Base = "";
 
                     for (int i = 0; i <= dir_Partes.Count() - 2; i++)
                     {
-                        //dir_Base = dir_Base + dir_Partes[i] + "/";
-                        dir_Base = dir_Base + dir_Partes[i] + "\\";
+                        dir_Base = dir_Base + dir_Partes[i] + "/";
+                        //dir_Base = dir_Base + dir_Partes[i] + "\\";
 
                     }
 
@@ -2641,14 +2641,14 @@ namespace ConsoleApp1
                     var dt_Ben_Seg = dtEstudo.AddMonths(-1);
                     pasta_ben = dt_Ben_Seg.ToString("yyyyMM");
 
-                    //dir_Partes = dir.Split('/');
-                    dir_Partes = dir.Split('\\');
+                    dir_Partes = dir.Split('/');
+                    //dir_Partes = dir.Split('\\');
                     dir_Base = "";
 
                     for (int i = 0; i <= dir_Partes.Count() - 2; i++)
                     {
-                        //dir_Base = dir_Base + dir_Partes[i] + "/";
-                        dir_Base = dir_Base + dir_Partes[i] + "\\";
+                        dir_Base = dir_Base + dir_Partes[i] + "/";
+                        //dir_Base = dir_Base + dir_Partes[i] + "\\";
 
                     }
 
