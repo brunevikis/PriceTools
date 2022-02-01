@@ -35,4 +35,3 @@ C:\Development\price_toolsVMAlfa\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\Tra
 C:\Development\price_toolsVMAlfa\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.dll
 C:\Development\price_toolsVMAlfa\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.pdb
 C:\Development\price_toolsVMAlfa\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.genruntimeconfig.cache
-C:\Development\price_tools\trunk\ConsoleApp1\obj\Release\netcoreapp2.0\TrataInviab.GeneratedMSBuildEditorConfig.editorconfig

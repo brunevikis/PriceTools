@@ -301,6 +301,9 @@ namespace ConsoleApp1
         /// <param name="nivel">1 = hqs, res, 2 = 1 + TI , 3 = 2 + excessoes</param>
         public static void DesfazerInviabilidades(ConsoleApp1.Decomp.Deck deck, Inviab.Inviab inviabilidades, int nivel)
         {
+            Console.Write("Rotina de tratamento de inviabilidades iniciada!!!");
+
+
             var dadger = deck[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
             var hidr = deck[ConsoleApp1.Decomp.DeckDocument.hidr].Document as HidrDat.HidrDat;
 
@@ -321,19 +324,19 @@ namespace ConsoleApp1
                                                                                                                //tipo,cod,est,limite
             #region Duplicar estagios 
 
-                var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
-                var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
-                var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
+            var hqDupList = s.Where(x => x.TipoRestricao == "RHQ").Select(x => x.CodRestricao).Distinct().ToList();
+            var reDupList = s.Where(x => x.TipoRestricao == "RHE").Select(x => x.CodRestricao).Distinct().ToList();
+            var hvDupList = s.Where(x => x.TipoRestricao == "RHV").Select(x => x.CodRestricao).Distinct().ToList();
             foreach (var hqnum in hqDupList)
             {
                 IEnumerable<BaseLine> rs;
                 rs = dadger.BlocoRhq.Where(x => x.Restricao == hqnum);
                 if (rs.Count() > 0)
                 {
-                    
+
                     var ls = rs.Where(x => x is Dadger.LqLine).Select(x => (Dadger.LqLine)x);
                     var lhq = rs.Where(x => x is Dadger.HqLine).Select(x => (Dadger.HqLine)x).First();
-                   // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
+                    // var lineTarget = ls.OrderByDescending(x => x.Estagio).FirstOrDefault();
                     var lineTarget = lhq.Fim;
                     for (int i = 1; i <= lineTarget; i++)
                     {
@@ -350,7 +353,7 @@ namespace ConsoleApp1
                             var nles = les.Clone();
                             nles.Estagio = estagioSeg;
                             dadger.BlocoRhq.Add(nles);
-                           // les = nles;
+                            // les = nles;
                         }
                     }
                 }
@@ -445,7 +448,7 @@ namespace ConsoleApp1
                         dynamic le256;
                         if (inviab.TipoRestricao == "RHE")
                         {
-                           
+
                             var ls = rs.Where(x => x is Dadger.LuLine).Select(x => (Dadger.LuLine)x);
                             le = ls.Where(x => x.Estagio <= inviab.Estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                         }
@@ -1366,6 +1369,8 @@ namespace ConsoleApp1
 
         public static void TrataDeflant(string path)
         {
+            Console.Write("Rotina Deflant para:" + path + ", iniciada!!!");
+
             var dadvaz = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("dadvaz")).First();
             var dadlinhas = File.ReadAllLines(dadvaz).ToList();
             var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -1520,6 +1525,8 @@ namespace ConsoleApp1
 
         public static void flexibilizaTucurui(string dir)
         {
+            Console.Write("Rotina de flexibilização Tucurui para:" + dir + ", iniciada!!!");
+
             var deckDecomp = DeckFactory.CreateDeck(dir) as ConsoleApp1.Decomp.Deck;
             var dadger = deckDecomp[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
 
@@ -1578,7 +1585,7 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Diretorio: " + dir);
             Console.WriteLine("Respondendo...");
-            Console.WriteLine("alteracao 87 102 149");
+            Console.WriteLine("adterm com pmo");
         }
         public static void CalcJirauStoAnto(string dir)
         {
@@ -1841,6 +1848,7 @@ namespace ConsoleApp1
         }
         public static void Altera_Dadgnl_Sem(string dir)
         {
+            Console.Write("Rotina de alteração do dadgnl.dat semanal para:" + dir + ", iniciada!!!");
 
             var dataCaso = dir.Split('/').Last();
             var dtEstudoAno = Convert.ToInt32(dataCaso.Substring(0, 4));
@@ -2153,6 +2161,7 @@ namespace ConsoleApp1
 
         public static void Altera_Dadgnl_Men(string dir)
         {
+            Console.Write("Rotina de alteração do dadgnl.dat mensal para:" + dir + ", iniciada!!!");
 
             var dataCaso = dir.Split('/').Last();
             var dtEstudoAno = Convert.ToInt32(dataCaso.Substring(0, 4));
@@ -2492,7 +2501,10 @@ namespace ConsoleApp1
 
         public static void Altera_Adterm(string dir)
         {
-            var dataCaso = dir.Split('/').Last();
+            Console.Write("Rotina de alteração do adterm.dat para:" + dir + ", iniciada!!!");
+
+            // var dataCaso = dir.Split('/').Last();
+            var dataCaso = dir.Split('\\').Last();
 
             var dtEstudoAno = Convert.ToInt32(dataCaso.Substring(0, 4));
             var dtEstudoMes = dataCaso.Substring(4, 2);
@@ -2505,197 +2517,232 @@ namespace ConsoleApp1
             var files = Directory.GetFiles(dir).ToList();
 
             var pmoFile = files.FirstOrDefault(x => Path.GetFileName(x).Equals("pmo.dat", StringComparison.OrdinalIgnoreCase));
-
-            var pmo = (ConsoleApp1.Pmo.Pmo)DocumentFactory.Create(pmoFile);
-
             adterm = deckNWEstudo[ConsoleApp1.Newave.Deck.DeckDocument.adterm].Document as ConsoleApp1.AdtermDat.AdtermDat;
 
-            double[] dadosAdt = new double[3];
-
-            foreach (var adt in adterm.Despachos.Where(x => x.String != "            "))
+            if (pmoFile != null)
             {
-                var dt_Ben = dtEstudo.AddMonths(-2);
-                var pasta_ben = dt_Ben.ToString("yyyyMM");
+                var pmo = (ConsoleApp1.Pmo.Pmo)DocumentFactory.Create(pmoFile);
+                var pmoBlocoGerMAx = pmo.Blocos["GTERM Max"];
 
-                var dir_Partes = dir.Split('/');
-                string dir_Base = "";
+                double gerMaxPmo = 0;
 
-                for (int i = 0; i <= dir_Partes.Count() - 2; i++)
+
+                double[] dadosAdt = new double[3];
+
+                foreach (var adt in adterm.Despachos.Where(x => x.String != "            "))
                 {
-                    dir_Base = dir_Base + dir_Partes[i] + "/";
+                    var geracaoUsina = pmoBlocoGerMAx.Where(x => x.Valores[0] == adt.Numero).First();
+                    gerMaxPmo = Convert.ToDouble(geracaoUsina.Valores[dtEstudo.Month + 2]);//pega valor do prorio mes
 
-                }
-
-
-                var pasta_DC = Directory.GetDirectories(dir_Base, "DCGNL*");
-
-
-
-
-                var dir_Ben = Path.Combine(pasta_DC[0], pasta_ben, "bengnl.csv");
-
-                if (File.Exists(dir_Ben))
-                {
-
-                    int indice;
-                    indice = adterm.Despachos.IndexOf(adt);
-                    indice = indice + 1;
-
-                    StreamReader rd = new StreamReader(dir_Ben);
-
-                    string linha = null;
-
-                    string[] dado = null;
-                    try
+                    if (adt.Numero == 86)
                     {
-                        while ((linha = rd.ReadLine()) != null)
+                        gerMaxPmo = gerMaxPmo > 350 ? 350 : gerMaxPmo;
+                    }
+
+                    var dt_Ben = dtEstudo.AddMonths(-2);
+                    var pasta_ben = dt_Ben.ToString("yyyyMM");
+
+                    //var dir_Partes = dir.Split('/');
+                    var dir_Partes = dir.Split('\\');
+                    string dir_Base = "";
+
+                    for (int i = 0; i <= dir_Partes.Count() - 2; i++)
+                    {
+                        //dir_Base = dir_Base + dir_Partes[i] + "/";
+                        dir_Base = dir_Base + dir_Partes[i] + "\\";
+
+                    }
+
+
+                    var pasta_DC = Directory.GetDirectories(dir_Base, "DCGNL*");
+
+
+
+
+                    var dir_Ben = Path.Combine(pasta_DC[0], pasta_ben, "bengnl.csv");
+
+                    if (File.Exists(dir_Ben))
+                    {
+
+                        int indice;
+                        indice = adterm.Despachos.IndexOf(adt);
+                        indice = indice + 1;
+
+                        StreamReader rd = new StreamReader(dir_Ben);
+
+                        string linha = null;
+
+                        string[] dado = null;
+                        try
                         {
-                            dado = linha.Split(';');
-
-
-                            if (dado[0].Trim() == "1")
+                            while ((linha = rd.ReadLine()) != null)
                             {
+                                dado = linha.Split(';');
 
-                                var usina_ben = int.Parse(dado[4].Trim());
 
-                                if (usina_ben == adt.Numero)
+                                if (dado[0].Trim() == "1")
                                 {
-                                    var beneficio = Convert.ToDouble(dado[7].Trim());
-                                    var custo = Convert.ToDouble(dado[8].Trim());
-                                    var pata_Ben = int.Parse(dado[6].Trim());
 
+                                    var usina_ben = int.Parse(dado[4].Trim());
 
-                                    switch (pata_Ben)
+                                    if (usina_ben == adt.Numero)
                                     {
-                                        case 1:
-                                            dadosAdt[0] = beneficio > custo ? adterm.Despachos[indice].Lim_P1 : 0;
-                                            adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
-                                            break;
-                                        case 2:
-                                            dadosAdt[1] = beneficio > custo ? adterm.Despachos[indice].Lim_P2 : 0;
-                                            adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
-                                            break;
-                                        case 3:
-                                            dadosAdt[2] = beneficio > custo ? adterm.Despachos[indice].Lim_P3 : 0;
-                                            adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
-                                            break;
+                                        var beneficio = Convert.ToDouble(dado[7].Trim());
+                                        var custo = Convert.ToDouble(dado[8].Trim());
+                                        var pata_Ben = int.Parse(dado[6].Trim());
+
+
+                                        switch (pata_Ben)
+                                        {
+                                            case 1:
+                                                // dadosAdt[0] = beneficio > custo ? adterm.Despachos[indice].Lim_P1 : 0;
+                                                dadosAdt[0] = beneficio > custo ? gerMaxPmo : 0;
+                                                adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                                break;
+                                            case 2:
+                                                // dadosAdt[1] = beneficio > custo ? adterm.Despachos[indice].Lim_P2 : 0;
+                                                dadosAdt[1] = beneficio > custo ? gerMaxPmo : 0;
+                                                adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                                break;
+                                            case 3:
+                                                // dadosAdt[2] = beneficio > custo ? adterm.Despachos[indice].Lim_P3 : 0;
+                                                dadosAdt[2] = beneficio > custo ? gerMaxPmo : 0;
+                                                adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
+                                                break;
+                                        }
+
+
+                                        //   adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                        //  adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                        //      adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
                                     }
-
-
-                                    //   adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
-                                    //  adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
-                                    //      adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
                                 }
+
                             }
+                            rd.Close();
+
+
 
                         }
-                        rd.Close();
-
-
-
-                    }
-                    catch
-                    {
-                        rd.Close();
-                    }
-
-
-
-
-
-                }
-
-
-
-
-                var dt_Ben_Seg = dtEstudo.AddMonths(-1);
-                pasta_ben = dt_Ben_Seg.ToString("yyyyMM");
-
-                dir_Partes = dir.Split('/');
-                dir_Base = "";
-
-                for (int i = 0; i <= dir_Partes.Count() - 2; i++)
-                {
-                    dir_Base = dir_Base + dir_Partes[i] + "/";
-
-                }
-
-
-                pasta_DC = Directory.GetDirectories(dir_Base, "DCGNL*");
-
-                dir_Ben = Path.Combine(pasta_DC[0], pasta_ben, "bengnl.csv");
-
-                if (File.Exists(dir_Ben))
-                {
-                    int indice;
-                    indice = adterm.Despachos.IndexOf(adt);
-                    indice = indice + 2;
-
-                    StreamReader rd = new StreamReader(dir_Ben);
-
-                    string linha = null;
-
-                    string[] dado = null;
-                    try
-                    {
-                        while ((linha = rd.ReadLine()) != null)
+                        catch
                         {
-                            dado = linha.Split(';');
+                            rd.Close();
+                        }
 
 
-                            if (dado[0].Trim() == "1")
+
+
+
+                    }
+
+
+
+
+                    var dt_Ben_Seg = dtEstudo.AddMonths(-1);
+                    pasta_ben = dt_Ben_Seg.ToString("yyyyMM");
+
+                    //dir_Partes = dir.Split('/');
+                    dir_Partes = dir.Split('\\');
+                    dir_Base = "";
+
+                    for (int i = 0; i <= dir_Partes.Count() - 2; i++)
+                    {
+                        //dir_Base = dir_Base + dir_Partes[i] + "/";
+                        dir_Base = dir_Base + dir_Partes[i] + "\\";
+
+                    }
+
+                    gerMaxPmo = Convert.ToDouble(geracaoUsina.Valores[dtEstudo.Month + 3]);//pega valor do mes seguinte
+                    if (adt.Numero == 86)
+                    {
+                        gerMaxPmo = gerMaxPmo > 350 ? 350 : gerMaxPmo;
+                    }
+
+                    pasta_DC = Directory.GetDirectories(dir_Base, "DCGNL*");
+
+                    dir_Ben = Path.Combine(pasta_DC[0], pasta_ben, "bengnl.csv");
+
+                    if (File.Exists(dir_Ben))
+                    {
+                        int indice;
+                        indice = adterm.Despachos.IndexOf(adt);
+                        indice = indice + 2;
+
+                        StreamReader rd = new StreamReader(dir_Ben);
+
+                        string linha = null;
+
+                        string[] dado = null;
+                        try
+                        {
+                            while ((linha = rd.ReadLine()) != null)
                             {
+                                dado = linha.Split(';');
 
-                                var usina_ben = int.Parse(dado[4].Trim());
 
-                                if (usina_ben == adt.Numero)
+                                if (dado[0].Trim() == "1")
                                 {
-                                    var beneficio = Convert.ToDouble(dado[7].Trim());
-                                    var custo = Convert.ToDouble(dado[8].Trim());
-                                    var pata_Ben = int.Parse(dado[6].Trim());
 
+                                    var usina_ben = int.Parse(dado[4].Trim());
 
-                                    switch (pata_Ben)
+                                    if (usina_ben == adt.Numero)
                                     {
-                                        case 1:
-                                            dadosAdt[0] = beneficio > custo ? adterm.Despachos[indice].Lim_P1 : 0;
-                                            adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
-                                            break;
-                                        case 2:
-                                            dadosAdt[1] = beneficio > custo ? adterm.Despachos[indice].Lim_P2 : 0;
-                                            adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
-                                            break;
-                                        case 3:
-                                            dadosAdt[2] = beneficio > custo ? adterm.Despachos[indice].Lim_P3 : 0;
-                                            adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
-                                            break;
-                                    }
+                                        var beneficio = Convert.ToDouble(dado[7].Trim());
+                                        var custo = Convert.ToDouble(dado[8].Trim());
+                                        var pata_Ben = int.Parse(dado[6].Trim());
 
+
+                                        switch (pata_Ben)
+                                        {
+                                            case 1:
+                                                //dadosAdt[0] = beneficio > custo ? adterm.Despachos[indice].Lim_P1 : 0;
+                                                dadosAdt[0] = beneficio > custo ? gerMaxPmo : 0;
+                                                adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                                break;
+                                            case 2:
+                                                //dadosAdt[1] = beneficio > custo ? adterm.Despachos[indice].Lim_P2 : 0;
+                                                dadosAdt[1] = beneficio > custo ? gerMaxPmo : 0;
+                                                adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                                break;
+                                            case 3:
+                                                //dadosAdt[2] = beneficio > custo ? adterm.Despachos[indice].Lim_P3 : 0;
+                                                dadosAdt[2] = beneficio > custo ? gerMaxPmo : 0;
+                                                adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
+                                                break;
+                                        }
+
+                                    }
                                 }
+
                             }
+                            rd.Close();
+
+
 
                         }
-                        rd.Close();
+                        catch
+                        {
+                            rd.Close();
+                        }
 
+
+                        //    adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                        ///  adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                        //  adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
 
 
                     }
-                    catch
-                    {
-                        rd.Close();
-                    }
 
-
-                    //    adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
-                    ///  adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
-                    //  adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
 
 
                 }
-
-
-
             }
+            else
+            {
+                Console.Write("Arquivo PMO.DAT não encontrado no diretório: " + dir + ", adterm.dat não sera alterado!!!");
+            }
+
+
 
             adterm.SaveToFile(createBackup: true);
 
