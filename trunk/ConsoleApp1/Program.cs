@@ -1585,7 +1585,10 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Diretorio: " + dir);
             Console.WriteLine("Respondendo...");
-            Console.WriteLine("adterm com pmo");
+            int maxit = 1000;
+            Console.WriteLine("0.1 em uh e log de iteracoes atingir meta");
+            File.WriteAllText(Path.Combine(dir, "docteste.txt"), "ok...");
+            Console.WriteLine($"numero de {maxit} iteraçoes");
         }
         public static void CalcJirauStoAnto(string dir)
         {

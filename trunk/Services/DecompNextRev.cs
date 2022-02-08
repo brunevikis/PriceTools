@@ -1058,28 +1058,53 @@ namespace Compass.Services
             #region Rhc
             var decompBaseCam = w.DecompBase;
             var versaoNewave = w.versao_Newave.Trim();
-            if (versaoNewave == "270405")
+            if (versaoNewave == "270405" || versaoNewave == "28" || versaoNewave == "270405aws" || versaoNewave == "28aws")//versoes que tem o bloco RHC
             {
                 var decompEntrada = DeckFactory.CreateDeck(decompBaseCam) as Compass.CommomLibrary.Decomp.Deck;
                 var dadgerEntrada = decompEntrada[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
                 var hesEntrada = dadgerEntrada.BlocoRhc.Where(x => x is HeLine).ToList();
 
                 var hes = dadger.BlocoRhc.Where(x => x is HeLine).ToList();
-                var numRests = hes.Union(hes).Select(x => x.Restricao).ToList();
+                //var numRests = hes.Union(hes).Select(x => x.Restricao).ToList();
+                var numRests = hes.Union(hes).Select(x => x.Restricao).Distinct().ToList();
 
-                //var cms = dadger.BlocoRhc.Where(x => x is CmLine).ToList();
-
-                foreach (var rhc in dadger.BlocoRhc.Where(x => x is HeLine && x[4] > 1).ToList())
-                {
-                    dadger.BlocoRhc.Remove(rhc);
-                }
 
                 foreach (var num in numRests)
                 {
-                    var cms = dadger.BlocoRhc.Where(x => x is CmLine && x[1] == num).ToList();
-                    foreach (var cm in cms)
+                    foreach (var rhc in dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == num && x[4] > mesOperativo.Estagios && x[8] == 0).ToList())
                     {
-                        if (cm == cms.First())
+                        dadger.BlocoRhc.Remove(rhc);//remove linhas HE com flag 0 e com estagio maior que os estagios do mes operativo
+                    }
+                    for (int est = 1; est <= mesOperativo.Estagios; est++)
+                    {
+                        //adiciona novas linhas HE com flag 0 caso o deck de entrada tenha um numero menor de estagios que o mes operativo
+                        var heLast = dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == num && x[8] == 0).LastOrDefault();
+                        if (heLast != null)
+                        {
+                            var heLinha = dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == num && x[4] == est && x[8] == 0).FirstOrDefault();
+                            if (heLinha == null)
+                            {
+                                int index = dadger.BlocoRhc.IndexOf(heLast);
+
+                                var heClone = heLast.Clone() as HeLine;
+                                heClone[4] = est;
+                                heClone.Comment = null;
+                                heClone[3] = heLast[3];
+                                dadger.BlocoRhc.Insert(index + 1, heClone);
+                            }
+                        }
+                        
+                    }
+                    foreach (var rhc in dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == num && x[8] == 1).ToList())
+                    {
+                        rhc[4] = mesOperativo.Estagios + 1;//altera o valor do estagio das linhas HE com flag 1 com o estagio do mes seguinte
+                    }
+
+                    var cms = dadger.BlocoRhc.Where(x => x is CmLine && x.Restricao == num).ToList();
+
+                    foreach (var cm in cms)//remove todas as linhas CM deixando apenas uma por restrição
+                    {
+                        if (cm == cms.Last())
                         {
                             continue;
                         }
@@ -1088,43 +1113,63 @@ namespace Compass.Services
                             dadger.BlocoRhc.Remove(cm);
                         }
                     }
-
                 }
+                //foreach (var rhc in dadger.BlocoRhc.Where(x => x is HeLine && x[4] > 1).ToList())
+                //{
+                //    dadger.BlocoRhc.Remove(rhc);
+                //}
 
-                foreach (var rhc in dadger.BlocoRhc.RhcGrouped.ToList())
-                {
-                    for (int est = 2; est <= mesOperativo.Estagios + 1; est++)
-                    {
-                        if (est == mesOperativo.Estagios + 1)
-                        {
-                            var heCopy = hesEntrada.Where(x => x.Restricao == rhc.Value[0].Restricao).Last();
-                            int index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == rhc.Value[0].Restricao).Last());
+                //foreach (var num in numRests)
+                //{
+                //    var cms = dadger.BlocoRhc.Where(x => x is CmLine && x[1] == num).ToList();
+                //    foreach (var cm in cms)
+                //    {
+                //        if (cm == cms.First())
+                //        {
+                //            continue;
+                //        }
+                //        else
+                //        {
+                //            dadger.BlocoRhc.Remove(cm);
+                //        }
+                //    }
 
-                            var heClone = rhc.Value[0].Clone() as HeLine;
-                            heClone[4] = est;
-                            heClone.Comment = null;
-                            heClone[3] = heCopy[3];
-                            dadger.BlocoRhc.Insert(index + 2, heClone);
+                //}
 
-                            index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is CmLine && x.Restricao == rhc.Value[1].Restricao).Last());
-                            var cmClone = rhc.Value[1].Clone() as CmLine;
-                            dadger.BlocoRhc.Insert(index + 2, cmClone);
-                        }
-                        else
-                        {
-                            int index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == rhc.Value[0].Restricao).Last());
-                            var heClone = rhc.Value[0].Clone() as HeLine;
-                            heClone[4] = est;
-                            heClone.Comment = null;
-                            dadger.BlocoRhc.Insert(index + 2, heClone);
+                //foreach (var rhc in dadger.BlocoRhc.RhcGrouped.ToList())
+                //{
+                //    for (int est = 2; est <= mesOperativo.Estagios + 1; est++)
+                //    {
+                //        if (est == mesOperativo.Estagios + 1)
+                //        {
+                //            var heCopy = hesEntrada.Where(x => x.Restricao == rhc.Value[0].Restricao).Last();
+                //            int index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == rhc.Value[0].Restricao).Last());
 
-                            index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is CmLine && x.Restricao == rhc.Value[1].Restricao).Last());
-                            var cmClone = rhc.Value[1].Clone() as CmLine;
+                //            var heClone = rhc.Value[0].Clone() as HeLine;
+                //            heClone[4] = est;
+                //            heClone.Comment = null;
+                //            heClone[3] = heCopy[3];
+                //            dadger.BlocoRhc.Insert(index + 2, heClone);
 
-                            dadger.BlocoRhc.Insert(index + 2, cmClone);
-                        }
-                    }
-                }
+                //            index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is CmLine && x.Restricao == rhc.Value[1].Restricao).Last());
+                //            var cmClone = rhc.Value[1].Clone() as CmLine;
+                //            dadger.BlocoRhc.Insert(index + 2, cmClone);
+                //        }
+                //        else
+                //        {
+                //            int index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == rhc.Value[0].Restricao).Last());
+                //            var heClone = rhc.Value[0].Clone() as HeLine;
+                //            heClone[4] = est;
+                //            heClone.Comment = null;
+                //            dadger.BlocoRhc.Insert(index + 2, heClone);
+
+                //            index = dadger.BlocoRhc.IndexOf(dadger.BlocoRhc.Where(x => x is CmLine && x.Restricao == rhc.Value[1].Restricao).Last());
+                //            var cmClone = rhc.Value[1].Clone() as CmLine;
+
+                //            dadger.BlocoRhc.Insert(index + 2, cmClone);
+                //        }
+                //    }
+                //}
 
             }
 

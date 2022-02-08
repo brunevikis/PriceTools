@@ -87,3 +87,4 @@ C:\Development\price_toolsVMAlfa\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.Co
 C:\Development\price_toolsVMAlfa\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete
 C:\Development\price_toolsVMAlfa\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.dll
 C:\Development\price_toolsVMAlfa\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.pdb
+C:\Development\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete

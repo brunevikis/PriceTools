@@ -618,10 +618,10 @@ namespace ConsoleApp1
 
             } while (++itNumber < itMax);
 
-            //if (itNumber >= itMax)
-            //{
-            //    MessageBox.Show("Número Máximo de Iterações atingido");
-            //}
+            if (itNumber >= itMax)
+            {
+                Console.WriteLine($"Número Máximo de {itMax} Iterações atingido");
+            }
         }
 
         static void goalSeekFixado(ConfigH configH, double[] earmTarget, double[] earmMax = null, List<ConsoleApp1.Decomp.ConfigH.Dados_Fixa> Fixa_UH = null)
@@ -698,10 +698,10 @@ namespace ConsoleApp1
 
             } while (++itNumber < itMax);
 
-            //if (itNumber >= itMax)
-            //{
-            //    MessageBox.Show("Número Máximo de Iterações atingido");
-            //}
+            if (itNumber >= itMax)
+            {
+               Console.WriteLine($"Número Máximo de {itMax} Iterações atingido");
+            }
         }
 
         static void goalSeekREE(ConfigH configH, double[] earmTarget, double[] earmMax = null/* List<Infosheet.Dados_Fixa> Fixa_UH = null*/)
@@ -802,10 +802,10 @@ namespace ConsoleApp1
                 }
             } while (++itNumber < itMax);
 
-            //if (itNumber >= itMax)
-            //{
-            //    MessageBox.Show("Número Máximo de Iterações atingido");
-            //}
+            if (itNumber >= itMax)
+            {
+                Console.WriteLine($"Número Máximo de {itMax} Iterações atingido");
+            }
         }
 
         static void goalSeekREEFixado(ConfigH configH, double[] earmTarget, double[] earmMax = null, List<ConsoleApp1.Decomp.ConfigH.Dados_Fixa> Fixa_UH = null)
@@ -906,10 +906,10 @@ namespace ConsoleApp1
                 }
             } while (++itNumber < itMax);
 
-            //if (itNumber >= itMax)
-            //{
-            //    MessageBox.Show("Número Máximo de Iterações atingido");
-            //}
+            if (itNumber >= itMax)
+            {
+                Console.WriteLine($"Número Máximo de {itMax} Iterações atingido");
+            }
         }
 
     }

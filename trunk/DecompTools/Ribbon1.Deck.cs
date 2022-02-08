@@ -674,7 +674,8 @@ Caso os newaves já tenham sido executados, os cortes existentes serão mantidos
                     == System.Windows.Forms.DialogResult.Yes)
                 {
                     //Services.Linux.Run(w.NewaveBase, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/encad_dc_nw_mensal_3.sh", "EncadeadoMensal-NW+DC", false, false);
-                    Services.Linux.Run(w.NewaveBase, $"/mnt/Fsx/AWS/enercore_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
+                    //Services.Linux.Run(w.NewaveBase, $"/mnt/Fsx/AWS/enercore_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
+                    Services.Linux.Run(w.NewaveBase, $"/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
                     //Services.Linux.Run(w.NewaveBase, $"/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
                 }
 
@@ -1168,6 +1169,17 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                     }
                 }
+                if (System.Windows.Forms.MessageBox.Show(@"Decks Criados. Agendar execução?
+Caso os newaves já tenham sido executados, os cortes existentes serão mantidos e somente a execução dos decomps prosseguirá."
+                  , "Novo Estudo Encadeado: " + (w.Version == 4 ? w.NomeDoEstudo : ""), System.Windows.Forms.MessageBoxButtons.YesNo)
+                  == System.Windows.Forms.DialogResult.Yes)
+                {
+                    //Services.Linux.Run(w.NewaveBase, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/encad_dc_nw_mensal_3.sh", "EncadeadoMensal-NW+DC", false, false);
+                    //Services.Linux.Run(w.NewaveBase, $"/mnt/Fsx/AWS/enercore_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
+                    Services.Linux.Run(w.NewaveBase, $"/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
+                    //Services.Linux.Run(w.NewaveBase, $"/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/encad_dc_nw_mensal_3_{w.versao_Newave}.sh", "EncadeadoMensal-NW+DC", false, false);
+                }
+
             }
             catch (Exception ex)
             {

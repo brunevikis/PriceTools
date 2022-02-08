@@ -39,6 +39,10 @@ namespace ConsoleApp1.Dadger {
                 {
                     value = 100.0f;
                 }
+                if (value < 0.1 && value > 0)
+                {
+                    value = 0.1f;
+                }
                 this[3] = value;
             }
         }

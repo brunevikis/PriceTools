@@ -28,6 +28,10 @@ namespace Compass.CommomLibrary.EntdadosDat
                 {
                     value = 100.0f;
                 }
+                if (value < 0.1 && value > 0)
+                {
+                    value = 0.1f;
+                }
                 this[4] = value;
             }
         }

@@ -246,9 +246,7 @@ namespace Compass.Services {
 
                     //var newUh = (UhLine)uhBase.Clone();
                     var uhe = configH.usinas[uhBase.Usina];
-
                     uhBase.VolIniPerc = uhe.VolIni > 0 && uhe.VolUtil > 0 ? (float)Math.Round((uhe.VolIni / uhe.VolUtil) * 100f, 2) : 0f;
-
 
                     //uhResult.Add(newUh);
                 }

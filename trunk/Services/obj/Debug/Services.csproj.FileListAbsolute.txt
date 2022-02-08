@@ -112,3 +112,4 @@ C:\Development\price_toolsVMAlfa\trunk\Services\obj\Debug\Services.csproj.CoreCo
 C:\Development\price_toolsVMAlfa\trunk\Services\obj\Debug\Services.csproj.CopyComplete
 C:\Development\price_toolsVMAlfa\trunk\Services\obj\Debug\Compass.Services.dll
 C:\Development\price_toolsVMAlfa\trunk\Services\obj\Debug\Compass.Services.pdb
+C:\Development\price_tools\trunk\Services\obj\Debug\Services.csproj.CopyComplete

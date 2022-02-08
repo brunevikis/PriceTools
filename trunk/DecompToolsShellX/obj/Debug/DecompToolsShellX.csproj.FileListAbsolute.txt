@@ -254,3 +254,4 @@ C:\Development\price_toolsVMAlfa\trunk\DecompToolsShellX\obj\Debug\Compass.Decom
 C:\Development\price_toolsVMAlfa\trunk\DecompToolsShellX\obj\Debug\DecompToolsShellX.csproj.CopyComplete
 C:\Development\price_toolsVMAlfa\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.exe
 C:\Development\price_toolsVMAlfa\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.pdb
+C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\DecompToolsShellX.csproj.CopyComplete
