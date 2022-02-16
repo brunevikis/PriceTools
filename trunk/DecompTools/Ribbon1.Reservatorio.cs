@@ -12,8 +12,10 @@ using Compass.ExcelTools.Templates;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Compass.DecompTools {
-    public partial class Ribbon1 {
+namespace Compass.DecompTools
+{
+    public partial class Ribbon1
+    {
 
         Compass.CommomLibrary.HidrDat.HidrDat hidr;
         private void btn_AtingirMetaRee_Click(object sender, RibbonControlEventArgs e)
@@ -192,6 +194,122 @@ namespace Compass.DecompTools {
                 double[] earmMaxSubmercado = configH.GetEarmsMax();
 
                 info.EarmMax = earmMaxSubmercado;
+                configH.ReloadUH();
+
+                //coclocar ccodigo aqui 
+                var decompVerifica = info.DeckVerifica;
+                double? tolerancia = info.ValTol;
+                if (decompVerifica != null && Directory.Exists(decompVerifica) && tolerancia != null && tolerancia > 0)
+                {
+                    var deckDCVerefica = DeckFactory.CreateDeck(decompVerifica) as Compass.CommomLibrary.Decomp.Deck;
+                    var hidrDatVerifica = deckDCVerefica[Compass.CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
+                    var dadgerVerfica = deckDCVerefica[Compass.CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
+
+                    var configHVerifica = new Compass.CommomLibrary.Decomp.ConfigH(dadgerVerfica, hidrDatVerifica);
+                    var listaverifica = configHVerifica.GetEarmsUH();
+                    var listaMeta = configH.GetEarmsUH();
+
+                    List<Tuple<string, int, double, double>> listaToler = new List<Tuple<string, int, double, double>>();
+
+                    if (configH.baseDoc is Dadger)
+                    {
+                        if (tolerancia > 1)//significa que a tolerancia foi informada em forma de MW
+                        {
+                            foreach (var uhBase in ((Dadger)configH.baseDoc).BlocoUh)
+                            {
+                                var uhe = configH.usinas[uhBase.Usina];
+
+                                bool existeUH = listaMeta.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+                                bool existeUHVerifica = listaverifica.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+
+                                if (existeUH == true && existeUHVerifica == true)
+                                {
+                                    double UHearm = listaMeta.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double UHearmVerifica = listaverifica.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double resultado = Math.Abs(UHearm - UHearmVerifica);
+                                    if (resultado > tolerancia)
+                                    {
+                                        var uhDados = listaMeta.Where(x => x.Item1 == uhBase.Usina).First();
+                                        listaToler.Add(new Tuple<string, int, double, double>(uhe.Usina, uhDados.Item1, uhDados.Item2, uhDados.Item3));
+                                    }
+                                }
+                            }
+                        }
+                        else//tolerancia em porcentagem
+                        {
+                            foreach (var uhBase in ((Dadger)configH.baseDoc).BlocoUh)
+                            {
+                                double newEnergia = 0;
+                                double Factor = 0.0036 * 730.5;
+                                //var newUh = (UhLine)uhBase.Clone();
+                                var uhe = configH.usinas[uhBase.Usina];
+                                if (uhe.InDadger || (uhe.IsFict && configH.usinas[uhe.CodReal.Value].InDadger))
+                                {
+                                    double VolIni = (double)tolerancia * uhe.VolUtil;
+                                    //uhe.VolIni = VolIni;
+                                    //var NovoEarm = tolerancia * uhe.ProdTotal;
+                                    var NovoEarm = VolIni * uhe.ProdTotal;
+                                    newEnergia = (float)((1 / Factor) * NovoEarm);
+                                }
+                                else
+                                {
+                                    newEnergia = 0;
+
+                                }
+
+                                bool existeUH = listaMeta.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+                                bool existeUHVerifica = listaverifica.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+
+                                if (existeUH == true && existeUHVerifica == true)
+                                {
+                                    double UHearm = listaMeta.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double UHearmVerifica = listaverifica.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double resultado = Math.Abs(UHearm - UHearmVerifica);
+                                    if (resultado > newEnergia)
+                                    {
+                                        var uhDados = listaMeta.Where(x => x.Item1 == uhBase.Usina).First();
+                                        listaToler.Add(new Tuple<string, int, double, double>(uhe.Usina, uhDados.Item1, uhDados.Item2, uhDados.Item3));
+                                    }
+                                }
+                            }
+                        }
+                        //preencehr excel aqui
+                        int rowTol = 6;
+                        int colMani = 23;
+                        int colVeri = 28;
+
+                        for (int rw = 6; info.WS.Cells[rw, colMani].Value != null; rw++)//apaga dados anteriores para uma nova rodada de verificação
+                        {
+                            info.WS.Cells[rw, colMani].Value = null;
+                            info.WS.Cells[rw, colMani + 1].Value = null;
+                            info.WS.Cells[rw, colMani + 2].Value = null;
+                            info.WS.Cells[rw, colMani + 3].Value = null;
+                        }
+
+                        for (int rw = 6; info.WS.Cells[rw, colVeri].Value != null; rw++)
+                        {
+                            info.WS.Cells[rw, colVeri].Value = null;
+                            info.WS.Cells[rw, colVeri + 1].Value = null;
+                            info.WS.Cells[rw, colVeri + 2].Value = null;
+                        }
+
+                        foreach (var tol in listaToler)
+                        {
+                            var dadoverifica = listaverifica.Where(x => x.Item1 == tol.Item2).First();
+
+                            info.WS.Cells[rowTol, colMani].Value = tol.Item1;
+                            info.WS.Cells[rowTol, colMani + 1].Value = tol.Item2;
+                            info.WS.Cells[rowTol, colMani + 2].Value = tol.Item3;
+                            info.WS.Cells[rowTol, colMani + 3].Value = tol.Item4;
+
+                            info.WS.Cells[rowTol, colVeri].Value = dadoverifica.Item1;
+                            info.WS.Cells[rowTol, colVeri + 1].Value = dadoverifica.Item2;
+                            info.WS.Cells[rowTol, colVeri + 2].Value = dadoverifica.Item3;
+
+                            rowTol++;
+                        }
+                    }
+                }
 
                 info.Show();
 
@@ -206,17 +324,19 @@ namespace Compass.DecompTools {
             }
         }
 
-        private void btnReservatorio_Click(object sender, RibbonControlEventArgs e) {
+        private void btnReservatorio_Click(object sender, RibbonControlEventArgs e)
+        {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var style = System.Globalization.NumberStyles.Any;
-            try {
+            try
+            {
                 var configH = LoadConfigH(null);
 
-               
+
 
                 var info = ActiveWorkbook.GetInfosheet();
 
-                
+
 
                 //var reserv = new Compass.Services.Reservatorio((Dadger)doc, (Compass.CommomLibrary.HidrDat.HidrDat)hidr);
 
@@ -227,9 +347,9 @@ namespace Compass.DecompTools {
                 /***********/
                 //Caso tenha algum posta para ser travado no Bloco uh
 
-                
+
                 var Fixa_UH = info.Fixa_UH;
-              
+
 
                 //informar meta %
                 //var earm = new float[] { 27, 40, 23, 56 };
@@ -238,9 +358,11 @@ namespace Compass.DecompTools {
 
                 //Se meta for relativa (%) e max não informado, calcular;
                 var earmMax = new double[0];
-                if (earmMeta.All(x => x < 100)) {
+                if (earmMeta.All(x => x < 100))
+                {
                     earmMax = info.EarmMax;
-                    if (earmMax == null) {
+                    if (earmMax == null)
+                    {
                         earmMax = configH.GetEarmsMax();
                         info.EarmMax = earmMax;
 
@@ -258,13 +380,13 @@ namespace Compass.DecompTools {
                     Compass.Services.Reservatorio.SetUHBlock(configH, earmMeta, earmMax);
                 }
 
-                    
+
 
 
                 double[] earmFinal = configH.GetEarms();
 
                 var doc = configH.baseDoc;
-                
+
 
                 Globals.ThisAddIn.Application.ScreenUpdating = false;
 
@@ -288,7 +410,7 @@ namespace Compass.DecompTools {
 
                 if (Deck_Base != "")
                 {
-                    
+
                     if (Exist_Estagio)
                     {
                         var Deck_Dadger = DeckFactory.CreateDeck(Deck_Base) as CommomLibrary.Decomp.Deck;
@@ -304,7 +426,7 @@ namespace Compass.DecompTools {
                             double valor_ve = 0;
 
                             string erros = null;
-                            
+
 
 
                             cel = 19;
@@ -338,7 +460,7 @@ namespace Compass.DecompTools {
                                             MessageBox.Show("Valor não encontrado no Bloco VE base para o Estagio informado");
                                             break;
                                         }
-                                    
+
                                     }
                                     catch
                                     {
@@ -361,7 +483,7 @@ namespace Compass.DecompTools {
                     }
                 }
 
-                
+
 
                 //info.BottonComments = doc.BottonComments;
                 //info.DocType = type;
@@ -372,50 +494,178 @@ namespace Compass.DecompTools {
                 info.Earm = earmFinal;
 
                 var i = 1;
-                foreach (var ree in Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.Values.Distinct()) {
+                foreach (var ree in Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.Values.Distinct())
+                {
                     info.WS.Cells[7 + i, 7].Value = ree;
                     info.WS.Cells[7 + i++, 9].Value =
                          configH.Usinas.Where(u => Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.ContainsKey(u.Cod) && Compass.CommomLibrary.Decomp.ConfigH.uhe_ree[u.Cod] == ree).Sum(u => u.EnergiaArmazenada);
 
                 }
-                
+
+                //coclocar ccodigo aqui 
+                var decompVerifica = info.DeckVerifica;
+                double? tolerancia = info.ValTol;
+                if (decompVerifica != null && Directory.Exists(decompVerifica) && tolerancia != null && tolerancia > 0)
+                {
+                    var deckDCVerefica = DeckFactory.CreateDeck(decompVerifica) as Compass.CommomLibrary.Decomp.Deck;
+                    var hidrDatVerifica = deckDCVerefica[Compass.CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
+                    var dadgerVerfica = deckDCVerefica[Compass.CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
+
+                    var configHVerifica = new Compass.CommomLibrary.Decomp.ConfigH(dadgerVerfica, hidrDatVerifica);
+                    var listaverifica = configHVerifica.GetEarmsUH();
+                    var listaMeta = configH.GetEarmsUH();
+
+                    List<Tuple<string, int, double, double>> listaToler = new List<Tuple<string, int, double, double>>();
+
+                    if (configH.baseDoc is Dadger)
+                    {
+                        if (tolerancia > 1)//significa que a tolerancia foi informada em forma de MW
+                        {
+                            foreach (var uhBase in ((Dadger)configH.baseDoc).BlocoUh)
+                            {
+                                var uhe = configH.usinas[uhBase.Usina];
+
+                                bool existeUH = listaMeta.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+                                bool existeUHVerifica = listaverifica.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+
+                                if (existeUH == true && existeUHVerifica == true)
+                                {
+                                    double UHearm = listaMeta.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double UHearmVerifica = listaverifica.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double resultado = Math.Abs(UHearm - UHearmVerifica);
+                                    if (resultado > tolerancia)
+                                    {
+                                        var uhDados = listaMeta.Where(x => x.Item1 == uhBase.Usina).First();
+                                        listaToler.Add(new Tuple<string, int, double, double>(uhe.Usina, uhDados.Item1, uhDados.Item2, uhDados.Item3));
+                                    }
+                                }
+                            }
+                        }
+                        else//tolerancia em porcentagem
+                        {
+                            foreach (var uhBase in ((Dadger)configH.baseDoc).BlocoUh)
+                            {
+                                double newEnergia = 0;
+                                double Factor = 0.0036 * 730.5;
+                                //var newUh = (UhLine)uhBase.Clone();
+                                var uhe = configH.usinas[uhBase.Usina];
+                                if (uhe.InDadger || (uhe.IsFict && configH.usinas[uhe.CodReal.Value].InDadger))
+                                {
+                                    double VolIni = (double)tolerancia * uhe.VolUtil;
+                                    //uhe.VolIni = VolIni;
+                                    //var NovoEarm = tolerancia * uhe.ProdTotal;
+                                    var NovoEarm = VolIni * uhe.ProdTotal;
+                                    newEnergia = (float)((1 / Factor) * NovoEarm);
+                                }
+                                else
+                                {
+                                    newEnergia = 0;
+
+                                }
+
+                                bool existeUH = listaMeta.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+                                bool existeUHVerifica = listaverifica.Any(x => x.Item1 == uhBase.Usina) ? true : false;
+
+                                if (existeUH == true && existeUHVerifica == true)
+                                {
+                                    double UHearm = listaMeta.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double UHearmVerifica = listaverifica.Where(x => x.Item1 == uhBase.Usina).Select(x => x.Item3).FirstOrDefault();
+                                    double resultado = Math.Abs(UHearm - UHearmVerifica);
+                                    if (resultado > newEnergia)
+                                    {
+                                        var uhDados = listaMeta.Where(x => x.Item1 == uhBase.Usina).First();
+                                        listaToler.Add(new Tuple<string, int, double, double>(uhe.Usina, uhDados.Item1, uhDados.Item2, uhDados.Item3));
+                                    }
+                                }
+                            }
+                        }
+                        //preencehr excel aqui
+                        int rowTol = 6;
+                        int colMani = 23;
+                        int colVeri = 28;
+
+                        for (int rw = 6; info.WS.Cells[rw, colMani].Value != null; rw++)//apaga dados anteriores para uma nova rodada de verificação
+                        {
+                            info.WS.Cells[rw, colMani].Value = null;
+                            info.WS.Cells[rw, colMani + 1].Value = null;
+                            info.WS.Cells[rw, colMani + 2].Value = null;
+                            info.WS.Cells[rw, colMani + 3].Value = null;
+                        }
+
+                        for (int rw = 6; info.WS.Cells[rw, colVeri].Value != null; rw++)
+                        {
+                            info.WS.Cells[rw, colVeri].Value = null;
+                            info.WS.Cells[rw, colVeri + 1].Value = null;
+                            info.WS.Cells[rw, colVeri + 2].Value = null;
+                        }
+
+                        foreach (var tol in listaToler)
+                        {
+                            var dadoverifica = listaverifica.Where(x => x.Item1 == tol.Item2).First();
+
+                            info.WS.Cells[rowTol, colMani].Value = tol.Item1;
+                            info.WS.Cells[rowTol, colMani + 1].Value = tol.Item2;
+                            info.WS.Cells[rowTol, colMani + 2].Value = tol.Item3;
+                            info.WS.Cells[rowTol, colMani + 3].Value = tol.Item4;
+
+                            info.WS.Cells[rowTol, colVeri].Value = dadoverifica.Item1;
+                            info.WS.Cells[rowTol, colVeri + 1].Value = dadoverifica.Item2;
+                            info.WS.Cells[rowTol, colVeri + 2].Value = dadoverifica.Item3;
+
+                            rowTol++;
+                        }
+                    }
+                }
+
                 info.Show();
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
-            } finally {
+            }
+            finally
+            {
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
             }
         }
 
-        private void btnReservatorioRelato_Click(object sender, RibbonControlEventArgs e) {
-            try {
+        private void btnReservatorioRelato_Click(object sender, RibbonControlEventArgs e)
+        {
+            try
+            {
 
 
                 System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
                 ofd.Filter = "relato | relato.*";
 
-                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
 
                     var relato = (Compass.CommomLibrary.Relato.Relato)DocumentFactory.Create(ofd.FileName);
 
                     var configH = LoadConfigH();
 
 
-                    if (configH.baseDoc is Dadger) {
+                    if (configH.baseDoc is Dadger)
+                    {
                         var dger = configH.baseDoc as Dadger;
 
                         var uhBlock = dger.BlocoUh;
 
-                        foreach (var reserv in relato.VolUtil) {
+                        foreach (var reserv in relato.VolUtil)
+                        {
                             var uh = uhBlock.FirstOrDefault(x => x.Usina == reserv.Cod);
                             if (uh != null)
                                 uh.VolIniPerc = (float)reserv.VolFinSem1;
                         }
-                    } else if (configH.baseDoc is CommomLibrary.ConfhdDat.ConfhdDat) {
+                    }
+                    else if (configH.baseDoc is CommomLibrary.ConfhdDat.ConfhdDat)
+                    {
                         var confhd = configH.baseDoc as CommomLibrary.ConfhdDat.ConfhdDat;
 
-                        foreach (var reserv in relato.VolUtil) {
+                        foreach (var reserv in relato.VolUtil)
+                        {
                             var uh = confhd.FirstOrDefault(x => x.Cod == reserv.Cod);
                             if (uh != null)
                                 uh.VolUtil = (float)reserv.VolFinSem1;
@@ -448,15 +698,21 @@ namespace Compass.DecompTools {
 
                     info.Show();
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
-            } finally {
+            }
+            finally
+            {
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
             }
         }
 
-        private void btnReservatorioEarm_Click(object sender, RibbonControlEventArgs e) {
-            try {
+        private void btnReservatorioEarm_Click(object sender, RibbonControlEventArgs e)
+        {
+            try
+            {
 
                 var configH = LoadConfigH();
 
@@ -482,16 +738,18 @@ namespace Compass.DecompTools {
                 };
 
                 var l = 2;
-                foreach (var uhe in configH.Usinas.Select(u => new dynamic[,]{                    
+                foreach (var uhe in configH.Usinas.Select(u => new dynamic[,]{
                     {u.Cod, u.Usina, u.ProdCalc, u.ProdTotal, u.VolIni , u.Mercado, u.EnergiaArmazenada}
                 }
-                    )) {
+                    ))
+                {
                     xlsM.Range[xlsM.Cells[l, 1], xlsM.Cells[l++, uhe.Length]].Value2 = uhe;
 
                 }
 
                 var i = 1;
-                foreach (var ree in Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.Values.Distinct()) {
+                foreach (var ree in Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.Values.Distinct())
+                {
                     info.WS.Cells[7 + i, 7].Value = ree;
                     info.WS.Cells[7 + i++, 9].Value =
                          configH.Usinas.Where(u => Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.ContainsKey(u.Cod) && Compass.CommomLibrary.Decomp.ConfigH.uhe_ree[u.Cod] == ree).Sum(u => u.EnergiaArmazenada);
@@ -499,15 +757,21 @@ namespace Compass.DecompTools {
                 }
 
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
-            } finally {
+            }
+            finally
+            {
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
             }
         }
 
-        private void btnReservatorioEarmMax_Click(object sender, RibbonControlEventArgs e) {
-            try {
+        private void btnReservatorioEarmMax_Click(object sender, RibbonControlEventArgs e)
+        {
+            try
+            {
 
 
                 var configH = LoadConfigH();
@@ -532,38 +796,47 @@ namespace Compass.DecompTools {
 
                 var l = 2;
 
-                var uhes = configH.Usinas.Select(u => new dynamic[,]{                    
+                var uhes = configH.Usinas.Select(u => new dynamic[,]{
                     {u.Cod, u.Usina, u.ProdCalc, u.ProdTotal, u.VolIni , u.Mercado, u.EnergiaArmazenada}
                 }
                 );
 
-                foreach (var uhe in uhes) {
+                foreach (var uhe in uhes)
+                {
                     xlsM.Range[xlsM.Cells[l, 1], xlsM.Cells[l++, uhe.Length]].Value2 = uhe;
 
                 }
 
                 var i = 1;
-                foreach (var ree in Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.Values.Distinct()) {
+                foreach (var ree in Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.Values.Distinct())
+                {
                     info.WS.Cells[7 + i, 7].Value = ree;
                     info.WS.Cells[7 + i++, 8].Value =
                          configH.Usinas.Where(u => Compass.CommomLibrary.Decomp.ConfigH.uhe_ree.ContainsKey(u.Cod) && Compass.CommomLibrary.Decomp.ConfigH.uhe_ree[u.Cod] == ree).Sum(u => u.EnergiaArmazenada);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
-            } finally {
+            }
+            finally
+            {
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
             }
         }
 
-        private void btnReservatorioRDH_Click(object sender, RibbonControlEventArgs e) {
+        private void btnReservatorioRDH_Click(object sender, RibbonControlEventArgs e)
+        {
             var xlApp = Globals.ThisAddIn.Application;
-            try {
+            try
+            {
 
 
                 System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
                 ofd.Filter = "rdh | *.xls*";
 
-                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
 
                     // var relato = (Compass.CommomLibrary.Relato.Relato)DocumentFactory.Create(ofd.FileName);
 
@@ -577,7 +850,8 @@ namespace Compass.DecompTools {
 
                     var configH = LoadConfigH();
 
-                    if (configH.baseDoc is Dadger) {
+                    if (configH.baseDoc is Dadger)
+                    {
                         var dger = configH.baseDoc as Dadger;
 
                         var uhBlock = dger.BlocoUh;
@@ -586,25 +860,31 @@ namespace Compass.DecompTools {
                                 join h in configH.Usinas on r.Posto equals h.Posto
                                 select new { h.Cod, r.VolUtilArm, h, r.Nivel };
 
-                        foreach (var reserv in q) {
+                        foreach (var reserv in q)
+                        {
                             var uh = uhBlock.FirstOrDefault(x => x.Usina == reserv.Cod);
-                            if (uh != null) {
+                            if (uh != null)
+                            {
                                 if (uh.Usina == 66) uh.VolIniPerc = reserv.h.GetVolumePorCota(reserv.Nivel);
                                 else
                                     uh.VolIniPerc = uh.VolIniPerc != 0 ? reserv.VolUtilArm : 0;
                             }
                         }
 
-                    } else if (configH.baseDoc is CommomLibrary.ConfhdDat.ConfhdDat) {
+                    }
+                    else if (configH.baseDoc is CommomLibrary.ConfhdDat.ConfhdDat)
+                    {
                         var confhd = configH.baseDoc as CommomLibrary.ConfhdDat.ConfhdDat;
 
                         var q = from r in rdh
                                 join h in configH.Usinas on r.Posto equals h.Posto
                                 select new { h.Cod, r.VolUtilArm, h, r.Nivel };
 
-                        foreach (var reserv in q) {
+                        foreach (var reserv in q)
+                        {
                             var uh = confhd.FirstOrDefault(x => x.Cod == reserv.Cod);
-                            if (uh != null) {
+                            if (uh != null)
+                            {
                                 if (uh.Cod == 66) uh.VolUtil = reserv.h.GetVolumePorCota(reserv.Nivel);
                                 else
                                     uh.VolUtil = uh.VolUtil != 0 ? reserv.VolUtilArm : 0;
@@ -630,14 +910,19 @@ namespace Compass.DecompTools {
 
                     info.Show();
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
-            } finally {
+            }
+            finally
+            {
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
             }
         }
 
-        Compass.CommomLibrary.Decomp.ConfigH LoadConfigH(string dadgerPath = null) {
+        Compass.CommomLibrary.Decomp.ConfigH LoadConfigH(string dadgerPath = null)
+        {
 
             //verificar se tem dadger aberto e carregá-lo
             var info = ActiveWorkbook.GetInfosheet();
@@ -645,7 +930,8 @@ namespace Compass.DecompTools {
                 info.DocType.Equals("dadger", StringComparison.OrdinalIgnoreCase) ||
                 info.DocType.Equals("confhddat", StringComparison.OrdinalIgnoreCase) ||
                 info.DocType.Equals("entdadosdat", StringComparison.OrdinalIgnoreCase)
-                )) {
+                ))
+            {
                 throw new Exception("Nenhum dadger, confdh ou entdados carregado.");
             }
 
@@ -659,7 +945,8 @@ namespace Compass.DecompTools {
             var hidrFile = System.IO.Path.Combine(deckFolder, "hidr.dat");
             var modifFile = System.IO.Path.Combine(deckFolder, "modif.dat");
 
-            if (!System.IO.File.Exists(hidrFile)) {
+            if (!System.IO.File.Exists(hidrFile))
+            {
                 hidrFile = System.IO.Path.Combine(Globals.ThisAddIn.ResourcesPath, "hidr.dat");
                 System.Windows.Forms.MessageBox.Show("Hidr.dat não encontrado. Usando arquivo padrão.\r\n" + hidrFile);
             }
@@ -669,19 +956,22 @@ namespace Compass.DecompTools {
 
 
 
-            if (doc is Dadger) {
+            if (doc is Dadger)
+            {
                 return new Compass.CommomLibrary.Decomp.ConfigH((Dadger)doc, hidr);
             }
             else if (doc is EntdadosDat)
             {
                 return new Compass.CommomLibrary.Decomp.ConfigH((EntdadosDat)doc, hidr);
             }
-            else if (doc is Compass.CommomLibrary.ConfhdDat.ConfhdDat) {
+            else if (doc is Compass.CommomLibrary.ConfhdDat.ConfhdDat)
+            {
                 var modif = BaseDocument.Create<Compass.CommomLibrary.ModifDatNW.ModifDatNw>(
                 File.ReadAllText(modifFile)
                 );
                 return new Compass.CommomLibrary.Decomp.ConfigH((Compass.CommomLibrary.ConfhdDat.ConfhdDat)doc, hidr, modif);
-            } else
+            }
+            else
                 throw new Exception("Documento inválido");
         }
     }

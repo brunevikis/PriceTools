@@ -19,6 +19,8 @@ namespace Compass.ExcelTools.Templates {
         public string DocBase { get { return ws.Cells[2, 19].Text; } set { ws.Cells[2, 19].Value = value; } }
 
         public string Estagio_Base { get { return ws.Cells[3, 20].Text; } set { ws.Cells[3, 20].Value = value; } }
+        public string DeckVerifica { get { return ws.Cells[2, 23].Text; } set { ws.Cells[2, 23].Value = value; } }
+        public double? ValTol { get { return Convert.ToSingle(ws.Cells[3, 24].Value); } set { ws.Cells[3, 24].Value = value; } }
 
         public Infosheet(Worksheet xlWs) {
             ws = xlWs;
@@ -41,6 +43,19 @@ namespace Compass.ExcelTools.Templates {
             ws.Cells[4, 19].Value = "Usina";
             ws.Cells[4, 20].Value = "UH";
             ws.Cells[4, 21].Value = "VE Base";
+            //
+            ws.Cells[1, 23].Value = "Deck Verificação Célula W2";
+            ws.Cells[3, 23].Value = "Tolerância";
+            ws.Cells[4, 23].Value = "Dadger Manipulado";
+            ws.Cells[5, 23].Value = "Nome";
+            ws.Cells[5, 24].Value = "UH";
+            ws.Cells[5, 25].Value = "Volume %";
+            ws.Cells[5, 26].Value = "Earm";
+            ws.Cells[4, 28].Value = "Dadger Verificação";
+            ws.Cells[5, 28].Value = "UH";
+            ws.Cells[5, 29].Value = "Volume %";
+            ws.Cells[5, 30].Value = "Earm";
+
 
 
         }

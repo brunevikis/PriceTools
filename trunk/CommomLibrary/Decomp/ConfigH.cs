@@ -799,6 +799,25 @@ namespace Compass.CommomLibrary.Decomp
             return earmMax;
         }
 
+        public List<Tuple<int,double,double>> GetEarmsUH()//UH % earm
+        {
+
+            updateQuedas();
+
+            updateProdTotal();
+
+            var lista = getEarmUH();
+            //var earms = new double[index_sistemas.Count];
+
+            //for (int x = 0; x < index_sistemas.Count; x++)
+            //{
+            //    int sistema = index_sistemas.Where(i => i.Item1 == x).First().Item2;
+            //    earms[x] = getEarm(sistema); ;
+            //}
+
+            return lista;
+        }
+
         public double[] GetEarms()
         {
 
@@ -838,6 +857,23 @@ namespace Compass.CommomLibrary.Decomp
         {
             double valor = Usinas.Where(u => uhe_ree.ContainsKey(u.Cod) && uhe_ree[u.Cod] == REE).Sum(u => u.EnergiaArmazenada);
             return valor;
+        }
+
+        List<Tuple<int,double,double>> getEarmUH()
+        {
+            //double total = 0;
+            List<Tuple<int, double, double>> dados = new List<Tuple<int, double, double>>();
+
+            foreach (var usina in Usinas)
+            {
+                double valor = usina.VolIni > 0 && usina.VolUtil > 0 ? (float)Math.Round((usina.VolIni / usina.VolUtil) * 100f, 2) : 0f;
+                dados.Add(new Tuple<int, double, double>(usina.Cod, valor, usina.EnergiaArmazenada));
+            }
+                //.Where(u => u.InDadger || (u.IsFict && usinas[u.CodReal.Value].InDadger))
+                
+                //total = total + usina.EnergiaArmazenada;
+
+            return dados;
         }
 
         double getEarm(int sistema)
