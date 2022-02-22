@@ -51,6 +51,11 @@ namespace ConsoleApp1
 
                 testandoDll(dir);
             }
+            else if (args[0] == "limpeza")
+            {
+
+                Limpeza();
+            }
             else if (args[0] == "dadgnl")
             {
                 Altera_Dadgnl_Men(dir);
@@ -1579,6 +1584,40 @@ namespace ConsoleApp1
 
             deckDecomp[ConsoleApp1.Decomp.DeckDocument.dadger].Document.SaveToFile();
 
+        }
+
+        public static void Limpeza()
+        {
+            try
+            {
+                List<Tuple<string, DateTime>> dirList = new List<Tuple<string, DateTime>>();
+                var diretorios = Directory.GetDirectories("/mnt/resource/decomp/").ToList();
+
+                if (diretorios.Count() > 6)
+                {
+                    foreach (var dir in diretorios)
+                    {
+                        DirectoryInfo diretorioInfo = new DirectoryInfo(dir);
+                        dirList.Add(new Tuple<string, DateTime>(dir, diretorioInfo.CreationTime));
+                    }
+                    var ordem = dirList.OrderByDescending(x => x.Item2).ToList();
+                    for (int i = 6; i < ordem.Count(); i++)
+                    {
+                        string dirExcluido = ordem[i].Item1;
+                        Directory.Delete(dirExcluido, true);
+                    }
+                    Console.WriteLine("-----DIRETORIOS EXCLUIDOS COM SUCESSO-----");
+                }
+                else
+                {
+                    Console.WriteLine("-----NAO HA DIRETORIOS PARA EXCLUIR-----");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("-----ERRO AO TENTAR APAGAR DIRETORIOS ANTIGOS, FALHA NA LIMPEZA-----");
+                Console.WriteLine(e.ToString());
+            }
         }
 
         public static void testandoDll(string dir)
