@@ -873,7 +873,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                 foreach (var df in dadosFixas)
                                 {
-                                    fixaUhTxtLines.Add(df.Posto.ToString() + "\t" + df.Volini.ToString());
+                                    //fixaUhTxtLines.Add(df.Posto.ToString() + "\t" + df.Volini.ToString());
+                                    fixaUhTxtLines.Add(df.Posto.ToString() + "\t" + (df.Volini != null ? df.Volini.ToString() : "null"));
                                 }
                                 File.WriteAllLines(Path.Combine(estudoPath, "UhFixados.txt"), fixaUhTxtLines);
 
