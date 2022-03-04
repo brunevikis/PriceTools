@@ -74,7 +74,15 @@ namespace ConsoleApp1
             }
             else if (args.Count() > 2 && args[0] == "metaencad")
             {
-                AtingirMetaEncad(dir, args[1], args[2]);
+                bool usaUHfix = true;
+                if (args.Count() > 3)
+                {
+                    if (args[3] == "nao")
+                    {
+                        usaUHfix = false;
+                    }
+                }
+                AtingirMetaEncad(dir, args[1], args[2], usaUHfix);
             }
             else
             {
@@ -1153,7 +1161,7 @@ namespace ConsoleApp1
             }
         }
 
-        public static void AtingirMetaEncad(string rootPath, string mesAtual, string mesSeguinte)
+        public static void AtingirMetaEncad(string rootPath, string mesAtual, string mesSeguinte, bool usaUHfix)
         {
             Console.WriteLine($"Iniciando Atingir Meta Encadeada, Newave: {mesAtual}  Decomp: {mesSeguinte} ");
             var DirsDC = Directory.GetDirectories(rootPath, "DC*").ToList();
@@ -1290,7 +1298,12 @@ namespace ConsoleApp1
                             }
 
                             #endregion
-                            if (dadosFixas.Count() > 0)
+
+                            if (usaUHfix == false && dadosFixas.Count() > 0)
+                            {
+                                Console.WriteLine("Rotina de atingir meta por REE sem fixar UH iniciada");
+                            }
+                            if (dadosFixas.Count() > 0 && usaUHfix == true)
                             {
                                 Reservatorio.SetUHBlockREEFixado(configH, earmMeta, earmMax, dadosFixas);
 
@@ -1347,7 +1360,7 @@ namespace ConsoleApp1
                             }
 
                             //configH.baseDoc.SaveToFile();
-                            configH.baseDoc.SaveToFileMetabkp("bkpREE",createBackup: true);
+                            configH.baseDoc.SaveToFileMetabkp("bkpREE", createBackup: true);
 
                             File.WriteAllText(Path.Combine(dir, "atingirMetaFinalizado.txt"), "OK");
 
@@ -2546,7 +2559,7 @@ namespace ConsoleApp1
         {
             Console.Write("Rotina de alteração do adterm.dat para:" + dir + ", iniciada!!!");
 
-             var dataCaso = dir.Split('/').Last();
+            var dataCaso = dir.Split('/').Last();
             //var dataCaso = dir.Split('\\').Last();
 
             var dtEstudoAno = Convert.ToInt32(dataCaso.Substring(0, 4));
