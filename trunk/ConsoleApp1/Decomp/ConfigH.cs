@@ -675,6 +675,7 @@ namespace ConsoleApp1.Decomp
         {
             foreach (var uhe in Usinas)
             {
+                
                 uhe.atualizaQueda();
             }
         }
@@ -1169,6 +1170,10 @@ namespace ConsoleApp1.Decomp
 
             foreach (var u in Usinas)
             {
+                if (u.Cod == 169)
+                {
+
+                }
                 if (curvaEarm.Any(x => x.Item1 == u.Cod && x.Item2 > 0))
                 {
                     u.VolMinRestricao = curvaEarm.Where(x => x.Item1 == u.Cod && x.Item2 > 0).Max(x => x.Item2);
@@ -1363,6 +1368,10 @@ namespace ConsoleApp1.Decomp
                     }
                     else
                         cotaRelativa = CotaMin;
+                }
+                if (cotaRelativa < CotaMin)
+                {
+                    cotaRelativa = CotaMin;
                 }
 
                 var queda = cotaRelativa - CanalFugaMed;

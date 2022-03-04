@@ -1300,7 +1300,8 @@ namespace ConsoleApp1
                                 Reservatorio.SetUHBlockREE(configH, earmMeta, earmMax);
                             }
 
-                            configH.baseDoc.SaveToFile();
+                            //configH.baseDoc.SaveToFile();
+                            configH.baseDoc.SaveToFileMetabkp("bkpInicioMeta", createBackup: true);
 
 
                             var fileMetaLines = File.ReadAllLines(fileMeta).Skip(1).Take(4).ToList();
@@ -1327,6 +1328,8 @@ namespace ConsoleApp1
 
                                 metaSub[index] = meta;
                             }
+                            deckDC = DeckFactory.CreateDeck(dir) as ConsoleApp1.Decomp.Deck;
+
                             dadger = deckDC[ConsoleApp1.Decomp.DeckDocument.dadger].Document as Dadger.Dadger;
                             var earmSubMax = configH.GetEarmsMax();
                             configH.ReloadUH();
@@ -1343,7 +1346,8 @@ namespace ConsoleApp1
 
                             }
 
-                            configH.baseDoc.SaveToFile();
+                            //configH.baseDoc.SaveToFile();
+                            configH.baseDoc.SaveToFileMetabkp("bkpREE",createBackup: true);
 
                             File.WriteAllText(Path.Combine(dir, "atingirMetaFinalizado.txt"), "OK");
 
@@ -1624,10 +1628,7 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Diretorio: " + dir);
             Console.WriteLine("Respondendo...");
-            int maxit = 1000;
-            Console.WriteLine("0.1 em uh e log de iteracoes atingir meta");
-            File.WriteAllText(Path.Combine(dir, "docteste.txt"), "ok...");
-            Console.WriteLine($"numero de {maxit} iteraçoes");
+            Console.WriteLine("correção atingir meta cota minima atualiza quedas");
         }
         public static void CalcJirauStoAnto(string dir)
         {

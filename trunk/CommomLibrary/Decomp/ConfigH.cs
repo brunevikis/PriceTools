@@ -1373,7 +1373,10 @@ namespace Compass.CommomLibrary.Decomp
                     else
                         cotaRelativa = CotaMin;
                 }
-
+                if (cotaRelativa < CotaMin)
+                {
+                    cotaRelativa = CotaMin;
+                }
                 var queda = cotaRelativa - CanalFugaMed;
 
                 if (PerdaTipo == 1)

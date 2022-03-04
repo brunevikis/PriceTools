@@ -297,6 +297,23 @@ namespace ConsoleApp1
             //SaveToFile(File);           
         }
 
+        public virtual void SaveToFileMetabkp(string sufixo, string filePath = null, bool createBackup = false)
+        {
+
+            filePath = filePath ?? File;
+
+            if (createBackup && System.IO.File.Exists(filePath))
+            {
+                var bkp = filePath + $"_{sufixo}.bak";
+                System.IO.File.Copy(filePath, bkp, true);
+            }
+
+
+            var text = ToText();
+            System.IO.File.WriteAllText(filePath, text, Encoding.Default);
+            //SaveToFile(File);           
+        }
+
         //public virtual void SaveToFile(string filePath) {
         //    var text = ToText();
         //    System.IO.File.WriteAllText(filePath, text, Encoding.Default);            

@@ -861,10 +861,10 @@ namespace ConsoleApp1
                     var ree = Convert.ToInt32(configH.index_Ree[x].Item2.Split('-').First().Trim());
 
                     erro = erro + Math.Abs(earmCurrent[x] - earmTarget[x]);
-                    var f = (earmTarget[x] / earmCurrent[x]);
+                    double f = (earmTarget[x] / earmCurrent[x]);
                     fatores[ree] = f;
                 }
-
+                
                 //se erro pequeno ou não houver grande variação parar iteração
                 if ((erro < 2 || Math.Abs(erroAnterior - erro) < 1) && desvio == true)
                     break;
@@ -893,7 +893,7 @@ namespace ConsoleApp1
                             var reeNum = Convert.ToInt32(ConfigH.uhe_ree[uhe.Cod].Split('-').First().Trim());
                             var reeNumFict = Convert.ToInt32(ConfigH.uhe_ree[configH.usinas[uhe.CodFicticia.Value].Cod].Split('-').First().Trim());
 
-                            var f = (float)Math.Pow(fatores[reeNum] *
+                            double f = (float)Math.Pow(fatores[reeNum] *
                                 fatores[reeNum] *
                                 fatores[reeNum] *
                                 fatores[reeNumFict],
