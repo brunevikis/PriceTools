@@ -622,6 +622,11 @@ namespace Compass.DecompTools
 
 
         }
+
+        private void btnPrevivazM2_Click(object sender, RibbonControlEventArgs e)
+        {
+
+        }
         private void btnPrevivaz_Click(object sender, RibbonControlEventArgs e)
         {
             var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;

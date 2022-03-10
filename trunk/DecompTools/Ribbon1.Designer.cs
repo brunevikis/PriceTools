@@ -71,6 +71,7 @@
             this.splitbtnPrevsCenariosNovoMensal = this.Factory.CreateRibbonSplitButton();
             this.btnPrevivaz = this.Factory.CreateRibbonButton();
             this.btnPrevivazEncad = this.Factory.CreateRibbonButton();
+            this.btnPrevivazM2 = this.Factory.CreateRibbonButton();
             this.btnPrevivazLocal = this.Factory.CreateRibbonButton();
             this.btnCriarDecksSensibilidade = this.Factory.CreateRibbonButton();
             this.btnPrevsCenariosProcess = this.Factory.CreateRibbonButton();
@@ -397,6 +398,7 @@
             // 
             this.splitbtnPrevsCenariosNovoMensal.Items.Add(this.btnPrevivaz);
             this.splitbtnPrevsCenariosNovoMensal.Items.Add(this.btnPrevivazEncad);
+            this.splitbtnPrevsCenariosNovoMensal.Items.Add(this.btnPrevivazM2);
             this.splitbtnPrevsCenariosNovoMensal.Items.Add(this.btnPrevivazLocal);
             this.splitbtnPrevsCenariosNovoMensal.Items.Add(this.btnCriarDecksSensibilidade);
             this.splitbtnPrevsCenariosNovoMensal.Label = "Novos Cenários";
@@ -416,6 +418,13 @@
             this.btnPrevivazEncad.Name = "btnPrevivazEncad";
             this.btnPrevivazEncad.ShowImage = true;
             this.btnPrevivazEncad.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnPrevivazEncad_Click);
+            // 
+            // btnPrevivazM2
+            // 
+            this.btnPrevivazM2.Label = "PrevivazM+2";
+            this.btnPrevivazM2.Name = "btnPrevivazM2";
+            this.btnPrevivazM2.ShowImage = true;
+            this.btnPrevivazM2.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnPrevivazM2_Click);
             // 
             // btnPrevivazLocal
             // 
@@ -555,6 +564,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnPrevivazEncad;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnPrevivazLocal;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_AtingirMetaRee;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnPrevivazM2;
     }
 
     partial class ThisRibbonCollection {

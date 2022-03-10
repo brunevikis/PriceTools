@@ -836,6 +836,62 @@ namespace Compass.CommomLibrary.Decomp
             return earms;
         }
 
+        public List<Tuple<string,double>> GetREEList()
+        {
+            List<Tuple<string, double>> dadosAtual = new List<Tuple<string, double>>();
+            List<Tuple<string, double>> dadosMax = new List<Tuple<string, double>>();
+            List<Tuple<string, double>> dadosPerc = new List<Tuple<string, double>>();
+
+            #region earm atual
+
+            updateQuedas();
+
+            updateProdTotal();
+
+            for (int x = 0; x < index_Ree.Count; x++)
+            {
+                string REE = index_Ree.Where(i => i.Item1 == x).First().Item2;
+                double valor = getEarmREE(REE);
+                dadosAtual.Add(new Tuple<string, double>(REE, valor));
+
+            }
+            #endregion
+
+            #region earm Max
+            var temp = Usinas.Where(u => !u.IsFict && u.VolUtil > 0);
+
+          
+            var currentVols = temp.Select(u => new { u.Cod, u.VolIni }).ToArray();
+            foreach (var uhe in temp)
+            {
+                uhe.VolIni = uhe.VolUtil;
+            }
+
+            updateQuedas();
+
+            updateProdTotal();
+
+            for (int x = 0; x < index_Ree.Count; x++)
+            {
+                string REE = index_Ree.Where(i => i.Item1 == x).First().Item2;
+                double valor = getEarmREE(REE);
+                dadosMax.Add(new Tuple<string, double>(REE, valor));
+
+            }
+
+            foreach (var dad in dadosAtual)
+            {
+                var dadMax = dadosMax.Where(x => x.Item1 == dad.Item1).First();
+
+                double perc = Math.Round((dad.Item2 / dadMax.Item2) * 100f, 2);
+
+                dadosPerc.Add(new Tuple<string, double>(dad.Item1, perc));
+            }
+            #endregion
+
+            return dadosPerc;
+        }
+
         public double[] GetEarmsREE()
         {
 

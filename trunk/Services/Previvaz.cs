@@ -1081,6 +1081,10 @@ namespace Compass.Services
 
             si.FileName = @"C:\Sistemas\PREVIVAZ\6.1.0\previvaz.exe";
 
+            if (!System.IO.File.Exists(si.FileName))
+            {
+                si.FileName = @"H:\TI - Sistemas\PREVIVAZ\6.1.0\previvaz.exe";
+            }
             si.WorkingDirectory = workFolder;
 
             si.CreateNoWindow = true;

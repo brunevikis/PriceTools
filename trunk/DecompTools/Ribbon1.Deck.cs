@@ -377,6 +377,21 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                 File.WriteAllText(Path.Combine(estudoPath, "configh.dat"), earmconfig);
 
+                                #region armazenamento REE
+                                var dadosREE = configH.GetREEList();
+
+                                configH.ReloadUH();
+
+                                List<string> linhasREE = new List<string>();
+
+                                linhasREE.Add("REE\tEARM%");
+                                foreach (var dadR in dadosREE)
+                                {
+                                    linhasREE.Add($"{ dadR.Item1}\t{dadR.Item2}%");
+                                }
+                                File.WriteAllLines(Path.Combine(estudoPath, "REE_EARM.txt"), linhasREE);
+
+                                #endregion
                                 //manter restricoes de volume para restringir variacao no atingir meta de armazenamento
                                 curvaArmazenamento = dadger.BlocoRhv.RhvGrouped
                                     .Where(x => x.Value.Any(y => (y is CvLine) && y[5].Equals("VARM")))
@@ -921,6 +936,23 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         dadger.SaveToFile();
 
                         #endregion Armazenamento
+
+
+                        #region armazenamento REE
+                        var dadosREE = configH.GetREEList();
+
+                        configH.ReloadUH();
+
+                        List<string> linhasREE = new List<string>();
+
+                        linhasREE.Add("REE\tEARM%");
+                        foreach (var dadR in dadosREE)
+                        {
+                            linhasREE.Add($"{ dadR.Item1}\t{dadR.Item2}%");
+                        }
+                        File.WriteAllLines(Path.Combine(estudoPath, "REE_EARM.txt"), linhasREE);
+
+                        #endregion
 
                         #region DeplecionamentoTucurui
                         var voltutilTucu = 38982d;
