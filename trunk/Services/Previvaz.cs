@@ -3,6 +3,7 @@ using Compass.ExcelTools.Templates;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -75,6 +76,104 @@ namespace Compass.Services
                     xlApp.ScreenUpdating = true;
 
                     ExcelTools.Helper.Release(xlApp);
+                }
+            }
+        }
+
+        public static void RunCenarioPrevsM2(string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder, bool encad = false)// bool encad)
+        {
+            Microsoft.Office.Interop.Excel.Application xlsApp = null;
+            xlsApp = new Microsoft.Office.Interop.Excel.Application();
+
+            try
+            {
+                //var xlsApp = new Microsoft.Office.Interop.Excel.Application();
+                while (!xlsApp.Ready)
+                {
+                    System.Threading.Thread.Sleep(200);
+                }
+
+                xlsApp.Visible = true;
+                xlsApp.ScreenUpdating = true;
+                xlsApp.DisplayAlerts = false;
+                //xlApp = ExcelTools.Helper.StartExcel();
+                //copia excel para nome unico /temporario
+
+                var sufixo = $"_{metas.Item1}";
+                var nomeTemp = Path.Combine(
+                    Path.GetDirectoryName(caminhoWbCenario),
+                    // Path.GetFileNameWithoutExtension(caminhoWbCenario) + $"_{sufixo}.xlsm"
+                    Path.GetFileName(caminhoWbCenario).Replace("_base", sufixo)
+                    );
+
+                System.IO.File.Copy(caminhoWbCenario, nomeTemp, true);
+
+                var wbxls = xlsApp.Workbooks.Open(caminhoWbCenario);
+                wbxls.Activate();
+                //xlsApp.Workbooks.
+
+                //var wb = new WorkbookPrevsCenariosMen(wbxls);
+                //Workbook wbc = xlsApp.ActiveWorkbook;
+                Worksheet wsPega = wbxls.Worksheets["Cen1"];
+                wsPega.Select();
+                wsPega.Range["_metaCen1"].NumberFormat = "General";
+                wsPega.Range["_metaCen1"].Value = metas.Item2;
+
+
+
+                //wb.METAS = metas.Item2;
+                //!AjustarCenarios
+                //xlApp.Run($"'CHUVAVAZAO_{code}.xlsm'!CriarCenario");
+                xlsApp.Run($"'{Path.GetFileName(caminhoWbCenario)}'!AjustarCenarios");
+
+                //var result = wb.PrevsCen1;
+                object[,] result = wsPega.Range["_cen1"].Value;
+                int linhas = wsPega.Range["_cen1"].Rows.Count;
+                int colunas = wsPega.Range["_cen1"].Columns.Count;
+
+                for (int x = 1; x <= linhas; x++)
+                {
+                    for (int y = metas.Item3 + 3; y <= 14; y++)
+                    {
+                        if (result[x, y] != null)
+                        {
+                            result[x, y] = null;
+                        }
+                    }
+                }
+                wbxls.Close(SaveChanges: false);
+                wbxls = xlsApp.Workbooks.Open(nomeTemp);
+                wbxls.Activate();
+
+                wsPega = wbxls.Worksheets["Cen1"];
+                wsPega.Select();
+                wsPega.Range["_metaCen1"].NumberFormat = "General";
+                wsPega.Range["_metaCen1"].Value = metas.Item2;
+
+                Worksheet wsEnt = wbxls.Worksheets["Entrada"];
+                wsEnt.Select();
+                wsEnt.Range["_entrada"].Value = result;
+                xlsApp.Calculate();
+                wbxls.Save();
+                //wbxls.Close(SaveChanges: false);
+                var wb = new WorkbookPrevsCenariosMen(wbxls);
+
+                RunCenario(wb, useAcomph, encad, previvazFolder, true);// encad);
+                wbxls.Save();
+                wbxls.Close(SaveChanges: false);
+                //System.IO.File.Delete(caminhoWbCenario);
+                //System.IO.File.Move(nomeTemp, caminhoWbCenario);
+
+            }
+            finally
+            {
+                if (xlsApp != null)
+                {
+                    xlsApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
+                    xlsApp.ScreenUpdating = true;
+                    xlsApp.Quit();
+                    ExcelTools.Helper.Release(xlsApp);
+
                 }
             }
         }
@@ -592,9 +691,15 @@ namespace Compass.Services
 
         //---------------------
 
-        public static void RunCenario(WorkbookPrevsCenariosMen wb, bool useAcomph, bool encad, string sufixoDePasta = "")//bool encad)
+        public static void RunCenario(WorkbookPrevsCenariosMen wb, bool useAcomph, bool encad, string sufixoDePasta = "", bool prevsM2 = false)//bool encad)
         {
             var previvazBaseFolder = wb.ArquivosDeEntrada;
+            object[,] vazExcedentes = new object[321, 12];
+            int XIcen1 = wb.GetCoordinatesByRange("_cen1", "XI");
+            int XFcen1 = wb.GetCoordinatesByRange("_cen1", "XF");
+            int YIcen1 = wb.GetCoordinatesByRange("_cen1", "YI");
+            int YFcen1 = wb.GetCoordinatesByRange("_cen1", "YF");
+
 
 
             ///log parcial 1 -- original
@@ -615,6 +720,11 @@ namespace Compass.Services
             // var tempFolder = @"Z:\previsaopld\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
             //var tempFolder = @"L:\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
             var tempFolder = Path.Combine(wb.Path, "arq_previvaz");
+
+            if (prevsM2)
+            {
+                tempFolder = sufixoDePasta;
+            }
 
             var teste = acompH.GroupBy(ac => new { ac.semana, ac.posto })
                    .Where(ac => ac.Count() >= semanaprevisao).ToList();
@@ -918,6 +1028,27 @@ namespace Compass.Services
                     else if (posto == 242) prevsCen1[242, c + i] = (double)vaz + (double)prevsCen1[239, c + i];
                     else prevsCen1[posto, c + i] = vaz;
                 }
+                if (prevsM2)
+                {
+                    int startIndex = 0;
+                    for (int x = 0; 4 + x < r.Value.Count; x++)
+                    {
+                        var vaz = r.Value[4 + x];
+
+                        if (c + x > 14)
+                        {
+                            if (postosIncrementais.ContainsKey(posto))
+                                vazExcedentes[postosIncrementais[posto].Item2, startIndex] = vaz;
+
+                            else if (posto == 239) vazExcedentes[239, startIndex] = (double)vaz + (double)vazExcedentes[237, startIndex];
+                            else if (posto == 242) vazExcedentes[242, startIndex] = (double)vaz + (double)vazExcedentes[239, startIndex];
+                            else vazExcedentes[posto, startIndex] = vaz;
+
+                            startIndex++;
+                        }
+
+                    }
+                }
             }
 
             #region trata posto 169
@@ -956,6 +1087,24 @@ namespace Compass.Services
             for (int i = sem_Atual + 3; i <= 14 && prevsCen1[168, i] is double; i++) // Adiciona 3 para começar depois da ultima semana de CPINS
                 prevsCen1[169, i] = (double)prevsCen1[156, i - 2] + (double)prevsCen1[158, i - 2] + (double)prevsCen1[168, i];
 
+            if (prevsM2)
+            {
+                for (int i = 0; i < 12 && vazExcedentes[168, i] is double; i++)
+                {
+                    if (i == 0)//usa os dados do prevscen1 da semana11
+                    {
+                        vazExcedentes[169, i] = (double)prevsCen1[156, 13] + (double)prevsCen1[158, 13] + (double)vazExcedentes[168, i];
+                    }
+                    else if (i ==1)//usa os dados do prevscen1 da semana12
+                    {
+                        vazExcedentes[169, i] = (double)prevsCen1[156, 14] + (double)prevsCen1[158, 14] + (double)vazExcedentes[168, i];
+                    }
+                    else
+                    {
+                        vazExcedentes[169, i] = (double)vazExcedentes[156, i - 2] + (double)vazExcedentes[158, i - 2] + (double)vazExcedentes[168, i];
+                    }
+                }
+            }
 
             #endregion trata posto 169
 
@@ -1002,6 +1151,7 @@ namespace Compass.Services
 
                     }
                 }
+                
             }
 
             wb.Entrada = prevsCen1;
@@ -1013,6 +1163,16 @@ namespace Compass.Services
 
             wb.Entrada = prevsCen1;
             wb.Regressoes = false;
+
+            try
+            {
+                wb.FillRange(vazExcedentes, "Cen1", XIcen1 - 1, XIcen1 - 1 + XFcen1, YFcen1 + 7, YFcen1 + 18);//preenchendo as celulas á frente do range "_cen1" obs +6 nas colunas  pra não cobrir celulas comreferencia de formula
+            }
+            catch (Exception e)
+            {
+
+                e.ToString();
+            }
 
             try
             {

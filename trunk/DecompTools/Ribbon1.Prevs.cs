@@ -625,7 +625,117 @@ namespace Compass.DecompTools
 
         private void btnPrevivazM2_Click(object sender, RibbonControlEventArgs e)
         {
+            var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
 
+            try
+            {
+                var tfile = "";
+                WorkbookPrevsM2 w;
+
+                if (Globals.ThisAddIn.Application.ActiveWorkbook == null ||
+                   !WorkbookPrevsM2.TryCreate(Globals.ThisAddIn.Application.ActiveWorkbook, out w))
+                {
+
+                    tfile = Path.Combine(Globals.ThisAddIn.ResourcesPath, "CenariosPrevs_m2.xltm");
+                    Globals.ThisAddIn.Application.Workbooks.Add(tfile);
+
+                    return;
+                }
+                //C:\Development\Implementacoes\PrevsM2\CenariosPrevs_m2.xlsx
+                //C:\Development\Implementacoes\uhzerandoMeta\2023_Mensal_oficial_seco_modelo-2022_0203.xlsm
+                //tfile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), "Gera_e_Avalia_Cenarios.xltm");
+                //tfile = Path.Combine(@"C:\Development\Implementacoes\PrevsM2\CenariosPrevs_m2.xlsx");
+                //Directory.CreateDirectory(Path.GetDirectoryName(tfile));
+
+                //File.WriteAllBytes(tfile, t1);
+
+                //var xlApp = Globals.ThisAddIn.Application;
+
+                //var wb = xlApp.Workbooks.Add(tfile);
+
+                //var PlanMeta = new WorkbookPrevsM2(wb);
+
+                var entrada = w.Entrada;
+                var cenarios = w.Cenarios;
+                var metas = w.Metas;
+                var estudo = w.EstudoPath;
+                var planBase = w.PlanBase;
+
+                string excelBase = planBase.Split('\\').Last().Split('.').First() + "_base." + planBase.Split('\\').Last().Split('.').Last();
+                string baseCam = Path.Combine(estudo, excelBase);
+
+                if (File.Exists(planBase))
+                {
+                    var res = System.Windows.Forms.MessageBox.Show("Usar Acomph?", "Decomp Tools", System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+                    var useAcomph = res == System.Windows.Forms.DialogResult.Yes;
+                    
+
+                    if (!Directory.Exists(estudo))
+                    {
+                        Directory.CreateDirectory(estudo);
+                    }
+
+                    File.Copy(planBase, baseCam, true);
+
+                    var ws = w.worksheet;
+                    var row = w.ROW;
+                    var col = w.COL;
+                    List<Tuple<string, object[,], int>> runs = new List<Tuple<string, object[,], int>>();
+
+                    for (int i = 1; i <= cenarios.Length; i++)
+                    {
+                        int rowMeta = row + i - 1;
+                        if (cenarios[i, 1] != null)
+                        {
+                            object[,] matriz = ws.Range[ws.Cells[rowMeta, col], ws.Cells[rowMeta + 3, col + 11]].Value;
+
+                            int maxIndex = 0;
+                            for (int x = 1; x <= 4; x++)
+                            {
+                                for (int y = 1; y <= 12; y++)
+                                {
+                                    if (matriz[x, y] != null)
+                                    {
+                                        if (maxIndex < y)
+                                        {
+                                            maxIndex = y;
+                                        }
+                                    }
+                                }
+                            }
+
+                            runs.Add(new Tuple<string, object[,], int>((string)cenarios[i, 1], matriz, maxIndex));
+                        }
+                    }
+
+                    foreach (var run in runs)
+                    {
+                        string previvaFolder = Path.Combine(estudo, "arq_previvaz_" + run.Item1);
+                        Services.Previvaz.RunCenarioPrevsM2(baseCam, useAcomph, run, previvaFolder, true);
+                    }
+                    //ws.Range[ws.Cells[r, col], ws.Cells[r, col + 9]]
+                    //var teste = ws.Range[ws.Cells[row, col], ws.Cells[row + 3, col + 11]].Value;
+                    //ws.Range[ws.Cells[15, 1], ws.Cells[18, 12]].Value = teste;
+                    System.Windows.Forms.MessageBox.Show("Processo concuído com sucesso!!!");
+
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Planilha Base Não Existente!!!");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                Globals.ThisAddIn.Application.StatusBar = false;
+                Globals.ThisAddIn.Application.DisplayStatusBar = statusBarState;
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+            }
         }
         private void btnPrevivaz_Click(object sender, RibbonControlEventArgs e)
         {
@@ -644,7 +754,7 @@ namespace Compass.DecompTools
                 if (System.Windows.Forms.MessageBox.Show("Executar Previvaz?", "Decomp Tools", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question)
                     != System.Windows.Forms.DialogResult.Yes)
                     return;
-                               
+
                 Services.Previvaz.RunCenario(wb, useAcomph, false);
 
                 Globals.ThisAddIn.Application.ScreenUpdating = false;

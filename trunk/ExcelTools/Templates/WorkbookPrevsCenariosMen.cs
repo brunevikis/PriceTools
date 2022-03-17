@@ -63,7 +63,48 @@ namespace Compass.ExcelTools.Templates
         public object[,] Saida3 { get { return Names["_saida3"].Value; } set { Names["_saida3"].Value = value; } }
         public object[,] Saida4 { get { return Names["_saida4"].Value; } set { Names["_saida4"].Value = value; } }
         public object[,] Saida5 { get { return Names["_saida5"].Value; } set { Names["_saida5"].Value = value; } }
+        public object[,] METAS
+        {
+            get { return Names["_metaCen1"].Value; }
+            set
+            {
+                Names["_metaCen1"].NumberFormat = "General";
+                Names["_metaCen1"].Value = value;
+            }
+        }
 
+        public void FillRange(object[,] matriz, string sheetName, int XI, int XF,int YI,int YF)
+        {
+            Worksheet ws = Wb.Worksheets[sheetName];
+            ws.Range[ws.Cells[XI, YI], ws.Cells[XF, YF]].Value = matriz;
+        }
+
+        public int GetCoordinatesByRange(string rangeName, string XY)
+        {
+            int coordenada = 0;
+
+            switch (XY)
+            {
+                case "XI":
+                    coordenada = Names[rangeName].Row;
+                    break;
+                case "XF":
+                    coordenada = Names[rangeName].Rows.Count;
+                    break;
+                case "YI":
+                    coordenada = Names[rangeName].Column;
+                    break;
+                case "YF":
+                    coordenada = Names[rangeName].Columns.Count;
+                    break;
+
+                default:
+                    break;
+            }
+
+            return coordenada;
+        }
+       
         public object[,] GetSemanaPrevsStr(int numSemHisto = 52)
         {
             var semPlan = Names["_semanasPrevs"].Value;
@@ -182,7 +223,7 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
-        
+
         public int AnoAtual
         {
             get

@@ -77,6 +77,7 @@
     <Compile Include="Templates\WorkbookPrevsCenariosMen.cs" />
     <Compile Include="Templates\WorkbookDiagramaOper.cs" />
     <Compile Include="Templates\WorkbookMensal.cs" />
+    <Compile Include="Templates\WorkbookPrevsM2.cs" />
     <Compile Include="Templates\WorkbookSensibilidade.cs" />
     <Compile Include="Templates\Infosheet.cs" />
     <Compile Include="Templates\RvxPlus1Configsheet.cs" />
