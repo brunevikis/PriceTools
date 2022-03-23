@@ -109,11 +109,12 @@ namespace Compass.ExcelTools.Templates
         {
             var semPlan = Names["_semanasPrevs"].Value;
             var semPlanAlt = Names["_semanasPrevs"].Value;
+            object[,] semanaCount = Names["_semanasPrevs"].Value;
 
             if (numSemHisto == 52)
             {
                 bool tem53 = false;
-                for (int i = 1; i <= 12; i++)
+                for (int i = 1; i <= semPlanAlt.Length; i++)
                 {
                     if (semPlanAlt[1, i] == 53)
                     {
@@ -122,7 +123,7 @@ namespace Compass.ExcelTools.Templates
                 }
                 if (tem53 == true)
                 {
-                    for (int i = 1; i <= 12; i++)
+                    for (int i = 1; i <= semPlanAlt.Length; i++)
                     {
                         //double sem = 1;
                         if (semPlanAlt[1, i] >= 30)

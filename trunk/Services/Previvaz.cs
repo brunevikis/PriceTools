@@ -106,7 +106,7 @@ namespace Compass.Services
                     Path.GetFileName(caminhoWbCenario).Replace("_base", sufixo)
                     );
 
-                System.IO.File.Copy(caminhoWbCenario, nomeTemp, true);
+                //System.IO.File.Copy(caminhoWbCenario, nomeTemp, true);
 
                 var wbxls = xlsApp.Workbooks.Open(caminhoWbCenario);
                 wbxls.Activate();
@@ -133,7 +133,7 @@ namespace Compass.Services
 
                 for (int x = 1; x <= linhas; x++)
                 {
-                    for (int y = metas.Item3 + 3; y <= 14; y++)
+                    for (int y = metas.Item3 + 3; y <= colunas; y++)//14
                     {
                         if (result[x, y] != null)
                         {
@@ -142,7 +142,10 @@ namespace Compass.Services
                     }
                 }
                 wbxls.Close(SaveChanges: false);
-                wbxls = xlsApp.Workbooks.Open(nomeTemp);
+
+                string PlanModelo = $@"H:\TI - Sistemas\UAT\PricingExcelTools\files\Gera_e_Avalia_Cenarios_Men_Sem_Extendido.xltm";
+                //wbxls = xlsApp.Workbooks.Open(nomeTemp);
+                wbxls = xlsApp.Workbooks.Open(PlanModelo);
                 wbxls.Activate();
 
                 wsPega = wbxls.Worksheets["Cen1"];
@@ -154,11 +157,11 @@ namespace Compass.Services
                 wsEnt.Select();
                 wsEnt.Range["_entrada"].Value = result;
                 xlsApp.Calculate();
-                wbxls.Save();
+                wbxls.SaveAs(nomeTemp, wbxls.FileFormat);
                 //wbxls.Close(SaveChanges: false);
                 var wb = new WorkbookPrevsCenariosMen(wbxls);
 
-                RunCenario(wb, useAcomph, encad, previvazFolder, true);// encad);
+                RunCenarioTestePrevM2(wb, useAcomph, encad, previvazFolder, true);// encad);
                 wbxls.Save();
                 wbxls.Close(SaveChanges: false);
                 //System.IO.File.Delete(caminhoWbCenario);
@@ -1095,7 +1098,7 @@ namespace Compass.Services
                     {
                         vazExcedentes[169, i] = (double)prevsCen1[156, 13] + (double)prevsCen1[158, 13] + (double)vazExcedentes[168, i];
                     }
-                    else if (i ==1)//usa os dados do prevscen1 da semana12
+                    else if (i == 1)//usa os dados do prevscen1 da semana12
                     {
                         vazExcedentes[169, i] = (double)prevsCen1[156, 14] + (double)prevsCen1[158, 14] + (double)vazExcedentes[168, i];
                     }
@@ -1151,7 +1154,7 @@ namespace Compass.Services
 
                     }
                 }
-                
+
             }
 
             wb.Entrada = prevsCen1;
@@ -1173,6 +1176,509 @@ namespace Compass.Services
 
                 e.ToString();
             }
+
+            try
+            {
+                if (wb.GravarPrevivaz)
+                {
+
+                    //var destPath = Path.Combine(wb.Path, "arq_previvaz");
+
+                    //if (Directory.Exists(destPath))
+                    //{
+                    //    Directory.Delete(destPath, true);
+                    //}
+
+
+                    //Tools.moveDirectory(tempFolder, destPath);
+                }
+            }
+            catch { }
+
+        }
+
+        public static void RunCenarioTestePrevM2(WorkbookPrevsCenariosMen wb, bool useAcomph, bool encad, string sufixoDePasta = "", bool prevsM2 = false)//bool encad)
+        {
+            var previvazBaseFolder = wb.ArquivosDeEntrada;
+            object[,] vazExcedentes = new object[321, 12];
+            int XIcen1 = wb.GetCoordinatesByRange("_cen1", "XI");
+            int XFcen1 = wb.GetCoordinatesByRange("_cen1", "XF");
+            int YIcen1 = wb.GetCoordinatesByRange("_cen1", "YI");
+            int YFcen1 = wb.GetCoordinatesByRange("_cen1", "YF");
+
+
+
+            ///log parcial 1 -- original
+            wb.Saida1 = wb.PrevsCen1;//[a,1] = id posto, [a,3...] = vazões 
+
+            List<Acomph> acompH = null;
+            var semanaprevisao = 6; //dias necessários para considerar a média como semanal
+
+
+            if (useAcomph)
+            {
+                acompH = Tools.GetAcomphData(DateTime.Today.AddDays(-21), DateTime.Today);
+            }
+
+            var prevsCen1 = wb.PrevsCen1;
+            var anoPrev = wb.AnoAtual;
+            var usr = System.Environment.UserName.Replace('.', '_');
+            // var tempFolder = @"Z:\previsaopld\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
+            //var tempFolder = @"L:\shared\CHUVA-VAZAO\previvaz_" + usr + sufixoDePasta;
+            var tempFolder = Path.Combine(wb.Path, "arq_previvaz");
+
+            if (prevsM2)
+            {
+                tempFolder = sufixoDePasta;
+            }
+
+            var teste = acompH.GroupBy(ac => new { ac.semana, ac.posto })
+                   .Where(ac => ac.Count() >= semanaprevisao).ToList();
+
+            if (acompH != null)
+            {
+                acompH.GroupBy(ac => new { ac.semana, ac.posto })
+                    .Where(ac => ac.Count() >= semanaprevisao).ToList()
+                    .ForEach(ac =>
+                    {
+                        for (int i = 1; i <= wb.SemanasPrevs.Length; i++)
+                        {
+                            if ((double)wb.SemanasPrevs[1, i] == (double)ac.Key.semana)
+                            {
+                                prevsCen1[ac.Key.posto, i + 2] = ac.Average(x => x.qNat);
+
+                                if (postosIncrementais.ContainsKey(ac.Key.posto))
+                                {
+                                    if (ac.Key.posto == 253)//tocantins sao salvador + canabrava
+                                    {
+                                        var canaBrava = acompH.Where(x => x.posto == 191 && x.semana == ac.Key.semana).ToList();
+                                        var dado = canaBrava.Average(x => x.qInc);
+                                        prevsCen1[postosIncrementais[ac.Key.posto].Item2, i + 2] = ac.Average(x => x.qInc) + dado;
+
+                                    }
+                                    else if (ac.Key.posto == 273)//tocantins lajeado + peixe Angical
+                                    {
+                                        var peixeAngi = acompH.Where(x => x.posto == 257 && x.semana == ac.Key.semana).ToList();
+                                        var dado = peixeAngi.Average(x => x.qInc);
+                                        prevsCen1[postosIncrementais[ac.Key.posto].Item2, i + 2] = ac.Average(x => x.qInc) + dado;
+
+                                    }
+                                    else
+                                    {
+                                        prevsCen1[postosIncrementais[ac.Key.posto].Item2, i + 2] = ac.Average(x => x.qInc);
+                                    }
+                                }
+
+                                if (ac.Key.posto == 169) prevsCen1[168, i + 2] = ac.Average(x => x.qInc);
+
+                                // if (ac.Key.posto == 239) prevsCen1[239, i + 2] = ac.Average(x => x.qNat) - (double)prevsCen1[237, i + 2];
+                                // if (ac.Key.posto == 242) prevsCen1[242, i + 2] = ac.Average(x => x.qNat) - (double)prevsCen1[239, i + 2];
+
+                            }
+                        }
+                    });
+            }
+
+
+
+            if (Directory.Exists(tempFolder))
+                Directory.Delete(tempFolder, true);
+            Directory.CreateDirectory(tempFolder);
+
+            var postosPrevivaz = Directory.GetFiles(previvazBaseFolder).GroupBy(x =>
+                System.Text.RegularExpressions.Regex.Match(
+                Path.GetFileNameWithoutExtension(x),
+                @"^\d+").Value
+               );
+
+            Dictionary<int, List<object>> results = new Dictionary<int, List<object>>();
+            var prevDecks = new List<Compass.CommomLibrary.Previvaz.Deck>();
+            //Globals.ThisAddIn.Application.StatusBar = "Executando : ";
+            foreach (var p in postosPrevivaz)
+            {//atualiza os dados do inp com o numero das semanas e o  arquivo str com as vazões semanais da planilha
+                var prevDeck = new Compass.CommomLibrary.Previvaz.Deck(p.Key);
+                prevDeck.GetFiles(previvazBaseFolder);
+
+
+                if (prevDeck[CommomLibrary.Previvaz.DeckDocument.str] == null || prevDeck[CommomLibrary.Previvaz.DeckDocument.lim] == null)
+                {
+                    continue;
+                }
+
+
+                prevDecks.Add(prevDeck);
+
+                var path = Path.Combine(tempFolder, p.Key);
+
+                int posto = int.Parse(prevDeck.Posto);
+
+                var inp = (Compass.CommomLibrary.Previvaz.Inp)prevDeck[CommomLibrary.Previvaz.DeckDocument.inp].Document;
+                var str = (Compass.CommomLibrary.Previvaz.Str)prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document;
+
+                inp.SemanaPrevisao = Convert.ToInt32(wb.SemanasPrevs[1, 1]);
+                inp.AnoPrevisao = anoPrev;
+
+                var numerosSem = wb.GetSemanaPrevsStr(inp.NumSemanasHist);
+                for (int s = 1; s < numerosSem.Length; s++)//12
+                {
+
+                    if (postosIncrementais.ContainsKey(posto) && (prevsCen1[postosIncrementais[posto].Item2, s + 2] is double && (double)prevsCen1[postosIncrementais[posto].Item2, s + 2] != 0))
+                    {
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = (double)prevsCen1[postosIncrementais[posto].Item2, s + 2];//se o posto incremental desse posto conter dados da semana, ele atribui esse dado para o posto(esses processo só acontece da semana rv0 até a atual)
+                        var dd = str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])];
+                    }
+                    else if (postosIncrementais.ContainsKey(posto) && (prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0))  //só entra nesse if para as semanas previstas,para esse posto que contem posto incremental,a sua vazão da semana prevista sera
+                    {                                                                                                                               //igual à sua vazão menos a vazão de seus postos montantes ex: vazão do posto 34 = v34 - (v33-v18-v99-v241-v261)  //OBS: o valor minimo será sempre 12
+                        if (posto == 253 || posto == 273 || posto == 271 || posto == 275)//postos tocantins que rodam com a incremental alocada nos postos auxiliares 308~311
+                        {
+                            str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = (double)prevsCen1[posto, s + 2];
+                        }
+                        else
+                        {
+                            var v = (double)prevsCen1[posto, s + 2]
+                            - postosIncrementais[posto].Item1.Sum(pm => (double)prevsCen1[pm, s + 2]);
+                            str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = Math.Max(v, 12);
+                        }
+
+
+                    }
+                    else if (posto == 239 && prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0)
+                    {
+                        var v = (double)prevsCen1[239, s + 2] - (double)prevsCen1[237, s + 2];// para o posto 239(ibitinga) sera usado a vazão de ibitinga menoa a vazão de barra bonita(237)
+                        if (v < 1) v = 5;                                                     //OBS: o valor minimo sempre sera 5
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = v;
+                    }
+                    else if (posto == 242 && prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0)
+                    {
+                        var v = (double)prevsCen1[242, s + 2] - (double)prevsCen1[239, s + 2];// para o posto 242(N.Avanhadava) sera usado a vazão de N.Avanhadava menoa a vazão de ibitinga(239)
+                        if (v < 1) v = 5;                                                     //OBS: o valor minimo sempre sera 5
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = v;
+                    }
+                    else if (prevsCen1[posto, s + 2] is double && (double)prevsCen1[posto, s + 2] != 0)
+                    {
+                        str[inp.AnoPrevisao, Convert.ToInt32(numerosSem[1, s])] = (double)prevsCen1[posto, s + 2];
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    var proxSem = Convert.ToInt32(numerosSem[1, s + 1]);
+
+                    if (proxSem < inp.SemanaPrevisao)    //confere se a proxima semana ainda faz parte do mesmo ano se nao incrementa o ano
+                    {
+                        inp.AnoPrevisao = inp.AnoPrevisao + 1;
+                    }
+                    if (proxSem == 2)
+                    {
+                        str.AnoFinal = inp.AnoPrevisao;
+                    }
+
+                    inp.SemanaPrevisao = proxSem;
+                }
+
+                prevDeck.CopyFilesToFolder(path);
+            }
+            Previvaz previvaz = new Previvaz();
+            Parallel.ForEach(postosPrevivaz, x =>
+            {
+                var path = Path.Combine(tempFolder, x.Key);
+                previvaz.RunPrevivazLocalVM(path);
+
+            });
+            //Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
+            //                Services.Previvaz.RunOnLinux(tempFolder);
+
+            if (encad)
+            {
+
+                //rodadas encadeadas previvaz inicio
+                foreach (var prevDeck in prevDecks)
+                {
+                    var rs = prevDeck.GetFut();
+                    if (rs.Count > 0)
+                    {
+                        //object[] r = (object[])rs.First().Value;
+                        results.Add((int)rs[0], rs);
+
+
+                        var inp = prevDeck[CommomLibrary.Previvaz.DeckDocument.inp].Document as CommomLibrary.Previvaz.Inp;
+                        var str = prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document as CommomLibrary.Previvaz.Str;
+
+                        inp.SemanaPrevisao += 6;
+
+                        // var numSemanas = 52 + inp.NumSemanasHist;
+                        //tratar virada de ano
+                        //var numSemanas = inp.NumSemanasHist - inp.SemanaPrevisao;
+
+                        //if (numSemanas == -1)
+                        //{
+                        //    inp.AnoPrevisao = inp.AnoPrevisao + 1;
+                        //}
+                        if (inp.SemanaPrevisao > inp.NumSemanasHist)
+                        {
+                            inp.AnoPrevisao = inp.AnoPrevisao + 1;
+                            str.AnoFinal = inp.AnoPrevisao;
+                            inp.SemanaPrevisao = inp.SemanaPrevisao - inp.NumSemanasHist;
+                        }
+                        str.AnoFinal = inp.AnoPrevisao;
+
+
+
+                        // var str = prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document as CommomLibrary.Previvaz.Str;
+                        try
+                        {
+                            var anoInicial = Convert.ToInt32(rs[1]);
+                            var semanaInicial = (int)rs[3];
+
+                            for (int i = 0; i < 6; i++)
+                            {
+                                str[anoInicial, semanaInicial] = (double)rs[4 + i];
+
+                                semanaInicial++;
+
+                                if (semanaInicial > inp.NumSemanasHist)
+                                {
+                                    semanaInicial = 1;
+                                    anoInicial++;
+                                }
+
+
+                            }
+
+
+                            str.SaveToFile();
+                            inp.SaveToFile();
+                            ///renomar o *_fut;
+                            var camFut = Path.Combine(prevDeck.Folder, prevDeck.Posto + "_fut.DAT");
+                            if (System.IO.File.Exists(camFut))
+                            {
+                                System.IO.File.Move(camFut, Path.Combine(prevDeck.Folder, prevDeck.Posto + "_futbkp.DAT"));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+
+                    }
+
+                }
+
+                Parallel.ForEach(postosPrevivaz, x =>
+                {
+                    var path_exe = Path.Combine(tempFolder, x.Key);
+                    previvaz.RunPrevivazLocalVM(path_exe);
+
+                });
+                //Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
+                //                Services.Previvaz.RunOnLinux(tempFolder);
+
+                //rodadas encadeadas previvaz fimmmm
+            }
+
+
+            foreach (var prevDeck in prevDecks)
+            {
+                var rs = prevDeck.GetFut();
+                if (rs.Count > 0)
+                {
+                    //   object[] r = (object[])rs.First().Value;
+
+                    if (results.ContainsKey((int)rs[0]))
+                    {
+                        var rAnterior = results[(int)rs[0]];
+
+                        rAnterior.Add(rs[4]);
+                        rAnterior.Add(rs[5]);
+                        rAnterior.Add(rs[6]);
+                        rAnterior.Add(rs[7]);
+                        rAnterior.Add(rs[8]);
+                        rAnterior.Add(rs[9]);
+
+                    }
+                    else
+                        results.Add((int)rs[0], rs);
+                }
+            }
+
+
+            // coloca resultado do previvaz na entrada para calcular postos artificias;
+            foreach (var r in results)
+            {
+                var numposto = r.Key;
+                var deck = prevDecks.Where(x => x.Posto == numposto.ToString()).First();
+                var inp = deck[CommomLibrary.Previvaz.DeckDocument.inp].Document as CommomLibrary.Previvaz.Inp;
+                var numerosSem = wb.GetSemanaPrevsStr(inp.NumSemanasHist);
+
+                var c = 1;
+                for (; c <= numerosSem.Length; c++)//12
+                {
+                    if ((int)(double)numerosSem[1, c] == (int)r.Value[3])
+                    {
+                        c += 2;
+                        break;
+                    }
+                }
+
+                // var c = (int)r[3] - (int)(double)wb.SemanasPrevs[1, 1] + 3;
+                var posto = r.Key;
+                for (int i = 0; i < numerosSem.Length - 1 && (c + i < numerosSem.Length + 3); i++)//11  15
+                {
+                    var vaz = 4 + i < r.Value.Count ? r.Value[4 + i] : r.Value.Last(); // completa todo o horizonte de 20 semanas repetindo o ultimo resultado do previvaz para além da 6a semana de previsão.
+
+                    if (postosIncrementais.ContainsKey(posto))
+                        prevsCen1[postosIncrementais[posto].Item2, c + i] = vaz;
+
+                    else if (posto == 239) prevsCen1[239, c + i] = (double)vaz + (double)prevsCen1[237, c + i];
+                    else if (posto == 242) prevsCen1[242, c + i] = (double)vaz + (double)prevsCen1[239, c + i];
+                    else prevsCen1[posto, c + i] = vaz;
+                }
+                //if (prevsM2)
+                //{
+                //    int startIndex = 0;
+                //    for (int x = 0; 4 + x < r.Value.Count; x++)
+                //    {
+                //        var vaz = r.Value[4 + x];
+
+                //        if (c + x > 14)
+                //        {
+                //            if (postosIncrementais.ContainsKey(posto))
+                //                vazExcedentes[postosIncrementais[posto].Item2, startIndex] = vaz;
+
+                //            else if (posto == 239) vazExcedentes[239, startIndex] = (double)vaz + (double)vazExcedentes[237, startIndex];
+                //            else if (posto == 242) vazExcedentes[242, startIndex] = (double)vaz + (double)vazExcedentes[239, startIndex];
+                //            else vazExcedentes[posto, startIndex] = vaz;
+
+                //            startIndex++;
+                //        }
+
+                //    }
+                //}
+            }
+
+            #region trata posto 169
+
+            var str156 = (Compass.CommomLibrary.Previvaz.Str)prevDecks.First(x => x.Posto == "156")[CommomLibrary.Previvaz.DeckDocument.str].Document;
+            var str158 = (Compass.CommomLibrary.Previvaz.Str)prevDecks.First(x => x.Posto == "158")[CommomLibrary.Previvaz.DeckDocument.str].Document;
+            var sem_2 = Convert.ToInt32(wb.SemanasPrevs[1, 1]) - 2;
+
+            var sem_Atual = Convert.ToInt32(wb.SemanaAtualIndice) + 2; // Adiciona 2 para ajustar a celula da planilha 
+            if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
+            {
+                sem_Atual = sem_Atual - 1;
+            }
+            /*
+                        if (sem_2 < 1)
+                        {
+                            sem_2 = sem_2 +
+                                ((Compass.CommomLibrary.Previvaz.Inp)prevDecks.First(x => x.Posto == "156")[CommomLibrary.Previvaz.DeckDocument.inp].Document).NumSemanasHist;
+                        }
+
+                        prevsCen1[169, 3] = (double)prevsCen1[168, 3]
+                            + str156[anoPrev, sem_2]
+                            + str158[anoPrev, sem_2];
+
+                        sem_2 = Convert.ToInt32(wb.SemanasPrevs[1, 1]) - 1;
+                        if (sem_2 < 1)
+                        {
+                            sem_2 = sem_2 +
+                                ((Compass.CommomLibrary.Previvaz.Inp)prevDecks.First(x => x.Posto == "156")[CommomLibrary.Previvaz.DeckDocument.inp].Document).NumSemanasHist;
+                        }
+
+                        prevsCen1[169, 4] = (double)prevsCen1[168, 4]
+                            + str156[anoPrev, sem_2]
+                            + str158[anoPrev, sem_2];
+                            */
+            for (int i = sem_Atual + 3; i <= wb.SemanasPrevs.Length + 2 && prevsCen1[168, i] is double; i++) // Adiciona 3 para começar depois da ultima semana de CPINS //14
+                prevsCen1[169, i] = (double)prevsCen1[156, i - 2] + (double)prevsCen1[158, i - 2] + (double)prevsCen1[168, i];
+
+            //if (prevsM2)
+            //{
+            //    for (int i = 0; i < 12 && vazExcedentes[168, i] is double; i++)
+            //    {
+            //        if (i == 0)//usa os dados do prevscen1 da semana11
+            //        {
+            //            vazExcedentes[169, i] = (double)prevsCen1[156, 13] + (double)prevsCen1[158, 13] + (double)vazExcedentes[168, i];
+            //        }
+            //        else if (i == 1)//usa os dados do prevscen1 da semana12
+            //        {
+            //            vazExcedentes[169, i] = (double)prevsCen1[156, 14] + (double)prevsCen1[158, 14] + (double)vazExcedentes[168, i];
+            //        }
+            //        else
+            //        {
+            //            vazExcedentes[169, i] = (double)vazExcedentes[156, i - 2] + (double)vazExcedentes[158, i - 2] + (double)vazExcedentes[168, i];
+            //        }
+            //    }
+            //}
+
+            #endregion trata posto 169
+
+            wb.Entrada = prevsCen1;
+
+            wb.Regressoes = true;
+
+            for (int posto = 1; posto <= 320; posto++)
+                for (int s = 0; s < wb.SemanasPrevs.Length; s++)//12
+                    if (!(prevsCen1[posto, 3 + s] is double) || (double)prevsCen1[posto, 3 + s] < 1) prevsCen1[posto, 3 + s] = wb.PrevsCen1[posto, 3 + s];
+
+            foreach (var pn in postosIncrementais)
+            {
+                for (int i = 0; i < wb.SemanasPrevs.Length; i++)//12
+                {
+                    if (
+                        (prevsCen1[pn.Key, 3 + i] is double && (double)prevsCen1[pn.Key, 3 + i] < 1)
+                        || !(prevsCen1[pn.Key, 3 + i] is double) || (prevsCen1[257, 3 + i] is double && (double)prevsCen1[257, 3 + i] < 1)
+                        )
+                    {
+                        if (pn.Key == 253)// sao salvador + canabrava
+                        {
+                            double fatcana = 0.504;
+                            prevsCen1[191, 3 + i] = ((double)prevsCen1[pn.Value.Item2, 3 + i] * fatcana) + ((double)prevsCen1[270, 3 + i]);
+                            double fatSal = 0.496;
+                            prevsCen1[pn.Key, 3 + i] = ((double)prevsCen1[pn.Value.Item2, 3 + i] * fatSal) + ((double)prevsCen1[191, 3 + i]);
+
+                        }
+                        else if (pn.Key == 273)//lajeado + peixe angical
+                        {
+                            double fatpeixe = 0.488;
+                            prevsCen1[257, 3 + i] = ((double)prevsCen1[pn.Value.Item2, 3 + i] * fatpeixe) + ((double)prevsCen1[253, 3 + i]);
+                            double fatlaj = 0.512;
+                            prevsCen1[pn.Key, 3 + i] = ((double)prevsCen1[pn.Value.Item2, 3 + i] * fatlaj) + ((double)prevsCen1[257, 3 + i]);
+
+                        }
+
+
+                        else
+                        {
+                            prevsCen1[pn.Key, 3 + i] = (double)prevsCen1[pn.Value.Item2, 3 + i]
+                            + pn.Value.Item1.Sum(pMn => (double)prevsCen1[pMn, 3 + i]);
+                        }
+
+                    }
+                }
+
+            }
+
+            wb.Entrada = prevsCen1;
+
+            // itera em todos os postos para se não houver resultado, na entrada, utiliza o resultado da regressão.
+            for (int posto = 1; posto <= 320; posto++)
+                for (int s = 0; s < wb.SemanasPrevs.Length; s++)//12
+                    if (!(prevsCen1[posto, 3 + s] is double) || (double)prevsCen1[posto, 3 + s] < 1) prevsCen1[posto, 3 + s] = wb.PrevsCen1[posto, 3 + s];
+
+            wb.Entrada = prevsCen1;
+            wb.Regressoes = false;
+
+            //try
+            //{
+            //    wb.FillRange(vazExcedentes, "Cen1", XIcen1 - 1, XIcen1 - 1 + XFcen1, YFcen1 + 7, YFcen1 + 18);//preenchendo as celulas á frente do range "_cen1" obs +6 nas colunas  pra não cobrir celulas comreferencia de formula
+            //}
+            //catch (Exception e)
+            //{
+
+            //    e.ToString();
+            //}
 
             try
             {
