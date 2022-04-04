@@ -73,7 +73,7 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
-        public void FillRange(object[,] matriz, string sheetName, int XI, int XF,int YI,int YF)
+        public void FillRange(object[,] matriz, string sheetName, int XI, int XF, int YI, int YF)
         {
             Worksheet ws = Wb.Worksheets[sheetName];
             ws.Range[ws.Cells[XI, YI], ws.Cells[XF, YF]].Value = matriz;
@@ -104,7 +104,7 @@ namespace Compass.ExcelTools.Templates
 
             return coordenada;
         }
-       
+
         public object[,] GetSemanaPrevsStr(int numSemHisto = 52)
         {
             var semPlan = Names["_semanasPrevs"].Value;
@@ -180,6 +180,7 @@ namespace Compass.ExcelTools.Templates
             {
                 return Names["_entradaPrevivaz"].Value.ToString();
             }
+            set { Names["_entradaPrevivaz"].Value = value; }
         }
 
         public bool GravarPrevivaz

@@ -103,7 +103,7 @@ namespace Compass.Services
                 var nomeTemp = Path.Combine(
                     Path.GetDirectoryName(caminhoWbCenario),
                     // Path.GetFileNameWithoutExtension(caminhoWbCenario) + $"_{sufixo}.xlsm"
-                    Path.GetFileName(caminhoWbCenario).Replace("_base", sufixo)
+                    Path.GetFileName(caminhoWbCenario).Replace("_dummy", sufixo)
                     );
 
                 //System.IO.File.Copy(caminhoWbCenario, nomeTemp, true);
@@ -111,6 +111,9 @@ namespace Compass.Services
                 var wbxls = xlsApp.Workbooks.Open(caminhoWbCenario);
                 wbxls.Activate();
                 //xlsApp.Workbooks.
+                Worksheet wsEnt1 = wbxls.Worksheets["Entrada"];
+                wsEnt1.Select();
+                string arqEntradaPath = wsEnt1.Range["_entradaPrevivaz"].Text;
 
                 //var wb = new WorkbookPrevsCenariosMen(wbxls);
                 //Workbook wbc = xlsApp.ActiveWorkbook;
@@ -160,6 +163,7 @@ namespace Compass.Services
                 wbxls.SaveAs(nomeTemp, wbxls.FileFormat);
                 //wbxls.Close(SaveChanges: false);
                 var wb = new WorkbookPrevsCenariosMen(wbxls);
+                wb.ArquivosDeEntrada = arqEntradaPath;
 
                 RunCenarioTestePrevM2(wb, useAcomph, encad, previvazFolder, true);// encad);
                 wbxls.Save();

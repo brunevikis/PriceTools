@@ -661,7 +661,7 @@ namespace Compass.DecompTools
                 var estudo = w.EstudoPath;
                 var planBase = w.PlanBase;
 
-                string excelBase = planBase.Split('\\').Last().Split('.').First() + "_base." + planBase.Split('\\').Last().Split('.').Last();
+                string excelBase = planBase.Split('\\').Last().Split('.').First() + "_dummy." + planBase.Split('\\').Last().Split('.').Last();
                 string baseCam = Path.Combine(estudo, excelBase);
 
                 if (File.Exists(planBase))
