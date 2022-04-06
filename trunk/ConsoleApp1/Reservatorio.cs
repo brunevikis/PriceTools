@@ -696,6 +696,16 @@ namespace ConsoleApp1
                     }
                 }
 
+                if (Fixa_UH != null)
+                {
+                    if (Fixa_UH.Count > 0)
+                    {
+                        var travando = false;
+                        travando = Meta_Fixa_UhREEFixado(configH, earmTarget, earmMax, Fixa_UH);
+                    }
+                }
+
+
             } while (++itNumber < itMax);
 
             if (itNumber >= itMax)
@@ -904,6 +914,16 @@ namespace ConsoleApp1
 
                     }
                 }
+
+                if (Fixa_UH != null)
+                {
+                    if (Fixa_UH.Count > 0)
+                    {
+                        var travando = false;
+                        travando = Meta_Fixa_UhREEFixado(configH, earmTarget, earmMax, Fixa_UH);
+                    }
+                }
+
             } while (++itNumber < itMax);
 
             if (itNumber >= itMax)

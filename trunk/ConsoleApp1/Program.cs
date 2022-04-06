@@ -1641,7 +1641,7 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Diretorio: " + dir);
             Console.WriteLine("Respondendo...");
-            Console.WriteLine("correção atingir meta cota minima atualiza quedas");
+            Console.WriteLine("correção atingir meta trava depois iteração");
         }
         public static void CalcJirauStoAnto(string dir)
         {

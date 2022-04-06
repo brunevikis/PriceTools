@@ -647,6 +647,8 @@ namespace Compass.Services {
                     }
                 }
 
+               var travando = Meta_Fixa_UhFixado(configH, earmTarget, earmMax, Fixa_UH);//trava novamente as usinas apos a iteração
+
             } while (++itNumber < itMax);
 
             if (itNumber >= itMax)
@@ -820,6 +822,16 @@ namespace Compass.Services {
                         }
                     }
                 }
+
+                if (Fixa_UH != null)
+                {
+                    if (Fixa_UH.Count > 0)
+                    {
+                        var travando = false;
+                        travando = Meta_Fixa_UhREE(configH, earmTarget, earmMax, Fixa_UH);
+                    }
+                }
+
             } while (++itNumber < itMax);
 
             if (itNumber >= itMax)
