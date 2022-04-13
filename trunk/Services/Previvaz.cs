@@ -80,7 +80,7 @@ namespace Compass.Services
             }
         }
 
-        public static void RunCenarioPrevsM2(string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder, bool encad = false)// bool encad)
+        public static void RunCenarioPrevsM2(string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder,string raiz, string cenario, bool encad = false)// bool encad)
         {
             Microsoft.Office.Interop.Excel.Application xlsApp = null;
             xlsApp = new Microsoft.Office.Interop.Excel.Application();
@@ -105,7 +105,10 @@ namespace Compass.Services
                     // Path.GetFileNameWithoutExtension(caminhoWbCenario) + $"_{sufixo}.xlsm"
                     Path.GetFileName(caminhoWbCenario).Replace("_dummy", sufixo)
                     );
-
+                if (System.IO.File.Exists(nomeTemp))
+                {
+                    System.IO.File.Delete(nomeTemp);
+                }
                 //System.IO.File.Copy(caminhoWbCenario, nomeTemp, true);
 
                 var wbxls = xlsApp.Workbooks.Open(caminhoWbCenario);
@@ -166,6 +169,9 @@ namespace Compass.Services
                 wb.ArquivosDeEntrada = arqEntradaPath;
 
                 RunCenarioTestePrevM2(wb, useAcomph, encad, previvazFolder, true);// encad);
+                ExportaPrevsM2(wb, raiz, cenario);
+
+
                 wbxls.Save();
                 wbxls.Close(SaveChanges: false);
                 //System.IO.File.Delete(caminhoWbCenario);
@@ -1201,6 +1207,68 @@ namespace Compass.Services
 
         }
 
+        public static void ExportaPrevsM2(WorkbookPrevsCenariosMen wb, string path, string cenario)
+        {
+            var prevsCen1 = wb.PrevsCen1;
+            var datasPrevs = wb.DatasPrevs;
+            List<DateTime> datas = new List<DateTime>();
+            for (int d = 1; d <= datasPrevs.Length; d++)
+            {
+                datas.Add((DateTime)datasPrevs[1, d]);
+            }
+
+           // var datas = (DateTime) wb.DatasPrevs[1, 1];
+            int index = 0;
+            DateTime inicio = new DateTime(datas[0].Year, datas[0].Month, 1);
+
+            string prevsname = $"prevs_{cenario}.rv0";
+            for (int m = 0; m <= 3; m++)
+            {
+                if (m > 0)
+                {
+                    prevsname = $"prevs_{cenario}_M{m}.rv0";
+                }
+                DateTime sextaRv0 = inicio.AddMonths(m);
+                while (sextaRv0.DayOfWeek != DayOfWeek.Friday)
+                {
+                    sextaRv0 = sextaRv0.AddDays(1);
+                }
+
+                if (datas.Contains(sextaRv0))
+                {
+                    index = datas.IndexOf(sextaRv0);
+                    StringBuilder sb = new StringBuilder();
+
+                    for (int i = 1; i <= 320; i++)
+                    {
+                        List<Double> vazoes = new List<double>();
+
+                        for (int j = index; j <= index + 5; j++)
+                        {
+                            int col = j + 3 > 22 ? 22 : j + 3;
+                            var vaz = Math.Round((double)prevsCen1[i, col]);
+                            vazoes.Add(vaz);
+                        }
+                        sb.AppendFormat("{0,6}{1,5}{2,10}{3,10}{4,10}{5,10}{6,10}{7,10}{8}",
+                                i.ToString(),
+                                i.ToString(),
+                               vazoes[0],
+                               vazoes[1],
+                               vazoes[2],
+                               vazoes[3],
+                               vazoes[4],
+                               vazoes[5],
+                                Environment.NewLine);
+
+                    }
+                    System.IO.File.WriteAllText(Path.Combine(path, prevsname), sb.ToString());
+                    //_SemanasPrevsDatas
+                }
+            }
+
+            
+        }
+
         public static void RunCenarioTestePrevM2(WorkbookPrevsCenariosMen wb, bool useAcomph, bool encad, string sufixoDePasta = "", bool prevsM2 = false)//bool encad)
         {
             var previvazBaseFolder = wb.ArquivosDeEntrada;
@@ -1210,6 +1278,12 @@ namespace Compass.Services
             int YIcen1 = wb.GetCoordinatesByRange("_cen1", "YI");
             int YFcen1 = wb.GetCoordinatesByRange("_cen1", "YF");
 
+            var datasPrevs = wb.DatasPrevs;
+            List<DateTime> datas = new List<DateTime>();
+            for (int d = 1; d <= datasPrevs.Length; d++)
+            {
+                datas.Add((DateTime)datasPrevs[1, d]);
+            }
 
 
             ///log parcial 1 -- original
@@ -1876,7 +1950,7 @@ namespace Compass.Services
             else
                 dtTemp = Data;
 
-            string pathPrevivaz = Path.Combine("N:\\Middle - Preço\\Acompanhamento de vazões\\", dtTemp.ToString("MM_yyyy"), "Dados_de_Entrada_e_Saida_" + dtTemp.ToString("yyyyMM") + "_RV" + rev.rev, "Previvaz", "Arq_Entrada");
+            string pathPrevivaz = Path.Combine("H:\\Middle - Preço\\Acompanhamento de vazões\\", dtTemp.ToString("MM_yyyy"), "Dados_de_Entrada_e_Saida_" + dtTemp.ToString("yyyyMM") + "_RV" + rev.rev, "Previvaz", "Arq_Entrada");
 
             var semanaprevisao = 6; //dias necessários para considerar a média como semanal
 
@@ -1902,7 +1976,7 @@ namespace Compass.Services
 
             var usr = System.Environment.UserName.Replace('.', '_');
 
-            var tempFolder = @"L:\shared\CHUVA-VAZAO\previvaz_" + usr + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+            var tempFolder = Path.Combine(path, "arq_previvaz");
 
 
             DateTime inicioMes = new DateTime(rev.revDate.Year, rev.revDate.Month, 1);//data da Rv0 do mês para preencher com dados do prevs oficial
@@ -2125,537 +2199,548 @@ namespace Compass.Services
 
                     prevDeck.CopyFilesToFolder(Path.Combine(tempFolder, posto.ToString()));
                 }
-
-                if (Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide"))
+                Previvaz previvaz = new Previvaz();
+                Parallel.ForEach(postosPrevivaz, x =>
                 {
-                    if (encad)
-                    {
+                    var pasta = Path.Combine(tempFolder, x.Key);
+                    previvaz.RunPrevivazLocalVM(pasta);
 
-                        //rodadas encadeadas previvaz inicio
-                        foreach (var prevDeck in prevDecks)
-                        {
-                            var rs = prevDeck.GetFut();
-                            if (rs.Count > 0)
-                            {
-                                //object[] r = (object[])rs.First().Value;
-                                results.Add((int)rs[0], rs);
+                });
+                //if (Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide"))
+                // {
+                if (encad)
+                {
 
-
-                                var inp = prevDeck[CommomLibrary.Previvaz.DeckDocument.inp].Document as CommomLibrary.Previvaz.Inp;
-                                var str = prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document as CommomLibrary.Previvaz.Str;
-
-                                inp.SemanaPrevisao += 6;
-
-                                // var numSemanas = 52 + inp.NumSemanasHist;
-                                //tratar virada de ano
-                                //var numSemanas = inp.NumSemanasHist - inp.SemanaPrevisao;
-
-                                //if (numSemanas == -1)
-                                //{
-                                //    inp.AnoPrevisao = inp.AnoPrevisao + 1;
-                                //}
-                                if (inp.SemanaPrevisao > inp.NumSemanasHist)
-                                {
-                                    inp.AnoPrevisao = inp.AnoPrevisao + 1;
-                                    str.AnoFinal = inp.AnoPrevisao;
-                                    inp.SemanaPrevisao = inp.SemanaPrevisao - inp.NumSemanasHist;
-                                }
-
-                                str.AnoFinal = inp.AnoPrevisao;
-
-
-                                // var str = prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document as CommomLibrary.Previvaz.Str;
-                                try
-                                {
-                                    var anoInicial = Convert.ToInt32(rs[1]);
-                                    var semanaInicial = (int)rs[3];
-
-                                    for (int i = 0; i < 6; i++)
-                                    {
-                                        str[anoInicial, semanaInicial] = (double)rs[4 + i];
-
-                                        semanaInicial++;
-
-                                        if (semanaInicial > inp.NumSemanasHist)
-                                        {
-                                            semanaInicial = 1;
-                                            anoInicial++;
-                                        }
-
-
-                                    }
-
-
-                                    str.SaveToFile();
-                                    inp.SaveToFile();
-                                    ///renomar o *_fut;
-                                    var camFut = Path.Combine(prevDeck.Folder, prevDeck.Posto + "_fut.DAT");
-                                    if (System.IO.File.Exists(camFut))
-                                    {
-                                        System.IO.File.Move(camFut, Path.Combine(prevDeck.Folder, prevDeck.Posto + "_futbkp.DAT"));
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                }
-
-                            }
-
-                        }
-
-
-                        Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
-                        //                Services.Previvaz.RunOnLinux(tempFolder);
-
-                        //rodadas encadeadas previvaz fimmmm
-                    }
-
+                    //rodadas encadeadas previvaz inicio
                     foreach (var prevDeck in prevDecks)
                     {
-                        var rs = prevDeck.GetFut();// coleta os resultados do previvaz
+                        var rs = prevDeck.GetFut();
                         if (rs.Count > 0)
                         {
+                            //object[] r = (object[])rs.First().Value;
+                            results.Add((int)rs[0], rs);
 
-                            if (results.ContainsKey((int)rs[0]))
+
+                            var inp = prevDeck[CommomLibrary.Previvaz.DeckDocument.inp].Document as CommomLibrary.Previvaz.Inp;
+                            var str = prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document as CommomLibrary.Previvaz.Str;
+
+                            inp.SemanaPrevisao += 6;
+
+                            // var numSemanas = 52 + inp.NumSemanasHist;
+                            //tratar virada de ano
+                            //var numSemanas = inp.NumSemanasHist - inp.SemanaPrevisao;
+
+                            //if (numSemanas == -1)
+                            //{
+                            //    inp.AnoPrevisao = inp.AnoPrevisao + 1;
+                            //}
+                            if (inp.SemanaPrevisao > inp.NumSemanasHist)
                             {
-                                var rAnterior = results[(int)rs[0]];
+                                inp.AnoPrevisao = inp.AnoPrevisao + 1;
+                                str.AnoFinal = inp.AnoPrevisao;
+                                inp.SemanaPrevisao = inp.SemanaPrevisao - inp.NumSemanasHist;
+                            }
 
-                                rAnterior.Add(rs[4]);
-                                rAnterior.Add(rs[5]);
-                                rAnterior.Add(rs[6]);
-                                rAnterior.Add(rs[7]);
-                                rAnterior.Add(rs[8]);
-                                rAnterior.Add(rs[9]);
+                            str.AnoFinal = inp.AnoPrevisao;
 
+
+                            // var str = prevDeck[CommomLibrary.Previvaz.DeckDocument.str].Document as CommomLibrary.Previvaz.Str;
+                            try
+                            {
+                                var anoInicial = Convert.ToInt32(rs[1]);
+                                var semanaInicial = (int)rs[3];
+
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    str[anoInicial, semanaInicial] = (double)rs[4 + i];
+
+                                    semanaInicial++;
+
+                                    if (semanaInicial > inp.NumSemanasHist)
+                                    {
+                                        semanaInicial = 1;
+                                        anoInicial++;
+                                    }
+
+
+                                }
+
+
+                                str.SaveToFile();
+                                inp.SaveToFile();
+                                ///renomar o *_fut;
+                                var camFut = Path.Combine(prevDeck.Folder, prevDeck.Posto + "_fut.DAT");
+                                if (System.IO.File.Exists(camFut))
+                                {
+                                    System.IO.File.Move(camFut, Path.Combine(prevDeck.Folder, prevDeck.Posto + "_futbkp.DAT"));
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                            }
+
+                        }
+
+                    }
+                    Parallel.ForEach(postosPrevivaz, x =>
+                    {
+                        var path_exe = Path.Combine(tempFolder, x.Key);
+                        previvaz.RunPrevivazLocalVM(path_exe);
+
+                    });
+
+                    // Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/shared/previvaz/previvaz3.sh", "previvaz", true, true, "hide");
+                    //                Services.Previvaz.RunOnLinux(tempFolder);
+
+                    //rodadas encadeadas previvaz fimmmm
+                }
+
+                foreach (var prevDeck in prevDecks)
+                {
+                    var rs = prevDeck.GetFut();// coleta os resultados do previvaz
+                    if (rs.Count > 0)
+                    {
+
+                        if (results.ContainsKey((int)rs[0]))
+                        {
+                            var rAnterior = results[(int)rs[0]];
+
+                            rAnterior.Add(rs[4]);
+                            rAnterior.Add(rs[5]);
+                            rAnterior.Add(rs[6]);
+                            rAnterior.Add(rs[7]);
+                            rAnterior.Add(rs[8]);
+                            rAnterior.Add(rs[9]);
+
+                        }
+                        else
+                            results.Add((int)rs[0], rs);
+                    }
+                }
+
+                // coloca os resultado do previvaz nas propagações para calcular postos artificias;
+                foreach (var r in results)
+                {
+
+                    var posto = r.Key;
+                    var prop = Propagacoes.Where(x => x.IdPosto == posto).FirstOrDefault();
+
+                    try
+                    {
+                        foreach (var sem in SemanasPrevs)
+                        {
+                            if (postosIncrementais.ContainsKey(posto))
+                            {
+                                var propInc = Propagacoes.Where(x => x.IdPosto == postosIncrementais[posto].Item2).FirstOrDefault();
+
+                                if (!propInc.calMedSemanal.ContainsKey(sem.Item1))
+                                {
+                                    var dat1 = sem.Item1;//primeira semana sem dados no posto incremental
+                                    var dat = SemanasPrevs.Where(x => x.Item2 == (int)r.Value[3]).Select(x => x.Item1).FirstOrDefault();//primeira semana de com dados do previvaz
+                                    for (DateTime d = dat1; d < dat; d = d.AddDays(7))
+                                    {
+                                        //if (d < dat)
+                                        //{
+                                        //    propInc.calMedSemanal[d] = 0;
+                                        //}
+                                    }
+
+
+                                    for (int i = 4; i < r.Value.Count; i++)
+                                    {
+                                        var vaz = r.Value[i];
+                                        propInc.calMedSemanal[dat] = (double)vaz;
+                                        dat = dat.AddDays(7);
+                                    }
+                                    while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
+                                    {
+                                        propInc.calMedSemanal[dat] = propInc.calMedSemanal[dat.AddDays(-7)];
+                                        dat = dat.AddDays(7);
+
+                                    }
+                                    break;
+                                }
+                            }
+
+                            else if (posto == 239)//ibitinga
+                            {
+                                if (!prop.calMedSemanal.ContainsKey(sem.Item1))
+                                {
+                                    var dat = sem.Item1;
+                                    var barraBoni = Propagacoes.Where(x => x.IdPosto == 237).FirstOrDefault();
+
+                                    for (int i = 4; i < r.Value.Count; i++)
+                                    {
+                                        var vaz = r.Value[i];
+                                        prop.calMedSemanal[dat] = (double)vaz + barraBoni.calMedSemanal[dat];//soma a vazão para compensar o que foi subtraido para rodar o previvaz
+                                        dat = dat.AddDays(7);
+                                    }
+                                    while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
+                                    {
+                                        prop.calMedSemanal[dat] = prop.calMedSemanal[dat.AddDays(-7)];
+                                        dat = dat.AddDays(7);
+
+                                    }
+                                    break;
+                                }
+                            }
+                            else if (posto == 242)//N.Avanhandava
+                            {
+                                if (!prop.calMedSemanal.ContainsKey(sem.Item1))
+                                {
+                                    var dat = sem.Item1;
+                                    var Ibitinga = Propagacoes.Where(x => x.IdPosto == 239).FirstOrDefault();
+
+                                    for (int i = 4; i < r.Value.Count; i++)
+                                    {
+                                        var vaz = r.Value[i];
+                                        prop.calMedSemanal[dat] = (double)vaz + Ibitinga.calMedSemanal[dat];//soma a vazão para compensar o que foi subtraido para rodar o previvaz
+                                        dat = dat.AddDays(7);
+                                    }
+                                    while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
+                                    {
+                                        prop.calMedSemanal[dat] = prop.calMedSemanal[dat.AddDays(-7)];
+                                        dat = dat.AddDays(7);
+
+                                    }
+                                    break;
+                                }
                             }
                             else
-                                results.Add((int)rs[0], rs);
-                        }
-                    }
-
-                    // coloca os resultado do previvaz nas propagações para calcular postos artificias;
-                    foreach (var r in results)
-                    {
-
-                        var posto = r.Key;
-                        var prop = Propagacoes.Where(x => x.IdPosto == posto).FirstOrDefault();
-
-                        try
-                        {
-                            foreach (var sem in SemanasPrevs)
                             {
-                                if (postosIncrementais.ContainsKey(posto))
+                                if (!prop.calMedSemanal.ContainsKey(sem.Item1))
                                 {
-                                    var propInc = Propagacoes.Where(x => x.IdPosto == postosIncrementais[posto].Item2).FirstOrDefault();
+                                    var dat = sem.Item1;
 
-                                    if (!propInc.calMedSemanal.ContainsKey(sem.Item1))
+                                    for (int i = 4; i < r.Value.Count; i++)
                                     {
-                                        var dat1 = sem.Item1;//primeira semana sem dados no posto incremental
-                                        var dat = SemanasPrevs.Where(x => x.Item2 == (int)r.Value[3]).Select(x => x.Item1).FirstOrDefault();//primeira semana de com dados do previvaz
-                                        for (DateTime d = dat1; d < dat; d = d.AddDays(7))
-                                        {
-                                            //if (d < dat)
-                                            //{
-                                            //    propInc.calMedSemanal[d] = 0;
-                                            //}
-                                        }
-
-
-                                        for (int i = 4; i < r.Value.Count; i++)
-                                        {
-                                            var vaz = r.Value[i];
-                                            propInc.calMedSemanal[dat] = (double)vaz;
-                                            dat = dat.AddDays(7);
-                                        }
-                                        while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
-                                        {
-                                            propInc.calMedSemanal[dat] = propInc.calMedSemanal[dat.AddDays(-7)];
-                                            dat = dat.AddDays(7);
-
-                                        }
-                                        break;
+                                        var vaz = r.Value[i];
+                                        prop.calMedSemanal[dat] = (double)vaz;
+                                        dat = dat.AddDays(7);
                                     }
-                                }
-
-                                else if (posto == 239)//ibitinga
-                                {
-                                    if (!prop.calMedSemanal.ContainsKey(sem.Item1))
+                                    while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
                                     {
-                                        var dat = sem.Item1;
-                                        var barraBoni = Propagacoes.Where(x => x.IdPosto == 237).FirstOrDefault();
-
-                                        for (int i = 4; i < r.Value.Count; i++)
-                                        {
-                                            var vaz = r.Value[i];
-                                            prop.calMedSemanal[dat] = (double)vaz + barraBoni.calMedSemanal[dat];//soma a vazão para compensar o que foi subtraido para rodar o previvaz
-                                            dat = dat.AddDays(7);
-                                        }
-                                        while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
-                                        {
-                                            prop.calMedSemanal[dat] = prop.calMedSemanal[dat.AddDays(-7)];
-                                            dat = dat.AddDays(7);
-
-                                        }
-                                        break;
+                                        prop.calMedSemanal[dat] = prop.calMedSemanal[dat.AddDays(-7)];
+                                        dat = dat.AddDays(7);
                                     }
-                                }
-                                else if (posto == 242)//N.Avanhandava
-                                {
-                                    if (!prop.calMedSemanal.ContainsKey(sem.Item1))
-                                    {
-                                        var dat = sem.Item1;
-                                        var Ibitinga = Propagacoes.Where(x => x.IdPosto == 239).FirstOrDefault();
-
-                                        for (int i = 4; i < r.Value.Count; i++)
-                                        {
-                                            var vaz = r.Value[i];
-                                            prop.calMedSemanal[dat] = (double)vaz + Ibitinga.calMedSemanal[dat];//soma a vazão para compensar o que foi subtraido para rodar o previvaz
-                                            dat = dat.AddDays(7);
-                                        }
-                                        while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
-                                        {
-                                            prop.calMedSemanal[dat] = prop.calMedSemanal[dat.AddDays(-7)];
-                                            dat = dat.AddDays(7);
-
-                                        }
-                                        break;
-                                    }
-                                }
-                                else
-                                {
-                                    if (!prop.calMedSemanal.ContainsKey(sem.Item1))
-                                    {
-                                        var dat = sem.Item1;
-
-                                        for (int i = 4; i < r.Value.Count; i++)
-                                        {
-                                            var vaz = r.Value[i];
-                                            prop.calMedSemanal[dat] = (double)vaz;
-                                            dat = dat.AddDays(7);
-                                        }
-                                        while (dat <= SemanasPrevs.Last().Item1)//caso as 6 semanas do previvaz não completem o horizonte de 12 semanas a vazão da ultima semana disponível sera copiada para as restantes
-                                        {
-                                            prop.calMedSemanal[dat] = prop.calMedSemanal[dat.AddDays(-7)];
-                                            dat = dat.AddDays(7);
-                                        }
-                                        break;
-                                    }
+                                    break;
                                 }
                             }
+                        }
 
-                        }
-                        catch (Exception e)
-                        {
-                            e.ToString();
-                        }
                     }
-
-
-                    #region trata posto 169 
-                    //Para completar o horizonte de 12 semanas previstas para o posto 169, suas vazões serão calculadas atraves da soma da vazão do posto 168 da semana 
-                    // em questão com as vazões dos postos 158 e 156 de duas semanas atrás.
-                    var p169 = Propagacoes.Where(x => x.IdPosto == 169).FirstOrDefault();
-                    var p168 = Propagacoes.Where(x => x.IdPosto == 168).FirstOrDefault();
-                    var p156 = Propagacoes.Where(x => x.IdPosto == 156).FirstOrDefault();
-                    var p158 = Propagacoes.Where(x => x.IdPosto == 158).FirstOrDefault();
-
-                    foreach (var sem in SemanasPrevs)//semanaPrevs contém as datas das 12 semanas 
+                    catch (Exception e)
                     {
-                        var dat = sem.Item1;
-                        if (!p169.calMedSemanal.ContainsKey(dat))
-                        {
-                            //(-14) = duas semanas atrás
-                            p169.calMedSemanal[dat] = p168.calMedSemanal[dat] + p156.calMedSemanal[dat.AddDays(-14)] + p158.calMedSemanal[dat.AddDays(-14)];
-                        }
+                        e.ToString();
                     }
-                    #endregion
-                    var testePro = Propagacoes;
-
-
-
-                    Propagacoes = IncluiPostos(Propagacoes);
-
-                    CalcularPostRegre(Propagacoes, SemanasPrevs);
-
-                    CalcularPostCalculados(SemanasPrevs);
-
-                    CopiaResultados(SemanasPrevs);
-                    #region codigo antigo
-                    ////===============================codigo antigo=========================================================
-                    //List<DateTime> listSex = Propagacoes.First().medSemanalNatural.Select(x => x.Key).ToList();
-
-                    //for (int i = 0; i < 6; i++) listSex.Add(listSex.Last().AddDays(+7));
-
-                    //foreach (var pPrevi in prevDecks)//var prevD in prevDecks.Where(b => b.Posto == posto))
-                    //{
-
-                    //    dynamic previ = pPrevi.GetFut();
-
-
-                    //    if (Propagacoes.Any(x => x.IdPosto == int.Parse(pPrevi.Posto)))
-                    //    {
-                    //        var propa = Propagacoes.Where(v => v.IdPosto == int.Parse(pPrevi.Posto)).First();
-                    //        DateTime dat = propa.medSemanalNatural.Last().Key.AddDays(7);
-
-                    //        for (int count = 4; count < 10; count++)
-                    //        {
-
-                    //            try
-                    //            {
-
-                    //                if (!propa.medSemanalNatural.ContainsKey(dat)) propa.medSemanalNatural[dat] = 0;
-
-                    //                propa.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
-
-                    //                dat = dat.AddDays(7);
-
-                    //                propa.OK = true;
-                    //            }
-                    //            catch (Exception ep)//TODO: tirar a Exception
-                    //            {
-                    //                propa.OK = false;
-                    //            }
-                    //        }
-                    //    }
-                    //    else if (acompH.Any(x => x.posto == int.Parse(pPrevi.Posto))) //Postos PREVIVAZ
-                    //    {
-
-                    //        Propagacao prop = new Propagacao();
-                    //        prop.IdPosto = int.Parse(pPrevi.Posto);
-                    //        prop.NomePostoFluv = "Posto Previvaz " + prop.IdPosto;
-
-
-                    //        try
-                    //        {
-                    //            foreach (var aph in acompH.Where(x => x.posto == int.Parse(pPrevi.Posto)).ToList())
-                    //            {
-                    //                if (!prop.VazaoIncremental.ContainsKey(aph.dt)) prop.VazaoIncremental[aph.dt] = 0;
-                    //                if (!prop.VazaoNatural.ContainsKey(aph.dt)) prop.VazaoNatural[aph.dt] = 0;
-
-                    //                prop.VazaoIncremental[aph.dt] = aph.qInc;
-                    //                prop.VazaoNatural[aph.dt] = aph.qNat;
-                    //            }
-
-
-                    //            foreach (DateTime dat in listSex)
-                    //            {
-                    //                if (dat <= uSexta)
-                    //                {
-                    //                    if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
-                    //                    if (!prop.medSemanalIncremental.ContainsKey(dat)) prop.medSemanalIncremental[dat] = 0;
-
-                    //                    if (prop.medSemanalNatural[dat] == 0) prop.medSemanalNatural[dat] = prop.VazaoNatural.Where(x => (x.Key >= dat.AddDays(-6)) && x.Key <= dat).Select(x => x.Value).Average();
-                    //                    if (prop.medSemanalIncremental[dat] == 0) prop.medSemanalIncremental[dat] = prop.VazaoIncremental.Where(x => (x.Key >= dat.AddDays(-6)) && x.Key <= dat).Select(x => x.Value).Average();
-                    //                }
-                    //                else
-                    //                {
-
-                    //                }
-                    //            }
-
-                    //            for (int count = 4; count < 10; count++)
-                    //            {
-
-                    //                try
-                    //                {
-                    //                    DateTime dat = prop.medSemanalNatural.Last().Key.AddDays(7);
-                    //                    if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
-                    //                    prop.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
-                    //                    //dat = dat.AddDays(7);
-                    //                    prop.OK = true;
-                    //                }
-                    //                catch (Exception ep)//TODO: tirar a Exception
-                    //                {
-                    //                    prop.OK = false;
-                    //                }
-                    //            }
-
-
-                    //            prop.OK = true;
-                    //        }
-                    //        catch (Exception ept)
-                    //        {
-                    //            prop.OK = false;
-                    //        }
-                    //        finally
-                    //        {
-                    //            Propagacoes.Add(prop);
-                    //        }
-                    //    }
-                    //    else if (pPrevi.Posto == "168")
-                    //    {
-                    //        #region teste 168
-                    //        //// var propa = Propagacoes.Where(v => v.IdPosto == int.Parse(pPrevi.Posto)).First();
-                    //        ////DateTime dat = Propagacoes.First().medSemanalNatural.Last().Key.AddDays(7);
-
-                    //        //Propagacao prop = new Propagacao();
-                    //        //prop.IdPosto = int.Parse(pPrevi.Posto);
-                    //        //prop.NomePostoFluv = "Posto " + prop.IdPosto;
-                    //        //foreach (DateTime d in listSex)
-                    //        //{
-
-
-                    //        //    if (!prop.medSemanalNatural.ContainsKey(d)) prop.medSemanalNatural[d] = 0;
-                    //        //    if (!prop.medSemanalIncremental.ContainsKey(d)) prop.medSemanalIncremental[d] = 0;
-
-
-
-
-                    //        //}
-                    //        //DateTime dat = listSex.Last();
-                    //        //for (int count = 9; count > 3; count--)
-                    //        //{
-
-                    //        //    try
-                    //        //    {
-
-                    //        //        if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
-
-                    //        //        prop.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
-
-                    //        //        dat = dat.AddDays(-7);
-
-                    //        //        prop.OK = true;
-                    //        //    }
-                    //        //    catch (Exception ep)//TODO: tirar a Exception
-                    //        //    {
-                    //        //        prop.OK = false;
-                    //        //    }
-                    //        //}
-                    //        //Propagacoes.Add(prop);
-                    //        #endregion teste 168
-                    //        if (acompH.Any(x => x.posto == 169))
-                    //        {
-
-                    //            Propagacao prop = new Propagacao();
-                    //            prop.IdPosto = int.Parse(pPrevi.Posto);
-                    //            prop.NomePostoFluv = "Posto Previvaz " + prop.IdPosto;
-
-
-                    //            try
-                    //            {
-                    //                foreach (var aph in acompH.Where(x => x.posto == 169).ToList())
-                    //                {
-                    //                    if (!prop.VazaoIncremental.ContainsKey(aph.dt)) prop.VazaoIncremental[aph.dt] = 0;
-                    //                    if (!prop.VazaoNatural.ContainsKey(aph.dt)) prop.VazaoNatural[aph.dt] = 0;
-
-                    //                    prop.VazaoIncremental[aph.dt] = aph.qInc;
-                    //                    prop.VazaoNatural[aph.dt] = aph.qNat;
-                    //                }
-
-
-                    //                foreach (DateTime data in listSex)
-                    //                {
-                    //                    if (data <= uSexta)
-                    //                    {
-                    //                        if (!prop.medSemanalNatural.ContainsKey(data)) prop.medSemanalNatural[data] = 0;
-                    //                        if (!prop.medSemanalIncremental.ContainsKey(data)) prop.medSemanalIncremental[data] = 0;
-
-                    //                        if (prop.medSemanalNatural[data] == 0) prop.medSemanalNatural[data] = prop.VazaoIncremental.Where(x => (x.Key >= data.AddDays(-6)) && x.Key <= data).Select(x => x.Value).Average();//vazao natural do post 168 é a incremental do 169 
-                    //                        //if (prop.medSemanalIncremental[data] == 0) prop.medSemanalIncremental[data] = 
-                    //                    }
-                    //                    else if (data == uSexta.AddDays(7))
-                    //                    {
-                    //                        var dias = data.Day - uSexta.Day - 1;
-                    //                        double soma = 0;
-                    //                        int cont = 0;
-                    //                        for (int d = dias; d > 0; d--)
-                    //                        {
-                    //                            var dat = data.AddDays(-d);// criar logica para calcular med semanal da semana atual!!!
-                    //                            if (prop.VazaoIncremental.ContainsKey(dat))
-                    //                            {
-                    //                                soma = soma + prop.VazaoIncremental[dat];
-                    //                                cont++;
-                    //                            }
-                    //                        }
-                    //                        prop.medSemanalNatural[data] = soma / cont;
-                    //                    }
-                    //                }
-
-                    //                for (int count = 4; count < 10; count++)
-                    //                {
-
-                    //                    try
-                    //                    {
-                    //                        DateTime dat = prop.medSemanalNatural.Last().Key.AddDays(7);
-                    //                        if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
-                    //                        prop.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
-                    //                        // dat = dat.AddDays(7);
-                    //                        prop.OK = true;
-                    //                    }
-                    //                    catch (Exception ep)//TODO: tirar a Exception
-                    //                    {
-                    //                        prop.OK = false;
-                    //                    }
-                    //                }
-
-
-                    //                prop.OK = true;
-                    //            }
-                    //            catch (Exception ept)
-                    //            {
-                    //                prop.OK = false;
-                    //            }
-                    //            finally
-                    //            {
-                    //                Propagacoes.Add(prop);
-                    //            }
-                    //        }
-
-                    //    }
-                    //    else
-                    //    {
-                    //        Propagacao prop = new Propagacao();
-                    //        prop.IdPosto = int.Parse(pPrevi.Posto);
-                    //        prop.NomePostoFluv = "Posto Calculado" + prop.IdPosto;
-                    //        try
-                    //        {
-
-                    //            prop.OK = true;
-                    //        }
-                    //        catch (Exception ept)
-                    //        {
-                    //            prop.OK = false;
-                    //        }
-                    //        finally
-                    //        {
-                    //            Propagacoes.Add(prop);
-                    //        }
-                    //    }
-                    //}
-                    ////continuar aquiiii!!!
-
-                    ////Propagacoes = IncluiPostos(Propagacoes);
-
-                    //// CalcularPostRegre(Propagacoes);
-
-                    ////CalcularPostCalculados();
-
-                    ////CopiaResultados();
-                    ////=======fim codigo antigo=====================
-                    #endregion
-
-                    {
-                        MemoryStream stream1 = new MemoryStream();
-                        DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<Propagacao>));
-
-                        ser.WriteObject(stream1, Propagacoes);
-                        stream1.Position = 0;
-                        System.IO.File.WriteAllText(Path.Combine(path, "Previvaz2.txt"), new StreamReader(stream1).ReadToEnd());
-                    }
-
-
                 }
 
-                var destPath = Path.Combine(path, "arq_previvaz");
 
-                if (Directory.Exists(destPath))
+                #region trata posto 169 
+                //Para completar o horizonte de 12 semanas previstas para o posto 169, suas vazões serão calculadas atraves da soma da vazão do posto 168 da semana 
+                // em questão com as vazões dos postos 158 e 156 de duas semanas atrás.
+                var p169 = Propagacoes.Where(x => x.IdPosto == 169).FirstOrDefault();
+                var p168 = Propagacoes.Where(x => x.IdPosto == 168).FirstOrDefault();
+                var p156 = Propagacoes.Where(x => x.IdPosto == 156).FirstOrDefault();
+                var p158 = Propagacoes.Where(x => x.IdPosto == 158).FirstOrDefault();
+
+                foreach (var sem in SemanasPrevs)//semanaPrevs contém as datas das 12 semanas 
                 {
-                    Directory.Delete(destPath, true);
+                    var dat = sem.Item1;
+                    if (!p169.calMedSemanal.ContainsKey(dat))
+                    {
+                        //(-14) = duas semanas atrás
+                        p169.calMedSemanal[dat] = p168.calMedSemanal[dat] + p156.calMedSemanal[dat.AddDays(-14)] + p158.calMedSemanal[dat.AddDays(-14)];
+                    }
+                }
+                #endregion
+                var testePro = Propagacoes;
+
+
+
+                Propagacoes = IncluiPostos(Propagacoes);
+
+                CalcularPostRegre(Propagacoes, SemanasPrevs);
+
+                CalcularPostCalculados(SemanasPrevs);
+
+                CopiaResultados(SemanasPrevs);
+                #region codigo antigo
+                ////===============================codigo antigo=========================================================
+                //List<DateTime> listSex = Propagacoes.First().medSemanalNatural.Select(x => x.Key).ToList();
+
+                //for (int i = 0; i < 6; i++) listSex.Add(listSex.Last().AddDays(+7));
+
+                //foreach (var pPrevi in prevDecks)//var prevD in prevDecks.Where(b => b.Posto == posto))
+                //{
+
+                //    dynamic previ = pPrevi.GetFut();
+
+
+                //    if (Propagacoes.Any(x => x.IdPosto == int.Parse(pPrevi.Posto)))
+                //    {
+                //        var propa = Propagacoes.Where(v => v.IdPosto == int.Parse(pPrevi.Posto)).First();
+                //        DateTime dat = propa.medSemanalNatural.Last().Key.AddDays(7);
+
+                //        for (int count = 4; count < 10; count++)
+                //        {
+
+                //            try
+                //            {
+
+                //                if (!propa.medSemanalNatural.ContainsKey(dat)) propa.medSemanalNatural[dat] = 0;
+
+                //                propa.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
+
+                //                dat = dat.AddDays(7);
+
+                //                propa.OK = true;
+                //            }
+                //            catch (Exception ep)//TODO: tirar a Exception
+                //            {
+                //                propa.OK = false;
+                //            }
+                //        }
+                //    }
+                //    else if (acompH.Any(x => x.posto == int.Parse(pPrevi.Posto))) //Postos PREVIVAZ
+                //    {
+
+                //        Propagacao prop = new Propagacao();
+                //        prop.IdPosto = int.Parse(pPrevi.Posto);
+                //        prop.NomePostoFluv = "Posto Previvaz " + prop.IdPosto;
+
+
+                //        try
+                //        {
+                //            foreach (var aph in acompH.Where(x => x.posto == int.Parse(pPrevi.Posto)).ToList())
+                //            {
+                //                if (!prop.VazaoIncremental.ContainsKey(aph.dt)) prop.VazaoIncremental[aph.dt] = 0;
+                //                if (!prop.VazaoNatural.ContainsKey(aph.dt)) prop.VazaoNatural[aph.dt] = 0;
+
+                //                prop.VazaoIncremental[aph.dt] = aph.qInc;
+                //                prop.VazaoNatural[aph.dt] = aph.qNat;
+                //            }
+
+
+                //            foreach (DateTime dat in listSex)
+                //            {
+                //                if (dat <= uSexta)
+                //                {
+                //                    if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
+                //                    if (!prop.medSemanalIncremental.ContainsKey(dat)) prop.medSemanalIncremental[dat] = 0;
+
+                //                    if (prop.medSemanalNatural[dat] == 0) prop.medSemanalNatural[dat] = prop.VazaoNatural.Where(x => (x.Key >= dat.AddDays(-6)) && x.Key <= dat).Select(x => x.Value).Average();
+                //                    if (prop.medSemanalIncremental[dat] == 0) prop.medSemanalIncremental[dat] = prop.VazaoIncremental.Where(x => (x.Key >= dat.AddDays(-6)) && x.Key <= dat).Select(x => x.Value).Average();
+                //                }
+                //                else
+                //                {
+
+                //                }
+                //            }
+
+                //            for (int count = 4; count < 10; count++)
+                //            {
+
+                //                try
+                //                {
+                //                    DateTime dat = prop.medSemanalNatural.Last().Key.AddDays(7);
+                //                    if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
+                //                    prop.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
+                //                    //dat = dat.AddDays(7);
+                //                    prop.OK = true;
+                //                }
+                //                catch (Exception ep)//TODO: tirar a Exception
+                //                {
+                //                    prop.OK = false;
+                //                }
+                //            }
+
+
+                //            prop.OK = true;
+                //        }
+                //        catch (Exception ept)
+                //        {
+                //            prop.OK = false;
+                //        }
+                //        finally
+                //        {
+                //            Propagacoes.Add(prop);
+                //        }
+                //    }
+                //    else if (pPrevi.Posto == "168")
+                //    {
+                //        #region teste 168
+                //        //// var propa = Propagacoes.Where(v => v.IdPosto == int.Parse(pPrevi.Posto)).First();
+                //        ////DateTime dat = Propagacoes.First().medSemanalNatural.Last().Key.AddDays(7);
+
+                //        //Propagacao prop = new Propagacao();
+                //        //prop.IdPosto = int.Parse(pPrevi.Posto);
+                //        //prop.NomePostoFluv = "Posto " + prop.IdPosto;
+                //        //foreach (DateTime d in listSex)
+                //        //{
+
+
+                //        //    if (!prop.medSemanalNatural.ContainsKey(d)) prop.medSemanalNatural[d] = 0;
+                //        //    if (!prop.medSemanalIncremental.ContainsKey(d)) prop.medSemanalIncremental[d] = 0;
+
+
+
+
+                //        //}
+                //        //DateTime dat = listSex.Last();
+                //        //for (int count = 9; count > 3; count--)
+                //        //{
+
+                //        //    try
+                //        //    {
+
+                //        //        if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
+
+                //        //        prop.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
+
+                //        //        dat = dat.AddDays(-7);
+
+                //        //        prop.OK = true;
+                //        //    }
+                //        //    catch (Exception ep)//TODO: tirar a Exception
+                //        //    {
+                //        //        prop.OK = false;
+                //        //    }
+                //        //}
+                //        //Propagacoes.Add(prop);
+                //        #endregion teste 168
+                //        if (acompH.Any(x => x.posto == 169))
+                //        {
+
+                //            Propagacao prop = new Propagacao();
+                //            prop.IdPosto = int.Parse(pPrevi.Posto);
+                //            prop.NomePostoFluv = "Posto Previvaz " + prop.IdPosto;
+
+
+                //            try
+                //            {
+                //                foreach (var aph in acompH.Where(x => x.posto == 169).ToList())
+                //                {
+                //                    if (!prop.VazaoIncremental.ContainsKey(aph.dt)) prop.VazaoIncremental[aph.dt] = 0;
+                //                    if (!prop.VazaoNatural.ContainsKey(aph.dt)) prop.VazaoNatural[aph.dt] = 0;
+
+                //                    prop.VazaoIncremental[aph.dt] = aph.qInc;
+                //                    prop.VazaoNatural[aph.dt] = aph.qNat;
+                //                }
+
+
+                //                foreach (DateTime data in listSex)
+                //                {
+                //                    if (data <= uSexta)
+                //                    {
+                //                        if (!prop.medSemanalNatural.ContainsKey(data)) prop.medSemanalNatural[data] = 0;
+                //                        if (!prop.medSemanalIncremental.ContainsKey(data)) prop.medSemanalIncremental[data] = 0;
+
+                //                        if (prop.medSemanalNatural[data] == 0) prop.medSemanalNatural[data] = prop.VazaoIncremental.Where(x => (x.Key >= data.AddDays(-6)) && x.Key <= data).Select(x => x.Value).Average();//vazao natural do post 168 é a incremental do 169 
+                //                        //if (prop.medSemanalIncremental[data] == 0) prop.medSemanalIncremental[data] = 
+                //                    }
+                //                    else if (data == uSexta.AddDays(7))
+                //                    {
+                //                        var dias = data.Day - uSexta.Day - 1;
+                //                        double soma = 0;
+                //                        int cont = 0;
+                //                        for (int d = dias; d > 0; d--)
+                //                        {
+                //                            var dat = data.AddDays(-d);// criar logica para calcular med semanal da semana atual!!!
+                //                            if (prop.VazaoIncremental.ContainsKey(dat))
+                //                            {
+                //                                soma = soma + prop.VazaoIncremental[dat];
+                //                                cont++;
+                //                            }
+                //                        }
+                //                        prop.medSemanalNatural[data] = soma / cont;
+                //                    }
+                //                }
+
+                //                for (int count = 4; count < 10; count++)
+                //                {
+
+                //                    try
+                //                    {
+                //                        DateTime dat = prop.medSemanalNatural.Last().Key.AddDays(7);
+                //                        if (!prop.medSemanalNatural.ContainsKey(dat)) prop.medSemanalNatural[dat] = 0;
+                //                        prop.medSemanalNatural[dat] = Convert.ToDouble(previ[count]);
+                //                        // dat = dat.AddDays(7);
+                //                        prop.OK = true;
+                //                    }
+                //                    catch (Exception ep)//TODO: tirar a Exception
+                //                    {
+                //                        prop.OK = false;
+                //                    }
+                //                }
+
+
+                //                prop.OK = true;
+                //            }
+                //            catch (Exception ept)
+                //            {
+                //                prop.OK = false;
+                //            }
+                //            finally
+                //            {
+                //                Propagacoes.Add(prop);
+                //            }
+                //        }
+
+                //    }
+                //    else
+                //    {
+                //        Propagacao prop = new Propagacao();
+                //        prop.IdPosto = int.Parse(pPrevi.Posto);
+                //        prop.NomePostoFluv = "Posto Calculado" + prop.IdPosto;
+                //        try
+                //        {
+
+                //            prop.OK = true;
+                //        }
+                //        catch (Exception ept)
+                //        {
+                //            prop.OK = false;
+                //        }
+                //        finally
+                //        {
+                //            Propagacoes.Add(prop);
+                //        }
+                //    }
+                //}
+                ////continuar aquiiii!!!
+
+                ////Propagacoes = IncluiPostos(Propagacoes);
+
+                //// CalcularPostRegre(Propagacoes);
+
+                ////CalcularPostCalculados();
+
+                ////CopiaResultados();
+                ////=======fim codigo antigo=====================
+                #endregion
+
+                {
+                    MemoryStream stream1 = new MemoryStream();
+                    DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<Propagacao>));
+
+                    ser.WriteObject(stream1, Propagacoes);
+                    stream1.Position = 0;
+                    System.IO.File.WriteAllText(Path.Combine(path, "Previvaz2.txt"), new StreamReader(stream1).ReadToEnd());
                 }
 
-                Tools.moveDirectory(tempFolder, destPath);
+
+                //}
+
+                //var destPath = Path.Combine(path, "arq_previvaz");
+
+                //if (Directory.Exists(destPath))
+                //{
+                //    Directory.Delete(destPath, true);
+                //}
+
+                //Tools.moveDirectory(tempFolder, destPath);
             }
 
 

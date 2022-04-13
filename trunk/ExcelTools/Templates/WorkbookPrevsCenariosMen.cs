@@ -58,6 +58,7 @@ namespace Compass.ExcelTools.Templates
         public object[,] PrevsCen1 { get { return Names["_cen1"].Value; } }
 
         public object[,] Entrada { get { return Names["_entrada"].Value; } set { Names["_entrada"].Value = value; } }
+        public object[,] DatasPrevs { get { return Names["_SemanasPrevsDatas"].Value; } set { Names["_SemanasPrevsDatas"].Value = value; } }//_SemanasPrevsDatas
         public object[,] Saida1 { get { return Names["_saida1"].Value; } set { Names["_saida1"].Value = value; } }
         public object[,] Saida2 { get { return Names["_saida2"].Value; } set { Names["_saida2"].Value = value; } }
         public object[,] Saida3 { get { return Names["_saida3"].Value; } set { Names["_saida3"].Value = value; } }

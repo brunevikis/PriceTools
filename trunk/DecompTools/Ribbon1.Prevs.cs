@@ -710,8 +710,8 @@ namespace Compass.DecompTools
 
                     foreach (var run in runs)
                     {
-                        string previvaFolder = Path.Combine(estudo, "arq_previvaz_" + run.Item1);
-                        Services.Previvaz.RunCenarioPrevsM2(baseCam, useAcomph, run, previvaFolder, true);
+                        string previvazFolder = Path.Combine(estudo, "arq_previvaz_" + run.Item1);
+                        Services.Previvaz.RunCenarioPrevsM2(baseCam, useAcomph, run, previvazFolder,estudo,run.Item1, true);
                     }
                     //ws.Range[ws.Cells[r, col], ws.Cells[r, col + 9]]
                     //var teste = ws.Range[ws.Cells[row, col], ws.Cells[row + 3, col + 11]].Value;
