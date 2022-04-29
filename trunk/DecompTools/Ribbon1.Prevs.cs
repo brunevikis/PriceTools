@@ -623,6 +623,49 @@ namespace Compass.DecompTools
 
         }
 
+        private void btnExpPevsM2_Click(object sender, RibbonControlEventArgs e)
+        {
+            var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
+
+            try
+            {
+
+                Globals.ThisAddIn.Application.DisplayStatusBar = true;
+                Globals.ThisAddIn.Application.StatusBar = "Preparando Entradas...";
+
+                var wb = new WorkbookPrevsCenariosMen(this.ActiveWorkbook);
+
+                if (System.Windows.Forms.MessageBox.Show("Exportar os Prevs?", "Decomp Tools", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question)
+                    != System.Windows.Forms.DialogResult.Yes)
+                    return;
+                var raiz = wb.Path;
+                var cenario = "Manual";
+              
+
+                Services.Previvaz.ExportaPrevsM2(wb, raiz, cenario);
+
+
+                System.Windows.Forms.MessageBox.Show("Processo concuído com sucesso!!!");
+
+                Globals.ThisAddIn.Application.ScreenUpdating = false;
+
+                Globals.ThisAddIn.Application.DisplayStatusBar = statusBarState;
+                Globals.ThisAddIn.Application.StatusBar = null;
+
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                Globals.ThisAddIn.Application.StatusBar = false;
+                Globals.ThisAddIn.Application.DisplayStatusBar = statusBarState;
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+            }
+
+        }
         private void btnPrevivazM2_Click(object sender, RibbonControlEventArgs e)
         {
             var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
