@@ -120,7 +120,7 @@ namespace Compass.CommomLibrary
 
             if (createBackup && System.IO.File.Exists(filePath))
             {
-                var bkp = filePath.Replace("DADGNL.", "OFICIAL_DADGNL.");
+                var bkp = filePath.Replace("DADGNL.", "OFICIAL_DADGNL.").Replace("dadgnl.", "OFICIAL_DADGNL.");
                 System.IO.File.Copy(filePath, bkp, true);
             }
 
