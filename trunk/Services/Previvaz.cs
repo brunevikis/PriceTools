@@ -3077,6 +3077,20 @@ namespace Compass.Services
                     }
                 }
 
+                foreach (var p in Propagacoes.Where(x => x.IdPosto == 307))
+                {
+                    var p201 = GetMediaSemanal(201, d);
+                    var p201b = p201 - 25;
+                    if (p201b > 0)
+                    {
+                        p.calMedSemanal[d] = p201b;
+                    }
+                    else
+                    {
+                        p.calMedSemanal[d] = 0;
+                    }
+                }
+
                 foreach (var p in Propagacoes.Where(x => x.IdPosto == 298))
                 {
                     var p125 = GetMediaSemanal(125, d);
