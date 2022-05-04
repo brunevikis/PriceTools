@@ -2868,7 +2868,7 @@ namespace Compass.Services
                                                                                      //obs: os dados de A0 A1 e quais são os postos regredidos e base, são disponibilizados pelo ONS     
 
                     var propRegre = Propagacoes.Where(i => i.IdPosto == l.Idposto_Regredido).First();
-                    if (!propRegre.calMedSemanal.ContainsKey(dat))//usa a regressão para as semanas que ainda não possuem dados
+                    if (!propRegre.calMedSemanal.ContainsKey(dat) || propRegre.IdPosto == 203)//usa a regressão para as semanas que ainda não possuem dados
                     {
                         propRegre.calMedSemanal[dat] = semRegre;
 
@@ -3151,7 +3151,7 @@ namespace Compass.Services
                     var p203 = GetMediaSemanal(203, d);
                     var p304 = GetMediaSemanal(304, d);
 
-                    p.calMedSemanal[d] = p129 - p298 - p203 - p304;
+                    p.calMedSemanal[d] = p129 - p298 - p203 + p304;
                     if (p.calMedSemanal[d] <= 0)
                     {
                         p.calMedSemanal[d] = 0;
