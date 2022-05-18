@@ -80,7 +80,7 @@ namespace Compass.Services
             }
         }
 
-        public static void RunCenarioPrevsM2(string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder,string raiz, string cenario, bool encad = false)// bool encad)
+        public static void RunCenarioPrevsM2(string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder, string raiz, string cenario, bool encad = false)// bool encad)
         {
             Microsoft.Office.Interop.Excel.Application xlsApp = null;
             xlsApp = new Microsoft.Office.Interop.Excel.Application();
@@ -118,6 +118,11 @@ namespace Compass.Services
                 wsEnt1.Select();
                 string arqEntradaPath = wsEnt1.Range["_entradaPrevivaz"].Text;
 
+                Worksheet wsPrevs = wbxls.Worksheets["Prevs"];
+                wsPrevs.Select();
+                DateTime dataPrevs = wsPrevs.Range["A2"].Value;
+                DateTime dataSEmEstimada = wsPrevs.Range["A4"].Value;
+
                 //var wb = new WorkbookPrevsCenariosMen(wbxls);
                 //Workbook wbc = xlsApp.ActiveWorkbook;
                 Worksheet wsPega = wbxls.Worksheets["Cen1"];
@@ -153,6 +158,11 @@ namespace Compass.Services
                 //wbxls = xlsApp.Workbooks.Open(nomeTemp);
                 wbxls = xlsApp.Workbooks.Open(PlanModelo);
                 wbxls.Activate();
+
+                wsPrevs = wbxls.Worksheets["Prevs"];
+                wsPrevs.Select();
+                wsPrevs.Range["A2"].Value = dataPrevs;
+                wsPrevs.Range["A4"].Value = dataSEmEstimada;
 
                 wsPega = wbxls.Worksheets["Cen1"];
                 wsPega.Select();
@@ -1217,7 +1227,7 @@ namespace Compass.Services
                 datas.Add((DateTime)datasPrevs[1, d]);
             }
 
-           // var datas = (DateTime) wb.DatasPrevs[1, 1];
+            // var datas = (DateTime) wb.DatasPrevs[1, 1];
             int index = 0;
             DateTime inicio = new DateTime(datas[0].Year, datas[0].Month, 1);
 
@@ -1266,7 +1276,7 @@ namespace Compass.Services
                 }
             }
 
-            
+
         }
 
         public static void RunCenarioTestePrevM2(WorkbookPrevsCenariosMen wb, bool useAcomph, bool encad, string sufixoDePasta = "", bool prevsM2 = false)//bool encad)
