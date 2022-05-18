@@ -3066,10 +3066,10 @@ namespace Compass.Services
                 {
                     var p34 = GetMediaSemanal(34, d);
                     var p243 = GetMediaSemanal(243, d);
-                    if (!p.calMedSemanal.ContainsKey(d))
-                    {
+                    //if (!p.calMedSemanal.ContainsKey(d))
+                    //{
                         p.calMedSemanal[d] = p34 + p243;
-                    }
+                    //}
 
                 }
 
