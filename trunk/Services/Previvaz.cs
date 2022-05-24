@@ -2016,6 +2016,11 @@ namespace Compass.Services
                             {
                                 if ((double)SemanasPrevs[i].Item2 == (double)ac.Key.semana)
                                 {
+                                    if (ac.Key.posto == 169 )
+                                    {
+
+                                    }
+
                                     var prop = Propagacoes.Where(x => x.IdPosto == ac.Key.posto).FirstOrDefault();
                                     prop.calMedSemanal[SemanasPrevs[i].Item1] = ac.Average(x => x.qNat);
 
@@ -3343,19 +3348,27 @@ namespace Compass.Services
 
                     else if (p.IdPosto == 169)
                     {
+                        var prop156 = Propagacoes.Where(x => x.IdPosto == 156).First();
+                        var prop158 = Propagacoes.Where(x => x.IdPosto == 158).First();
+                        var prop168 = Propagacoes.Where(x => x.IdPosto == 168).First();
                         var d2 = d.AddDays(-14);
-                        var p168 = GetMediaSemanal(168, d);
-                        var p156 = GetMediaSemanal(156, d2);
-                        var p158 = GetMediaSemanal(158, d2);
-                        p.calMedSemanal[d] = p168 + p156 + p158;
-                        if (p.calMedSemanal[d] <= 0)
+
+                        if (!p.calMedSemanal.ContainsKey(d) && prop168.calMedSemanal.ContainsKey(d) && prop156.calMedSemanal.ContainsKey(d2) && prop158.calMedSemanal.ContainsKey(d2))
                         {
-                            p.calMedSemanal[d] = 0;
+                            var p168 = GetMediaSemanal(168, d);
+                            var p156 = GetMediaSemanal(156, d2);
+                            var p158 = GetMediaSemanal(158, d2);
+                            p.calMedSemanal[d] = p168 + p156 + p158;
+                            if (p.calMedSemanal[d] <= 0)
+                            {
+                                p.calMedSemanal[d] = 0;
+                            }
+                            else if (p.calMedSemanal[d] <= 1)
+                            {
+                                p.calMedSemanal[d] = 1;
+                            }
                         }
-                        else if (p.calMedSemanal[d] <= 1)
-                        {
-                            p.calMedSemanal[d] = 1;
-                        }
+
                     }
 
 
