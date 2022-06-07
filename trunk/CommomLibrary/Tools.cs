@@ -36,7 +36,8 @@ namespace Compass.CommomLibrary
 
             cli.Host = "smtp.gmail.com";
             cli.Port = 587;
-            cli.Credentials = new System.Net.NetworkCredential("cpas.robot@gmail.com", "cp@s9876");
+            //cli.Credentials = new System.Net.NetworkCredential("cpas.robot@gmail.com", "cp@s9876");
+            cli.Credentials = new System.Net.NetworkCredential("cpas.robot@gmail.com", "ujkuiwpbeqerumvs");
 
             cli.EnableSsl = true;
 
