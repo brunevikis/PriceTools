@@ -115,6 +115,7 @@ namespace Compass.CommomLibrary.Dadger
             get { return campos; }
         }
         public int Estagio { get { return this[4]; } set { this[4] = value; } }
+        public double limInf { get { return this[3]; } set { this[3] = value; } }
 
         // public int Inicio { get { return this[2]; } set { this[2] = value; } }
         // public int Fim { get { return this[3]; } set { this[3] = value; } }

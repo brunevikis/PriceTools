@@ -344,6 +344,29 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<HERHC> herhc = null;
+        public List<HERHC> Herhc
+        {
+            get
+            {
+                
+                
+                    herhc = new List<HERHC>();
+
+                    var ws = Names["_he"].Worksheet;
+                    var row = Names["_he"].Row;
+                    var col = Names["_he"].Column;
+
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        herhc.Add(new HERHC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
+                    }
+                
+
+                return herhc;
+            }
+        }
+
         public class Dados_Fixa
         {
             public int Posto { get; set; }
@@ -849,7 +872,27 @@ namespace Compass.ExcelTools.Templates
                 if (rng[1, 12].Value is double) VolMes[9] = rng[1, 12].Value;
                 if (rng[1, 13].Value is double) VolMes[10] = rng[1, 13].Value;
                 if (rng[1, 14].Value is double) VolMes[11] = rng[1, 14].Value;
-                if (rng[1, 14].Value is double) VolMes[12] = rng[1, 15].Value;
+                if (rng[1, 15].Value is double) VolMes[12] = rng[1, 15].Value;
+
+            }
+        }
+
+        public class HERHC
+        {
+            public int Rest { get; set; }
+            public int MesEst { get; set; }
+
+            public double valAtual { get; set; }
+            public double? valAnt { get; set; }
+            public HERHC(Range rng)
+            {
+                if (rng[1, 1].Value is double) Rest = (int)rng[1, 1].Value;
+
+                if (rng[1, 2].Value is double) MesEst = (int)rng[1, 2].Value;
+
+                if (rng[1, 3].Value is double) valAtual = rng[1, 3].Value;
+                if (rng[1, 4].Value is double) valAnt = rng[1, 4].Value;
+               
 
             }
         }

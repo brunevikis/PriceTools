@@ -1093,7 +1093,7 @@ namespace Compass.Services
                                 dadger.BlocoRhc.Insert(index + 1, heClone);
                             }
                         }
-                        
+
                     }
                     foreach (var rhc in dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == num && x[8] == 1).ToList())
                     {
@@ -1114,6 +1114,65 @@ namespace Compass.Services
                         }
                     }
                 }
+
+                //manipulacao com dados da planilha
+                if (w.Herhc.Count() > 0)
+                {
+                    var hePlanLinhes = w.Herhc.Where(x => x.MesEst == mesOperativo.Mes).ToList();
+
+                    foreach (var hep in hePlanLinhes)
+                    {
+                        var hesList = dadger.BlocoRhc.Where(x => x is HeLine && x.Restricao == hep.Rest).ToList();
+                        if (hesList.Count > 0)
+                        {
+                            if (hesList.Count() == 1)//ou o deck é mensal ou a restricão é de mes seguinte 
+                            {
+                                hesList[0][3] = Math.Round(hep.valAtual * 100, 1);
+                            }
+                            else
+                            {
+                                int estagiosCont = hesList.Count();
+
+                                if (hep.valAnt != null)
+                                {
+                                    double inicio = Math.Round((hep.valAnt ?? 0) * 100, 1);
+                                    double dif = hep.valAtual - (hep.valAnt ?? 0);
+                                    double inc = Math.Round((dif / (estagiosCont-1)) * 100, 1);
+                                    for (int i = 0; i < estagiosCont; i++)
+                                    {
+
+                                        if (i == estagiosCont - 1)
+                                        {
+                                            hesList[i][3] = Math.Round(hep.valAtual * 100, 1);
+                                        }
+                                        else
+                                        {
+                                            hesList[i][3] = inicio;
+                                        }
+                                        inicio += inc;
+
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < estagiosCont; i++)
+                                    {
+
+                                        hesList[i][3] = Math.Round(hep.valAtual * 100, 1);
+
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+
+                }
+
+
                 //foreach (var rhc in dadger.BlocoRhc.Where(x => x is HeLine && x[4] > 1).ToList())
                 //{
                 //    dadger.BlocoRhc.Remove(rhc);
