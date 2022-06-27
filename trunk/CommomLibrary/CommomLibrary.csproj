@@ -81,6 +81,8 @@
     <Compile Include="AgrintDat\AgrintDat.cs" />
     <Compile Include="Cotasr\Cot.cs" />
     <Compile Include="Cotasr\Cotasr.cs" />
+    <Compile Include="CurvaDat\CurvaDat.cs" />
+    <Compile Include="CurvaDat\CurvaSeg.cs" />
     <Compile Include="Dadger\Rhc.cs" />
     <Compile Include="Dadger\Ri.cs" />
     <Compile Include="Dadvaz\Dadvaz.cs" />

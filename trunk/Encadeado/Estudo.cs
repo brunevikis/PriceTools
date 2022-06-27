@@ -46,6 +46,7 @@ namespace Encadeado
 
         public List<IADTERM> Adterm { get; set; }
         public List<IMERCADO> MERCADO { get; set; }
+        public List<ICURVA> Curva { get; set; }
         public List<IINTERCAMBIO> Intercambios { get; set; }
         public List<IMODIF> Modifs { get; set; }
 
@@ -111,6 +112,7 @@ namespace Encadeado
             IncrementarAgrInt(deck);
             IncrementarHidr(deck);
             IncrementarSistema(deck);
+            IncrementarCurva(deck);
 
             if (DefinirVolumesPO) //IncrementarMercados(deck);
             {
@@ -450,6 +452,63 @@ namespace Encadeado
 
             //}
         }
+
+        public void IncrementarCurva(DeckNewave deck)
+        {
+            DeckMediaBase = new DeckNewave();
+            DeckMediaBase.EstudoPai = this;
+
+            DeckMediaBase.GetFiles(Origem);
+            var curvaBase = DeckMediaBase[Compass.CommomLibrary.Newave.Deck.DeckDocument.curva].Document as Compass.CommomLibrary.CurvaDat.CurvaDat;
+
+            var curvaDat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.curva].Document as Compass.CommomLibrary.CurvaDat.CurvaDat;
+
+            var curvasBaseLinha = curvaBase.BlocoCurvaSeg.Where(x => x is Compass.CommomLibrary.CurvaDat.CurvaSegPorLine).ToList();
+            var curvasDatLinha = curvaDat.BlocoCurvaSeg.Where(x => x is Compass.CommomLibrary.CurvaDat.CurvaSegPorLine).ToList();
+
+            foreach (var cb in curvasBaseLinha)
+            {
+                foreach (var cd in curvasDatLinha)
+                {
+                    if (cb.Ree == cd.Ree && cb.Ano == cd.Ano)
+                    {
+                        for (int i = 1; i <= 12; i++)
+                        {
+                            cd[i] = cb[i];
+                        }
+                    }
+                }
+            }
+
+            //curvasDatLinha = curvasBaseLinha;
+
+
+            foreach (var cur in this.Curva.Where(x => x.MesEstudo == deck.Dger.MesEstudo))
+            {
+                foreach (var item in curvaDat.BlocoCurvaSeg.Where(x => x is Compass.CommomLibrary.CurvaDat.CurvaSegPorLine).ToList())
+                {
+                    if (item.Ree == cur.REE && item.Ano == cur.Ano)
+                    {
+                        double percent = cur.Porc * 100;
+                        int mes = Convert.ToInt32(cur.Mes);
+                        item[mes] = percent;
+                        var val = item[mes];
+                        
+                    }
+                }
+                //if (curvaLine != null)
+                //{
+                //    double percent = cur.Porc * 100;
+                //    int mes = Convert.ToInt32(cur.Mes);
+                //    var val = curvaLine.Valores[mes];
+
+                //    curvaLine.Valores[mes] = percent;
+                    
+                //}
+            }
+
+        }
+
         private void IncrementarAgrInt(DeckNewave deck)
         {
 
@@ -1520,7 +1579,6 @@ namespace Encadeado
             IncrementarEarm(DeckMedia);
             SobrescreverIntercambios(DeckMedia);
             SobrescreverSistemas(DeckMedia);
-
             DeckMedia.SaveFilesToFolder(DeckMedia.BaseFolder);
             AlterarModif(DeckMedia);
             DeckMedia.EscreverListagemNwlistop();

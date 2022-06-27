@@ -34,6 +34,10 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<SistemaDat.SistemaDat>(System.IO.File.ReadAllText(filePath));
             }
+            else if (fileName.StartsWith("curva"))
+            {
+                doc = BaseDocument.Create<CurvaDat.CurvaDat>(System.IO.File.ReadAllText(filePath));
+            }
             else if (fileName.StartsWith("ree.dat"))
             {
                 doc = BaseDocument.Create<ReeDat.ReeDat>(System.IO.File.ReadAllText(filePath));

@@ -598,6 +598,33 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<Compass.CommomLibrary.ICURVA> Curvasree = null;
+        public List<Compass.CommomLibrary.ICURVA> CurvasReedat
+        {
+            get
+            {
+                if (Names.ContainsKey("_curva"))
+                {
+                    if (Curvasree == null)
+                    {
+                        Curvasree = new List<Compass.CommomLibrary.ICURVA>();
+
+                        var ws = Names["_curva"].Worksheet;
+                        var row = Names["_curva"].Row;
+                        var col = Names["_curva"].Column;
+
+                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                        {
+                            Curvasree.Add(new CURVAREE(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
+                        }
+                    }
+
+                    return Curvasree;
+                }
+                else return null;
+            }
+        }
+
         List<Compass.CommomLibrary.IADTERM> adterm = null;
         public List<Compass.CommomLibrary.IADTERM> adtermdat
         {
@@ -1116,6 +1143,28 @@ namespace Compass.ExcelTools.Templates
                 if (rng[1, 3].Value is double) Mes = rng[1, 3].Value;
                 if (rng[1, 4].Value is double) AnoIni = rng[1, 4].Value;
                 if (rng[1, 5].Value is double) Carga = rng[1, 5].Value;
+            }
+
+        }
+
+        public class CURVAREE : Compass.CommomLibrary.ICURVA
+        {
+            public double REE { get; set; }
+            public double Ano { get; set; }
+            public double MesEstudo { get; set; }
+
+            public double Mes { get; set; }
+
+            public double Porc { get; set; }
+
+            public CURVAREE(Range rng)
+            {
+                if (rng[1, 1].Value is double) REE = (int)rng[1, 1].Value;
+                if (rng[1, 2].Value is double) MesEstudo = (int)rng[1, 2].Value;
+                if (rng[1, 4].Value is double) Ano = rng[1, 3].Value;
+
+                if (rng[1, 3].Value is double) Mes = rng[1, 4].Value;
+                if (rng[1, 5].Value is double) Porc = rng[1, 5].Value;
             }
 
         }

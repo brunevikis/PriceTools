@@ -1058,7 +1058,7 @@ namespace Compass.Services
             #region Rhc
             var decompBaseCam = w.DecompBase;
             var versaoNewave = w.versao_Newave.Trim();
-            if (versaoNewave == "270405" || versaoNewave == "28" || versaoNewave == "270405aws" || versaoNewave == "28aws")//versoes que tem o bloco RHC
+            if (versaoNewave == "270405" || versaoNewave == "28" || versaoNewave == "270405aws" || versaoNewave == "28aws" || versaoNewave.StartsWith("28"))//versoes que tem o bloco RHC
             {
                 var decompEntrada = DeckFactory.CreateDeck(decompBaseCam) as Compass.CommomLibrary.Decomp.Deck;
                 var dadgerEntrada = decompEntrada[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;

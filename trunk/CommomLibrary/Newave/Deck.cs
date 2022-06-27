@@ -12,6 +12,7 @@ namespace Compass.CommomLibrary.Newave
         public enum DeckDocument
         {
             sistema,
+            curva,
             patamar,
             modif,
             exph,
@@ -98,6 +99,8 @@ namespace Compass.CommomLibrary.Newave
                 {
                     case DeckDocument.sistema:
                         return Documents["SISTEMA.DAT"];
+                    case DeckDocument.curva:
+                        return Documents["CURVA.DAT"];
                     case DeckDocument.patamar:
                         return Documents["PATAMAR.DAT"];
                     case DeckDocument.modif:

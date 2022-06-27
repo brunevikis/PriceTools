@@ -81,4 +81,14 @@ namespace Compass.CommomLibrary {
 
        
     }
+    public interface ICURVA
+    {
+        double REE { get; set; }
+         double Ano { get; set; }
+        double MesEstudo { get; set; }
+
+        double Mes { get; set; }
+
+        double Porc { get; set; }
+    }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Compass.CommomLibrary.SistemaDat {
+namespace Compass.CommomLibrary.SistemaDat
+{
     /*
     public class PeqBlock : BaseBlock<PeqLine>
     {
@@ -54,7 +55,8 @@ namespace Compass.CommomLibrary.SistemaDat {
 
     }
     */
-    public class MerBlock : BaseBlock<MerLine> {
+    public class MerBlock : BaseBlock<MerLine>
+    {
 
         internal string header =
 @" MERCADO DE ENERGIA TOTAL
@@ -62,26 +64,32 @@ namespace Compass.CommomLibrary.SistemaDat {
        XXXJAN. XXXFEV. XXXMAR. XXXABR. XXXMAI. XXXJUN. XXXJUL. XXXAGO. XXXSET. XXXOUT. XXXNOV. XXXDEZ.
 ";
 
-        public override MerLine CreateLine(string line = null) {
+        public override MerLine CreateLine(string line = null)
+        {
             line = line ?? "";
 
             var id = line.Trim().Split(' ')[0];
             int t;
-            if (id.Length <= 3 && int.TryParse(id, out t)) {
+            if (id.Length <= 3 && int.TryParse(id, out t))
+            {
                 return BaseLine.Create<MerLine>(line);
-            } else if (id == "POS"){
+            }
+            else if (id == "POS")
+            {
                 var x = BaseLine.Create<MerEnePosLine>(line);
                 x["Submercado"] = this.Last()["Submercado"];
                 return x;
             }
-            else  {
+            else
+            {
                 var x = BaseLine.Create<MerEneLine>(line);
                 x["Submercado"] = this.Last()["Submercado"];
                 return x;
             }
         }
 
-        public override string ToText() {
+        public override string ToText()
+        {
 
             return header + base.ToText() + " 999\n";
         }
@@ -90,34 +98,42 @@ namespace Compass.CommomLibrary.SistemaDat {
 
     //public abstract class IntLine : BaseLine { }
 
-    public class MerLine : BaseLine {
+    public class MerLine : BaseLine
+    {
         public static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 2 , 4 ,"I3"  , "Submercado"),
         };
 
-        public override BaseField[] Campos {
+        public override BaseField[] Campos
+        {
             get { return campos; }
         }
 
-        public int? Ano {
-            get {
+        public int? Ano
+        {
+            get
+            {
                 if (this is MerEneLine) return this[0];
                 else return null;
             }
-            set {
+            set
+            {
                 this[0] = value;
             }
         }
 
-        public int Mercado {
-            get {
-                 return this["Submercado"];
+        public int Mercado
+        {
+            get
+            {
+                return this["Submercado"];
             }
         }
     }
 
 
-    public class MerEneLine : MerLine {
+    public class MerEneLine : MerLine
+    {
         public static readonly new BaseField[] campos = new BaseField[] {
                 new BaseField( 1 , 4 ,"I4"  , "Ano"),
                 new BaseField( 8 ,  14 ,"f7.0"  ,  "Mercado Mes 1"),
@@ -134,10 +150,11 @@ namespace Compass.CommomLibrary.SistemaDat {
                 new BaseField( 96 , 102 ,"f7.0"  , "Mercado Mes 12"),
 
                 new BaseField( 0 , 0 ,"I3"  , "Submercado"),
-                
+
         };
 
-        public override BaseField[] Campos {
+        public override BaseField[] Campos
+        {
             get { return campos; }
         }
         public double Anos { get { return Valores[0]; } set { Valores[0] = value; } }
@@ -156,7 +173,8 @@ namespace Compass.CommomLibrary.SistemaDat {
 
     }
 
-    public class MerEnePosLine : MerLine {
+    public class MerEnePosLine : MerLine
+    {
         public static readonly new BaseField[] campos = new BaseField[] {
                 new BaseField( 1 , 7 ,"A7"  , "Ano"),
                 new BaseField( 8 ,  14 ,"f7.0"  ,  "Mercado Mes 1"),
@@ -173,10 +191,11 @@ namespace Compass.CommomLibrary.SistemaDat {
                 new BaseField( 96 , 102 ,"f7.0"  , "Mercado Mes 12"),
 
                 new BaseField( 0 , 0 ,"I3"  , "Submercado"),
-                
+
         };
 
-        public override BaseField[] Campos {
+        public override BaseField[] Campos
+        {
             get { return campos; }
         }
     }
