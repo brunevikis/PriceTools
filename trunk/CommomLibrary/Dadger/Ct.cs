@@ -38,14 +38,14 @@ namespace Compass.CommomLibrary.Dadger
                 new BaseField( 10 ,11,"I2"   ,"Subsistema" ),
                 new BaseField( 15 ,24,"A10"  ,"Nome" ),
                 new BaseField( 25 ,26,"I2"   ,"Estagio" ),
-                new BaseField( 30 ,34,"f5.2" ,"Ger Min Pat1" ),
-                new BaseField( 35 ,39,"f5.2" ,"Capacidade Pat1" ),
+                new BaseField( 30 ,34,"f5.2" ,"Ger Min Pat1" ),//infl
+                new BaseField( 35 ,39,"f5.2" ,"Capacidade Pat1" ),//disp
                 new BaseField( 40 ,49,"F10.2","CVU Pat1" ),
-                new BaseField( 50 ,54,"f5.2" ,"Ger Min Pat2" ),
-                new BaseField( 55 ,59,"f5.2" ,"Capacidade Pat2" ),
+                new BaseField( 50 ,54,"f5.2" ,"Ger Min Pat2" ),//infl
+                new BaseField( 55 ,59,"f5.2" ,"Capacidade Pat2" ),//disp
                 new BaseField( 60 ,69,"F10.2","CVU Pat2" ),
-                new BaseField( 70 ,74,"f5.2" ,"Ger Min Pat3" ),
-                new BaseField( 75 ,79,"f5.2" ,"Capacidade Pat3" ),
+                new BaseField( 70 ,74,"f5.2" ,"Ger Min Pat3" ),//infl
+                new BaseField( 75 ,79,"f5.2" ,"Capacidade Pat3" ),//disp
                 new BaseField( 80 ,89,"F10.2","CVU Pat3" )
             };
 
@@ -53,6 +53,7 @@ namespace Compass.CommomLibrary.Dadger
         {
             get { return CtCampos; }
         }
+
 
         public int Subsistema { get { return Valores[2]; } set { Valores[2] = value; } }
         public int Estagio { get { return Valores[4]; } set { Valores[4] = value; } }
@@ -62,6 +63,16 @@ namespace Compass.CommomLibrary.Dadger
         public double Cvu1 { get { return Valores[7]; } set { this[7] = value; } }
         public double Cvu2 { get { return Valores[10]; } set { this[10] = value; } }
         public double Cvu3 { get { return Valores[13]; } set { this[13] = value; } }
+
+        public double Disp1 { get { return Valores[6]; } set { this[6] = value; } }
+        public double Disp2 { get { return Valores[9]; } set { this[9] = value; } }
+        public double Disp3 { get { return Valores[12]; } set { this[12] = value; } }
+
+        public double Infl1 { get { return Valores[5]; } set { this[5] = value; } }
+        public double Infl2 { get { return Valores[8]; } set { this[8] = value; } }
+        public double Infl3 { get { return Valores[11]; } set { this[11] = value; } }
+
+
 
     }
 }

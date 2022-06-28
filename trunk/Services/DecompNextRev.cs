@@ -3,6 +3,7 @@ using Compass.CommomLibrary.Dadger;
 using Compass.CommomLibrary.Decomp;
 using Compass.ExcelTools.Templates;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data;
@@ -222,6 +223,27 @@ namespace Compass.Services
 
                 dadger.BlocoCT.Add(ct);
             }
+            //Retirar usinas com disponibilidade zerada em todos os patamares de todos seus estagios
+
+            var ctCods = dadger.BlocoCT.Select(x => x.Cod).Distinct().ToList();
+            List<string> usinasremovidas = new List<string>();
+            List<int> usinasRemover = new List<int>();
+
+            foreach (var cods in ctCods)
+            {
+                var ctUsinas = dadger.BlocoCT.Where(x => x.Cod == cods).ToList();
+                if (ctUsinas.All(x => x.Disp1 == 0 && x.Disp2 == 0 && x.Disp3 == 0))
+                {
+                    usinasRemover.Add(cods);
+                    usinasremovidas.Add(cods.ToString());
+                }
+            }
+            foreach (var ur in usinasRemover)
+            {
+                dadger.BlocoCT.Where(x => x.Cod == ur).ToList().ForEach(y => dadger.BlocoCT.Remove(y));
+            }
+            // fim
+
             #endregion
 
             #region ci/ce
@@ -1137,7 +1159,7 @@ namespace Compass.Services
                                 {
                                     double inicio = Math.Round((hep.valAnt ?? 0) * 100, 1);
                                     double dif = hep.valAtual - (hep.valAnt ?? 0);
-                                    double inc = Math.Round((dif / (estagiosCont-1)) * 100, 1);
+                                    double inc = Math.Round((dif / (estagiosCont - 1)) * 100, 1);
                                     for (int i = 0; i < estagiosCont; i++)
                                     {
 

@@ -46,7 +46,9 @@ namespace Compass.CommomLibrary.Dadger {
         public override BaseField[] Campos {
             get { return campos; }
         }
+        public int Cod { get { return Valores[1]; } set { this[1] = value; } }
+
     }
 
-    
+
 }
