@@ -99,7 +99,7 @@ namespace Compass.CommomLibrary.Dadger
                 new BaseField( 1  , 2 ,"A2"    , "Id"),
                 new BaseField( 5  , 7 ,"I3"   , "Restricao"),
                 new BaseField( 10 , 10,"I1"    , "tipo limite"),
-                new BaseField( 15 , 24,"F10.0"    , "limite inf"),
+                new BaseField( 15 , 24,"F10.1"    , "limite inf"),
                 new BaseField( 26 , 27,"I2"    , "estago"),
                 new BaseField( 29 , 38,"F10.0"    , "Penalidade"),
                 new BaseField( 40 , 40,"I1"    , "Calculo"),

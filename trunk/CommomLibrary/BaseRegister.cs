@@ -630,6 +630,7 @@ namespace Compass.CommomLibrary
                             {
                                 strValue = fVal.ToString("F" + dec.ToString(), System.Globalization.NumberFormatInfo.InvariantInfo);
                             }
+                           
                         }
                         else
                             strValue = value.ToString();

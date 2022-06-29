@@ -124,7 +124,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.MERCADO = w.MercadosSisdat ?? new List<IMERCADO>();
 
                     estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
-                    estudo.Curva = w.CurvasReedat?? new List<ICURVA>();
+                    estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
 
 
 
@@ -356,7 +356,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         fixaUhTxtLines.Add("Usina    VolIniPerc %");
                                         foreach (var df in dadosFixas)
                                         {
-                                            fixaUhTxtLines.Add(df.Posto.ToString() + "\t" +( df.Volini != null ? df.Volini.ToString() : "null"));
+                                            fixaUhTxtLines.Add(df.Posto.ToString() + "\t" + (df.Volini != null ? df.Volini.ToString() : "null"));
                                         }
                                         File.WriteAllLines(Path.Combine(estudoPath, "UhFixados.txt"), fixaUhTxtLines);
 

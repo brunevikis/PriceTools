@@ -2001,14 +2001,24 @@ namespace Compass.Services
                         }
                         else if (rhv.Usina == 275 && rhv.LimInf != rhv.LimSup)
                         {
-                            var lu = (LvLine)rest.Value.FirstOrDefault(y => (y is LvLine) && y[2] == realestagio);
-                            if (lu != null)
-                            {
-                                lu[3] = rhv.LimInf;
-                                lu[4] = rhv.LimSup;
+                            var lu = (LvLine)rest.Value.FirstOrDefault(y => (y is LvLine) && y[2] == realestagio)
+                            ?? new LvLine() { Restricao = rest.Value.First().Restricao, Estagio = realestagio };
 
-                                if (!rest.Value.Contains(lu)) dadger.BlocoRhv.Add(lu);
-                            }
+
+                            lu[3] = rhv.LimInf;
+                            lu[4] = rhv.LimSup;
+
+                            if (!rest.Value.Contains(lu)) dadger.BlocoRhv.Add(lu);
+
+
+                            //var lu = (LvLine)rest.Value.FirstOrDefault(y => (y is LvLine) && y[2] == realestagio);
+                            //if (lu != null)
+                            //{
+                            //    lu[3] = rhv.LimInf;
+                            //    lu[4] = rhv.LimSup;
+
+                            //    if (!rest.Value.Contains(lu)) dadger.BlocoRhv.Add(lu);
+                            //}
 
 
                         }
