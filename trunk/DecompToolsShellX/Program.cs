@@ -807,7 +807,7 @@ namespace Compass.DecompToolsShellX
                     var frm = new FrmOnsReCcee(cceeDeck);
                     frm.Salvar();
                     //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/newave25.sh");
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/mnt/Fsx/AWS/enercore_ctl_common/scripts/newave270416.sh");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newave28.sh");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Decomp.Deck && (command.Length > 1 && command[1] == "true"))
                 {
@@ -817,7 +817,7 @@ namespace Compass.DecompToolsShellX
                     var frmCortes = new FrmCortes(new string[] { cceeDeck.BaseFolder });
                     frmCortes.OK(true);
 
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/mnt/Fsx/AWS/enercore_ctl_common/scripts/decomp31Viab.sh preliminar");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decomp31Viab.sh preliminar");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Newave.Deck)
                 {
@@ -3719,7 +3719,8 @@ namespace Compass.DecompToolsShellX
                 }
 
                 //string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem191412.sh";
-                string comandoDS = "/mnt/Fsx/AWS/enercore_ctl_common/scripts/dessem190243.sh";
+                //string comandoDS = "/mnt/Fsx/AWS/enercore_ctl_common/scripts/dessem190243.sh";
+                string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem190243.sh";
 
                 bool status = DessemAutorun(cloneDir, comandoDS);
                 if (status)
@@ -4842,7 +4843,7 @@ namespace Compass.DecompToolsShellX
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
                 //var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
-                var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
@@ -4907,8 +4908,8 @@ namespace Compass.DecompToolsShellX
 
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
-               // var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
-                var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
+                //var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
