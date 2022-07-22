@@ -10,6 +10,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE</StartProgram>
-    <StartArguments>C:\Development\Implementacoes\CM_CURVA\2022_Mensal_oficial_base_2406.xlsm</StartArguments>
+    <StartArguments>"C:\Development\Implementacoes\Pqusinas_add\2023_Mensal_oficial_seco_1507 MMGD.xlsm"</StartArguments>
   </PropertyGroup>
 </Project>

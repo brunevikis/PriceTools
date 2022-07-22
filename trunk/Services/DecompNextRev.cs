@@ -2993,7 +2993,10 @@ namespace Compass.Services
                             double p1 = 0;
                             double p2 = 0;
                             double p3 = 0;
-                            for (int i = 1; i <= 4; i++)
+
+                            int numUsinas = patamares.Nao_Simuladas.Where(x => x.Submercado == numMercado + 1).Select(x => x.Tipo_Usina).Max();///
+
+                            for (int i = 1; i <= numUsinas; i++) //for (int i = 1; i <= 4; i++)
                             {
                                 var Mes = dtAtual.Mes;
                                 var Ano = dtAtual.Ano;
