@@ -113,3 +113,5 @@ C:\Development\price_toolsVMAlfa\trunk\Encadeado\obj\Debug\Encadeado.csproj.Core
 C:\Development\price_toolsVMAlfa\trunk\Encadeado\obj\Debug\Encadeado.csproj.CopyComplete
 C:\Development\price_toolsVMAlfa\trunk\Encadeado\obj\Debug\Encadeado.dll
 C:\Development\price_toolsVMAlfa\trunk\Encadeado\obj\Debug\Encadeado.pdb
+C:\Development\price_tools\trunk\Encadeado\bin\Debug\System.Net.Http.dll
+C:\Development\price_tools\trunk\Encadeado\bin\Debug\System.Net.Http.xml

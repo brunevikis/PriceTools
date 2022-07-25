@@ -106,3 +106,5 @@ C:\Development\price_toolsVMAlfa\trunk\DecompTools\obj\Debug\DecompTools.csproj.
 C:\Development\price_toolsVMAlfa\trunk\DecompTools\obj\Debug\DecompTools.csproj.CopyComplete
 C:\Development\price_toolsVMAlfa\trunk\DecompTools\obj\Debug\DecompTools.dll
 C:\Development\price_toolsVMAlfa\trunk\DecompTools\obj\Debug\DecompTools.pdb
+C:\Development\price_tools\trunk\DecompTools\bin\Debug\System.Net.Http.dll
+C:\Development\price_tools\trunk\DecompTools\bin\Debug\System.Net.Http.xml

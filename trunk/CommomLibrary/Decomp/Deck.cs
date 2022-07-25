@@ -266,6 +266,37 @@ namespace Compass.CommomLibrary.Decomp
                 var PLD_mensal = Path.Combine(this.BaseFolder, "PLD_Mensal.csv");
 
                 List<string[]> resu_PLD = new List<string[]>();
+                if (!File.Exists(PLD_mensal))
+                {
+
+
+                    System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
+
+                    //var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
+                    //var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
+                   // responseTsk.Wait();
+                   // var response = responseTsk.Result;
+
+
+                   // System.Net.Http.HttpResponseMessage response = new System.Net.Http.HttpResponseMessage();
+                    try
+                    {
+                        string caminho = this.BaseFolder.Replace("K:\\", "/home/producao/PrevisaoPLD/").Replace("\\", "/");
+                        string arq = DateTime.Now.ToString("yyyyMMddHHmmss");
+                        string com = $"result_{ arq}";
+                        File.WriteAllText($@"K:\enercore_ctl_common\{com}", caminho);
+
+                        var response = httpClient.GetAsync(@"http://10.206.194.196:5015/api/" + "Command/PLD_Local-" + com);
+                        response.Wait();
+
+                        File.Delete($@"K:\enercore_ctl_common\{com}");
+                    }
+                    catch
+                    {
+                       
+
+                    }
+                }
 
                 if (File.Exists(PLD_mensal))
                 {
