@@ -35,7 +35,7 @@ namespace Compass.CommomLibrary.Decomp
             List<Tuple<int, string>> rees = new List<Tuple<int, string>>();
             foreach (var item in uhe_ree.Values.Distinct())
             {
-                
+
                 rees.Add(new Tuple<int, string>(indx, item));
                 indx++;
             }
@@ -799,7 +799,7 @@ namespace Compass.CommomLibrary.Decomp
             return earmMax;
         }
 
-        public List<Tuple<int,double,double>> GetEarmsUH()//UH % earm
+        public List<Tuple<int, double, double>> GetEarmsUH()//UH % earm
         {
 
             updateQuedas();
@@ -836,7 +836,7 @@ namespace Compass.CommomLibrary.Decomp
             return earms;
         }
 
-        public List<Tuple<string,double>> GetREEList()
+        public List<Tuple<string, double>> GetREEList()
         {
             List<Tuple<string, double>> dadosAtual = new List<Tuple<string, double>>();
             List<Tuple<string, double>> dadosMax = new List<Tuple<string, double>>();
@@ -860,7 +860,7 @@ namespace Compass.CommomLibrary.Decomp
             #region earm Max
             var temp = Usinas.Where(u => !u.IsFict && u.VolUtil > 0);
 
-          
+
             var currentVols = temp.Select(u => new { u.Cod, u.VolIni }).ToArray();
             foreach (var uhe in temp)
             {
@@ -915,7 +915,7 @@ namespace Compass.CommomLibrary.Decomp
             return valor;
         }
 
-        List<Tuple<int,double,double>> getEarmUH()
+        List<Tuple<int, double, double>> getEarmUH()
         {
             //double total = 0;
             List<Tuple<int, double, double>> dados = new List<Tuple<int, double, double>>();
@@ -925,9 +925,9 @@ namespace Compass.CommomLibrary.Decomp
                 double valor = usina.VolIni > 0 && usina.VolUtil > 0 ? (float)Math.Round((usina.VolIni / usina.VolUtil) * 100f, 2) : 0f;
                 dados.Add(new Tuple<int, double, double>(usina.Cod, valor, usina.EnergiaArmazenada));
             }
-                //.Where(u => u.InDadger || (u.IsFict && usinas[u.CodReal.Value].InDadger))
-                
-                //total = total + usina.EnergiaArmazenada;
+            //.Where(u => u.InDadger || (u.IsFict && usinas[u.CodReal.Value].InDadger))
+
+            //total = total + usina.EnergiaArmazenada;
 
             return dados;
         }
@@ -1355,7 +1355,7 @@ namespace Compass.CommomLibrary.Decomp
                             volIni = (VolMinRestricao ?? 0);
                     }
 
-                    
+
 
                     //if (volIni > VolUtil)
                     //    volIni = VolUtil;
@@ -1706,6 +1706,7 @@ namespace Compass.CommomLibrary.Decomp
 {318   ,"12 - PRNPANEMA"},
 {319   ,"12 - PRNPANEMA"},
 {86    ,"2 - SUL"},
+{88    ,"2 - SUL"},
 {89    ,"2 - SUL"},
 {90    ,"2 - SUL"},
 {91    ,"2 - SUL"},

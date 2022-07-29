@@ -1647,6 +1647,7 @@ namespace ConsoleApp1.Decomp
 {318   ,"12 - PRNPANEMA"},
 {319   ,"12 - PRNPANEMA"},
 {86    ,"2 - SUL"},
+{88    ,"2 - SUL"},
 {89    ,"2 - SUL"},
 {90    ,"2 - SUL"},
 {91    ,"2 - SUL"},
