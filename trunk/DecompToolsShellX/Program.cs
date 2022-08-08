@@ -4909,7 +4909,7 @@ namespace Compass.DecompToolsShellX
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
                 //var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
-                var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://10.206.194.210:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
