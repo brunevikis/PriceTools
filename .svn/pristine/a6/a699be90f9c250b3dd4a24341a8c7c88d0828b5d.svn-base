@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "ConsoleApp1": {
-      "commandName": "Project",
-      "commandLineArgs": "flexTucurui",
-      "workingDirectory": "Z:\\6_decomp\\03_Casos\\2021_03\\testeBruno\\202110"
-    }
-  }
-}

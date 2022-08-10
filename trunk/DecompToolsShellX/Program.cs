@@ -2,6 +2,7 @@
 using Compass.ExcelTools;
 using Compass.Services;
 using Compass.CommomLibrary.EntdadosDat;
+using System.IO.Compression;
 using System.Globalization;
 using System.Text;
 using Microsoft.Office.Interop.Excel;
@@ -14,6 +15,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Windows.Forms;
 using System.Net;
+using Ionic.Zip;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -58,7 +60,7 @@ namespace Compass.DecompToolsShellX
             //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
 
             //< add key = "passwordlogin" value = "Pas5Word" />
-
+            //dessem2ccee "K:\5_dessem\2022_08\RV1\DS_ONS_082022_RV1D11|true"
             //previvaz "C:\Files\16_Chuva_Vazao\2022_05\RV3\22-05-18\testeSE_Bruno\SCP_CV_ACOMPH_FUNC_d-1_EURO\Propagacoes_Automaticas.txt"
 
             //convdecodess "L:\teste_decodess\DEC_ONS_052021_RV2_VE"
@@ -1603,7 +1605,7 @@ namespace Compass.DecompToolsShellX
 
                 var excelname = Path.Combine(dir, "Coleta_Limites.xlsm");//  Acompanhamento_Limites_Elétricos.xlsm
                 //var template = @"C:\Development\Implementacoes\TESTES_PEGALIMITES\Acompanhamento_Limites_Elétricos.xlsm";
-                var template = @"X:\AWS\enercore_ctl_common\Coleta\Coleta_Limites.xlsm";
+                var template = @"K:\enercore_ctl_common\Coleta\Coleta_Limites.xlsm";
                 File.Copy(template, excelname,true);
                 //Microsoft.Office.Interop.Excel.Application xlApp = null;
                 Microsoft.Office.Interop.Excel.Application xlApp = ExcelTools.Helper.StartExcelInvisible();
@@ -2279,7 +2281,8 @@ namespace Compass.DecompToolsShellX
         public static void CriarDecksDiarios(string dirBase, DateTime dataEstudo, Compass.CommomLibrary.EntdadosDat.CiceBlock blocoCICE, List<Tuple<int, float>> dadosRhe, List<Tuple<string, float>> custoCVU)
         {
             var rev = Tools.GetCurrRev(dataEstudo);
-            var camDessemDiario = $@"L:\7_dessem\DecksDiarios\{rev.revDate:MM_yyyy}\RV{rev.rev}\{DateTime.Now:dd_MM_yyyy_HH_mm_ss}";
+            //var camDessemDiario = $@"L:\7_dessem\DecksDiarios\{rev.revDate:MM_yyyy}\RV{rev.rev}\{DateTime.Now:dd_MM_yyyy_HH_mm_ss}";
+            var camDessemDiario = $@"K:\5_dessem\DecksDiarios\{rev.revDate:MM_yyyy}\RV{rev.rev}\{DateTime.Now:dd_MM_yyyy_HH_mm_ss}";
             var camdessemBase = camDessemDiario + "\\Base";
             if (!Directory.Exists(camdessemBase))
             {
@@ -3455,7 +3458,8 @@ namespace Compass.DecompToolsShellX
                 var arquivos = Directory.GetFiles(diretorio);
                 var tempFolderCLONE = @"L:\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
                 //var tempFolder = @"Z:\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
-                var tempFolder = @"X:\AWS\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+                //var tempFolder = @"X:\AWS\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+                var tempFolder = @"K:\shared\DESSEM\decodess_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
                 if (Directory.Exists(tempFolder))
                     Directory.Delete(tempFolder, true);
                 Directory.CreateDirectory(tempFolder);
@@ -3467,7 +3471,8 @@ namespace Compass.DecompToolsShellX
 
                 //if (Services.Linux.Run(tempFolder, @"/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/decodess.sh", "decodess", true, true, "hide"))
                 //if (AutorunDecodess(tempFolder, @"/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/decodess.sh"))
-                if (AutorunDecodess(tempFolder, @"/mnt/Fsx/AWS/enercore_ctl_common/scripts/scripts/decodess.sh"))
+                //if (AutorunDecodess(tempFolder, @"/mnt/Fsx/AWS/enercore_ctl_common/scripts/decodess.sh"))
+                if (AutorunDecodess(tempFolder, @"/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decodess.sh"))
                 {
                     int timeout = 0;
                     var tempArqs = Directory.GetFiles(tempFolder);
@@ -4048,12 +4053,30 @@ namespace Compass.DecompToolsShellX
             {
                 for (int i = 1; i <= 10; i++)
                 {
-                    string camDecomp = @"X:\AWS\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
-                    //string camDecomp = @"L:\6_decomp\03_Casos\" + rev.revDate.ToString("yyyy_MM") + "\\teste_bruno\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
-
+                    //string camDecomp = @"X:\AWS\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                    string camDecomp = @"K:\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                    string etcFile = Path.Combine(camDecomp, "etc.zip");
                     if (Directory.Exists(camDecomp))
                     {
                         var arqs = Directory.GetFiles(camDecomp).ToList();
+                        if (arqs.All(x =>Path.GetFileName(x).ToLower()!= mapcut) && arqs.All(x => Path.GetFileName(x).ToLower() != cortdeco))
+                        {
+                            Ionic.Zip.ZipFile arquivoZip = Ionic.Zip.ZipFile.Read(etcFile);
+                            try
+                            {
+                                foreach (ZipEntry e in arquivoZip)
+                                {
+                                    e.Extract(camDecomp, ExtractExistingFileAction.OverwriteSilently);
+                                }
+                                arquivoZip.Dispose();
+                                arqs = Directory.GetFiles(camDecomp).ToList();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                throw ex;
+                            }
+                        }
                         foreach (var arq in arqs)
                         {
                             var filename = Path.GetFileName(arq);
@@ -4843,7 +4866,8 @@ namespace Compass.DecompToolsShellX
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
                 //var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
-                var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
+               // var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://10.206.194.210:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
@@ -4874,7 +4898,9 @@ namespace Compass.DecompToolsShellX
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
                 //var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
-                var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://10.206.194.210:5015/api/Command", cont);
+
+                //var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
 
