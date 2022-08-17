@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>rodardessem "K:\5_dessem\DESSEM_CCEE\2022\08_ago\RV1\DS_CCEE_082022_SEMREDE_RV1D10|true"</StartArguments>
+    <StartArguments>ons2ccee "K:\4_curto_prazo\2022_08\DEC_ONS_082022_RV2_VE|true"</StartArguments>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup>

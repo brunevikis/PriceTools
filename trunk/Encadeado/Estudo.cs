@@ -1,14 +1,28 @@
 ﻿using Compass.CommomLibrary;
+
 using Compass.Services.DB;
 using Encadeado.Modelo;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Net;
+
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+
+using Compass.Services;
+using Compass.CommomLibrary.EntdadosDat;
+using System.IO.Compression;
+using System.Globalization;
+
+
+
+
+using System.Threading;
+using System.Net.Http;
 
 namespace Encadeado
 {
@@ -47,6 +61,7 @@ namespace Encadeado
         public List<IADTERM> Adterm { get; set; }
         public List<IMERCADO> MERCADO { get; set; }
         public List<ICURVA> Curva { get; set; }
+        public List<IADTERMDAD> Adtermdad { get; set; }
         public List<IINTERCAMBIO> Intercambios { get; set; }
         public List<IMODIF> Modifs { get; set; }
 
@@ -319,7 +334,52 @@ namespace Encadeado
             {
                 datNex = datOp;
             }
+            if (this.Adtermdad.Count() > 0)
+            {
+                foreach (var adt in adtermDat.Despachos.Where(x => x.String != "            "))// zera todos so meses de todas as usinas para depois ver em qual preencher de cordo com a planilha
+                {
+                    var indice = adtermDat.Despachos.IndexOf(adt);
+                    adtermDat.Despachos[indice + 1].Lim_P1 = 0;
+                    adtermDat.Despachos[indice + 1].Lim_P2 = 0;
+                    adtermDat.Despachos[indice + 1].Lim_P3 = 0;
+                    adtermDat.Despachos[indice + 2].Lim_P1 = 0;
+                    adtermDat.Despachos[indice + 2].Lim_P2 = 0;
+                    adtermDat.Despachos[indice + 2].Lim_P3 = 0;
+                }
 
+
+                var adtermdads = this.Adtermdad.Where(x => x.ano == deck.Dger.AnoEstudo && x.mes == deck.Dger.MesEstudo).ToList();
+
+                if (adtermdads.Count() > 0)
+                {
+                    var Usinas = adtermDat.Despachos.Where(x => x.String != "            ").ToList();
+                    foreach (var adx in adtermdads.Where(x => x.estagio == 1))// primeiro mes
+                    {
+                        var adt = Usinas.Where(x => x.Numero == adx.usina).FirstOrDefault();
+                        if (adt != null)
+                        {
+                            var indice = adtermDat.Despachos.IndexOf(adt);
+                            adtermDat.Despachos[indice + 1].Lim_P1 = adx.PT1;
+                            adtermDat.Despachos[indice + 1].Lim_P2 = adx.PT2;
+                            adtermDat.Despachos[indice + 1].Lim_P3 = adx.PT3;
+                        }
+                    }
+
+                    foreach (var adx in adtermdads.Where(x => x.estagio == 2))// segundo mes
+                    {
+                        var adt = Usinas.Where(x => x.Numero == adx.usina).FirstOrDefault();
+                        if (adt != null)
+                        {
+                            var indice = adtermDat.Despachos.IndexOf(adt);
+                            adtermDat.Despachos[indice + 2].Lim_P1 = adx.PT1;
+                            adtermDat.Despachos[indice + 2].Lim_P2 = adx.PT2;
+                            adtermDat.Despachos[indice + 2].Lim_P3 = adx.PT3;
+                        }
+                    }
+
+                }
+            }
+            
             foreach (var adt in adtermDat.Despachos.Where(x => x.String != "            "))
             {
 
@@ -493,7 +553,7 @@ namespace Encadeado
                         int mes = Convert.ToInt32(cur.Mes);
                         item[mes] = percent;
                         var val = item[mes];
-                        
+
                     }
                 }
                 //if (curvaLine != null)
@@ -503,7 +563,7 @@ namespace Encadeado
                 //    var val = curvaLine.Valores[mes];
 
                 //    curvaLine.Valores[mes] = percent;
-                    
+
                 //}
             }
 
@@ -1205,7 +1265,7 @@ namespace Encadeado
                         newModifLine.Usina = dad.Usina;
                         int index = modifs.IndexOf(modifline) + 1;
                         modifs.Insert(index, newModifLine);
-                      
+
                     }
                     else
                     {
@@ -1219,11 +1279,11 @@ namespace Encadeado
                         }
                     }
                 }
-                
+
 
             }
-            modifs.SaveToFile( filePath: modifFile);
-            
+            modifs.SaveToFile(filePath: modifFile);
+
         }
         private void SobrescreverSistemas(DeckNewave deck)
         {
@@ -1607,14 +1667,57 @@ namespace Encadeado
 
         private void ExecutarConsistencia(string destino)
         {
+            //bool ret;
+
+            //ret = ConsisteRun(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3");
+
+
+            //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");
 
             var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
+
+
+
 
             if (!ret)
             {
                 throw new Exception("Ocorreu erro na criação e consistência dos decks newaves. Verifique.");
             }
 
+        }
+
+        public bool ConsisteRun(string path, string comando)
+        {
+            try
+            {
+                var nameCommand = "DcNwPreli" + DateTime.Now.ToString("yyyyMMddHHmmss");
+
+               var comm = new { CommandName = nameCommand, EnviarEmail = false, WorkingDirectory = path, Command = comando, User = "AutoRun", IgnoreQueue = true };
+                
+                var cont = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(comm));
+                cont.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+
+                System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
+
+                //var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
+                var responseTsk = httpClient.PostAsync("http://10.206.194.210:5015/api/Command", cont);
+                responseTsk.Wait();
+                var response = responseTsk.Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    return true;
+                }
+
+            }
+            catch (Exception erro)
+            {
+                return false;
+            }
         }
     }
 }

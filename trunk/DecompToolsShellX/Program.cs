@@ -77,7 +77,7 @@ namespace Compass.DecompToolsShellX
 
             //dessem2ccee "P:\Bruno Araujo\ConversaoDessem\DS_ONS_112020_RV2D16_teste|true"
 
-            //ons2ccee "Z:\6_decomp\03_Casos\2020_11\teste_bruno\Nova pasta\DEC_ONS_112020_RV2_VE|true"
+            //ons2ccee "K:\4_curto_prazo\2022_08\DEC_ONS_082022_RV2_VE|true"
 
             // ons2ccee "Z:\6_decomp\03_Casos\2020_11\teste_bruno\Teste_CVLINE\DEC_ONS_112020_RV0_VE|true"
             //previvaz "N:\Middle - Preço\16_Chuva_Vazao\2020_07\RV4\20-07-20\testeBruno\CV_ACOMPH_FUNC_Atualizado\CHUVAVAZAO_CENARIO_1087970864.xlsm"|true --> para encadear o previvaz

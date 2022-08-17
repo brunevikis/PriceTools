@@ -34,7 +34,7 @@ namespace Compass.DecompToolsShellX
 
         private void CarregaDecksOld()
         {
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var dadger = this.Deck[CommomLibrary.Decomp.DeckDocument.dadger].Document as CommomLibrary.Dadger.Dadger;
 
             var data = dadger.DataEstudo;
@@ -48,8 +48,8 @@ namespace Compass.DecompToolsShellX
             var ano = data.AddDays(-1).Year.ToString("0000");
             var rev = revAnterior.ToString("0");
             var sem = (revAnterior + 1).ToString("0");
-
-            string mesExtenso = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(Convert.ToInt32(data.AddDays(-1).Month)).ToLower().Substring(0, 3);
+            string mesExtenso = Culture.DateTimeFormat.GetMonthName(Convert.ToInt32(data.AddDays(-1).Month)).ToLower().Substring(0, 3);
+            //string mesExtenso = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(Convert.ToInt32(data.AddDays(-1).Month)).ToLower().Substring(0, 3);
 
             TextBoxONS.Text = Path.Combine("H:\\Middle - Preço\\Resultados_Modelos\\DECOMP\\ONS_DC", ano, mes + "_" + mesExtenso, "DEC_ONS_" + mes + ano + "_RV" + rev + "_VE"); // mudar o final
             TextBoxCCEE.Text = Path.Combine("H:\\Middle - Preço\\Resultados_Modelos\\DECOMP\\CCEE_DC", ano, mes + "_" + mesExtenso, "DC" + ano + mes + "-sem" + sem);//mudar o final

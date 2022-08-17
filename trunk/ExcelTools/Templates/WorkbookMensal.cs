@@ -344,6 +344,29 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<DADADTERM> dadadterm = null;
+        public List<DADADTERM> Dadterm
+        {
+            get
+            {
+               // if (dadadterm == null)
+                //{
+                    dadadterm = new List<DADADTERM>();
+
+                    var ws = Names["_adtermdadgnl"].Worksheet;
+                    var row = Names["_adtermdadgnl"].Row;
+                    var col = Names["_adtermdadgnl"].Column;
+
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        dadadterm.Add(new DADADTERM(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
+                    }
+                //}
+
+                return dadadterm;
+            }
+        }
+
         List<HERHC> herhc = null;
         public List<HERHC> Herhc
         {
@@ -620,6 +643,33 @@ namespace Compass.ExcelTools.Templates
                     }
 
                     return Curvasree;
+                }
+                else return null;
+            }
+        }
+
+        List<Compass.CommomLibrary.IADTERMDAD> Adatermdad = null;
+        public List<Compass.CommomLibrary.IADTERMDAD> AdtremDadd
+        {
+            get
+            {
+                if (Names.ContainsKey("_adtermdadgnl"))
+                {
+                    //if (Adatermdad == null)
+                    //{
+                        Adatermdad = new List<Compass.CommomLibrary.IADTERMDAD>();
+
+                        var ws = Names["_adtermdadgnl"].Worksheet;
+                        var row = Names["_adtermdadgnl"].Row;
+                        var col = Names["_adtermdadgnl"].Column;
+
+                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                        {
+                            Adatermdad.Add(new ADTERMDAD(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
+                        }
+                   // }
+
+                    return Adatermdad;
                 }
                 else return null;
             }
@@ -1161,10 +1211,105 @@ namespace Compass.ExcelTools.Templates
             {
                 if (rng[1, 1].Value is double) REE = (int)rng[1, 1].Value;
                 if (rng[1, 2].Value is double) MesEstudo = (int)rng[1, 2].Value;
-                if (rng[1, 4].Value is double) Ano = rng[1, 3].Value;
+                if (rng[1, 3].Value is double) Ano = rng[1, 3].Value;
 
-                if (rng[1, 3].Value is double) Mes = rng[1, 4].Value;
+                if (rng[1, 4].Value is double) Mes = rng[1, 4].Value;
                 if (rng[1, 5].Value is double) Porc = rng[1, 5].Value;
+            }
+
+        }
+
+        public class ADTERMDAD : Compass.CommomLibrary.IADTERMDAD
+        {
+            public double usina { get; set; }
+            public double ano { get; set; }
+            public double mes { get; set; }
+            public double estagio { get; set; }
+            public double PT1 { get; set; }
+            public double PT2 { get; set; }
+            public double PT3 { get; set; }
+
+            public ADTERMDAD(Range rng)
+            {
+                if (rng[1, 1].Value is double) usina = (int)rng[1, 1].Value;
+                if (rng[1, 2].Value is double) ano = (int)rng[1, 2].Value;
+                if (rng[1, 3].Value is double) mes = rng[1, 3].Value;
+
+                if (rng[1, 4].Value is double) estagio = rng[1, 4].Value;
+                if (rng[1, 5].Value != null)
+                {
+                    PT1 = rng[1, 5].Value;
+                }
+                else
+                {
+                    PT1 = 0;
+                }
+
+                if (rng[1, 6].Value != null)
+                {
+                    PT2 = rng[1, 6].Value;
+                }
+                else
+                {
+                    PT2 = 0;
+                }
+
+                if (rng[1, 7].Value != null)
+                {
+                    PT3 = rng[1, 7].Value;
+                }
+                else
+                {
+                    PT3 = 0;
+                }
+            }
+
+        }
+
+        public class DADADTERM
+        {
+            public double usina { get; set; }
+            public double ano { get; set; }
+            public double mes { get; set; }
+            public double estagio { get; set; }
+            public double PT1 { get; set; }
+            public double PT2 { get; set; }
+            public double PT3 { get; set; }
+
+            public DADADTERM(Range rng)
+            {
+                if (rng[1, 1].Value is double) usina = (int)rng[1, 1].Value;
+                if (rng[1, 2].Value is double) ano = (int)rng[1, 2].Value;
+                if (rng[1, 3].Value is double) mes = rng[1, 3].Value;
+
+                if (rng[1, 4].Value is double) estagio = rng[1, 4].Value;
+
+                if (rng[1, 5].Value !=  null)
+                {
+                    PT1 = rng[1, 5].Value;
+                }
+                else
+                {
+                    PT1 = 0;
+                }
+
+                if (rng[1, 6].Value != null)
+                {
+                    PT2 = rng[1, 6].Value;
+                }
+                else
+                {
+                    PT2 = 0;
+                }
+
+                if (rng[1, 7].Value != null)
+                {
+                    PT3 = rng[1, 7].Value;
+                }
+                else
+                {
+                    PT3 = 0;
+                }
             }
 
         }

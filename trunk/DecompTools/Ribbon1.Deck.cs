@@ -125,6 +125,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
 
                     estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
                     estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
+                    estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
 
 
 
@@ -218,6 +219,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             var dtEstudoSeguinte = dtEstudo.AddMonths(1);
 
                             var estudoPath = Path.Combine(outPath, dtEstudo.ToString("yyyyMM"));
+                            var nwPath = Path.Combine(w.NewaveBase, dtEstudo.ToString("yyyyMM"));
 
                             Directory.CreateDirectory(estudoPath);
 
@@ -392,6 +394,24 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 }
                                 File.WriteAllLines(Path.Combine(estudoPath, "REE_EARM.txt"), linhasREE);
 
+                                var dgerFile = Directory.GetFiles(nwPath).Where(x => Path.GetFileName(x).ToLower().Equals("dger.dat")).FirstOrDefault();
+                                if (dgerFile != null)
+                                {
+                                    var dger = (Compass.CommomLibrary.DgerDat.DgerDat)DocumentFactory.Create(dgerFile);
+
+                                    var earmsREE = new double[dadosREE.Count()];
+                                    int i = 0;
+                                    foreach (var dadR in dadosREE)
+                                    {
+                                        earmsREE[i] = Math.Round(dadR.Item2, 1);
+                                        i++;
+                                    }
+
+                                    dger.Earms = earmsREE;
+                                    dger.SaveToFile();
+                                }
+
+
                                 #endregion
                                 //manter restricoes de volume para restringir variacao no atingir meta de armazenamento
                                 curvaArmazenamento = dadger.BlocoRhv.RhvGrouped
@@ -535,6 +555,24 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     glLine.MesInicio = dtEstudo.Month;
                                     glLine.AnoInicio = dtEstudo.Year;
 
+                                    if (w.Dadterm.Count() > 0)
+                                    {
+                                        var dadAdterms = w.Dadterm.Where(x => x.usina == glLine.NumeroUsina && x.ano == dtEstudo.Year && x.mes == dtEstudo.Month && x.estagio == 1).FirstOrDefault();
+                                        if (dadAdterms != null)
+                                        {
+                                            glLine.GeracaoPat1 = (float)dadAdterms.PT1;
+                                            glLine.GeracaoPat2 = (float)dadAdterms.PT2;
+                                            glLine.GeracaoPat3 = (float)dadAdterms.PT3;
+                                        }
+                                        else
+                                        {
+                                            glLine.GeracaoPat1 = 0;
+                                            glLine.GeracaoPat2 = 0;
+                                            glLine.GeracaoPat3 = 0;
+                                        }
+                                    }
+
+
                                     dadgnl.BlocoGL.Add(glLine.Clone());
 
                                     //======
@@ -621,6 +659,24 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     glLine.DiaInicio = dtEstudoSeguinte.Day;
                                     glLine.MesInicio = dtEstudoSeguinte.Month;
                                     glLine.AnoInicio = dtEstudoSeguinte.Year;
+
+                                    if (w.Dadterm.Count() > 0)
+                                    {
+                                        var dadAdterms2 = w.Dadterm.Where(x => x.usina == glLine.NumeroUsina && x.ano == dtEstudo.Year && x.mes == dtEstudo.Month && x.estagio == 2).FirstOrDefault();
+                                        if (dadAdterms2 != null)
+                                        {
+                                            glLine.GeracaoPat1 = (float)dadAdterms2.PT1;
+                                            glLine.GeracaoPat2 = (float)dadAdterms2.PT2;
+                                            glLine.GeracaoPat3 = (float)dadAdterms2.PT3;
+                                        }
+                                        else
+                                        {
+                                            glLine.GeracaoPat1 = 0;
+                                            glLine.GeracaoPat2 = 0;
+                                            glLine.GeracaoPat3 = 0;
+                                        }
+                                    }
+
                                     dadgnl.BlocoGL.Add(glLine);
 
 
@@ -1089,6 +1145,24 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 glLine.MesInicio = mesOperativo.SemanasOperativas[_e].Inicio.Month;
                                 glLine.AnoInicio = mesOperativo.SemanasOperativas[_e].Inicio.Year;
 
+                                if (w.Dadterm.Count() > 0 )
+                                {
+                                    var dadAdterms = w.Dadterm.Where(x => x.usina == glLine.NumeroUsina && x.ano == dtEstudo.Year && x.mes == dtEstudo.Month && x.estagio == 1).FirstOrDefault();
+                                    if (dadAdterms != null)
+                                    {
+                                        glLine.GeracaoPat1 = (float)dadAdterms.PT1;
+                                        glLine.GeracaoPat2 = (float)dadAdterms.PT2;
+                                        glLine.GeracaoPat3 = (float)dadAdterms.PT3;
+                                    }
+                                    else
+                                    {
+                                        glLine.GeracaoPat1 = 0;
+                                        glLine.GeracaoPat2 = 0;
+                                        glLine.GeracaoPat3 = 0;
+                                    }
+                                }
+
+                               
                                 dadgnl.BlocoGL.Add(glLine.Clone());
                             }
 
@@ -1141,6 +1215,23 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                 dtTemp = dtTemp.AddDays(7);
 
+                                if (w.Dadterm.Count() > 0)
+                                {
+                                    var dadAdterms = w.Dadterm.Where(x => x.usina == glLine.NumeroUsina && x.ano == dtEstudo.Year && x.mes == dtEstudo.Month && x.estagio == 2).FirstOrDefault();
+                                    if (dadAdterms != null)
+                                    {
+                                        glLine.GeracaoPat1 = (float)dadAdterms.PT1;
+                                        glLine.GeracaoPat2 = (float)dadAdterms.PT2;
+                                        glLine.GeracaoPat3 = (float)dadAdterms.PT3;
+                                    }
+                                    else
+                                    {
+                                        glLine.GeracaoPat1 = 0;
+                                        glLine.GeracaoPat2 = 0;
+                                        glLine.GeracaoPat3 = 0;
+                                    }
+                                }
+                               
                                 dadgnl.BlocoGL.Add(glLine.Clone());
                             }
                         }

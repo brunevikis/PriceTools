@@ -87,10 +87,12 @@ namespace Compass.DecompToolsShellX
         }
 
         private void CarregaDecksOld() {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
 
             var data = deckONS.Dger.DataEstudo.AddMonths(-1);
             // var data = DateTime.Today.AddMonths(-1);
-            var nomeMes = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(data.Month).ToLower();
+            //var nomeMes = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(data.Month).ToLower();
+            var nomeMes = Culture.DateTimeFormat.GetMonthName(data.Month).ToLower();
 
             TextBoxCCEE.Text = System.IO.Path.Combine(ConfigurationManager.AppSettings["nvPath"], "CCEE_NW", data.ToString("yyyy"), data.ToString("MM") + "_" + nomeMes, "NW" + data.ToString("yyyyMM"));
             TextBoxONS.Text = System.IO.Path.Combine(ConfigurationManager.AppSettings["nvPath"], "ONS_NW", data.ToString("yyyy"), data.ToString("MM_yyyy"), "deck_newave_" + data.ToString("yyyy_MM"));

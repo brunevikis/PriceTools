@@ -1501,7 +1501,7 @@ namespace ConsoleApp1
             ///home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/newave27.sh
             var mes = Tools.GetMonthNumAbrev(rev.revDate.Month);
             // var dir = $@"Z:\7_dessem\Arquivos_base\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\{dataRef:yyyyMMdd}";
-            var dir = $@"/mnt/Fsx/AWS/5_dessem/Arquivos_base/{rev.revDate:yyyy}/{mes}/RV{rev.rev}/{dataRef:yyyyMMdd}";
+            var dir = $@"/home/producao/PrevisaoPLD/5_dessem/Arquivos_base/{rev.revDate:yyyy}/{mes}/RV{rev.rev}/{dataRef:yyyyMMdd}";
             if (Directory.Exists(dir))
             {
                 pasta = dir;

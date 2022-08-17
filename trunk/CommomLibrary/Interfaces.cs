@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Compass.CommomLibrary {
-    public interface IRE {
+namespace Compass.CommomLibrary
+{
+    public interface IRE
+    {
         int AnoFim { get; set; }
         int AnoIni { get; set; }
         int MesEstudo { get; set; }
@@ -34,12 +36,12 @@ namespace Compass.CommomLibrary {
         int MesEstudo { get; set; }
         int MesFim { get; set; }
         int MesIni { get; set; }
-        
+
         double RestricaoP1 { get; set; }
         double RestricaoP2 { get; set; }
         double RestricaoP3 { get; set; }
 
-        System.Collections.Generic.List<Tuple<int,int>> Intercambios { get; set; }
+        System.Collections.Generic.List<Tuple<int, int>> Intercambios { get; set; }
     }
 
     public interface IMODIF
@@ -77,18 +79,29 @@ namespace Compass.CommomLibrary {
 
         double Mes { get; set; }
 
-        double Carga { get; set; }      
+        double Carga { get; set; }
 
-       
+
     }
     public interface ICURVA
     {
         double REE { get; set; }
-         double Ano { get; set; }
+        double Ano { get; set; }
         double MesEstudo { get; set; }
 
         double Mes { get; set; }
 
         double Porc { get; set; }
+    }
+
+    public interface IADTERMDAD
+    {
+        double usina { get; set; }
+        double ano { get; set; }
+        double mes { get; set; }
+        double estagio { get; set; }
+        double PT1 { get; set; }
+        double PT2 { get; set; }
+        double PT3 { get; set; }
     }
 }

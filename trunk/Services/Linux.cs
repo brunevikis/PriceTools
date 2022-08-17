@@ -16,7 +16,8 @@ namespace Compass.Services
 
             LinuxQueue40.QueueController controller = new LinuxQueue40.QueueController();
 
-           LinuxQueue40.QueueFolders.RegisterFolder(@"L:\cpas_ctl_common\");
+            LinuxQueue40.QueueFolders.RegisterFolder(@"L:\cpas_ctl_common\");
+            //LinuxQueue40.QueueFolders.RegisterFolder(@"K:\enercore_ctl_common");
            // LinuxQueue40.QueueFolders.RegisterFolder(@"Z:\cpas_ctl_common\");
 
             
@@ -28,6 +29,43 @@ namespace Compass.Services
                 Cluster = new LinuxQueue40.Cluster() { Alias = "Auto", Host = "" },
                 IgnoreQueue = ignoreQueue,
                 WorkingDirectory = workfolder,
+                User = user
+            };
+
+            controller.Enqueue(comm);
+            if (wait)
+            {
+                ret = controller.WaitCompletition(comm, timeout: 360000) == true &&
+                    comm.ExitCode == 0;
+            }
+
+            controller = null;
+
+            return ret;
+
+
+        }
+
+        public static bool Run2(string workfolder, string command, string name = "xxx", bool wait = true, bool ignoreQueue = false, string user = "DecompTools")
+        {
+
+            var ret = true;
+
+            LinuxQueue40.QueueController controller = new LinuxQueue40.QueueController();
+
+            //LinuxQueue40.QueueFolders.RegisterFolder(@"L:\cpas_ctl_common\");
+            LinuxQueue40.QueueFolders.RegisterFolder(@"K:\enercore_ctl_common");
+            // LinuxQueue40.QueueFolders.RegisterFolder(@"Z:\cpas_ctl_common\");
+
+
+
+            var comm = new LinuxQueue40.CommItem()
+            {
+                Command = command,
+                CommandName = name + "_" + DateTime.Now.ToString("yyyyMMddHHmmssss"),
+                Cluster = new LinuxQueue40.Cluster() { Alias = "Auto", Host = "" },
+                IgnoreQueue = ignoreQueue,
+                WorkingDirectory = workfolder.Replace("K:", "/home/producao/PrevisaoPLD"),
                 User = user
             };
 
