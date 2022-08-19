@@ -80,6 +80,211 @@ namespace Compass.Services
             }
         }
 
+        public static void RunCenarioPrevsM2SemExcel(string arqLog, string arqConfig, string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder, string raiz, string cenario, bool encad = false)// bool encad)
+        {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var configs = System.IO.File.ReadAllLines(arqConfig).ToList();
+            string arqEntradaPath = configs[0];
+            DateTime dataPrevs = Convert.ToDateTime(configs[1], Culture.DateTimeFormat);
+            DateTime dataSEmEstimada = Convert.ToDateTime(configs[2], Culture.DateTimeFormat);
+            int cont = System.IO.File.ReadAllLines(arqLog).Skip(1).ToList().Count();
+
+            //object[,] vazoes = System.IO.File.ReadAllLines(arqLog).Skip(1).ToList().ForEach(x => x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(y => Convert.ToDouble(y[0]))), ++i } };
+            var vazoes = System.IO.File.ReadAllLines(arqLog).Skip(1).ToList().Select(x => new object[1, 12] {
+                {
+
+                   Convert.ToDouble( x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[2]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[3]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[4]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[5]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[6]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[7]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[8]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[9]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[10]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[11]),
+                    Convert.ToDouble(x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[12])
+                }
+            });
+
+            // object[,] teste = vazoes.SelectMany(x=> new object[1, 1] { {x[0,0] } }); 
+            object[,] teste = new object[12 * 320, 12];
+            int l = 0;
+            foreach (var vaz in vazoes)
+            {
+                int c = 0;
+
+                foreach (var v in vaz)
+                {
+                    teste[l, c] = v;
+                    c++;
+                }
+                l++;
+            }
+
+
+
+            Microsoft.Office.Interop.Excel.Application xlsApp = null;
+            xlsApp = new Microsoft.Office.Interop.Excel.Application();
+
+            try
+            {
+                //var xlsApp = new Microsoft.Office.Interop.Excel.Application();
+                while (!xlsApp.Ready)
+                {
+                    System.Threading.Thread.Sleep(200);
+                }
+
+                xlsApp.Visible = true;
+                xlsApp.ScreenUpdating = true;
+                xlsApp.DisplayAlerts = false;
+                //xlApp = ExcelTools.Helper.StartExcel();
+                //copia excel para nome unico /temporario
+
+                var sufixo = $"_{metas.Item1}";
+                var nomeTemp = Path.Combine(
+                    Path.GetDirectoryName(arqLog),
+                     Path.GetFileNameWithoutExtension(caminhoWbCenario).Replace("_Log", $"_{sufixo}.xlsm")
+                    //Path.GetFileName(caminhoWbCenario).Replace("_Log", sufixo)
+                    );
+                if (System.IO.File.Exists(nomeTemp))
+                {
+                    System.IO.File.Delete(nomeTemp);
+                }
+
+
+                //System.IO.File.Copy(caminhoWbCenario, nomeTemp, true);
+
+                var wbxls = xlsApp.Workbooks.Open(caminhoWbCenario);
+                wbxls.Activate();
+                //xlsApp.Workbooks.
+                Worksheet wsEnt1 = wbxls.Worksheets["Entrada"];
+                wsEnt1.Select();
+                wsEnt1.Range["H3"].Value = arqEntradaPath;
+
+                //string arqEntradaPath = wsEnt1.Range["_entradaPrevivaz"].Text;
+                int Li = wsEnt1.Range["_entrada"].Row;
+                int Ci = wsEnt1.Range["_entrada"].Column + 2;
+                int Lf = 320 + Li - 1;
+                int Cf = wsEnt1.Range["_entrada"].Columns.Count + Ci - 3;
+
+                wsEnt1.Range[wsEnt1.Cells[Li, Ci], wsEnt1.Cells[Lf, Cf]].Value = teste;
+
+
+                //foreach (var vaz in vazoes)
+                //{
+                //    wsEnt1.Range[wsEnt1.Cells[Li, 3], wsEnt1.Cells[Li, 14]].Value = vaz;
+                //    Li++;
+                //}
+
+                Worksheet wsPrevs = wbxls.Worksheets["Prevs"];
+                wsPrevs.Select();
+                wsPrevs.Range["A2"].Value = dataPrevs;
+                wsPrevs.Range["A4"].Value = dataSEmEstimada;
+                xlsApp.Calculate();
+
+                //DateTime dataPrevs = wsPrevs.Range["A2"].Value;
+                //DateTime dataSEmEstimada = wsPrevs.Range["A4"].Value;
+
+                ///
+
+                //ws.Range[ws.Cells[1, 1], ws.Cells[res.GetLength(0), res.GetLength(1)]].Value = res;
+
+                //ws = wb.Worksheets["Aux"] as Microsoft.Office.Interop.Excel.Worksheet;
+                //(ws.Range[ws.Cells[3, 2], ws.Cells[3, 2]] as Excel.Range).Value2 = this.ArquivoPrevsBase;
+                //(ws.Range[ws.Cells[4, 2], ws.Cells[4, 2]] as Excel.Range).Value2 = this.ArquivosDeEntradaPrevivaz;
+                //(ws.Range[ws.Cells[5, 2], ws.Cells[5, 2]] as Excel.Range).Value2 = this.ArquivosDeSaida.Split('\\').LastOrDefault();
+                //
+
+
+
+                //var wb = new WorkbookPrevsCenariosMen(wbxls);
+                //Workbook wbc = xlsApp.ActiveWorkbook;
+                Worksheet wsPega = wbxls.Worksheets["Cen1"];
+                wsPega.Select();
+                wsPega.Range["_metaCen1"].NumberFormat = "General";
+                wsPega.Range["_metaCen1"].Value = metas.Item2;
+
+                var nome = Path.Combine(
+                       Path.GetDirectoryName(arqLog),
+                        Path.GetFileNameWithoutExtension(caminhoWbCenario) + ".xlsm"
+                       //Path.GetFileName(caminhoWbCenario).Replace("_Log", sufixo)
+                       );
+                if (System.IO.File.Exists(nome))
+                {
+                    System.IO.File.Delete(nome);
+                }
+                wbxls.SaveAs(nome, wbxls.FileFormat);
+
+                //wb.METAS = metas.Item2;
+                //!AjustarCenarios
+                //xlApp.Run($"'CHUVAVAZAO_{code}.xlsm'!CriarCenario");
+                xlsApp.Run($"'{Path.GetFileName(nome)}'!AjustarCenarios");//arrumar a chamada do nome da planilha Log é template, ela esta abrindo como Log1
+
+                //var result = wb.PrevsCen1;
+                object[,] result = wsPega.Range["_cen1"].Value;
+                int linhas = wsPega.Range["_cen1"].Rows.Count;
+                int colunas = wsPega.Range["_cen1"].Columns.Count;
+
+                for (int x = 1; x <= linhas; x++)
+                {
+                    for (int y = metas.Item3 + 3; y <= colunas; y++)//14
+                    {
+                        if (result[x, y] != null)
+                        {
+                            result[x, y] = null;
+                        }
+                    }
+                }
+                wbxls.Close(SaveChanges: false);
+
+                string PlanModelo = $@"H:\TI - Sistemas\UAT\PricingExcelTools\files\Gera_e_Avalia_Cenarios_Men_Sem_Extendido.xltm";
+                //wbxls = xlsApp.Workbooks.Open(nomeTemp);
+                wbxls = xlsApp.Workbooks.Open(PlanModelo);
+                wbxls.Activate();
+
+                wsPrevs = wbxls.Worksheets["Prevs"];
+                wsPrevs.Select();
+                wsPrevs.Range["A2"].Value = dataPrevs;
+                wsPrevs.Range["A4"].Value = dataSEmEstimada;
+
+                wsPega = wbxls.Worksheets["Cen1"];
+                wsPega.Select();
+                wsPega.Range["_metaCen1"].NumberFormat = "General";
+                wsPega.Range["_metaCen1"].Value = metas.Item2;
+
+                Worksheet wsEnt = wbxls.Worksheets["Entrada"];
+                wsEnt.Select();
+                wsEnt.Range["_entrada"].Value = result;
+                xlsApp.Calculate();
+                wbxls.SaveAs(nomeTemp, wbxls.FileFormat);
+                //wbxls.Close(SaveChanges: false);
+                var wb = new WorkbookPrevsCenariosMen(wbxls);
+                wb.ArquivosDeEntrada = arqEntradaPath;
+
+                RunCenarioTestePrevM2(wb, useAcomph, encad, previvazFolder, true);// encad);
+                ExportaPrevsM2(wb, raiz, cenario);
+
+
+                wbxls.Save();
+                wbxls.Close(SaveChanges: false);
+                //System.IO.File.Delete(caminhoWbCenario);
+                //System.IO.File.Move(nomeTemp, caminhoWbCenario);
+
+            }
+            finally
+            {
+                if (xlsApp != null)
+                {
+                    xlsApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
+                    xlsApp.ScreenUpdating = true;
+                    xlsApp.Quit();
+                    ExcelTools.Helper.Release(xlsApp);
+
+                }
+            }
+        }
         public static void RunCenarioPrevsM2(string caminhoWbCenario, bool useAcomph, Tuple<string, object[,], int> metas, string previvazFolder, string raiz, string cenario, bool encad = false)// bool encad)
         {
             Microsoft.Office.Interop.Excel.Application xlsApp = null;
@@ -2016,7 +2221,7 @@ namespace Compass.Services
                             {
                                 if ((double)SemanasPrevs[i].Item2 == (double)ac.Key.semana)
                                 {
-                                    if (ac.Key.posto == 169 )
+                                    if (ac.Key.posto == 169)
                                     {
 
                                     }
@@ -3073,7 +3278,7 @@ namespace Compass.Services
                     var p243 = GetMediaSemanal(243, d);
                     //if (!p.calMedSemanal.ContainsKey(d))
                     //{
-                        p.calMedSemanal[d] = p34 + p243;
+                    p.calMedSemanal[d] = p34 + p243;
                     //}
 
                 }
