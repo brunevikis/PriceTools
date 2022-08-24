@@ -1641,7 +1641,7 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Diretorio: " + dir);
             Console.WriteLine("Respondendo...");
-            Console.WriteLine("correção atingir meta trava depois iteração");
+            Console.WriteLine("alteraadterm");
         }
         public static void CalcJirauStoAnto(string dir)
         {
@@ -2012,15 +2012,18 @@ namespace ConsoleApp1
                                         {
                                             case 1:
                                                 dadosAdt[0] = beneficio > custo ? (float)tgLine[6] : 0;
-                                                Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)tgLine[6]);
+                                                //Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)tgLine[6]);
+                                                Linha_GL1.GeracaoPat1 = Math.Max((float)dadosAdt[0], Linha_GL1.GeracaoPat1);
                                                 break;
                                             case 2:
                                                 dadosAdt[1] = beneficio > custo ? (float)tgLine[9] : 0;
-                                                Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)tgLine[9]);
+                                                //Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)tgLine[9]);
+                                                Linha_GL1.GeracaoPat2 = Math.Max((float)dadosAdt[1], Linha_GL1.GeracaoPat2);
                                                 break;
                                             case 3:
                                                 dadosAdt[2] = beneficio > custo ? (float)tgLine[12] : 0;
-                                                Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)tgLine[12]);
+                                                //Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)tgLine[12]);
+                                                Linha_GL1.GeracaoPat3 = Math.Max((float)dadosAdt[2], Linha_GL1.GeracaoPat3);
                                                 break;
                                         }
 
@@ -2063,9 +2066,13 @@ namespace ConsoleApp1
                     Tuple<double, double, double> despacho;
                     despacho = new Tuple<double, double, double>(dadosAdt[0], dadosAdt[1], dadosAdt[2]);
 
-                    Linha_GL1.GeracaoPat1 = Math.Min((float)despacho.Item1, (float)tgLine[6]);
-                    Linha_GL1.GeracaoPat2 = Math.Min((float)despacho.Item2, (float)tgLine[9]);
-                    Linha_GL1.GeracaoPat3 = Math.Min((float)despacho.Item3, (float)tgLine[12]);
+                    //Linha_GL1.GeracaoPat1 = Math.Min((float)despacho.Item1, (float)tgLine[6]);
+                    //Linha_GL1.GeracaoPat2 = Math.Min((float)despacho.Item2, (float)tgLine[9]);
+                    //Linha_GL1.GeracaoPat3 = Math.Min((float)despacho.Item3, (float)tgLine[12]);
+
+                    Linha_GL1.GeracaoPat1 = Math.Max((float)despacho.Item1, Linha_GL1.GeracaoPat1);
+                    Linha_GL1.GeracaoPat2 = Math.Max((float)despacho.Item2, Linha_GL1.GeracaoPat2);
+                    Linha_GL1.GeracaoPat3 = Math.Max((float)despacho.Item3, Linha_GL1.GeracaoPat3);
 
                 }
 
@@ -2145,15 +2152,18 @@ namespace ConsoleApp1
                                         {
                                             case 1:
                                                 dadosAdt[0] = beneficio > custo ? (float)dadosTG[0] : 0;
-                                                Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)dadosTG[0]);
+                                                //Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)dadosTG[0]);
+                                                Linha_GL1.GeracaoPat1 = Math.Max((float)dadosAdt[0], Linha_GL1.GeracaoPat1);
                                                 break;
                                             case 2:
                                                 dadosAdt[1] = beneficio > custo ? (float)dadosTG[1] : 0;
-                                                Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)dadosTG[1]);
+                                                //Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)dadosTG[1]);
+                                                Linha_GL1.GeracaoPat2 = Math.Max((float)dadosAdt[1], Linha_GL1.GeracaoPat2);
                                                 break;
                                             case 3:
                                                 dadosAdt[2] = beneficio > custo ? (float)dadosTG[2] : 0;
-                                                Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)dadosTG[2]);
+                                                //Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)dadosTG[2]);
+                                                Linha_GL1.GeracaoPat3 = Math.Max((float)dadosAdt[2], Linha_GL1.GeracaoPat3);
                                                 break;
                                         }
 
@@ -2199,9 +2209,13 @@ namespace ConsoleApp1
 
                         despacho = new Tuple<double, double, double>(dadosAdt[0], dadosAdt[1], dadosAdt[2]);
 
-                        Linha_GL1.GeracaoPat1 = Math.Min((float)despacho.Item1, (float)dadosTG[0]);
-                        Linha_GL1.GeracaoPat2 = Math.Min((float)despacho.Item2, (float)dadosTG[1]);
-                        Linha_GL1.GeracaoPat3 = Math.Min((float)despacho.Item3, (float)dadosTG[2]);
+                        //Linha_GL1.GeracaoPat1 = Math.Min((float)despacho.Item1, (float)dadosTG[0]);
+                        //Linha_GL1.GeracaoPat2 = Math.Min((float)despacho.Item2, (float)dadosTG[1]);
+                        //Linha_GL1.GeracaoPat3 = Math.Min((float)despacho.Item3, (float)dadosTG[2]);
+
+                        Linha_GL1.GeracaoPat1 = Math.Max((float)despacho.Item1, Linha_GL1.GeracaoPat1);
+                        Linha_GL1.GeracaoPat2 = Math.Max((float)despacho.Item2, Linha_GL1.GeracaoPat2);
+                        Linha_GL1.GeracaoPat3 = Math.Max((float)despacho.Item3, Linha_GL1.GeracaoPat3);
 
 
 
@@ -2323,7 +2337,7 @@ namespace ConsoleApp1
                 {
                     try
                     {
-                        Line_Ofi = dadgnl_ori.BlocoGL.Where(x => x.MesInicio == int.Parse(dtEstudoMes) && x.AnoInicio == dtEstudoAno && x.NumeroUsina == ut.Usina).FirstOrDefault();
+                        //Line_Ofi = dadgnl_ori.BlocoGL.Where(x => x.MesInicio == int.Parse(dtEstudoMes) && x.AnoInicio == dtEstudoAno && x.NumeroUsina == ut.Usina).FirstOrDefault();
                     }
                     catch
                     {
@@ -2331,7 +2345,7 @@ namespace ConsoleApp1
                     }
 
                     var Linha_GL1 = dadgnl.BlocoGL.Where(x => x.MesInicio == dtEstudo.Month && x.AnoInicio == dtEstudo.Year && x.NumeroUsina == ut.Usina).FirstOrDefault();
-
+                    Line_Ofi = null;
                     if (Line_Ofi != null)
                     {
 
@@ -2339,12 +2353,20 @@ namespace ConsoleApp1
                         dadosAdt[1] = Line_Ofi.GeracaoPat2;
                         dadosAdt[2] = Line_Ofi.GeracaoPat3;
 
-                        Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)tgLine[6]);
-                        Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)tgLine[9]);
-                        Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)tgLine[12]);
+                        //Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)tgLine[6]);
+                        //Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)tgLine[9]);
+                        //Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)tgLine[12]);
 
+                        var valor1 = Math.Max((float)dadosAdt[0], (float)tgLine[6]);
+                        var valor2 = Math.Max((float)dadosAdt[1], (float)tgLine[9]);
+                        var valor3 = Math.Max((float)dadosAdt[2], (float)tgLine[12]);
+
+                        Linha_GL1.GeracaoPat1 = Math.Max(Linha_GL1.GeracaoPat1, valor1);
+                        Linha_GL1.GeracaoPat2 = Math.Max(Linha_GL1.GeracaoPat2, valor2);
+                        Linha_GL1.GeracaoPat3 = Math.Max(Linha_GL1.GeracaoPat3, valor3);
                     }
-                    else if (File.Exists(dir_Ben))
+                    // else if (File.Exists(dir_Ben))
+                    if (File.Exists(dir_Ben))
                     {
 
                         StreamReader rd = new StreamReader(dir_Ben);
@@ -2375,15 +2397,18 @@ namespace ConsoleApp1
                                         {
                                             case 1:
                                                 dadosAdt[0] = beneficio > custo ? (float)tgLine[6] : 0;
-                                                Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)tgLine[6]);
+                                                Linha_GL1.GeracaoPat1 = Math.Max((float)dadosAdt[0], Linha_GL1.GeracaoPat1);
+                                                //Linha_GL1.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)tgLine[6]);
                                                 break;
                                             case 2:
                                                 dadosAdt[1] = beneficio > custo ? (float)tgLine[9] : 0;
-                                                Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)tgLine[9]);
+                                                Linha_GL1.GeracaoPat2 = Math.Max((float)dadosAdt[1], Linha_GL1.GeracaoPat2);
+                                                //Linha_GL1.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)tgLine[9]);
                                                 break;
                                             case 3:
                                                 dadosAdt[2] = beneficio > custo ? (float)tgLine[12] : 0;
-                                                Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)tgLine[12]);
+                                                Linha_GL1.GeracaoPat3 = Math.Max((float)dadosAdt[2], Linha_GL1.GeracaoPat3);
+                                                //Linha_GL1.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)tgLine[12]);
                                                 break;
                                         }
 
@@ -2427,7 +2452,7 @@ namespace ConsoleApp1
 
                     try
                     {
-                        Line_Ofi_Seguinte = dadgnl_ori.BlocoGL.Where(x => x.MesInicio == dt_seguinte.Month && x.AnoInicio == dt_seguinte.Year && x.NumeroUsina == ut.Usina).FirstOrDefault();
+                        // Line_Ofi_Seguinte = dadgnl_ori.BlocoGL.Where(x => x.MesInicio == dt_seguinte.Month && x.AnoInicio == dt_seguinte.Year && x.NumeroUsina == ut.Usina).FirstOrDefault();
                     }
                     catch
                     {
@@ -2466,6 +2491,7 @@ namespace ConsoleApp1
 
                     var Linha_GL2 = dadgnl.BlocoGL.Where(x => x.MesInicio == dt_seguinte.Month && x.AnoInicio == dt_seguinte.Year && x.NumeroUsina == ut.Usina).FirstOrDefault();
 
+                    Line_Ofi_Seguinte = null;
                     if (Line_Ofi_Seguinte != null)
                     {
 
@@ -2473,12 +2499,20 @@ namespace ConsoleApp1
                         dadosAdt[1] = Line_Ofi_Seguinte.GeracaoPat2;
                         dadosAdt[2] = Line_Ofi_Seguinte.GeracaoPat3;
 
-                        Linha_GL2.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)dadosTG[0]);
-                        Linha_GL2.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)dadosTG[1]);
-                        Linha_GL2.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)dadosTG[2]);
+                        //Linha_GL2.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)dadosTG[0]);
+                        //Linha_GL2.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)dadosTG[1]);
+                        //Linha_GL2.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)dadosTG[2]);
 
+                        var valor1 = Math.Max((float)dadosAdt[0], (float)dadosTG[0]);
+                        var valor2 = Math.Max((float)dadosAdt[1], (float)dadosTG[1]);
+                        var valor3 = Math.Max((float)dadosAdt[2], (float)dadosTG[2]);
+
+                        Linha_GL2.GeracaoPat1 = Math.Max(Linha_GL2.GeracaoPat1, valor1);
+                        Linha_GL2.GeracaoPat2 = Math.Max(Linha_GL2.GeracaoPat2, valor2);
+                        Linha_GL2.GeracaoPat3 = Math.Max(Linha_GL2.GeracaoPat3, valor3);
                     }
-                    else if (File.Exists(dir_Ben))
+                    //else if (File.Exists(dir_Ben))
+                    if (File.Exists(dir_Ben))
                     {
 
                         StreamReader rd = new StreamReader(dir_Ben);
@@ -2509,15 +2543,18 @@ namespace ConsoleApp1
                                         {
                                             case 1:
                                                 dadosAdt[0] = beneficio > custo ? dadosTG[0] : 0;
-                                                Linha_GL2.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)dadosTG[0]);
+                                                Linha_GL2.GeracaoPat1 = Math.Max((float)dadosAdt[0], Linha_GL2.GeracaoPat1);
+                                                //Linha_GL2.GeracaoPat1 = Math.Min((float)dadosAdt[0], (float)dadosTG[0]);
                                                 break;
                                             case 2:
                                                 dadosAdt[1] = beneficio > custo ? dadosTG[1] : 0;
-                                                Linha_GL2.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)dadosTG[1]);
+                                                Linha_GL2.GeracaoPat2 = Math.Max((float)dadosAdt[1], Linha_GL2.GeracaoPat2);
+                                                //Linha_GL2.GeracaoPat2 = Math.Min((float)dadosAdt[1], (float)dadosTG[1]);
                                                 break;
                                             case 3:
                                                 dadosAdt[2] = beneficio > custo ? dadosTG[2] : 0;
-                                                Linha_GL2.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)dadosTG[2]);
+                                                Linha_GL2.GeracaoPat3 = Math.Max((float)dadosAdt[2], Linha_GL2.GeracaoPat3);
+                                                //Linha_GL2.GeracaoPat3 = Math.Min((float)dadosAdt[2], (float)dadosTG[2]);
                                                 break;
                                         }
 
@@ -2653,17 +2690,23 @@ namespace ConsoleApp1
                                             case 1:
                                                 // dadosAdt[0] = beneficio > custo ? adterm.Despachos[indice].Lim_P1 : 0;
                                                 dadosAdt[0] = beneficio > custo ? gerMaxPmo : 0;
-                                                adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                                //adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                                adterm.Despachos[indice].Lim_P1 = Math.Max(adterm.Despachos[indice].Lim_P1, dadosAdt[0]);
+
                                                 break;
                                             case 2:
                                                 // dadosAdt[1] = beneficio > custo ? adterm.Despachos[indice].Lim_P2 : 0;
                                                 dadosAdt[1] = beneficio > custo ? gerMaxPmo : 0;
-                                                adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                                //adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                                adterm.Despachos[indice].Lim_P2 = Math.Max(adterm.Despachos[indice].Lim_P2, dadosAdt[1]);
+
                                                 break;
                                             case 3:
                                                 // dadosAdt[2] = beneficio > custo ? adterm.Despachos[indice].Lim_P3 : 0;
                                                 dadosAdt[2] = beneficio > custo ? gerMaxPmo : 0;
-                                                adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
+                                                //adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
+                                                adterm.Despachos[indice].Lim_P3 = Math.Max(adterm.Despachos[indice].Lim_P3, dadosAdt[2]);
+
                                                 break;
                                         }
 
@@ -2753,17 +2796,23 @@ namespace ConsoleApp1
                                             case 1:
                                                 //dadosAdt[0] = beneficio > custo ? adterm.Despachos[indice].Lim_P1 : 0;
                                                 dadosAdt[0] = beneficio > custo ? gerMaxPmo : 0;
-                                                adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                                //adterm.Despachos[indice].Lim_P1 = dadosAdt[0];
+                                                adterm.Despachos[indice].Lim_P1 = Math.Max(adterm.Despachos[indice].Lim_P1, dadosAdt[0]);
+
                                                 break;
                                             case 2:
                                                 //dadosAdt[1] = beneficio > custo ? adterm.Despachos[indice].Lim_P2 : 0;
                                                 dadosAdt[1] = beneficio > custo ? gerMaxPmo : 0;
-                                                adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                                //adterm.Despachos[indice].Lim_P2 = dadosAdt[1];
+                                                adterm.Despachos[indice].Lim_P2 = Math.Max(adterm.Despachos[indice].Lim_P2, dadosAdt[1]);
+
                                                 break;
                                             case 3:
                                                 //dadosAdt[2] = beneficio > custo ? adterm.Despachos[indice].Lim_P3 : 0;
                                                 dadosAdt[2] = beneficio > custo ? gerMaxPmo : 0;
-                                                adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
+                                                //adterm.Despachos[indice].Lim_P3 = dadosAdt[2];
+                                                adterm.Despachos[indice].Lim_P3 = Math.Max(adterm.Despachos[indice].Lim_P3, dadosAdt[2]);
+
                                                 break;
                                         }
 

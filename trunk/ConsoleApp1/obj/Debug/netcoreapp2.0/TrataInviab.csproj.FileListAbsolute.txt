@@ -32,4 +32,3 @@ C:\Development\price_tools\trunk\ConsoleApp1\obj\Debug\netcoreapp2.0\TrataInviab
 C:\Development\price_tools\trunk\ConsoleApp1\obj\Debug\netcoreapp2.0\TrataInviab.dll
 C:\Development\price_tools\trunk\ConsoleApp1\obj\Debug\netcoreapp2.0\TrataInviab.pdb
 C:\Development\price_tools\trunk\ConsoleApp1\obj\Debug\netcoreapp2.0\TrataInviab.genruntimeconfig.cache
-C:\Development\price_tools\trunk\ConsoleApp1\obj\Debug\netcoreapp2.0\TrataInviab.csproj.AssemblyReference.cache
