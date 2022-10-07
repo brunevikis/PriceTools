@@ -96,6 +96,32 @@ namespace Compass.DecompToolsShellX
 
         }
 
+        public static void Show(String caption,bool multi = true, params Result[] results)
+        {
+            var frm = new FormViewer(caption);
+
+            foreach (var res in results)
+            {
+                frm._results[res.Dir] = res;
+            }
+
+            frm.RefreshView(multi);
+
+            if (System.Threading.Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+            {
+
+                Thread thread = new Thread(() => frm.ShowDialog());
+                thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+                thread.Start();
+                //thread.Join(); //Wait for the thread to end
+
+            }
+            else
+            {
+                frm.ShowDialog();
+            }
+
+        }
         internal static void Show(string caption, ResultDataSource resultDataSource)
         {
             var frm = new FormViewer(caption);
@@ -188,6 +214,31 @@ namespace Compass.DecompToolsShellX
             _results.Remove("");
 
             if (_results.Keys.Count > 1)
+            {
+                if (_results.First().Value.PDO_Sist_Result != null)
+                {
+                    RefreshViewMultipleDessem();
+                }
+                else
+                {
+                    RefreshViewMultiple();
+                }
+            }
+            else if (_results.Keys.Count == 1)
+            {
+                RefreshViewSingle();
+            }
+
+            this.Cursor = Cursors.Default;
+        }
+
+        private void RefreshView(bool multi)
+        {
+            this.Cursor = Cursors.WaitCursor;
+
+            _results.Remove("");
+
+            if (_results.Keys.Count > 1 || multi == true)
             {
                 if (_results.First().Value.PDO_Sist_Result != null)
                 {
@@ -493,35 +544,43 @@ namespace Compass.DecompToolsShellX
             int num = 0;
             List<string> l1;
             int[] usinas = new int[] { 15, 86, 224 };
-            foreach (var item in orderedResults)
+            try
             {
-                num = item.GNL_Result.Count();
-            }
+                foreach (var item in orderedResults)
+                {
+                    num = item.GNL_Result.Count();
+                }
 
-            for (int i = 0; i < num; i++)
+                for (int i = 0; i < num; i++)
+                {
+
+                    int semana = orderedResults.Select(x => x.GNL_Result[i].semana).Last();
+                    int usi = orderedResults.Select(x => x.GNL_Result[i].Posto).Last();
+
+                    l1 = orderedResults.Select(x => x.GNL_Result[i].GNL_pat1.ToString("N2")).ToList();
+                    l1.Insert(0, Convert.ToString(usi));
+                    l1.Insert(1, Convert.ToString(semana));
+                    l1.Insert(2, "1");
+                    dtGNL.Rows.Add(l1.ToArray());
+
+                    l1 = orderedResults.Select(x => x.GNL_Result[i].GNL_pat2.ToString("N2")).ToList();
+                    l1.Insert(0, Convert.ToString(usi));
+                    l1.Insert(1, Convert.ToString(semana));
+                    l1.Insert(2, "2");
+                    dtGNL.Rows.Add(l1.ToArray());
+
+                    l1 = orderedResults.Select(x => x.GNL_Result[i].GNL_pat3.ToString("N2")).ToList();
+                    l1.Insert(0, Convert.ToString(usi));
+                    l1.Insert(1, Convert.ToString(semana));
+                    l1.Insert(2, "3");
+                    dtGNL.Rows.Add(l1.ToArray());
+                }
+            }
+            catch
             {
 
-                int semana = orderedResults.Select(x => x.GNL_Result[i].semana).Last();
-                int usi = orderedResults.Select(x => x.GNL_Result[i].Posto).Last();
-
-                l1 = orderedResults.Select(x => x.GNL_Result[i].GNL_pat1.ToString("N2")).ToList();
-                l1.Insert(0, Convert.ToString(usi));
-                l1.Insert(1, Convert.ToString(semana));
-                l1.Insert(2, "1");
-                dtGNL.Rows.Add(l1.ToArray());
-
-                l1 = orderedResults.Select(x => x.GNL_Result[i].GNL_pat2.ToString("N2")).ToList();
-                l1.Insert(0, Convert.ToString(usi));
-                l1.Insert(1, Convert.ToString(semana));
-                l1.Insert(2, "2");
-                dtGNL.Rows.Add(l1.ToArray());
-
-                l1 = orderedResults.Select(x => x.GNL_Result[i].GNL_pat3.ToString("N2")).ToList();
-                l1.Insert(0, Convert.ToString(usi));
-                l1.Insert(1, Convert.ToString(semana));
-                l1.Insert(2, "3");
-                dtGNL.Rows.Add(l1.ToArray());
             }
+            
 
             for (int i = 1; i <= 4; i++)
             {
@@ -827,8 +886,38 @@ namespace Compass.DecompToolsShellX
         private string GetCommonPath(string[] p)
         {
 
-            if (p.Length < 2) return "X:\\AWS\\";
+            if (p.Length < 2)
+            {
+                if (p.Length >0 )
+                {
+                    string commonfolder = p.First().Replace(p.First().Split('\\').Last(), "");
+                    //return "K:\\";
+                    return commonfolder;
+                }
+                else
+                {
+                    return "K:\\";
+                }
+              
+            }
+            List<string> folders = new List<string>();
 
+            foreach (var f in p)
+            {
+                var partes = f.Split('\\').ToList();
+                foreach (var part in partes)
+                {
+                    if (p.All(x => x.Split('\\').Any(y => y.Equals(part))) && !folders.Contains(part))
+                    {
+                        folders.Add(part);
+                    }
+                }
+            }
+            if (folders.Count() >0)
+            {
+                string ret = string.Join("\\",folders.ToArray()) + "\\";
+                return ret;
+            }
             int idx = -1;
             int mark = 0;
 

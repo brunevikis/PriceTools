@@ -83,6 +83,7 @@ namespace Compass.DecompToolsShellX
             //previvaz "N:\Middle - Preço\16_Chuva_Vazao\2020_07\RV4\20-07-20\testeBruno\CV_ACOMPH_FUNC_Atualizado\CHUVAVAZAO_CENARIO_1087970864.xlsm"|true --> para encadear o previvaz
             //  previvaz "N:\Middle - Preço\16_Chuva_Vazao\2020_07\RV3\20-07-14\testeBruno\CV_ACOMPH_FUNC_EURO\CHUVAVAZAO_CENARIO_-883830657.xlsm"
             //   previvaz "N:\Middle - Preço\16_Chuva_Vazao\2020_07\RV4\20-07-20\testeBruno\CPM_CV_FUNC_d-1_EURO\Propagacoes_Automaticas.txt""
+            //resultados "C:\Development\Implementacoes\verResultados\202210_oficial_umido_3009\RV0_70_30_50_80"
 
             if (args.Length > 1)
             {
@@ -634,8 +635,10 @@ namespace Compass.DecompToolsShellX
                 else
                     return;
 
+                var dirsTets = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).Where(x => Directory.GetFiles(x).Any(y => y.EndsWith(".dat", StringComparison.OrdinalIgnoreCase))).ToList();
+                var dirsTets2 = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).ToList();
 
-                var dirs = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories)
+                var dirs = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).Where(x => Directory.GetFiles(x).Any(y => y.EndsWith(".dat",StringComparison.OrdinalIgnoreCase)))
                     .AsParallel()//.WithDegreeOfParallelism(4)                       
                     .Select(x => new
                     {
@@ -651,13 +654,21 @@ namespace Compass.DecompToolsShellX
                         result = x.deck.GetResults()
                     }).Where(x => x.result != null).ToList();
 
-                var dDc = dirs.Where(x => x.deck is CommomLibrary.Decomp.Deck).AsParallel()
+                var dDcMensal = dirs.Where(x => x.deck is CommomLibrary.Decomp.Deck && (DocumentFactory.Create( x.deck.Documents["DADGER."].Document.File) as Compass.CommomLibrary.Dadger.Dadger).VAZOES_NumeroDeSemanas == 0 && Directory.GetFiles(x.deck.BaseFolder).Any(y => y.EndsWith("dec_oper_sist.csv",StringComparison.OrdinalIgnoreCase))).AsParallel()
                     .Select(x => new
                     {
                         x.dir,
                         x.deck,
                         result = x.deck.GetResults()
                     }).Where(x => x.result != null).ToList();
+
+                var dDcSem = dirs.Where(x => x.deck is CommomLibrary.Decomp.Deck && (DocumentFactory.Create(x.deck.Documents["DADGER."].Document.File) as Compass.CommomLibrary.Dadger.Dadger).VAZOES_NumeroDeSemanas > 0 && Directory.GetFiles(x.deck.BaseFolder).Any(y => y.EndsWith("dec_oper_sist.csv", StringComparison.OrdinalIgnoreCase))).AsParallel()
+                   .Select(x => new
+                   {
+                       x.dir,
+                       x.deck,
+                       result = x.deck.GetResults()
+                   }).Where(x => x.result != null).ToList();
 
                 var dDs = dirs.Where(x => x.deck is CommomLibrary.Dessem.Deck).AsParallel()
                     .Select(x => new
@@ -667,9 +678,10 @@ namespace Compass.DecompToolsShellX
                         result = x.deck.GetResults()
                     }).Where(x => x.result != null).ToList();
 
-                if (dNw.Count() > 0) FormViewer.Show("NEWAVE", dNw.Select(x => x.result).ToArray());
-                if (dDc.Count() > 0) FormViewer.Show("DECOMP", dDc.Select(x => x.result).ToArray());
-                if (dDs.Count() > 0) FormViewer.Show("DESSEM", dDs.Select(x => x.result).ToArray());
+                if (dNw.Count() > 0) FormViewer.Show("NEWAVE",true, dNw.Select(x => x.result).ToArray());
+                if (dDcMensal.Count() > 0) FormViewer.Show("DECOMP",true, dDcMensal.Select(x => x.result).ToArray());
+                if (dDcSem.Count() > 0) FormViewer.Show("DECOMP",true, dDcSem.Select(x => x.result).ToArray());
+                if (dDs.Count() > 0) FormViewer.Show("DESSEM",true, dDs.Select(x => x.result).ToArray());
 
             }
             catch (Exception ex)
