@@ -12,7 +12,47 @@ namespace Compass.Services
 {
     public class Deck
     {
+        private static List<Tuple<int, DateTime, double>> OpenFileGtCCEE(string filePath)
+        {
+            Microsoft.Office.Interop.Excel.Application xlApp = null;
 
+            try
+            {
+                xlApp = Helper.StartExcel();
+
+                var wb = xlApp.Workbooks.Open(filePath, ReadOnly: true);
+                var ws = wb.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+
+                //List<int> utes = new List<int> { 24, 25, 26, 27 };
+                List<Tuple<int, DateTime, double>> dados = new List<Tuple<int, DateTime, double>>();
+                // foreach (var ut in utes)
+                // {
+                for (int l = 3; !string.IsNullOrWhiteSpace(ws.Cells[l, 1].Text); l++)//!string.IsNullOrWhiteSpace(ws.Cells[l, 1].Text)
+                {
+                    int ute = Convert.ToInt32(ws.Range["A" + l.ToString()].Value);
+                    double gtmin = Convert.ToDouble(ws.Range["D" + l.ToString()].Value2);
+                    if (gtmin > 0)
+                    {
+                        dados.Add(new Tuple<int, DateTime, double>(ute, ws.Range["C" + l.ToString()].Value, Convert.ToDouble(ws.Range["D" + l.ToString()].Value2)));
+                    }
+                }
+                //}
+
+                wb.Close(SaveChanges: false);
+                xlApp.Quit();
+
+                if (dados.Count() > 0)
+                    return dados;
+                else
+                    throw new Exception("Erro no arquivo do Gtmin_CCEE.xlsx");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Tuple<int, DateTime, double>>();
+            }
+        }
         private static ColetaGtminAgente OpenFileGtAgente(string filePath)
         {
             Microsoft.Office.Interop.Excel.Application xlApp = null;
@@ -227,46 +267,134 @@ namespace Compass.Services
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             ColetaGtminAgente gtminAgente = null;
 
-            if (deckCCEEAnterior[CommomLibrary.Newave.Deck.DeckDocument.cadterm] == null)
-            {
-                throw new Exception("Não existe arquivo CADTERM no deck para realizar a conversão. Copie o arquivo e tente novamente.");
-            }
+            //if (deckCCEEAnterior[CommomLibrary.Newave.Deck.DeckDocument.cadterm] == null)
+            //{
+            //    throw new Exception("Não existe arquivo CADTERM no deck para realizar a conversão. Copie o arquivo e tente novamente.");
+            //}
 
-            var cadTerm = deckCCEEAnterior[CommomLibrary.Newave.Deck.DeckDocument.cadterm].Document as Compass.CommomLibrary.CadTermDat.CadTermDat;
-
+            var GTMIN_CCEEFile = Directory.GetFiles(deckCCEEAnterior.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("GTMIN_CCEE_", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            var cadTermFile = Directory.GetFiles(deckCCEEAnterior.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("CADTERM.DAT", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            bool temCadterm = false;
             var confT = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.conft].Document as Compass.CommomLibrary.ConftDat.ConftDat;
             var expt = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.expt].Document as Compass.CommomLibrary.ExptDat.ExptDat;
             var term = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.term].Document as Compass.CommomLibrary.TermDat.TermDat;
 
-            foreach (var ute in confT)
+            if (cadTermFile != null && File.Exists(cadTermFile) && !File.Exists(GTMIN_CCEEFile) && GTMIN_CCEEFile == null)
             {
-
-                if (!cadTerm.Any(x => x.Num == ute.Num)) continue;
-
-                var gtminCadTerm = cadTerm.First(x => x.Num == ute.Num).Gtmin;
-
-                //if (ute.Existente == "EX") { //caso existente, modificar term.dat (campos 6=jan...17=dez, 18=demais anos)
-                for (int c = 6; c <= 18; c++)
+                var cadTerm = deckCCEEAnterior[CommomLibrary.Newave.Deck.DeckDocument.cadterm].Document as Compass.CommomLibrary.CadTermDat.CadTermDat;
+                temCadterm = true;
+                foreach (var ute in confT)
                 {
-                    if (gtminCadTerm < term.First(x => x.Cod == ute.Num)[c])
-                        term.First(x => x.Cod == ute.Num)[c] = gtminCadTerm;
-                }
-                //} else { // se não existente, alterar expt "GTMIN"
-                foreach (var exptGtmin in expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN"))
-                {
-                    if (gtminCadTerm < exptGtmin.Valor)
+
+                    if (!cadTerm.Any(x => x.Num == ute.Num))
                     {
-                        exptGtmin.Valor = gtminCadTerm;
+                        continue;
+
                     }
+
+                    var gtminCadTerm = cadTerm.First(x => x.Num == ute.Num).Gtmin;
+
+                    //if (ute.Existente == "EX") { //caso existente, modificar term.dat (campos 6=jan...17=dez, 18=demais anos)
+                    for (int c = 6; c <= 18; c++)
+                    {
+                        if (gtminCadTerm < term.First(x => x.Cod == ute.Num)[c])
+                            term.First(x => x.Cod == ute.Num)[c] = gtminCadTerm;
+                    }
+                    //} else { // se não existente, alterar expt "GTMIN"
+                    foreach (var exptGtmin in expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN"))
+                    {
+                        if (gtminCadTerm < exptGtmin.Valor)
+                        {
+                            exptGtmin.Valor = gtminCadTerm;
+                        }
+                    }
+                    //}
                 }
-                //}
             }
+            
 
             var dgerData = cceeDeck.Dger.DataEstudo;
 
-            if (File.Exists(System.IO.Path.Combine(deckCCEEAnterior.BaseFolder, "GtminAgenteCDE.xlsx")))
+            if (GTMIN_CCEEFile != null && File.Exists(GTMIN_CCEEFile) && temCadterm == false)
+            {
+                var GtminCCEE = OpenFileGtCCEE(GTMIN_CCEEFile);
+                var utes = GtminCCEE.Select(x => x.Item1).Distinct();
+
+                foreach (var ute in confT)
+                {
+                    if (GtminCCEE.Any(x => x.Item1 == ute.Num) && term.Any(y => y.Cod == ute.Num))
+                    {
+
+                        DateTime menorData = GtminCCEE.Select(x => x.Item2).Min();
+
+                        if (GtminCCEE.First(x => x.Item1 == ute.Num).Item2 == menorData)
+                        {
+                            var gtmin = GtminCCEE.First(x => x.Item1 == ute.Num).Item3;
+                            //if (ute.Existente == "EX") { //caso existente, modificar term.dat (campos 6=jan...17=dez, 18=demais anos)
+                            for (int c = 6; c <= 18; c++)
+                            {
+                                if (gtmin < term.First(x => x.Cod == ute.Num)[c])
+                                    term.First(x => x.Cod == ute.Num)[c] = gtmin;
+                            }
+                            //} else { // se não existente, alterar expt "GTMIN"
+                            foreach (var exptGtmin in expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN"))
+                            {
+                                if (gtmin < exptGtmin.Valor)
+                                {
+                                    exptGtmin.Valor = gtmin;
+                                }
+                            }
+                            //}
+                        }
+
+                    }
+
+                }
+
+                foreach (var ute in utes)
+                {
+                    //if (!cadTerm.Any(x => x.Num == ute)) continue;
+                    if (expt.Any(x => x.Cod == ute && x.Tipo == "GTMIN"))
+                    {
+                        var toremove = expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN").ToList();
+                        var idx = expt.IndexOf(toremove.First());
+                        toremove.ForEach(x => expt.Remove(x));
+                        var uteDados = GtminCCEE.Where(x => x.Item1 == ute).ToList();
+                        foreach (var uD in uteDados)
+                        {
+
+                            var data = new DateTime(uD.Item2.Year, uD.Item2.Month, 1);
+
+                            if (data >= dgerData)
+                            {
+
+                                var valornovo = uD.Item3;
+                                var valorantigo = toremove.Where(x => x.DataInicio <= data && x.DataFim >= data)
+                                    .FirstOrDefault()?.Valor ?? 0;
+
+                                if (valornovo > valorantigo) valornovo = valorantigo;
+
+                                expt.Insert(idx++,
+
+                                    new CommomLibrary.ExptDat.ExptLine()
+                                    {
+                                        Cod = ute,
+                                        Tipo = "GTMIN",
+                                        Valor = valornovo,
+                                        DataInicio = data,
+                                        DataFim = data,
+                                    }
+                                    );
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            else if (File.Exists(System.IO.Path.Combine(deckCCEEAnterior.BaseFolder, "GtminAgenteCDE.xlsx")))
             {
                 gtminAgente = OpenFileGtAgente(System.IO.Path.Combine(deckCCEEAnterior.BaseFolder, "GtminAgenteCDE.xlsx"));
+                var cadTerm = deckCCEEAnterior[CommomLibrary.Newave.Deck.DeckDocument.cadterm].Document as Compass.CommomLibrary.CadTermDat.CadTermDat;
 
 
                 foreach (var ute in gtminAgente.Usinas)
@@ -718,6 +846,11 @@ namespace Compass.Services
     }
 
     public class ColetaGtminAgente
+    {
+        public List<Usina> Usinas { get; set; }
+
+    }
+    public class ColetaGtminCCEE
     {
         public List<Usina> Usinas { get; set; }
 

@@ -27,7 +27,8 @@ namespace Compass.CommomLibrary.ConftDat {
             }
         }
 
-        public IEnumerator<ConftLine> GetEnumerator() {
+        public IEnumerator<ConftLine> GetEnumerator() 
+        {
             return ((ConftBlock)Blocos["Conft"]).GetEnumerator();
         }
 
