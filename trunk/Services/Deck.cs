@@ -31,10 +31,10 @@ namespace Compass.Services
                 {
                     int ute = Convert.ToInt32(ws.Range["A" + l.ToString()].Value);
                     double gtmin = Convert.ToDouble(ws.Range["D" + l.ToString()].Value2);
-                    if (gtmin > 0)
-                    {
+                   // if (gtmin > 0)
+                    //{
                         dados.Add(new Tuple<int, DateTime, double>(ute, ws.Range["C" + l.ToString()].Value, Convert.ToDouble(ws.Range["D" + l.ToString()].Value2)));
-                    }
+                   // }
                 }
                 //}
 
@@ -322,6 +322,10 @@ namespace Compass.Services
 
                 foreach (var ute in confT)
                 {
+                    //if (ute.Num == 238)
+                    //{
+
+                    //}
                     if (GtminCCEE.Any(x => x.Item1 == ute.Num) && term.Any(y => y.Cod == ute.Num))
                     {
 
@@ -339,10 +343,14 @@ namespace Compass.Services
                             //} else { // se não existente, alterar expt "GTMIN"
                             foreach (var exptGtmin in expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN"))
                             {
-                                if (gtmin < exptGtmin.Valor)
+                                if (exptGtmin.DataInicio <= menorData && exptGtmin.DataFim >= menorData)
                                 {
-                                    exptGtmin.Valor = gtmin;
+                                    if (gtmin < exptGtmin.Valor)
+                                    {
+                                        exptGtmin.Valor = gtmin;
+                                    }
                                 }
+                                
                             }
                             //}
                         }
@@ -353,6 +361,10 @@ namespace Compass.Services
 
                 foreach (var ute in utes)
                 {
+                    //if (ute == 326 || ute == 327 || ute == 328 || ute == 1 || ute == 238)
+                    //{
+
+                    //}
                     //if (!cadTerm.Any(x => x.Num == ute)) continue;
                     if (expt.Any(x => x.Cod == ute && x.Tipo == "GTMIN"))
                     {

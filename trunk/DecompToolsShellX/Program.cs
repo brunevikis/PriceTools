@@ -59,6 +59,8 @@ namespace Compass.DecompToolsShellX
 
             //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
 
+            //resultados "C:\Development\Implementacoes\verResultados\202210_oficial_umido_3009\bkprvo"
+
             //< add key = "passwordlogin" value = "Pas5Word" />
             //dessem2ccee "K:\5_dessem\2022_08\RV1\DS_ONS_082022_RV1D11|true"
             //previvaz "C:\Files\16_Chuva_Vazao\2022_05\RV3\22-05-18\testeSE_Bruno\SCP_CV_ACOMPH_FUNC_d-1_EURO\Propagacoes_Automaticas.txt"

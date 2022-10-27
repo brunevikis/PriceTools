@@ -10,7 +10,6 @@ C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.ValueTuple.xml
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.CoreCompileInputs.cache
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\Compass.CommomLibrary.dll
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\Compass.CommomLibrary.pdb
-C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.AssemblyReference.cache
 C:\Development\price_toolsVMAlfa\trunk\CommomLibrary\bin\Debug\Compass.CommomLibrary.dll.config
 C:\Development\price_toolsVMAlfa\trunk\CommomLibrary\bin\Debug\Compass.CommomLibrary.dll
 C:\Development\price_toolsVMAlfa\trunk\CommomLibrary\bin\Debug\Compass.CommomLibrary.pdb

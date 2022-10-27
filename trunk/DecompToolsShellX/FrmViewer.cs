@@ -698,17 +698,46 @@ namespace Compass.DecompToolsShellX
             }
             for (int i = 1; i <= 4; i++)
             {
+                l1 = orderedResults.Select(x => x[i].DemandaPrimeiroEstagio.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
+                dtDemanda.Rows.Add(l1.ToArray());
+            }
+
+            dtDemanda.Rows.Add();
+            dtDemanda.Rows.Add("Média 1° Mês");
+
+            for (int i = 1; i <= 4; i++)
+            {
                 l1 = orderedResults.Select(x => x[i].DemandaMes.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
                 dtDemanda.Rows.Add(l1.ToArray());
             }
+
             for (int i = 1; i <= 4; i++)
             {
                 l1 = orderedResults.Select(x => x[i].GerHidr.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
                 dtGerHidr.Rows.Add(l1.ToArray());
             }
+            dtGerHidr.Rows.Add();
+            dtGerHidr.Rows.Add("Média 1° Mês");
+
+
+            for (int i = 1; i <= 4; i++)
+            {
+                l1 = orderedResults.Select(x => x[i].GerHidrMedia.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
+                dtGerHidr.Rows.Add(l1.ToArray());
+            }
+           
             for (int i = 1; i <= 4; i++)
             {
                 l1 = orderedResults.Select(x => x[i].GerTerm.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
+                dtGerTerm.Rows.Add(l1.ToArray());
+            }
+
+            dtGerTerm.Rows.Add();
+            dtGerTerm.Rows.Add("Média 1° Mês");
+
+            for (int i = 1; i <= 4; i++)
+            {
+                l1 = orderedResults.Select(x => x[i].GerTermMedia.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
                 dtGerTerm.Rows.Add(l1.ToArray());
             }
 

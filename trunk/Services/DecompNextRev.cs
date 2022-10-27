@@ -2788,12 +2788,35 @@ namespace Compass.Services
             var cargaMedia = pmoBase.Blocos["MERCADO"].Where(x => x[2] == dtAtual.Ano).Select(x => new { mercado = x[0], carga = x[dtAtual.Mes.ToString()] });
             var cargaMediaNext = pmoBase.Blocos["MERCADO"].Where(x => x[2] == dtAtual.SemanasOperativas.Last().Fim.Year).Select(x => new { mercado = x[0], carga = x[dtAtual.SemanasOperativas.Last().Fim.Month.ToString()] });
 
+            var c_adic_Soma = c_adicA
+                         .Where(x => x.Ano == dtAtual.Ano.ToString() && (!x.Descricao.ToUpper().Contains("ITAIPU") && !x.Descricao.ToUpper().Contains("ANDE")))
+                         .Select(x => new { mercado = x.Mercado, carga = (double)x[dtAtual.Mes.ToString()] }).ToList();
+            var c_adic_SomaNext = c_adicA
+                .Where(x => x.Ano == dtAtual.SemanasOperativas.Last().Fim.Year.ToString() && (!x.Descricao.ToUpper().Contains("ITAIPU") && !x.Descricao.ToUpper().Contains("ANDE")))
+                .Select(x => new { mercado = x.Mercado, carga = (double)x[dtAtual.SemanasOperativas.Last().Fim.Month.ToString()] }).ToList();
+
             var cargasMediasSemanais = new double[4, dtAtual.Estagios + 1];
 
             for (int i = 0; i < 4; i++)
             {
+                double adic = 0;
+                double adicNext = 0;
+                if (c_adic_Soma.Count() > 0)
+                {
+                    adic = c_adic_Soma.Where(x => x.mercado == (i + 1) && x.carga > 0.0)
+                                .Sum(x => x.carga);
+                }
+                if (c_adic_SomaNext.Count() > 0)
+                {
+                    adicNext = c_adic_SomaNext.Where(x => x.mercado == (i + 1) && x.carga > 0.0)
+                                .Sum(x => x.carga);
+                }
+
                 var c1 = cargaMedia.First(x => x.mercado == mercados[i]).carga;
                 var c2 = cargaMediaNext.First(x => x.mercado == mercados[i]).carga;
+
+                c1 += adic;
+                c2 += adicNext;
 
                 var b = (c2 - c1) * 2 / (dtAtual.Estagios + 1);
                 var a = 2 * c1 - c2;
@@ -2854,6 +2877,10 @@ namespace Compass.Services
                 .Where(x => x.Ano == dtAtual.Ano.ToString())
                 .Select(x => new { mercado = x.Mercado, carga = (double)x[dtAtual.Mes.ToString()] }).ToList();
 
+            var c_adic_RI = c_adicA
+                .Where(x => x.Ano == dtAtual.Ano.ToString() && (x.Descricao.ToUpper().Contains("ITAIPU") || x.Descricao.ToUpper().Contains("ANDE")))
+                .Select(x => new { mercado = x.Mercado, carga = (double)x[dtAtual.Mes.ToString()] }).ToList();
+
             var pequenas = pmoBase.Blocos["PEQUENAS"].Where(x => x[2] == dtAtual.Ano)
                 .Select(x => new { mercado = x[0], carga = x[dtAtual.Mes.ToString()] });
 
@@ -2880,6 +2907,10 @@ namespace Compass.Services
 
                     c_adic = c_adicA
                         .Where(x => x.Ano == estagio.Inicio.Year.ToString())
+                        .Select(x => new { mercado = x.Mercado, carga = (double)x[estagio.Inicio.Month.ToString()] }).ToList();
+
+                    c_adic_RI = c_adicA
+                        .Where(x => x.Ano == estagio.Inicio.Year.ToString() && (x.Descricao.ToUpper().Contains("ITAIPU") || x.Descricao.ToUpper().Contains("ANDE")))
                         .Select(x => new { mercado = x.Mercado, carga = (double)x[estagio.Inicio.Month.ToString()] }).ToList();
 
                     pequenas = pmoBase.Blocos["PEQUENAS"].Where(x => x[2] == estagio.Inicio.Year)
@@ -2937,6 +2968,10 @@ namespace Compass.Services
                             var riTemp = new RiLine();
                             double riCarga = c_adic.Where(x => x.mercado == (numMercado + 1) && x.carga > 0.0)
                                 .Sum(x => x.carga);
+
+                            double riCargaNew = c_adic_RI.Where(x => x.mercado == (numMercado + 1) && x.carga > 0.0)
+                               .Sum(x => x.carga);
+                            riCarga = riCargaNew;
 
                             riTemp[1] = 66;
                             riTemp[2] = e + 1;

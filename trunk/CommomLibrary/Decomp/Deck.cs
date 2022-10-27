@@ -274,11 +274,11 @@ namespace Compass.CommomLibrary.Decomp
 
                     //var responseTsk = httpClient.PostAsync("http://ec2-44-201-188-49.compute-1.amazonaws.com:5015/api/Command", cont);
                     //var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
-                   // responseTsk.Wait();
-                   // var response = responseTsk.Result;
+                    // responseTsk.Wait();
+                    // var response = responseTsk.Result;
 
 
-                   // System.Net.Http.HttpResponseMessage response = new System.Net.Http.HttpResponseMessage();
+                    // System.Net.Http.HttpResponseMessage response = new System.Net.Http.HttpResponseMessage();
                     try
                     {
                         string caminho = this.BaseFolder.Replace("K:\\", "/home/producao/PrevisaoPLD/").Replace("\\", "/");
@@ -293,7 +293,7 @@ namespace Compass.CommomLibrary.Decomp
                     }
                     catch
                     {
-                       
+
 
                     }
                 }
@@ -302,7 +302,7 @@ namespace Compass.CommomLibrary.Decomp
                 {
                     var infos = File.ReadAllLines(PLD_mensal);
 
-                    foreach(var l in infos)
+                    foreach (var l in infos)
                     {
                         var ls = l.Split(';').Select(x => x.Trim()).ToArray();
                         if (ls.Length > 2)
@@ -311,7 +311,7 @@ namespace Compass.CommomLibrary.Decomp
                         }
                     }
 
-                   
+
                 }
 
                 List<Result.CMO_Mensal> Resu_CMO = new List<Result.CMO_Mensal>();
@@ -335,7 +335,7 @@ namespace Compass.CommomLibrary.Decomp
                     }
 
                 }
-                
+
 
 
 
@@ -439,7 +439,7 @@ namespace Compass.CommomLibrary.Decomp
                 var cortesPath = (this[DeckDocument.dadger].Document as Dadger.Dadger).CortesPath;
                 result.Cortes = System.IO.Path.GetDirectoryName(cortesPath);
 
-                
+
 
                 if (BaseDeck.EnaMLT == null || BaseDeck.EnaMLT[SistemaEnum.SE][mesEstudo] == 0)
                 {
@@ -522,10 +522,57 @@ namespace Compass.CommomLibrary.Decomp
 
                         }
                     });
+                //int maxEstagios = datalines.Select(x => int.Parse(x[0])).Max() - 1;
+                //List<Tuple<int, double>> gerMedia = new List<Tuple<int, double>>(0);
 
+                //datalines
+                //    .Where(x => int.Parse(x[0]) <= maxEstagios)
+                //    .GroupBy(x => int.Parse(x[4]))
+                //    .Where(x => x.Key < 5).ToList()
+                //    .ForEach(x =>
+                //    {
+                //        foreach (var l in x)
+                //        {
+                //            double ger = 0;
+                //            if (l[2].Trim() == "-")
+                //            {
+                //                if (x.Key == 1)
+                //                {
+
+                //                    //som 1.900MW (IT50Hz) e geracao 60Hz                        
+                //                    ger = double.Parse(l[10],
+                //                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
+                //                              + double.Parse(l[16].Replace("-", "0").Trim(),
+                //                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
+                //                              + 1900d;
+                //                    gerMedia.Add(new Tuple<int, double>(x.Key, ger));
+                //                }
+                //                else
+                //                {
+                //                    ger = double.Parse(l[10],
+                //                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
+                //                    gerMedia.Add(new Tuple<int, double>(x.Key, ger));
+
+                //                }
+                //            }
+                            
+                //        }
+                        
+                //    });
+
+                //for (int sist = 1; sist <= 4; sist++)
+                //{
+                //    if (gerMedia.Any(x => x.Item1 == sist))
+                //    {
+                //        result[sist].GerHidrMedia = gerMedia.Where(x => x.Item1 == sist).Select(x => x.Item2).Average();
+                //    }
+                //}
 
                 if (numEstagios == 0)
                 {
+                    for (int sis = 1; sis <= 4; sis++) result[sis].GerHidrMedia = result[sis].GerHidr;
+
+                    for (int sis = 1; sis <= 4; sis++) result[sis].GerTermMedia = result[sis].GerTerm;
 
                     for (int sis = 1; sis <= 4; sis++) result[sis].DemandaMes = result[sis].DemandaPrimeiroEstagio;
                     datalines
@@ -542,6 +589,76 @@ namespace Compass.CommomLibrary.Decomp
                 }
                 else
                 {
+
+                    datalines
+                           .Where(x => x[2] == "-")
+                           .Where(x => x[0] != (numEstagios + 1).ToString())
+                           .GroupBy(x => int.Parse(x[4]))
+                           .Where(x => x.Key < 5).ToList().ForEach(x =>
+                           {
+                               int totaldias = 0;
+                               result[x.Key].GerHidrMedia =
+                                   x.Sum(y =>
+                                   {
+
+                                       int peso = (
+                                           y[0] == "1" ? (dadger.DataEstudo.Month != dadger.VAZOES_MesInicialDoEstudo ? dadger.DataEstudo.AddDays(6).Day : 7)
+                                           : (
+                                                    y[0] == numEstagios.ToString() ? 7 - dias2mes : 7
+                                                )
+                                           );
+                                       totaldias += peso;
+                                       if (x.Key == 1)
+                                       {
+                                           return
+
+                                          (double.Parse(y[10],
+                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[16].Replace("-", "0").Trim(),
+                                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + 1900d)
+                                          * peso;
+                                       }
+                                       else
+                                       {
+                                           return
+
+                                           double.Parse(y[10],
+                                           System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
+                                           * peso;
+                                       }
+                                     
+                                   }) / (totaldias);
+                           });
+
+                    datalines
+                           .Where(x => x[2] == "-")
+                           .Where(x => x[0] != (numEstagios + 1).ToString())
+                           .GroupBy(x => int.Parse(x[4]))
+                           .Where(x => x.Key < 5).ToList().ForEach(x =>
+                           {
+                               int totaldias = 0;
+                               result[x.Key].GerTermMedia =
+                                   x.Sum(y =>
+                                   {
+
+                                       int peso = (
+                                           y[0] == "1" ? (dadger.DataEstudo.Month != dadger.VAZOES_MesInicialDoEstudo ? dadger.DataEstudo.AddDays(6).Day : 7)
+                                           : (
+                                                    y[0] == numEstagios.ToString() ? 7 - dias2mes : 7
+                                                )
+                                           );
+                                       totaldias += peso;
+                                       
+                                           return
+
+                                          (double.Parse(y[8],
+                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[9].Replace("-", "0").Trim(),
+                                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo))
+                                          * peso;
+                                      
+                                       
+
+                                   }) / (totaldias);
+                           });
 
 
                     datalines
@@ -608,7 +725,7 @@ namespace Compass.CommomLibrary.Decomp
 
 
             }
-            catch(Exception erro) { }
+            catch (Exception erro) { }
             return result;
 
         }

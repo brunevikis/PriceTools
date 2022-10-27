@@ -137,8 +137,9 @@ namespace Compass.CommomLibrary {
             public double GerHidr { get; set; }
             public double GerTerm { get; set; }
             public double GerPeq { get; set; }
+            public double GerHidrMedia { get; set; }
+            public double GerTermMedia { get; set; }
 
-           
 
         }
 
