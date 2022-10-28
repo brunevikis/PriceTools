@@ -273,6 +273,7 @@ namespace Compass.Services
             //}
 
             var GTMIN_CCEEFile = Directory.GetFiles(deckCCEEAnterior.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("GTMIN_CCEE_", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            var GTMIN_CCEEFileAtual = Directory.GetFiles(cceeDeck.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("GTMIN_CCEE_", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             var cadTermFile = Directory.GetFiles(deckCCEEAnterior.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("CADTERM.DAT", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             bool temCadterm = false;
             var confT = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.conft].Document as Compass.CommomLibrary.ConftDat.ConftDat;
@@ -317,6 +318,13 @@ namespace Compass.Services
 
             if (GTMIN_CCEEFile != null && File.Exists(GTMIN_CCEEFile) && temCadterm == false)
             {
+                if (GTMIN_CCEEFileAtual != null && File.Exists(GTMIN_CCEEFileAtual))
+                {
+                    GTMIN_CCEEFile = GTMIN_CCEEFileAtual;
+
+                }
+
+
                 var GtminCCEE = OpenFileGtCCEE(GTMIN_CCEEFile);
                 var utes = GtminCCEE.Select(x => x.Item1).Distinct();
 

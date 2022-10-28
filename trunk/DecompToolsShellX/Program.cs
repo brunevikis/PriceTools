@@ -815,6 +815,21 @@ namespace Compass.DecompToolsShellX
                 }
 
                 deck.CopyFilesToFolder(cloneDir);
+                try
+                {
+                    var GTMIN_CCEEFileAtual = Directory.GetFiles(deck.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("GTMIN_CCEE_", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    if (GTMIN_CCEEFileAtual != null && File.Exists(GTMIN_CCEEFileAtual))
+                    {
+                        File.Copy(GTMIN_CCEEFileAtual, Path.Combine(cloneDir, GTMIN_CCEEFileAtual.Split('\\').Last()),true);
+
+                    }
+                }
+                catch (Exception ed)
+                {
+
+                    
+                }
+
                 dynamic cceeDeck = DeckFactory.CreateDeck(cloneDir);
 
 
