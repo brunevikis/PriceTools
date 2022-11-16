@@ -344,23 +344,102 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<FAIXALIMITES> faixalimites = null;
+        public List<FAIXALIMITES> Faixalimites
+        {
+            get
+            {
+                if (Names.ContainsKey("_faixaLimites"))
+                {
+                   // if (faixalimites == null)
+                   // {
+                        faixalimites = new List<FAIXALIMITES>();
+
+                        var ws = Names["_faixaLimites"].Worksheet;
+                        var row = Names["_faixaLimites"].Row;
+                        var col = Names["_faixaLimites"].Column;
+
+                        int headerRow = row - 1;
+                        int headerMaxCol = col;
+                        int percentsCols = 0;
+                        for (int c = col + 8; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
+                        {
+                            headerMaxCol = c;
+                            percentsCols++;
+                        }
+
+                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                        {
+                            faixalimites.Add(new FAIXALIMITES(ws.Range[ws.Cells[r, col], ws.Cells[r, headerMaxCol]], percentsCols));
+                        }
+                    //}
+
+                    return faixalimites;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+        }
+
+        List<FAIXAPERCENTS> faixapercents = null;
+
+        public List<FAIXAPERCENTS> Faixapercents
+        {
+            get
+            {
+                if (Names.ContainsKey("_faixaLimites"))
+                {
+                    //if (faixapercents == null)
+                   // {
+                        faixapercents = new List<FAIXAPERCENTS>();
+
+                        var ws = Names["_faixaLimites"].Worksheet;
+                        var row = Names["_faixaLimites"].Row;
+                        var col = Names["_faixaLimites"].Column;
+
+                        int headerRow = row - 1;
+                        int headerMaxCol = col;
+                        int percentsCols = 0;
+                        for (int c = col + 7; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
+                        {
+                            headerMaxCol = c;
+                            percentsCols++;
+                        }
+
+                        faixapercents.Add(new FAIXAPERCENTS(ws.Range[ws.Cells[headerRow, col], ws.Cells[headerRow, headerMaxCol]], percentsCols));
+
+                   // }
+
+                    return faixapercents;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+        }
+
         List<DADADTERM> dadadterm = null;
         public List<DADADTERM> Dadterm
         {
             get
             {
-               // if (dadadterm == null)
+                // if (dadadterm == null)
                 //{
-                    dadadterm = new List<DADADTERM>();
+                dadadterm = new List<DADADTERM>();
 
-                    var ws = Names["_adtermdadgnl"].Worksheet;
-                    var row = Names["_adtermdadgnl"].Row;
-                    var col = Names["_adtermdadgnl"].Column;
+                var ws = Names["_adtermdadgnl"].Worksheet;
+                var row = Names["_adtermdadgnl"].Row;
+                var col = Names["_adtermdadgnl"].Column;
 
-                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
-                    {
-                        dadadterm.Add(new DADADTERM(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
-                    }
+                for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                {
+                    dadadterm.Add(new DADADTERM(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
+                }
                 //}
 
                 return dadadterm;
@@ -372,19 +451,19 @@ namespace Compass.ExcelTools.Templates
         {
             get
             {
-                
-                
-                    herhc = new List<HERHC>();
 
-                    var ws = Names["_he"].Worksheet;
-                    var row = Names["_he"].Row;
-                    var col = Names["_he"].Column;
 
-                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
-                    {
-                        herhc.Add(new HERHC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
-                    }
-                
+                herhc = new List<HERHC>();
+
+                var ws = Names["_he"].Worksheet;
+                var row = Names["_he"].Row;
+                var col = Names["_he"].Column;
+
+                for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                {
+                    herhc.Add(new HERHC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
+                }
+
 
                 return herhc;
             }
@@ -657,17 +736,17 @@ namespace Compass.ExcelTools.Templates
                 {
                     //if (Adatermdad == null)
                     //{
-                        Adatermdad = new List<Compass.CommomLibrary.IADTERMDAD>();
+                    Adatermdad = new List<Compass.CommomLibrary.IADTERMDAD>();
 
-                        var ws = Names["_adtermdadgnl"].Worksheet;
-                        var row = Names["_adtermdadgnl"].Row;
-                        var col = Names["_adtermdadgnl"].Column;
+                    var ws = Names["_adtermdadgnl"].Worksheet;
+                    var row = Names["_adtermdadgnl"].Row;
+                    var col = Names["_adtermdadgnl"].Column;
 
-                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
-                        {
-                            Adatermdad.Add(new ADTERMDAD(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
-                        }
-                   // }
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        Adatermdad.Add(new ADTERMDAD(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
+                    }
+                    // }
 
                     return Adatermdad;
                 }
@@ -811,7 +890,7 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
-        public class ModifWb: Compass.CommomLibrary.IMODIF
+        public class ModifWb : Compass.CommomLibrary.IMODIF
         {
             public int Usina { get; set; }
 
@@ -922,7 +1001,7 @@ namespace Compass.ExcelTools.Templates
                 if (rng[1, 12].Value is double) TaxaMes[9] = rng[1, 12].Value;
                 if (rng[1, 13].Value is double) TaxaMes[10] = rng[1, 13].Value;
                 if (rng[1, 14].Value is double) TaxaMes[11] = rng[1, 14].Value;
-                
+
             }
         }
 
@@ -954,6 +1033,61 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        public class FAIXALIMITES
+        {
+            public int UH { get; set; }
+            public string TipoRest { get; set; }
+            public int UsiRest { get; set; }
+
+            public int CodRest { get; set; }
+            public int MesIni { get; set; }
+            public int MesFim { get; set; }
+            public string InfSup { get; set; }
+            public bool Ativa { get; set; }
+            public List<double> Vals = new List<double>();// { get; set; }
+            public FAIXALIMITES(Range rng, int maxCol)
+            {
+                if (rng[1, 1].Value is double) UH = (int)rng[1, 1].Value;
+                TipoRest = ((string)rng[1, 2].Text).ToUpper();
+                if (rng[1, 3].Value is double) UsiRest = (int)rng[1, 3].Value;
+
+                if (rng[1, 4].Value is double) CodRest = (int)rng[1, 4].Value;
+
+                if (rng[1, 5].Value is double) MesIni = (int)rng[1, 5].Value;
+
+                if (rng[1, 6].Value is double) MesFim = (int)rng[1, 6].Value;
+
+                InfSup = ((string)rng[1, 7].Text).ToUpper().Equals("SUP") ? "SUP" : "INF";
+
+                Ativa = ((string)rng[1, 8].Text).ToUpper() == "SIM";
+
+                for (int i = 9; i <= maxCol + 8; i++)
+                {
+                    if (rng[1, i].Value is double) Vals.Add(rng[1, i].Value);
+
+                }
+
+
+            }
+
+
+        }
+
+        public class FAIXAPERCENTS
+        {
+
+            public List<double> Percents = new List<double>();// { get; set; }
+            public FAIXAPERCENTS(Range rng, int maxCol)
+            {
+                for (int i = 9; i <= maxCol + 8; i++)
+                {
+                    if (rng[1, i].Value is double) Percents.Add(rng[1, i].Value * 100f);
+                }
+
+            }
+
+        }
+
         public class HERHC
         {
             public int Rest { get; set; }
@@ -969,7 +1103,7 @@ namespace Compass.ExcelTools.Templates
 
                 if (rng[1, 3].Value is double) valAtual = rng[1, 3].Value;
                 if (rng[1, 4].Value is double) valAnt = rng[1, 4].Value;
-               
+
 
             }
         }
@@ -994,11 +1128,12 @@ namespace Compass.ExcelTools.Templates
             public RHQ(Range rng)
             {
 
-                if (rng[1, 1].Value is double){
+                if (rng[1, 1].Value is double)
+                {
                     Usina = (int)rng[1, 1].Value;
                     Usinas = new List<int>();
                     Usinas.Add(Usina);
-                } 
+                }
                 else if (((string)rng[1, 1].Text).StartsWith("#", StringComparison.OrdinalIgnoreCase)) Restricao = int.Parse(((string)rng[1, 1].Text).Substring(1));
                 else if (((string)rng[1, 1].Text).Contains(";"))
                 {
@@ -1014,7 +1149,7 @@ namespace Compass.ExcelTools.Templates
                         }
                     });
                 }
-                    
+
 
                 if (rng[1, 2].Value is double) Mes = (int)rng[1, 2].Value;
                 if (rng[1, 3].Value is double) Ano = (int)rng[1, 3].Value;
@@ -1284,7 +1419,7 @@ namespace Compass.ExcelTools.Templates
 
                 if (rng[1, 4].Value is double) estagio = rng[1, 4].Value;
 
-                if (rng[1, 5].Value !=  null)
+                if (rng[1, 5].Value != null)
                 {
                     PT1 = rng[1, 5].Value;
                 }

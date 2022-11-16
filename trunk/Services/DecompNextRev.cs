@@ -45,6 +45,19 @@ namespace Compass.Services
 
         }
 
+        public static double GetLimitesPorFaixa(double voliniPerc, WorkbookMensal.FAIXALIMITES faixaLimite, WorkbookMensal.FAIXAPERCENTS faixaPercent)
+        {
+            double valor = 0;
+            for (int i = 0; i < faixaPercent.Percents.Count(); i++)
+            {
+                if (voliniPerc <= faixaPercent.Percents[i])
+                {
+                    return faixaLimite.Vals[i];
+                }
+            }
+
+            return valor;
+        }
 
         public static Dadger CreateRv0(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo, WorkbookMensal w, MesOperativo mesOperativo, Compass.CommomLibrary.Pmo.Pmo pmoBase)
         {

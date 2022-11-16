@@ -440,9 +440,490 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 #endregion Armazenamento
 
                                 dadgers[dtEstudo] = configH.baseDoc as Dadger;
+
+                                #region faixa limites de restrição
+
+                                //codigofaixaslimites aqui
+                                if (w.Faixapercents != null && w.Faixalimites != null)//if (w.Faixapercents.Count() > 0 && w.Faixalimites.Count() > 0)
+                                {
+                                    DateTime mesSeg = dtEstudo.AddMonths(1);
+                                    dadger = configH.baseDoc as Dadger;
+
+                                    var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
+                                    var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
+
+                                    Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;
+
+
+
+
+                                    if (limitesHQ.Count() > 0)
+                                    {
+
+                                        foreach (var lHq in limitesHQ)
+                                        {
+                                            // dynamic lq;
+                                            var UH = dadger.BlocoUh.Where(x => x.Usina == lHq.UH).FirstOrDefault();
+
+                                            double produt65 = configH.Usinas.Any(x => x.Cod == lHq.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHq.UsiRest).Select(x => x.Prod65VolUtil).First() : -1;// -1 para ocaso de não encontrar o dado referente a usina da restrição
+
+                                            if (UH != null)
+                                            {
+
+                                                var rests = dadger.BlocoRhq.Where(x => x.Restricao == lHq.CodRest);
+
+                                                if (rests.Count() > 0)
+                                                {
+                                                    var le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LqLine).Select(x => (Compass.CommomLibrary.Dadger.LqLine)x);
+                                                    dynamic lqdummy = le.Where(x => x.Estagio <= 2).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                                    if (lqdummy.Estagio < 2)//caso não exista o estagio do segundo mes informado, copia os dados do ultimo estagio informado para o segundo mes
+                                                    {
+
+                                                        var nledummy = lqdummy.Clone();
+                                                        nledummy.Estagio = 2;
+                                                        dadger.BlocoRhq.Add(nledummy);
+                                                    }
+
+                                                    rests = dadger.BlocoRhq.Where(x => x.Restricao == lHq.CodRest);
+                                                    le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LqLine).Select(x => (Compass.CommomLibrary.Dadger.LqLine)x);
+                                                    var lqs = le.Where(x => x.Estagio <= 2).ToList();
+
+                                                    if (lqs.Count() > 0)
+                                                    {
+                                                        foreach (var lq in lqs)
+                                                        {
+                                                            modif = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
+                                                            var modifFile = modif.File;
+
+                                                            var reDat = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.re].Document as Compass.CommomLibrary.ReDat.ReDat;
+
+                                                            DateTime data;
+                                                            data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
+
+                                                            double valor = 0;
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHq, w.Faixapercents.First());
+
+                                                            if (lq.Estagio == 2)
+                                                            {
+                                                                data = mesSeg;
+                                                                var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH == lHq.UH && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
+                                                                if (lHqSEg != null)
+                                                                {
+                                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHqSEg, w.Faixapercents.First());
+                                                                }
+                                                            }
+
+                                                            if (lHq.InfSup == "SUP")
+                                                            {
+                                                                lq[4] = valor < lq[3] ? lq[3] : valor;
+                                                                lq[6] = valor < lq[3] ? lq[3] : valor;
+                                                                lq[8] = valor < lq[3] ? lq[3] : valor;
+
+                                                                if (produt65 >= 0) // alteração do arquivo re.dat caso necessario 
+                                                                {
+                                                                    double restValor = lq[4];
+                                                                    foreach (var reRest in reDat.Restricoes.ToList())
+                                                                    {
+                                                                        foreach (var reDet in reDat.Detalhes.Where(x => x.Numero == reRest.Numero).ToList())
+                                                                        {
+
+                                                                            if (reDet.Inicio < deckNWEstudo.Dger.DataEstudo && reDet.Fim >= deckNWEstudo.Dger.DataEstudo)
+                                                                            {
+                                                                                reDet.Inicio = deckNWEstudo.Dger.DataEstudo;
+                                                                            }
+                                                                            else if (reDet.Fim < deckNWEstudo.Dger.DataEstudo)
+                                                                            {
+                                                                                reDat.Detalhes.Remove(reDet);
+                                                                            }
+                                                                        }
+
+                                                                        if (reDat.Detalhes.Where(x => x.Numero == reRest.Numero).Count() == 0) reDat.Restricoes.Remove(reRest);
+                                                                    }
+                                                                    //procura restricao
+                                                                    var re = reDat.Restricoes.Where(
+                                                                        x => String.Join("", x.Valores.Skip(1).Where(y => y != null).OrderBy(y => y).Select(y => y.ToString().Trim()))
+                                                                            == String.Join("", lHq.UsiRest.ToString())
+                                                                        ).FirstOrDefault();
+
+                                                                    //se nao exite insere
+                                                                    if (re == null)
+                                                                    {
+
+                                                                        re = new Compass.CommomLibrary.ReDat.ReLine()
+                                                                        {
+                                                                            Numero = reDat.Restricoes.Max(x => x.Numero) + 1
+                                                                        };
+
+                                                                        re[1] = lHq.UsiRest;
+
+                                                                        reDat.Restricoes.Add(re);
+
+
+                                                                        var val = new Compass.CommomLibrary.ReDat.ReValLine()
+                                                                        {
+                                                                            Numero = re.Numero,
+                                                                            Patamar = 0,
+                                                                            ValorRestricao = restValor * produt65,
+                                                                            Inicio = data,
+                                                                            Fim = data,
+                                                                        };
+
+                                                                        reDat.Detalhes.Add(val);
+
+                                                                    }
+                                                                    //altera ou insere novo valor
+                                                                    else
+                                                                    {
+
+                                                                        var val = new Compass.CommomLibrary.ReDat.ReValLine()
+                                                                        {
+                                                                            Numero = re.Numero,
+                                                                            Patamar = 0,
+                                                                            ValorRestricao = restValor * produt65,
+                                                                            Inicio = data,
+                                                                            Fim = data,
+                                                                        };
+
+                                                                        var anterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                                                                            .Where(x => x.Inicio < val.Inicio && x.Fim >= val.Inicio).FirstOrDefault();
+                                                                        var posterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                                                                            .Where(x => x.Inicio <= val.Fim && x.Fim > val.Fim).FirstOrDefault();
+
+                                                                        if (anterior != null)
+                                                                        {
+                                                                            var anteriorSplit = anterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
+                                                                            anterior.Inicio = val.Inicio;
+                                                                            anteriorSplit.Fim = val.Inicio.AddMonths(-1);
+
+                                                                            reDat.Detalhes.Add(anteriorSplit);
+                                                                        }
+
+                                                                        if (posterior != null)
+                                                                        {
+                                                                            var posteriorSplit = posterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
+                                                                            posterior.Fim = val.Fim; ;
+                                                                            posteriorSplit.Inicio = val.Fim.AddMonths(1);
+
+                                                                            reDat.Detalhes.Add(posteriorSplit);
+                                                                        }
+
+                                                                        reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                                                                            .Where(x => x.Inicio >= val.Inicio && x.Fim <= val.Fim).ToList().ForEach(x =>
+                                                                                reDat.Detalhes.Remove(x)
+                                                                                );
+
+                                                                        reDat.Detalhes.Add(val);
+                                                                    }
+                                                                    var newl = reDat.Detalhes.OrderBy(x => x.Numero).ThenBy(x => x.Inicio).ToList();
+                                                                    reDat.Detalhes.Clear();
+                                                                    newl.ForEach(x => reDat.Detalhes.Add(x));
+                                                                    reDat.SaveToFile();
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                lq[3] = valor > lq[4] ? lq[4] : valor;
+                                                                lq[5] = valor > lq[4] ? lq[4] : valor;
+                                                                lq[7] = valor > lq[4] ? lq[4] : valor;
+                                                            }
+
+                                                            /////////
+
+                                                            var modifline = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+                                                            double modifval = lq[3];
+                                                            if (modifline != null)
+                                                            {
+                                                                if (modifline.DataModif < data)
+                                                                {
+
+                                                                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                    var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                    var valorAntigo = modifline.ValorModif;
+
+
+                                                                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                                    newModifLine.Chave = "VAZMINT";
+                                                                    newModifLine.Usina = lHq.UsiRest;
+                                                                    int index = modif.IndexOf(modifline) + 1;
+                                                                    modif.Insert(index, newModifLine);
+
+                                                                    //mes seguinte verificação
+                                                                    var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                    if (modiflineMesSeq == null)
+                                                                    {
+                                                                        //newModifLine2 = modifline;
+                                                                        newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                        //newModifLine2.DataModif = data.AddMonths(1);
+                                                                        newModifLine2.Chave = "VAZMINT";
+                                                                        newModifLine2.Usina = lHq.UsiRest;
+                                                                        int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                        modif.Insert(index2, newModifLine2);
+                                                                    }
+
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                    var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                    var valorAntigo = modifline.ValorModif;
+
+                                                                    modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+
+                                                                    //mes seguinte verificação
+                                                                    var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                    if (modiflineMesSeq == null)
+                                                                    {
+                                                                        //newModifLine2 = modifline;
+                                                                        newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                        //newModifLine2.DataModif = data.AddMonths(1);
+                                                                        newModifLine2.Chave = "VAZMINT";
+                                                                        newModifLine2.Usina = lHq.UsiRest;
+                                                                        int index2 = modif.IndexOf(modifline) + 1;
+                                                                        modif.Insert(index2, newModifLine2);
+                                                                    }
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                                                                if (mod != null)
+                                                                {
+                                                                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                                    newModifLine.Chave = "VAZMINT";
+                                                                    newModifLine.Usina = lHq.UsiRest;
+                                                                    int index = modif.IndexOf(mod) + 1;
+                                                                    modif.Insert(index, newModifLine);
+                                                                }
+
+
+                                                            }
+
+                                                            modif.SaveToFile(filePath: modifFile);
+                                                            /////////
+                                                        }
+
+                                                    }
+                                                }
+
+
+                                            }
+                                        }
+                                    }
+                                    if (limitesHV.Count() > 0)
+                                    {
+                                        foreach (var lHv in limitesHV)
+                                        {
+                                            // dynamic lq;
+
+                                            var UH = dadger.BlocoUh.Where(x => x.Usina == lHv.UH).FirstOrDefault();
+
+                                            double hectoMin = configH.Usinas.Any(x => x.Cod == lHv.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHv.UsiRest).Select(x => x.VolMin).First() : -1;
+
+                                            if (UH != null)
+                                            {
+
+                                                var rests = dadger.BlocoRhv.Where(x => x.Restricao == lHv.CodRest);
+
+                                                if (rests.Count() > 0)
+                                                {
+                                                    var le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LvLine).Select(x => (Compass.CommomLibrary.Dadger.LvLine)x);
+                                                    // var lvs = le.Where(x => x.Estagio <= dadger.VAZOES_NumeroDeSemanas).ToList();
+                                                    dynamic lvdummy = le.Where(x => x.Estagio <= 2).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                                    if (lvdummy.Estagio < 2)//caso não exista o estagio do segundo mes informado, copia os dados do ultimo estagio informado para o segundo mes
+                                                    {
+
+                                                        var nledummy = lvdummy.Clone();
+                                                        nledummy.Estagio = 2;
+                                                        dadger.BlocoRhv.Add(nledummy);
+                                                    }
+
+                                                    rests = dadger.BlocoRhv.Where(x => x.Restricao == lHv.CodRest);
+                                                    le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LvLine).Select(x => (Compass.CommomLibrary.Dadger.LvLine)x);
+                                                    var lvs = le.Where(x => x.Estagio <= 2).ToList();
+
+                                                    if (lvs.Count() > 0)
+                                                    {
+                                                        foreach (var lv in lvs)
+                                                        {
+                                                            modif = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
+                                                            var modifFile = modif.File;
+
+                                                            string minemonico = "";
+                                                            double valorTemp;
+
+                                                            DateTime data;
+                                                            data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
+
+                                                            double valor = 0;
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHv, w.Faixapercents.First());
+
+                                                            if (lv.Estagio == 2)
+                                                            {
+                                                                data = mesSeg;
+                                                                var lHvSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHv.UsiRest && x.UH == lHv.UH && x.InfSup == lHv.InfSup && x.TipoRest.ToUpper().Equals("HV")).FirstOrDefault();
+                                                                if (lHvSEg != null)
+                                                                {
+                                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHvSEg, w.Faixapercents.First());
+                                                                }
+                                                            }
+
+                                                            if (lHv.InfSup == "SUP")
+                                                            {
+                                                                lv[4] = valor < lv[3] ? lv[3] : valor;
+                                                                minemonico = "VMAXT";
+                                                                valorTemp = lv[4];
+                                                            }
+                                                            else
+                                                            {
+                                                                lv[3] = valor > lv[4] ? lv[4] : valor;
+                                                                minemonico = "VMINT";
+                                                                valorTemp = lv[3];
+                                                            }
+
+                                                            /////////
+
+                                                            if (hectoMin >= 0)
+                                                            {
+                                                                var modifline = modif.Where(x => x.Usina == lHv.UsiRest && x.Chave == minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+                                                                double modifval = valorTemp + hectoMin;
+                                                                if (modifline != null)
+                                                                {
+                                                                    if (modifline.DataModif < data)
+                                                                    {
+
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var valorAntigo = modifline.ValorModif;
+
+
+                                                                        newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'), "'h'");
+                                                                        newModifLine.Chave = minemonico;
+                                                                        newModifLine.Usina = lHv.UsiRest;
+                                                                        int index = modif.IndexOf(modifline) + 1;
+                                                                        modif.Insert(index, newModifLine);
+
+                                                                        //mes seguinte verificação
+                                                                        var modiflineMesSeq = modif.Where(x => x.Usina == lHv.UsiRest && x.Chave == minemonico && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                        if (modiflineMesSeq == null)
+                                                                        {
+                                                                            //newModifLine2 = modifline;
+                                                                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'), "'h'");
+                                                                            //newModifLine2.DataModif = data.AddMonths(1);
+                                                                            newModifLine2.Chave = minemonico;
+                                                                            newModifLine2.Usina = lHv.UsiRest;
+                                                                            int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                            modif.Insert(index2, newModifLine2);
+                                                                        }
+
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var valorAntigo = modifline.ValorModif;
+
+                                                                        modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'), "'h'");
+
+                                                                        //mes seguinte verificação
+                                                                        var modiflineMesSeq = modif.Where(x => x.Usina == lHv.UsiRest && x.Chave == minemonico && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                        if (modiflineMesSeq == null)
+                                                                        {
+                                                                            //newModifLine2 = modifline;
+                                                                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'), "'h'");
+                                                                            //newModifLine2.DataModif = data.AddMonths(1);
+                                                                            newModifLine2.Chave = minemonico;
+                                                                            newModifLine2.Usina = lHv.UsiRest;
+                                                                            int index2 = modif.IndexOf(modifline) + 1;
+                                                                            modif.Insert(index2, newModifLine2);
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    var mod = modif.Where(x => x.Usina == lHv.UsiRest).FirstOrDefault();
+                                                                    if (mod != null)
+                                                                    {
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                        newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'), "'h'");
+                                                                        newModifLine.Chave = minemonico;
+                                                                        newModifLine.Usina = lHv.UsiRest;
+                                                                        int index = modif.IndexOf(mod) + 1;
+                                                                        modif.Insert(index, newModifLine);
+                                                                    }
+
+
+                                                                }
+
+                                                                modif.SaveToFile(filePath: modifFile);
+                                                            }
+
+                                                            /////////
+
+                                                        }
+
+                                                    }
+                                                }
+
+
+
+                                            }
+                                        }
+                                    }
+                                    dadger.SaveToFile();
+
+                                    if (w.Faixapercents.Count() > 0 && w.Faixalimites.Count() > 0)
+                                    {
+                                        List<string> faixaText = new List<string>();
+                                        string header = "UH;TIPO REST;USINA REST;COD REST;MÊS INI;MÊS FIM;INF/SUP;ATIVA";
+                                        w.Faixapercents.First().Percents.ForEach(x => header = header + ";" + x.ToString() + "%");
+
+                                        faixaText.Add(header);
+                                        w.Faixalimites.ForEach(x =>
+                                        {
+                                            string linha;
+                                            linha = string.Join(";", x.UH.ToString(), x.TipoRest, x.UsiRest.ToString(), x.CodRest.ToString(), x.MesIni.ToString(), x.MesFim.ToString(), x.InfSup.ToString(), x.Ativa.ToString()) + ";";
+                                            linha = linha + string.Join(";", x.Vals.ToList());
+                                            faixaText.Add(linha);
+                                            // x.Vals.ForEach(y => { linha = linha + y.ToString(); });
+                                        });
+                                        File.WriteAllLines(Path.Combine(estudoPath, "LIMITES_DE_RESTRICAO.txt"), faixaText);
+
+                                        string destino = deckNWEstudo.BaseFolder;
+                                        
+
+                                       // var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+
+                                        var ret = Compass.Services.Linux.Run(destino, w.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
+                                        if (!ret)
+                                        {
+                                            throw new Exception("Ocorreu erro na criação e consistência dos decks newaves. Verifique.");
+                                        }
+                                        Compass.Services.Deck.CreateDgerNewdesp(destino);
+
+
+                                    }
+
+                                }
+
+                                //fim codigofaixas limites
+
+                                #endregion
                             }
 
                             #endregion DADGER
+
+
 
                             #region DADGNL
 
@@ -1057,6 +1538,472 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         }
                         #endregion
 
+                        #region faixa limites de restrição
+
+                        //codigofaixaslimites aqui
+                        if (w.Faixapercents != null && w.Faixalimites != null)//if (w.Faixapercents.Count() > 0 && w.Faixalimites.Count() > 0)
+                        {
+                            DateTime mesSeg = dtEstudo.AddMonths(1);
+
+                            var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
+                            var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
+
+                            Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;
+
+
+
+
+                            if (limitesHQ.Count() > 0)
+                            {
+
+                                foreach (var lHq in limitesHQ)
+                                {
+                                    // dynamic lq;
+                                    var UH = dadger.BlocoUh.Where(x => x.Usina == lHq.UH).FirstOrDefault();
+
+                                    double produt65 = configH.Usinas.Any(x => x.Cod == lHq.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHq.UsiRest).Select(x => x.Prod65VolUtil).First() : -1;// -1 para ocaso de não encontrar o dado referente a usina da restrição
+
+                                    if (UH != null)
+                                    {
+
+                                        var rests = dadger.BlocoRhq.Where(x => x.Restricao == lHq.CodRest);
+
+                                        if (rests.Count() > 0)
+                                        {
+                                            var le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LqLine).Select(x => (Compass.CommomLibrary.Dadger.LqLine)x);
+                                            dynamic lqdummy = le.Where(x => x.Estagio <= dadger.VAZOES_NumeroDeSemanas + 1).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                            if (lqdummy.Estagio < dadger.VAZOES_NumeroDeSemanas + 1)//caso não exista o estagio do segundo mes informado, copia os dados do ultimo estagio informado para o segundo mes
+                                            {
+
+                                                var nledummy = lqdummy.Clone();
+                                                nledummy.Estagio = dadger.VAZOES_NumeroDeSemanas + 1;
+                                                dadger.BlocoRhq.Add(nledummy);
+                                            }
+
+                                            rests = dadger.BlocoRhq.Where(x => x.Restricao == lHq.CodRest);
+                                            le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LqLine).Select(x => (Compass.CommomLibrary.Dadger.LqLine)x);
+                                            var lqs = le.Where(x => x.Estagio <= dadger.VAZOES_NumeroDeSemanas + 1).ToList();
+
+                                            if (lqs.Count() > 0)
+                                            {
+                                                foreach (var lq in lqs)
+                                                {
+                                                    modif = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
+                                                    var modifFile = modif.File;
+
+                                                    var reDat = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.re].Document as Compass.CommomLibrary.ReDat.ReDat;
+
+                                                    DateTime data;
+                                                    data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
+
+                                                    double valor = 0;
+                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHq, w.Faixapercents.First());
+
+                                                    if (lq.Estagio == dadger.VAZOES_NumeroDeSemanas + 1)
+                                                    {
+                                                        data = mesSeg;
+                                                        var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH == lHq.UH && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
+                                                        if (lHqSEg != null)
+                                                        {
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHqSEg, w.Faixapercents.First());
+                                                        }
+                                                    }
+
+                                                    if (lHq.InfSup == "SUP")
+                                                    {
+                                                        lq[4] = valor < lq[3] ? lq[3] : valor;
+                                                        lq[6] = valor < lq[3] ? lq[3] : valor;
+                                                        lq[8] = valor < lq[3] ? lq[3] : valor;
+
+                                                        if (produt65 >= 0) // alteração do arquivo re.dat caso necessario 
+                                                        {
+                                                            double restValor = lq[4];
+                                                            foreach (var reRest in reDat.Restricoes.ToList())
+                                                            {
+                                                                foreach (var reDet in reDat.Detalhes.Where(x => x.Numero == reRest.Numero).ToList())
+                                                                {
+
+                                                                    if (reDet.Inicio < deckNWEstudo.Dger.DataEstudo && reDet.Fim >= deckNWEstudo.Dger.DataEstudo)
+                                                                    {
+                                                                        reDet.Inicio = deckNWEstudo.Dger.DataEstudo;
+                                                                    }
+                                                                    else if (reDet.Fim < deckNWEstudo.Dger.DataEstudo)
+                                                                    {
+                                                                        reDat.Detalhes.Remove(reDet);
+                                                                    }
+                                                                }
+
+                                                                if (reDat.Detalhes.Where(x => x.Numero == reRest.Numero).Count() == 0) reDat.Restricoes.Remove(reRest);
+                                                            }
+                                                            //procura restricao
+                                                            var re = reDat.Restricoes.Where(
+                                                                x => String.Join("", x.Valores.Skip(1).Where(y => y != null).OrderBy(y => y).Select(y => y.ToString().Trim()))
+                                                                    == String.Join("", lHq.UsiRest.ToString())
+                                                                ).FirstOrDefault();
+
+                                                            //se nao exite insere
+                                                            if (re == null)
+                                                            {
+
+                                                                re = new Compass.CommomLibrary.ReDat.ReLine()
+                                                                {
+                                                                    Numero = reDat.Restricoes.Max(x => x.Numero) + 1
+                                                                };
+
+                                                                re[1] = lHq.UsiRest;
+
+                                                                reDat.Restricoes.Add(re);
+
+
+                                                                var val = new Compass.CommomLibrary.ReDat.ReValLine()
+                                                                {
+                                                                    Numero = re.Numero,
+                                                                    Patamar = 0,
+                                                                    ValorRestricao = restValor * produt65,
+                                                                    Inicio = data,
+                                                                    Fim = data,
+                                                                };
+
+                                                                reDat.Detalhes.Add(val);
+
+                                                            }
+                                                            //altera ou insere novo valor
+                                                            else
+                                                            {
+
+                                                                var val = new Compass.CommomLibrary.ReDat.ReValLine()
+                                                                {
+                                                                    Numero = re.Numero,
+                                                                    Patamar = 0,
+                                                                    ValorRestricao = restValor * produt65,
+                                                                    Inicio = data,
+                                                                    Fim = data,
+                                                                };
+
+                                                                var anterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                                                                    .Where(x => x.Inicio < val.Inicio && x.Fim >= val.Inicio).FirstOrDefault();
+                                                                var posterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                                                                    .Where(x => x.Inicio <= val.Fim && x.Fim > val.Fim).FirstOrDefault();
+
+                                                                if (anterior != null)
+                                                                {
+                                                                    var anteriorSplit = anterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
+                                                                    anterior.Inicio = val.Inicio;
+                                                                    anteriorSplit.Fim = val.Inicio.AddMonths(-1);
+
+                                                                    reDat.Detalhes.Add(anteriorSplit);
+                                                                }
+
+                                                                if (posterior != null)
+                                                                {
+                                                                    var posteriorSplit = posterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
+                                                                    posterior.Fim = val.Fim; ;
+                                                                    posteriorSplit.Inicio = val.Fim.AddMonths(1);
+
+                                                                    reDat.Detalhes.Add(posteriorSplit);
+                                                                }
+
+                                                                reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                                                                    .Where(x => x.Inicio >= val.Inicio && x.Fim <= val.Fim).ToList().ForEach(x =>
+                                                                        reDat.Detalhes.Remove(x)
+                                                                        );
+
+                                                                reDat.Detalhes.Add(val);
+                                                            }
+                                                            var newl = reDat.Detalhes.OrderBy(x => x.Numero).ThenBy(x => x.Inicio).ToList();
+                                                            reDat.Detalhes.Clear();
+                                                            newl.ForEach(x => reDat.Detalhes.Add(x));
+                                                            reDat.SaveToFile();
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        lq[3] = valor > lq[4] ? lq[4] : valor;
+                                                        lq[5] = valor > lq[4] ? lq[4] : valor;
+                                                        lq[7] = valor > lq[4] ? lq[4] : valor;
+                                                    }
+
+                                                    /////////
+
+                                                    var modifline = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+                                                    double modifval = lq[3];
+                                                    if (modifline != null)
+                                                    {
+                                                        if (modifline.DataModif < data)
+                                                        {
+
+                                                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                            var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                            var valorAntigo = modifline.ValorModif;
+
+
+                                                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                            newModifLine.Chave = "VAZMINT";
+                                                            newModifLine.Usina = lHq.UsiRest;
+                                                            int index = modif.IndexOf(modifline) + 1;
+                                                            modif.Insert(index, newModifLine);
+
+                                                            //mes seguinte verificação
+                                                            var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                            if (modiflineMesSeq == null)
+                                                            {
+                                                                //newModifLine2 = modifline;
+                                                                newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                //newModifLine2.DataModif = data.AddMonths(1);
+                                                                newModifLine2.Chave = "VAZMINT";
+                                                                newModifLine2.Usina = lHq.UsiRest;
+                                                                int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                modif.Insert(index2, newModifLine2);
+                                                            }
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                            var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                            var valorAntigo = modifline.ValorModif;
+
+                                                            modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+
+                                                            //mes seguinte verificação
+                                                            var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                            if (modiflineMesSeq == null)
+                                                            {
+                                                                //newModifLine2 = modifline;
+                                                                newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                //newModifLine2.DataModif = data.AddMonths(1);
+                                                                newModifLine2.Chave = "VAZMINT";
+                                                                newModifLine2.Usina = lHq.UsiRest;
+                                                                int index2 = modif.IndexOf(modifline) + 1;
+                                                                modif.Insert(index2, newModifLine2);
+                                                            }
+
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                                                        if (mod != null)
+                                                        {
+                                                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                            newModifLine.Chave = "VAZMINT";
+                                                            newModifLine.Usina = lHq.UsiRest;
+                                                            int index = modif.IndexOf(mod) + 1;
+                                                            modif.Insert(index, newModifLine);
+                                                        }
+
+
+                                                    }
+
+                                                    modif.SaveToFile(filePath: modifFile);
+                                                    /////////
+                                                }
+
+                                            }
+                                        }
+
+
+                                    }
+                                }
+                            }
+                            if (limitesHV.Count() > 0)
+                            {
+                                foreach (var lHv in limitesHV)
+                                {
+                                    // dynamic lq;
+
+                                    var UH = dadger.BlocoUh.Where(x => x.Usina == lHv.UH).FirstOrDefault();
+
+                                    double hectoMin = configH.Usinas.Any(x => x.Cod == lHv.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHv.UsiRest).Select(x => x.VolMin).First() : -1;
+
+                                    if (UH != null)
+                                    {
+
+                                        var rests = dadger.BlocoRhv.Where(x => x.Restricao == lHv.CodRest);
+
+                                        if (rests.Count() > 0)
+                                        {
+                                            var le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LvLine).Select(x => (Compass.CommomLibrary.Dadger.LvLine)x);
+                                            // var lvs = le.Where(x => x.Estagio <= dadger.VAZOES_NumeroDeSemanas).ToList();
+                                            dynamic lvdummy = le.Where(x => x.Estagio <= dadger.VAZOES_NumeroDeSemanas + 1).OrderByDescending(x => x.Estagio).FirstOrDefault();
+
+                                            if (lvdummy.Estagio < dadger.VAZOES_NumeroDeSemanas + 1)//caso não exista o estagio do segundo mes informado, copia os dados do ultimo estagio informado para o segundo mes
+                                            {
+
+                                                var nledummy = lvdummy.Clone();
+                                                nledummy.Estagio = dadger.VAZOES_NumeroDeSemanas + 1;
+                                                dadger.BlocoRhv.Add(nledummy);
+                                            }
+
+                                            rests = dadger.BlocoRhv.Where(x => x.Restricao == lHv.CodRest);
+                                            le = rests.Where(x => x is Compass.CommomLibrary.Dadger.LvLine).Select(x => (Compass.CommomLibrary.Dadger.LvLine)x);
+                                            var lvs = le.Where(x => x.Estagio <= dadger.VAZOES_NumeroDeSemanas + 1).ToList();
+
+                                            if (lvs.Count() > 0)
+                                            {
+                                                foreach (var lv in lvs)
+                                                {
+                                                    modif = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
+                                                    var modifFile = modif.File;
+
+                                                    string minemonico = "";
+                                                    double valorTemp;
+
+                                                    DateTime data;
+                                                    data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
+
+                                                    double valor = 0;
+                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHv, w.Faixapercents.First());
+
+                                                    if (lv.Estagio == dadger.VAZOES_NumeroDeSemanas + 1)
+                                                    {
+                                                        data = mesSeg;
+                                                        var lHvSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHv.UsiRest && x.UH == lHv.UH && x.InfSup == lHv.InfSup && x.TipoRest.ToUpper().Equals("HV")).FirstOrDefault();
+                                                        if (lHvSEg != null)
+                                                        {
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHvSEg, w.Faixapercents.First());
+                                                        }
+                                                    }
+
+                                                    if (lHv.InfSup == "SUP")
+                                                    {
+                                                        lv[4] = valor < lv[3] ? lv[3] : valor;
+                                                        minemonico = "VMAXT";
+                                                        valorTemp = lv[4];
+                                                    }
+                                                    else
+                                                    {
+                                                        lv[3] = valor > lv[4] ? lv[4] : valor;
+                                                        minemonico = "VMINT";
+                                                        valorTemp = lv[3];
+                                                    }
+
+                                                    /////////
+
+                                                    if (hectoMin >= 0)
+                                                    {
+                                                        var modifline = modif.Where(x => x.Usina == lHv.UsiRest && x.Chave == minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+                                                        double modifval = valorTemp + hectoMin;
+                                                        if (modifline != null)
+                                                        {
+                                                            if (modifline.DataModif < data)
+                                                            {
+
+                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var valorAntigo = modifline.ValorModif;
+
+
+                                                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'), "'h'");
+                                                                newModifLine.Chave = minemonico;
+                                                                newModifLine.Usina = lHv.UsiRest;
+                                                                int index = modif.IndexOf(modifline) + 1;
+                                                                modif.Insert(index, newModifLine);
+
+                                                                //mes seguinte verificação
+                                                                var modiflineMesSeq = modif.Where(x => x.Usina == lHv.UsiRest && x.Chave == minemonico && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                if (modiflineMesSeq == null)
+                                                                {
+                                                                    //newModifLine2 = modifline;
+                                                                    newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'), "'h'");
+                                                                    //newModifLine2.DataModif = data.AddMonths(1);
+                                                                    newModifLine2.Chave = minemonico;
+                                                                    newModifLine2.Usina = lHv.UsiRest;
+                                                                    int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                    modif.Insert(index2, newModifLine2);
+                                                                }
+
+
+                                                            }
+                                                            else
+                                                            {
+                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var valorAntigo = modifline.ValorModif;
+
+                                                                modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'), "'h'");
+
+                                                                //mes seguinte verificação
+                                                                var modiflineMesSeq = modif.Where(x => x.Usina == lHv.UsiRest && x.Chave == minemonico && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                if (modiflineMesSeq == null)
+                                                                {
+                                                                    //newModifLine2 = modifline;
+                                                                    newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'), "'h'");
+                                                                    //newModifLine2.DataModif = data.AddMonths(1);
+                                                                    newModifLine2.Chave = minemonico;
+                                                                    newModifLine2.Usina = lHv.UsiRest;
+                                                                    int index2 = modif.IndexOf(modifline) + 1;
+                                                                    modif.Insert(index2, newModifLine2);
+                                                                }
+
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            var mod = modif.Where(x => x.Usina == lHv.UsiRest).FirstOrDefault();
+                                                            if (mod != null)
+                                                            {
+                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'), "'h'");
+                                                                newModifLine.Chave = minemonico;
+                                                                newModifLine.Usina = lHv.UsiRest;
+                                                                int index = modif.IndexOf(mod) + 1;
+                                                                modif.Insert(index, newModifLine);
+                                                            }
+
+
+                                                        }
+
+                                                        modif.SaveToFile(filePath: modifFile);
+                                                    }
+
+                                                    /////////
+
+                                                }
+
+                                            }
+                                        }
+
+
+
+                                    }
+                                }
+                            }
+                            dadger.SaveToFile();
+
+                            if (w.Faixapercents.Count() > 0 && w.Faixalimites.Count() > 0)
+                            {
+                                List<string> faixaText = new List<string>();
+                                string header = "UH;TIPO REST;USINA REST;COD REST;MÊS INI;MÊS FIM;INF/SUP;ATIVA";
+                                w.Faixapercents.First().Percents.ForEach(x => header = header + ";" + x.ToString() + "%");
+
+                                faixaText.Add(header);
+                                w.Faixalimites.ForEach(x =>
+                                {
+                                    string linha;
+                                    linha = string.Join(";", x.UH.ToString(), x.TipoRest, x.UsiRest.ToString(), x.CodRest.ToString(), x.MesIni.ToString(), x.MesFim.ToString(), x.InfSup.ToString(), x.Ativa.ToString()) + ";";
+                                    linha = linha + string.Join(";", x.Vals.ToList());
+                                    faixaText.Add(linha);
+                                    // x.Vals.ForEach(y => { linha = linha + y.ToString(); });
+                                });
+                                File.WriteAllLines(Path.Combine(estudoPath, "LIMITES_DE_RESTRICAO.txt"), faixaText);
+                            }
+
+                        }
+
+                        //fim codigofaixas limites
+
+                        #endregion
+
+
+
                         #region DADGNL
 
                         Compass.CommomLibrary.Dadgnl.Dadgnl dadgnl;
@@ -1145,7 +2092,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 glLine.MesInicio = mesOperativo.SemanasOperativas[_e].Inicio.Month;
                                 glLine.AnoInicio = mesOperativo.SemanasOperativas[_e].Inicio.Year;
 
-                                if (w.Dadterm.Count() > 0 )
+                                if (w.Dadterm.Count() > 0)
                                 {
                                     var dadAdterms = w.Dadterm.Where(x => x.usina == glLine.NumeroUsina && x.ano == dtEstudo.Year && x.mes == dtEstudo.Month && x.estagio == 1).FirstOrDefault();
                                     if (dadAdterms != null)
@@ -1162,7 +2109,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     }
                                 }
 
-                               
+
                                 dadgnl.BlocoGL.Add(glLine.Clone());
                             }
 
@@ -1231,7 +2178,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         glLine.GeracaoPat3 = 0;
                                     }
                                 }
-                               
+
                                 dadgnl.BlocoGL.Add(glLine.Clone());
                             }
                         }
