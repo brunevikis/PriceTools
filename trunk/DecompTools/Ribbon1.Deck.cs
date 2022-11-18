@@ -900,9 +900,51 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         File.WriteAllLines(Path.Combine(estudoPath, "LIMITES_DE_RESTRICAO.txt"), faixaText);
 
                                         string destino = deckNWEstudo.BaseFolder;
-                                        
 
-                                       // var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+
+                                        // var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+
+                                        var dgerFileconsist = Directory.GetFiles(destino).Where(x => Path.GetFileName(x).ToLower().Equals("dger.dat")).FirstOrDefault();
+                                        if (dgerFileconsist != null)
+                                        {
+
+
+                                            var dger = (Compass.CommomLibrary.DgerDat.DgerDat)DocumentFactory.Create(dgerFileconsist);
+
+                                            
+                                            var earmsREE = new double[dadosREE.Count()];
+                                            int r = 0;
+                                            foreach (var dadR in dadosREE)
+                                            {
+                                                earmsREE[r] = Math.Round(dadR.Item2, 1);
+                                                if (earmsREE[r] > 100.0f)
+                                                {
+                                                    earmsREE[r] = 100.0f;
+                                                }
+                                                if (earmsREE[r] < 0 )
+                                                {
+                                                    earmsREE[r] = 0;
+                                                }
+                                                r++;
+                                            }
+                                            //for (int i = 0; i < dger.Earms.Count(); i++)
+                                            //{
+                                            //    if (dger.Earms[i] > 100.0f)
+                                            //    {
+                                            //        dger.Earms[i] = 100.0f;
+                                            //    }
+                                            //    if (dger.Earms[i] < 0)
+                                            //    {
+                                            //        dger.Earms[i] = 0;
+                                            //    }
+
+                                            //}
+
+                                            dger.Earms = earmsREE;
+                                            dger.SaveToFile();
+                                        }
+                                        // var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+
 
                                         var ret = Compass.Services.Linux.Run(destino, w.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
                                         if (!ret)
@@ -911,6 +953,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         }
                                         Compass.Services.Deck.CreateDgerNewdesp(destino);
 
+
+                                        
 
                                     }
 
