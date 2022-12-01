@@ -347,10 +347,10 @@ new DateTime(2033,12,25),
 
             };
 
-        public static Tuple<int, int, int> GetHorasPatamares(DateTime ini, DateTime fim, bool patamares2019)
+        public static Tuple<int, int, int> GetHorasPatamares(DateTime ini, DateTime fim, bool patamares2019, bool patamares2023 = false)
         {
             Tuple<int, int, int>[,] horasPatamares;
-
+            
             // var horasPatamares = new Tuple<int, int, int>[] {
             //                new Tuple<int,int,int>(3,14,7),
             //                new Tuple<int,int,int>(0,5,19),
@@ -373,7 +373,7 @@ new DateTime(2033,12,25),
                 horasPatamares = new Tuple<int, int, int>[,] {
                            { new Tuple<int,int,int>(3,14,7), new Tuple<int,int,int>(0,5,19) }
                 };
-            
+
             //{ new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) }, patamares2021
             //{ new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
             //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
@@ -386,7 +386,23 @@ new DateTime(2033,12,25),
             //    { new Tuple<int, int, int>(10, 06, 08), new Tuple<int, int, int>(00, 04, 20) },
             //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
             //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) }
-            
+            if (patamares2023)
+            {
+                horasPatamares = new Tuple<int, int, int>[,] {
+                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) }//
+            };
+            }
 
 
 
@@ -864,11 +880,11 @@ new DateTime(2033,12,25),
         //    this.HorasPat3 = pat.Item3;
         //}
 
-        public SemanaOperativa(DateTime i, DateTime f, bool patamares2019)
+        public SemanaOperativa(DateTime i, DateTime f, bool patamares2019, bool patamares2023 = false)
         {
             this.Inicio = i;
             this.Fim = f;
-            var pat = Tools.GetHorasPatamares(i, f, patamares2019);
+            var pat = Tools.GetHorasPatamares(i, f, patamares2019, patamares2023);
             this.HorasPat1 = pat.Item1;
             this.HorasPat2 = pat.Item2;
             this.HorasPat3 = pat.Item3;
@@ -907,7 +923,7 @@ new DateTime(2033,12,25),
         {
             this.SemanasOperativas = new List<SemanaOperativa>();
         }
-        public static MesOperativo CreateSemanal(int ano, int mes, bool patamares2019)
+        public static MesOperativo CreateSemanal(int ano, int mes, bool patamares2019, bool patamares2023 = false)
         {
             var mOper = new MesOperativo();
             mOper.Ano = ano;
@@ -921,7 +937,7 @@ new DateTime(2033,12,25),
             while (datetime.Month == mes)
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019)
+                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2023)
                     );
 
                 datetime = datetime.AddDays(7);
@@ -930,7 +946,7 @@ new DateTime(2033,12,25),
             if (datetime.Day == 7)
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa((new DateTime(ano, mes, 1)).AddMonths(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019)
+                    new SemanaOperativa((new DateTime(ano, mes, 1)).AddMonths(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2023)
                     );
 
                 mOper.Fim = datetime.AddDays(-7);
@@ -939,11 +955,11 @@ new DateTime(2033,12,25),
             else
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019)
+                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2023)
                     );
 
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019)
+                    new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2023)
                     );
 
                 mOper.Fim = datetime.AddDays(-7);
@@ -1023,7 +1039,7 @@ new DateTime(2033,12,25),
             return mOper;
         }
 
-        public static MesOperativo CreateMensal(int ano, int mes, bool patamares2019)
+        public static MesOperativo CreateMensal(int ano, int mes, bool patamares2019, bool patamares2023 = false)
         {
             var mOper = new MesOperativo();
 
@@ -1036,10 +1052,10 @@ new DateTime(2033,12,25),
             mOper.Fim = datetime.AddMonths(1).AddDays(-1);
 
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(mOper.Inicio, mOper.Fim, patamares2019)
+                new SemanaOperativa(mOper.Inicio, mOper.Fim, patamares2019, patamares2023)
                 );
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(mOper.Inicio.AddMonths(1), datetime.AddMonths(2).AddDays(-1), patamares2019)
+                new SemanaOperativa(mOper.Inicio.AddMonths(1), datetime.AddMonths(2).AddDays(-1), patamares2019,patamares2023)
                 );
 
             mOper.DiasMes2 = 0;

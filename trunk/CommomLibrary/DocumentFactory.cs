@@ -54,6 +54,10 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<ReDat.ReDat>(System.IO.File.ReadAllText(filePath));
             }
+            else if (fileName.StartsWith("re_base.dat"))
+            {
+                doc = BaseDocument.Create<ReDat.ReDat>(System.IO.File.ReadAllText(filePath));
+            }
             else if (fileName.StartsWith("c_adic"))
             {
                 doc = BaseDocument.Create<C_AdicDat.C_AdicDat>(System.IO.File.ReadAllText(filePath));

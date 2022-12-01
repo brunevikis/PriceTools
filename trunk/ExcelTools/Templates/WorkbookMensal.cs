@@ -91,6 +91,14 @@ namespace Compass.ExcelTools.Templates
 
             }
         }
+        public bool patamares2023
+        {
+            get
+            {
+                return this.Wb.Worksheets["Geral"].Range("U8").Text.ToUpper() == "SIM";
+
+            }
+        }
 
         public string NewaveBase
         {

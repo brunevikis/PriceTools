@@ -2337,7 +2337,18 @@ namespace Compass.Services
                 }
 
                 //reDat
-                var reDat = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.re].Document as CommomLibrary.ReDat.ReDat;
+                string redatBase = Path.Combine(deckNWEstudo.BaseFolder, "re_base.dat");
+                Compass.CommomLibrary.ReDat.ReDat reDat;
+
+                if (File.Exists(redatBase))
+                {
+                    reDat = (Compass.CommomLibrary.ReDat.ReDat)DocumentFactory.Create(redatBase);
+                }
+                else
+                {
+                    reDat = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.re].Document as CommomLibrary.ReDat.ReDat;
+                }
+
                 foreach (var re in reDat[dt.Item1])
                 {
                     var usinas = re.Key.Valores.Skip(1).TakeWhile(x => x is int).ToArray();

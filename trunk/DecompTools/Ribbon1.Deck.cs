@@ -251,8 +251,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                             var patamares2019 = durPat1[0] > 0.15;
 
-
-                            MesOperativo mesOperativo = MesOperativo.CreateMensal(dtEstudo.Year, dtEstudo.Month, patamares2019);
+                            bool patamares2023 = w.patamares2023;
+                            MesOperativo mesOperativo = MesOperativo.CreateMensal(dtEstudo.Year, dtEstudo.Month, patamares2019, patamares2023);
 
                             var horasMesEstudoP1 = mesOperativo.SemanasOperativas[0].HorasPat1;
                             var horasMesEstudoP2 = mesOperativo.SemanasOperativas[0].HorasPat2;
@@ -454,8 +454,12 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                     Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;
 
-
-
+                                    //string redatBase = Path.Combine(deckNWEstudo.BaseFolder, "re_base.dat");
+                                    //var redatFile = Directory.GetFiles(deckNWEstudo.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Equals("re.dat")).FirstOrDefault();
+                                    //if (redatFile != null && !File.Exists(redatBase))
+                                    //{
+                                    //    File.Copy(redatFile, redatBase, true);
+                                    //}
 
                                     if (limitesHQ.Count() > 0)
                                     {
@@ -902,7 +906,6 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         string destino = deckNWEstudo.BaseFolder;
 
 
-                                        // var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
 
                                         var dgerFileconsist = Directory.GetFiles(destino).Where(x => Path.GetFileName(x).ToLower().Equals("dger.dat")).FirstOrDefault();
                                         if (dgerFileconsist != null)
@@ -911,7 +914,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                             var dger = (Compass.CommomLibrary.DgerDat.DgerDat)DocumentFactory.Create(dgerFileconsist);
 
-                                            
+
                                             var earmsREE = new double[dadosREE.Count()];
                                             int r = 0;
                                             foreach (var dadR in dadosREE)
@@ -921,7 +924,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                 {
                                                     earmsREE[r] = 100.0f;
                                                 }
-                                                if (earmsREE[r] < 0 )
+                                                if (earmsREE[r] < 0)
                                                 {
                                                     earmsREE[r] = 0;
                                                 }
@@ -943,8 +946,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             dger.Earms = earmsREE;
                                             dger.SaveToFile();
                                         }
-                                        // var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
 
+                                        //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
 
                                         var ret = Compass.Services.Linux.Run(destino, w.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
                                         if (!ret)
@@ -954,7 +957,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         Compass.Services.Deck.CreateDgerNewdesp(destino);
 
 
-                                        
+
 
                                     }
 
@@ -1398,8 +1401,9 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         bool patamares2019 = durPat1[0] > 0.15;
 
                         var pmoBase = DocumentFactory.Create(System.IO.Path.Combine(deckNWEstudo.BaseFolder, "pmo.dat")) as Compass.CommomLibrary.Pmo.Pmo;
+                        bool patamares2023 = w.patamares2023;
 
-                        var mesOperativo = MesOperativo.CreateSemanal(dtEstudo.Year, dtEstudo.Month, patamares2019);
+                        var mesOperativo = MesOperativo.CreateSemanal(dtEstudo.Year, dtEstudo.Month, patamares2019, patamares2023);
 
 
                         //  if (dtEstudo != (deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger).VAZOES_DataDoEstudo)
@@ -1594,7 +1598,12 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                             Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;
 
-
+                            //string redatBase = Path.Combine(deckNWEstudo.BaseFolder, "re_base.dat");
+                            //var redatFile = Directory.GetFiles(deckNWEstudo.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Equals("re.dat")).FirstOrDefault();
+                            //if (redatFile != null && !File.Exists(redatBase))
+                            //{
+                            //    File.Copy(redatFile, redatBase, true);
+                            //}
 
 
                             if (limitesHQ.Count() > 0)
@@ -2166,7 +2175,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 if (_e > mesOperativo.EstagiosReaisDoMesAtual && endSemanaTemp.Day < 7) endSemanaTemp = endSemanaTemp.AddDays(-endSemanaTemp.Day);
 
 
-                                var semanaOperativaTemp = new SemanaOperativa(dtTemp, endSemanaTemp, patamares2019);
+                                var semanaOperativaTemp = new SemanaOperativa(dtTemp, endSemanaTemp, patamares2019, patamares2023);
 
 
                                 var despachoDeckAnterior = glOriginal.Where(x => x.NumeroUsina == ut.Usina)
