@@ -691,7 +691,8 @@ namespace Compass.DecompToolsShellX
                                 Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                             }
-                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt);
+                            bool pat2023 = dt.Year >= 2023;
+                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt,pat2023);
 
                             foreach (var inter in intervalosAgruped)
                             {

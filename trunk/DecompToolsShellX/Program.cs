@@ -56,6 +56,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("carregarprevs", carregaPrevs);
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
+            actions.Add("getpatamares", getPatamares);
 
             //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
 
@@ -273,6 +274,46 @@ namespace Compass.DecompToolsShellX
                         previvaz.Run(dir);
                     }
                 }
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+            }
+        }
+
+        static void getPatamares(string anoArg)
+        {
+            bool patamares2023 = false;
+            int ano = Convert.ToInt32(anoArg);
+            patamares2023 = ano >= 2023;
+            DateTime inicio = new DateTime(ano, 1, 1);
+            DateTime fim = new DateTime(ano, 12, 31);
+            List<string> patamareDeCarga = new List<string>();
+            patamareDeCarga.Add("USE [COMPARADOR_DC]\nGO\nINSERT INTO[dbo].[semanas_patamares]\n([Semana]\n,[pesado]\n,[medio]\n,[leve])\nVALUES\n");
+            int numeroSemana = 1;
+
+            try
+            {
+                for (DateTime d = inicio;d  <= fim; d = d.AddDays(1))
+                {
+                    DateTime semanaInicio = d;
+                    DateTime semanaFim = d;
+                    while (semanaFim.DayOfWeek != DayOfWeek.Friday && semanaFim.AddDays(1).Month == semanaInicio.Month)
+                    {
+                        semanaFim = semanaFim.AddDays(1);
+                    }
+                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023);
+                    patamareDeCarga.Add("(" + semanaInicio.ToString("yyyyMM") + numeroSemana.ToString() + "," + pat.Item1.ToString() + "," + pat.Item2.ToString() + "," + pat.Item3 +"),");
+                    d = semanaFim;
+                    numeroSemana = d.AddDays(1).Month == semanaInicio.Month ? numeroSemana+1 : 1;
+
+                }
+                patamareDeCarga.Add("GO");
+                File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA"+anoArg+".txt", patamareDeCarga);
 
             }
             catch (Exception ex)
@@ -1556,7 +1597,8 @@ namespace Compass.DecompToolsShellX
                                                 Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
                                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                                             }
-                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d);
+                                            bool pat2023 = d.Year >= 2023;
+                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d,pat2023);
 
                                             foreach (var inter in intervalosAgruped)
                                             {
@@ -2784,7 +2826,9 @@ namespace Compass.DecompToolsShellX
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
 
             #region BLOCO TM
-            var intervalos = Tools.GetIntervalosHoararios(dataEstudo);
+            bool patamres2023 = dataEstudo.Year >= 2023;
+
+            var intervalos = Tools.GetIntervalosHoararios(dataEstudo,patamres2023);
             string comentario = entdados.BlocoTm.First().Comment;
             for (DateTime d = dataEstudo.AddDays(-7); d <= dataEstudo; d = d.AddDays(1))
             {
