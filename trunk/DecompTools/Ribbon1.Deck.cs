@@ -49,6 +49,7 @@ namespace Compass.DecompTools
         {
             var planilhaAdterm = new List<IADTERM>();
             var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
+            List<string> consistFolders = new List<string>();
             try
             {
 
@@ -193,6 +194,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                     Dictionary<DateTime, Compass.CommomLibrary.VazoesC.VazoesC> vazoesCs = new Dictionary<DateTime, Compass.CommomLibrary.VazoesC.VazoesC>();
 
                     Dictionary<DateTime, Tuple<string, string>> configs = new Dictionary<DateTime, Tuple<string, string>>();
+
+
 
                     foreach (var cenario in w.Cenarios)
                     {
@@ -448,6 +451,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 {
                                     DateTime mesSeg = dtEstudo.AddMonths(1);
                                     dadger = configH.baseDoc as Dadger;
+                                   // configH = new Compass.CommomLibrary.Decomp.ConfigH(dadger, hidrDat);
 
                                     var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
                                     var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
@@ -467,7 +471,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         foreach (var lHq in limitesHQ)
                                         {
                                             // dynamic lq;
-                                            var UH = dadger.BlocoUh.Where(x => x.Usina == lHq.UH).FirstOrDefault();
+                                            var UH = dadger.BlocoUh.Where(x => x.Usina == lHq.UH.First()).FirstOrDefault();
 
                                             double produt65 = configH.Usinas.Any(x => x.Cod == lHq.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHq.UsiRest).Select(x => x.Prod65VolUtil).First() : -1;// -1 para ocaso de não encontrar o dado referente a usina da restrição
 
@@ -475,6 +479,12 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             {
 
                                                 var rests = dadger.BlocoRhq.Where(x => x.Restricao == lHq.CodRest);
+
+                                                double percentAlvo = UH.VolIniPerc;
+                                                if (lHq.UH.Count() > 1)
+                                                {
+                                                    percentAlvo = Services.DecompNextRev.GetpercentAlvo(configH, lHq.UH);
+                                                }
 
                                                 if (rests.Count() > 0)
                                                 {
@@ -506,15 +516,15 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                             data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
 
                                                             double valor = 0;
-                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHq, w.Faixapercents.First());
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHq, w.Faixapercents.First());
 
                                                             if (lq.Estagio == 2)
                                                             {
                                                                 data = mesSeg;
-                                                                var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH == lHq.UH && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
+                                                                var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH.All(lHq.UH.Contains) && x.UH.Count == lHq.UH.Count && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
                                                                 if (lHqSEg != null)
                                                                 {
-                                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHqSEg, w.Faixapercents.First());
+                                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHqSEg, w.Faixapercents.First());
                                                                 }
                                                             }
 
@@ -725,7 +735,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         {
                                             // dynamic lq;
 
-                                            var UH = dadger.BlocoUh.Where(x => x.Usina == lHv.UH).FirstOrDefault();
+                                            var UH = dadger.BlocoUh.Where(x => x.Usina == lHv.UH.First()).FirstOrDefault();
 
                                             double hectoMin = configH.Usinas.Any(x => x.Cod == lHv.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHv.UsiRest).Select(x => x.VolMin).First() : -1;
 
@@ -733,6 +743,13 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             {
 
                                                 var rests = dadger.BlocoRhv.Where(x => x.Restricao == lHv.CodRest);
+
+                                                double percentAlvo = UH.VolIniPerc;
+
+                                                if (lHv.UH.Count() > 1)
+                                                {
+                                                    percentAlvo = Services.DecompNextRev.GetpercentAlvo(configH, lHv.UH);
+                                                }
 
                                                 if (rests.Count() > 0)
                                                 {
@@ -766,15 +783,15 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                             data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
 
                                                             double valor = 0;
-                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHv, w.Faixapercents.First());
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHv, w.Faixapercents.First());
 
                                                             if (lv.Estagio == 2)
                                                             {
                                                                 data = mesSeg;
-                                                                var lHvSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHv.UsiRest && x.UH == lHv.UH && x.InfSup == lHv.InfSup && x.TipoRest.ToUpper().Equals("HV")).FirstOrDefault();
+                                                                var lHvSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHv.UsiRest && x.UH.All(lHv.UH.Contains) && x.UH.Count == lHv.UH.Count && x.InfSup == lHv.InfSup && x.TipoRest.ToUpper().Equals("HV")).FirstOrDefault();
                                                                 if (lHvSEg != null)
                                                                 {
-                                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHvSEg, w.Faixapercents.First());
+                                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHvSEg, w.Faixapercents.First());
                                                                 }
                                                             }
 
@@ -896,7 +913,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         w.Faixalimites.ForEach(x =>
                                         {
                                             string linha;
-                                            linha = string.Join(";", x.UH.ToString(), x.TipoRest, x.UsiRest.ToString(), x.CodRest.ToString(), x.MesIni.ToString(), x.MesFim.ToString(), x.InfSup.ToString(), x.Ativa.ToString()) + ";";
+                                            linha = string.Join(";", x.UHstring, x.TipoRest, x.UsiRest.ToString(), x.CodRest.ToString(), x.MesIni.ToString(), x.MesFim.ToString(), x.InfSup.ToString(), x.Ativa.ToString()) + ";";
                                             linha = linha + string.Join(";", x.Vals.ToList());
                                             faixaText.Add(linha);
                                             // x.Vals.ForEach(y => { linha = linha + y.ToString(); });
@@ -946,15 +963,20 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             dger.Earms = earmsREE;
                                             dger.SaveToFile();
                                         }
+                                        if (estudoPath.Contains("DCGNL"))
+                                        {
+                                            consistFolders.Add(destino);
+                                        }
 
                                         //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
 
-                                        var ret = Compass.Services.Linux.Run(destino, w.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
-                                        if (!ret)
-                                        {
-                                            throw new Exception("Ocorreu erro na criação e consistência dos decks newaves. Verifique.");
-                                        }
-                                        Compass.Services.Deck.CreateDgerNewdesp(destino);
+                                        ////var ret = Compass.Services.Linux.Run(destino, w.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
+                                        //if (!ret)
+                                        //{
+                                        //    throw new Exception("Ocorreu erro na criação e consistência dos decks newaves. Verifique.");
+                                        //}
+
+                                        //Compass.Services.Deck.CreateDgerNewdesp(destino);
 
 
 
@@ -1268,6 +1290,13 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                     }
                 }
 
+                if (consistFolders.Count() > 0)
+                {
+
+                    Encadeado.Estudo estudo = new Encadeado.Estudo();
+                    bool tesets = estudo.execucaoConsistDC(consistFolders);
+                }
+
                 if (System.Windows.Forms.MessageBox.Show(@"Decks Criados. Agendar execução?
 Caso os newaves já tenham sido executados, os cortes existentes serão mantidos e somente a execução dos decomps prosseguirá."
                     , "Novo Estudo Encadeado: " + (w.Version == 4 ? w.NomeDoEstudo : ""), System.Windows.Forms.MessageBoxButtons.YesNo)
@@ -1479,11 +1508,11 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 }
                                 File.WriteAllLines(Path.Combine(estudoPath, "UhFixados.txt"), fixaUhTxtLines);
 
-                                Services.Reservatorio.SetUHBlockFixado(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax, dadosFixas);
+                                //Services.Reservatorio.SetUHBlockFixado(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax, dadosFixas);
                             }
                             else
                             {
-                                Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
+                                //Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
                             }
 
                         }
@@ -1612,7 +1641,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 foreach (var lHq in limitesHQ)
                                 {
                                     // dynamic lq;
-                                    var UH = dadger.BlocoUh.Where(x => x.Usina == lHq.UH).FirstOrDefault();
+                                    var UH = dadger.BlocoUh.Where(x => x.Usina == lHq.UH.First()).FirstOrDefault();
 
                                     double produt65 = configH.Usinas.Any(x => x.Cod == lHq.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHq.UsiRest).Select(x => x.Prod65VolUtil).First() : -1;// -1 para ocaso de não encontrar o dado referente a usina da restrição
 
@@ -1620,6 +1649,13 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     {
 
                                         var rests = dadger.BlocoRhq.Where(x => x.Restricao == lHq.CodRest);
+
+                                        double percentAlvo = UH.VolIniPerc;
+
+                                        if (lHq.UH.Count() > 1)
+                                        {
+                                            percentAlvo = Services.DecompNextRev.GetpercentAlvo(configH, lHq.UH);
+                                        }
 
                                         if (rests.Count() > 0)
                                         {
@@ -1651,15 +1687,16 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                     data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
 
                                                     double valor = 0;
-                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHq, w.Faixapercents.First());
+                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHq, w.Faixapercents.First());
 
                                                     if (lq.Estagio == dadger.VAZOES_NumeroDeSemanas + 1)
                                                     {
                                                         data = mesSeg;
-                                                        var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH == lHq.UH && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
+                                                       // var a = ints1.All(ints2.Contains) && ints1.Count == ints2.Count;
+                                                        var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH.All(lHq.UH.Contains) && x.UH.Count == lHq.UH.Count && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
                                                         if (lHqSEg != null)
                                                         {
-                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHqSEg, w.Faixapercents.First());
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHqSEg, w.Faixapercents.First());
                                                         }
                                                     }
 
@@ -1870,7 +1907,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 {
                                     // dynamic lq;
 
-                                    var UH = dadger.BlocoUh.Where(x => x.Usina == lHv.UH).FirstOrDefault();
+                                    var UH = dadger.BlocoUh.Where(x => x.Usina == lHv.UH.First()).FirstOrDefault();
 
                                     double hectoMin = configH.Usinas.Any(x => x.Cod == lHv.UsiRest) ? configH.Usinas.Where(x => x.Cod == lHv.UsiRest).Select(x => x.VolMin).First() : -1;
 
@@ -1878,6 +1915,13 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     {
 
                                         var rests = dadger.BlocoRhv.Where(x => x.Restricao == lHv.CodRest);
+
+                                        double percentAlvo = UH.VolIniPerc;
+
+                                        if (lHv.UH.Count() > 1)
+                                        {
+                                            percentAlvo = Services.DecompNextRev.GetpercentAlvo(configH, lHv.UH);
+                                        }
 
                                         if (rests.Count() > 0)
                                         {
@@ -1911,15 +1955,15 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                     data = new DateTime(dtEstudo.Year, dtEstudo.Month, 1);
 
                                                     double valor = 0;
-                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHv, w.Faixapercents.First());
+                                                    valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHv, w.Faixapercents.First());
 
                                                     if (lv.Estagio == dadger.VAZOES_NumeroDeSemanas + 1)
                                                     {
                                                         data = mesSeg;
-                                                        var lHvSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHv.UsiRest && x.UH == lHv.UH && x.InfSup == lHv.InfSup && x.TipoRest.ToUpper().Equals("HV")).FirstOrDefault();
+                                                        var lHvSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHv.UsiRest && x.UH.All(lHv.UH.Contains) && x.UH.Count == lHv.UH.Count && x.InfSup == lHv.InfSup && x.TipoRest.ToUpper().Equals("HV")).FirstOrDefault();
                                                         if (lHvSEg != null)
                                                         {
-                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(UH.VolIniPerc, lHvSEg, w.Faixapercents.First());
+                                                            valor = Services.DecompNextRev.GetLimitesPorFaixa(percentAlvo, lHvSEg, w.Faixapercents.First());
                                                         }
                                                     }
 
@@ -2041,7 +2085,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 w.Faixalimites.ForEach(x =>
                                 {
                                     string linha;
-                                    linha = string.Join(";", x.UH.ToString(), x.TipoRest, x.UsiRest.ToString(), x.CodRest.ToString(), x.MesIni.ToString(), x.MesFim.ToString(), x.InfSup.ToString(), x.Ativa.ToString()) + ";";
+                                    linha = string.Join(";", x.UHstring, x.TipoRest, x.UsiRest.ToString(), x.CodRest.ToString(), x.MesIni.ToString(), x.MesFim.ToString(), x.InfSup.ToString(), x.Ativa.ToString()) + ";";
                                     linha = linha + string.Join(";", x.Vals.ToList());
                                     faixaText.Add(linha);
                                     // x.Vals.ForEach(y => { linha = linha + y.ToString(); });

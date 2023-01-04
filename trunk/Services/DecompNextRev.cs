@@ -44,6 +44,14 @@ namespace Compass.Services
             dadger.SaveToFile();
 
         }
+        public static double GetpercentAlvo(Compass.CommomLibrary.Decomp.ConfigH configH, List<int> UHs)
+        {
+            double percentAlvo = configH.GetpercentAlvo(UHs);
+            
+            return percentAlvo;
+        }
+     
+
 
         public static double GetLimitesPorFaixa(double voliniPerc, WorkbookMensal.FAIXALIMITES faixaLimite, WorkbookMensal.FAIXAPERCENTS faixaPercent)
         {

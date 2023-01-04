@@ -86,6 +86,20 @@ namespace Encadeado
             return true;
         }
 
+        public bool execucaoConsistDC(List<string> consistFoldres)
+        {
+            List<Task> consists = new List<Task>();
+
+            foreach (var conF in consistFoldres)
+            {
+                consists.Add(IterarConsist(conF));
+            }
+          
+
+            Task.WaitAll(consists.ToArray());
+            return true;
+        }
+
         private Task Iterar()
         {
 
@@ -105,6 +119,17 @@ namespace Encadeado
                 Compass.Services.Deck.CreateDgerNewdesp(path);
             });
 
+        }
+
+        private Task IterarConsist(string destino)
+        {
+            string path = destino;
+            Thread.Sleep(1000);
+            return Task.Factory.StartNew(() =>
+            {
+                ExecutarConsistencia(path);
+                Compass.Services.Deck.CreateDgerNewdesp(path);
+            });
         }
 
         private void SetNomeDeck(DeckNewave deck)

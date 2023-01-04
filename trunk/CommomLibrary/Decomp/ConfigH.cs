@@ -798,7 +798,28 @@ namespace Compass.CommomLibrary.Decomp
 
             return earmMax;
         }
+        public double GetpercentAlvo(List<int> UHs)
+        {
+            double pA = 0;
+            double earmAtual = 0;
+            double earmMax = 0;
 
+
+            foreach (var uh in UHs)
+            {
+                var uhe = Usinas.Where(x => x.Cod == uh).First();
+                earmAtual += uhe.EnergiaArmazenada;
+                double volbkp = uhe.VolIni;
+                uhe.VolIni = uhe.VolUtil;
+                earmMax += uhe.EnergiaArmazenada;
+                uhe.VolIni = volbkp;
+            }
+
+            double valor = earmAtual / earmMax * 100.0f;
+            pA = valor > 100 ? 100 : valor;
+
+            return pA;
+        }
         public List<Tuple<int, double, double>> GetEarmsUH()//UH % earm
         {
 

@@ -95,7 +95,14 @@ namespace Compass.ExcelTools.Templates
         {
             get
             {
-                return this.Wb.Worksheets["Geral"].Range("U8").Text.ToUpper() == "SIM";
+                if (this.Wb.Worksheets["Geral"].Range("U8").Text.ToUpper() == "NÃO" || this.Wb.Worksheets["Geral"].Range("U8").Text.ToUpper() == "NAO")
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
 
             }
         }
@@ -359,27 +366,27 @@ namespace Compass.ExcelTools.Templates
             {
                 if (Names.ContainsKey("_faixaLimites"))
                 {
-                   // if (faixalimites == null)
-                   // {
-                        faixalimites = new List<FAIXALIMITES>();
+                    // if (faixalimites == null)
+                    // {
+                    faixalimites = new List<FAIXALIMITES>();
 
-                        var ws = Names["_faixaLimites"].Worksheet;
-                        var row = Names["_faixaLimites"].Row;
-                        var col = Names["_faixaLimites"].Column;
+                    var ws = Names["_faixaLimites"].Worksheet;
+                    var row = Names["_faixaLimites"].Row;
+                    var col = Names["_faixaLimites"].Column;
 
-                        int headerRow = row - 1;
-                        int headerMaxCol = col;
-                        int percentsCols = 0;
-                        for (int c = col + 8; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
-                        {
-                            headerMaxCol = c;
-                            percentsCols++;
-                        }
+                    int headerRow = row - 1;
+                    int headerMaxCol = col;
+                    int percentsCols = 0;
+                    for (int c = col + 8; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
+                    {
+                        headerMaxCol = c;
+                        percentsCols++;
+                    }
 
-                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
-                        {
-                            faixalimites.Add(new FAIXALIMITES(ws.Range[ws.Cells[r, col], ws.Cells[r, headerMaxCol]], percentsCols));
-                        }
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        faixalimites.Add(new FAIXALIMITES(ws.Range[ws.Cells[r, col], ws.Cells[r, headerMaxCol]], percentsCols));
+                    }
                     //}
 
                     return faixalimites;
@@ -401,25 +408,25 @@ namespace Compass.ExcelTools.Templates
                 if (Names.ContainsKey("_faixaLimites"))
                 {
                     //if (faixapercents == null)
-                   // {
-                        faixapercents = new List<FAIXAPERCENTS>();
+                    // {
+                    faixapercents = new List<FAIXAPERCENTS>();
 
-                        var ws = Names["_faixaLimites"].Worksheet;
-                        var row = Names["_faixaLimites"].Row;
-                        var col = Names["_faixaLimites"].Column;
+                    var ws = Names["_faixaLimites"].Worksheet;
+                    var row = Names["_faixaLimites"].Row;
+                    var col = Names["_faixaLimites"].Column;
 
-                        int headerRow = row - 1;
-                        int headerMaxCol = col;
-                        int percentsCols = 0;
-                        for (int c = col + 7; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
-                        {
-                            headerMaxCol = c;
-                            percentsCols++;
-                        }
+                    int headerRow = row - 1;
+                    int headerMaxCol = col;
+                    int percentsCols = 0;
+                    for (int c = col + 7; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
+                    {
+                        headerMaxCol = c;
+                        percentsCols++;
+                    }
 
-                        faixapercents.Add(new FAIXAPERCENTS(ws.Range[ws.Cells[headerRow, col], ws.Cells[headerRow, headerMaxCol]], percentsCols));
+                    faixapercents.Add(new FAIXAPERCENTS(ws.Range[ws.Cells[headerRow, col], ws.Cells[headerRow, headerMaxCol]], percentsCols));
 
-                   // }
+                    // }
 
                     return faixapercents;
                 }
@@ -1043,8 +1050,9 @@ namespace Compass.ExcelTools.Templates
 
         public class FAIXALIMITES
         {
-            public int UH { get; set; }
+            public List<int> UH { get; set; }
             public string TipoRest { get; set; }
+            public string UHstring { get; set; }
             public int UsiRest { get; set; }
 
             public int CodRest { get; set; }
@@ -1055,7 +1063,19 @@ namespace Compass.ExcelTools.Templates
             public List<double> Vals = new List<double>();// { get; set; }
             public FAIXALIMITES(Range rng, int maxCol)
             {
-                if (rng[1, 1].Value is double) UH = (int)rng[1, 1].Value;
+                UH = new List<int>();
+                ((string)rng[1, 1].Text).Split(new string[] { ";", "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(x =>
+                {
+
+                    int u;
+                    if (int.TryParse(x.Trim(), out u))
+                    {
+                        UH.Add(u);
+                    }
+                });
+
+                // if (rng[1, 1].Value is double) UH = (int)rng[1, 1].Value;
+                UHstring = ((string)rng[1, 1].Text).Replace(';', '-').Replace(" ","");
                 TipoRest = ((string)rng[1, 2].Text).ToUpper();
                 if (rng[1, 3].Value is double) UsiRest = (int)rng[1, 3].Value;
 
