@@ -147,7 +147,7 @@ namespace Compass.CommomLibrary.Dessem
             }
         }
         Result result = null;
-        public override Result GetResults()
+        public override Result GetResults(bool alternativo = false)
         {
 
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");

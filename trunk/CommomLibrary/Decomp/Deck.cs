@@ -246,7 +246,273 @@ namespace Compass.CommomLibrary.Decomp
 
         Result result = null;
 
-        public override Result GetResults()
+        public static double[] PLD_LimitesAlter()
+        {
+            try
+            {
+                string arqConfig = @"H:\TI - Sistemas\UAT\PricingExcelTools\files\Config_PLD_Alternativo.csv";
+
+                //StreamReader rd = new StreamReader(@"Z:\shared\linuxQueue\Config_PLD.csv");
+                double[] pld = new double[2];
+
+
+                var dados = File.ReadAllLines(arqConfig).Skip(1).First().Replace('.', ',').Split(';').ToArray();
+                pld[0] = Convert.ToDouble(dados[0]);
+                pld[1] = Convert.ToDouble(dados[1]);
+
+
+                return pld;
+
+            }
+            catch
+            {
+                return null;
+
+            }
+
+        }
+
+        public static int[] Dias_Semanas(int mes, int ano) // Returna quantidade de dias para cada semana do mes OBS: Semana de Sabado a Sexta
+        {
+            int[] semana_dias = new int[7];
+            var semana = 1;
+            var dias = 1;
+            var dias_mes = DateTime.DaysInMonth(ano, mes);
+
+            for (var dia = 1; dia < dias_mes; dia++)
+            {
+                DateTime data = new DateTime(ano, mes, dia);
+
+                if (data.DayOfWeek == DayOfWeek.Friday)
+                {
+                    semana_dias[semana] = dias;
+                    dias = 0;
+                    semana++;
+                }
+                dias++;
+            }
+
+            semana_dias[semana] = dias;
+
+            return semana_dias;
+        }
+
+        public string getPldAlter(string dir)
+        {
+            List<Resu_PLD_Mensal> Resu = new List<Resu_PLD_Mensal>();
+
+            double PLD = 0;
+            double Soma_CMO = 0;
+            double Soma_Horas = 0;
+
+            string tipo = null;
+
+            //QueueController ctl = new QueueController();
+
+            //var comms = ctl.ReadComms();
+
+            //var l = comms.Where(x => x.CommandName == name).FirstOrDefault();
+
+            // if (l == null)
+            // {
+            //     comms = ctl.ReadComms(-30);
+            //     l = comms.Where(x => x.CommandName == name).FirstOrDefault();
+            // }
+
+
+            //if (l != null)
+            if (Directory.Exists(dir))
+            {
+                try
+                {
+
+
+                    //////////////////////////////////////
+                    var caso = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("caso.dat")).First();
+
+
+                    var rv = File.ReadAllLines(caso);
+
+                    var dadger_file = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("dadger." + rv[0])).First();
+
+                    if (dadger_file.Count() > 0)
+                    {
+                        var dadger = File.ReadAllLines(dadger_file);
+                        DateTime dt_estudo = DateTime.Today;
+
+
+
+                        foreach (var linha in dadger)
+                        {
+                            if (linha.StartsWith("DT"))
+                            {
+                                var dados = linha.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                                dt_estudo = new DateTime(int.Parse(dados[3]), int.Parse(dados[2]), int.Parse(dados[1]));
+                            }
+                            else if (linha.StartsWith("& NO. SEMANAS"))
+                            {
+                                var dados = linha.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                                if (int.Parse(dados[8]) != 0)
+                                {
+                                    tipo = "semanal";
+                                    dt_estudo = dt_estudo.AddDays(8);
+                                }
+                                else
+                                {
+                                    tipo = "mensal";
+                                }
+                            }
+                        }
+
+
+
+                        var mes = dt_estudo.Month;
+                        var ano = dt_estudo.Year;
+
+                        var pld_lim = PLD_LimitesAlter();
+
+                        double PLD_limite = pld_lim[0];
+                        double PLD_Max = pld_lim[1];
+
+                        var dec_oper = Directory.GetFiles(dir, "dec_oper_sist.csv");
+                        double cmo = 0;
+                        if (dec_oper.Length > 0)
+                        {
+                            var infos = File.ReadAllLines(dec_oper[0]);
+                            foreach (var line in infos)
+                            {
+                                int semana = 0;
+
+                                var dados = line.Split(';');
+
+                                if ((dados.Count() > 20) && (int.TryParse(dados[0].Trim(), out semana)))
+                                {
+                                    if ((dados[0].Trim() == dados[1].Trim()) && (dados[4].Trim() != "11"))
+                                    {
+                                        if (dados[3].Trim() != "-")
+                                        {
+                                            cmo = Convert.ToDouble(dados[23].Trim().Replace('.',',').ToString());
+                                            var horas = Convert.ToDouble(dados[3].Trim().Replace('.', ',').ToString());
+                                            if (cmo > PLD_limite)
+                                            {
+                                                if (cmo > PLD_Max)
+                                                {
+                                                    Soma_CMO = Soma_CMO + horas * PLD_Max;
+                                                }
+                                                else
+                                                {
+                                                    Soma_CMO = Soma_CMO + horas * cmo;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Soma_CMO = Soma_CMO + horas * PLD_limite;
+                                            }
+                                            Soma_Horas = Soma_Horas + horas;
+                                        }
+                                        else
+                                        {
+                                            cmo = Convert.ToDouble(dados[23].Trim().Replace('.', ',').ToString());
+                                            PLD = Soma_CMO / Soma_Horas;
+                                            double Pld_Mensal = 0;
+                                            int dias_Semana_Atual = 0;
+                                            if (tipo == "mensal" && semana == 1)
+                                            {
+                                                Pld_Mensal = PLD;
+                                            }
+                                            else if (tipo == "mensal")
+                                            {
+                                                Pld_Mensal = 0;
+                                            }
+                                            else
+                                            {
+                                                int[] dias_semana = Dias_Semanas(mes, ano);
+                                                try
+                                                {
+                                                    dias_Semana_Atual = dias_semana[Convert.ToInt32(dados[1].Trim())];
+                                                }
+                                                catch
+                                                {
+
+                                                }
+                                                var dias_mes = DateTime.DaysInMonth(ano, mes);
+
+                                                Pld_Mensal = (PLD * dias_Semana_Atual) / dias_mes;
+                                            }
+                                            object[,] Conjunto_Dados = new object[1, 7] {
+                                        {
+                                            semana,
+                                            dados[4].Trim(),
+                                            cmo,
+                                            PLD,
+                                            dt_estudo,
+                                            tipo,
+                                            Pld_Mensal
+
+                                        }
+                                    };
+
+                                            Resu.Add(new Resu_PLD_Mensal(Conjunto_Dados));
+
+                                            PLD = 0;
+                                            Soma_CMO = 0;
+                                            Soma_Horas = 0;
+
+                                        }
+
+
+
+                                    }
+                                }
+
+
+                            }
+
+                        }
+                        string json = "";
+
+                        var arq = Path.Combine(dir, "PLD_Mensal_alternativo.csv");
+                        //  if (Auto)
+                        if (File.Exists(arq))
+                        {
+                            File.Delete(arq);
+                        }
+                        using (TextWriter tw = new StreamWriter(arq, false, Encoding.Default))
+                        {
+                            tw.WriteLine(dir + "\n");
+                            tw.WriteLine("Semana;Submercado;CMO;PLD;Mes;Tipo;PLD_Mensal");
+                            foreach (var dado in Resu)
+                            { 
+                                //tw.WriteLine(dado.Semana + ";" + dado.Submercado + ";" + dado.CMO + ";" + dado.PLD + ";" + dado.Mes + ";" + dado.Tipo + ";" + dado.PLD_Mensal); //escreve no arquivo novamente
+                                tw.WriteLine(dado.Semana + ";" + dado.Submercado + ";" + dado.CMO.ToString().Replace(',','.') + ";" + dado.PLD.ToString().Replace(',', '.') + ";" + dado.Mes + ";" + dado.Tipo + ";" + dado.PLD_Mensal.ToString().Replace(',', '.')); //escreve no arquivo novamente
+                            }
+
+                            tw.Close();
+                        }
+
+
+
+                        return json;
+                    }
+                    else
+                    {
+                        Console.Write("Dadger não encontrado");
+                        return null;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.Write("Erro ao Calcular PLD Mensal");
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public override Result GetResults(bool alternativo = false)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             if (result != null) return result;
@@ -264,6 +530,7 @@ namespace Compass.CommomLibrary.Decomp
                 var dec_oper = Path.Combine(this.BaseFolder, "dec_oper_sist.csv");
 
                 var PLD_mensal = Path.Combine(this.BaseFolder, "PLD_Mensal.csv");
+                var PLD_mensalAlternativo = Path.Combine(this.BaseFolder, "PLD_Mensal_alternativo.csv");
 
                 List<string[]> resu_PLD = new List<string[]>();
                 if (!File.Exists(PLD_mensal))
@@ -298,7 +565,31 @@ namespace Compass.CommomLibrary.Decomp
                     }
                 }
 
-                if (File.Exists(PLD_mensal))
+                if (alternativo)
+                {
+                    if (File.Exists(PLD_mensalAlternativo))
+                    {
+                        File.Delete(PLD_mensalAlternativo);
+                    }
+                    getPldAlter(this.BaseFolder);
+
+                    if (File.Exists(PLD_mensalAlternativo))
+                    {
+                        var infos = File.ReadAllLines(PLD_mensalAlternativo);
+
+                        foreach (var l in infos)
+                        {
+                            var ls = l.Split(';').Select(x => x.Trim()).ToArray();
+                            if (ls.Length > 2)
+                            {
+                                resu_PLD.Add(ls);
+                            }
+                        }
+
+
+                    }
+                }
+                else if (File.Exists(PLD_mensal))
                 {
                     var infos = File.ReadAllLines(PLD_mensal);
 
@@ -555,9 +846,9 @@ namespace Compass.CommomLibrary.Decomp
 
                 //                }
                 //            }
-                            
+
                 //        }
-                        
+
                 //    });
 
                 //for (int sist = 1; sist <= 4; sist++)
@@ -625,7 +916,7 @@ namespace Compass.CommomLibrary.Decomp
                                            System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
                                            * peso;
                                        }
-                                     
+
                                    }) / (totaldias);
                            });
 
@@ -647,15 +938,15 @@ namespace Compass.CommomLibrary.Decomp
                                                 )
                                            );
                                        totaldias += peso;
-                                       
-                                           return
 
-                                          (double.Parse(y[8],
-                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[9].Replace("-", "0").Trim(),
-                                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo))
-                                          * peso;
-                                      
-                                       
+                                       return
+
+                                      (double.Parse(y[8],
+                                      System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[9].Replace("-", "0").Trim(),
+                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo))
+                                      * peso;
+
+
 
                                    }) / (totaldias);
                            });

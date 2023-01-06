@@ -147,7 +147,7 @@ namespace Compass.CommomLibrary.Previvaz
             }
         }
 
-        public override Result GetResults()
+        public override Result GetResults(bool alternativo = false)
         {
             throw new NotImplementedException();
         }

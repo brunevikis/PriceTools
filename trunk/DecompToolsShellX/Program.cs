@@ -634,6 +634,16 @@ namespace Compass.DecompToolsShellX
         {
             try
             {
+                bool alternativo = false;
+
+                if (System.Windows.Forms.MessageBox.Show(@"Deseja usar PLD Alternativo?"
+                  , "Limites PLD", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    var frm = new FrmPldAlter();
+                    frm.ShowDialog();
+                    alternativo = frm.usar;
+
+                }
 
                 string dir;
                 if (Directory.Exists(path))
@@ -655,7 +665,7 @@ namespace Compass.DecompToolsShellX
                 if (deck is CommomLibrary.Newave.Deck || deck is CommomLibrary.Decomp.Deck || deck is CommomLibrary.Dessem.Deck)
                 {
 
-                    var results = deck.GetResults();
+                    var results = deck.GetResults(alternativo);
                     FormViewer.Show(dir, results);
                 }
             }
@@ -669,6 +679,16 @@ namespace Compass.DecompToolsShellX
         {
             try
             {
+                bool alternativo = false;
+
+                if (System.Windows.Forms.MessageBox.Show(@"Deseja usar PLD Alternativo?"
+                  , "Limites PLD", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    var frm = new FrmPldAlter();
+                    frm.ShowDialog();
+                    alternativo =  frm.usar;
+
+                }
 
                 string dir;
                 if (Directory.Exists(path))
@@ -702,7 +722,7 @@ namespace Compass.DecompToolsShellX
                     {
                         x.dir,
                         x.deck,
-                        result = x.deck.GetResults()
+                        result = x.deck.GetResults(alternativo)
                     }).Where(x => x.result != null).ToList();
 
                 var dDcSem = dirs.Where(x => x.deck is CommomLibrary.Decomp.Deck && (DocumentFactory.Create(x.deck.Documents["DADGER."].Document.File) as Compass.CommomLibrary.Dadger.Dadger).VAZOES_NumeroDeSemanas > 0 && Directory.GetFiles(x.deck.BaseFolder).Any(y => y.EndsWith("dec_oper_sist.csv", StringComparison.OrdinalIgnoreCase))).AsParallel()
@@ -710,7 +730,7 @@ namespace Compass.DecompToolsShellX
                    {
                        x.dir,
                        x.deck,
-                       result = x.deck.GetResults()
+                       result = x.deck.GetResults(alternativo)
                    }).Where(x => x.result != null).ToList();
 
                 var dDs = dirs.Where(x => x.deck is CommomLibrary.Dessem.Deck).AsParallel()
@@ -5338,6 +5358,7 @@ namespace Compass.DecompToolsShellX
             var frm = new FrmExtriDE((string)path);
             frm.ShowDialog();
         }
+        
 
         static void cortesTHSTA(object paths)
         {

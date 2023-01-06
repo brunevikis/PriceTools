@@ -10,7 +10,7 @@ namespace Compass.CommomLibrary {
         public abstract Dictionary<string, DeckFile> Documents { get; }
         public abstract void GetFiles(string baseFolder);
         public abstract void CopyFilesToFolder(string folder);
-        public abstract Result GetResults();
+        public abstract Result GetResults(bool alternativo = false);
         public string BaseFolder { get; set; }
 
         //static Dictionary<SistemaEnum, double[]> enaMLT = new Dictionary<SistemaEnum, double[]>();
@@ -52,6 +52,34 @@ namespace Compass.CommomLibrary {
         S = 2,
         NE = 3,
         N = 4
+    }
+
+    public class Resu_PLD_Mensal
+    {
+        public int Semana { get; set; }
+        public int Submercado { get; set; }
+        public double CMO { get; set; }
+        public double PLD { get; set; }
+
+        public int Mes { get; set; }
+
+        public string Tipo { get; set; }
+
+
+        public double PLD_Mensal { get; set; }
+
+        public Resu_PLD_Mensal(object[,] dados)
+        {
+            DateTime data = Convert.ToDateTime(dados[0, 4]);
+            Semana = int.Parse(dados[0, 0].ToString());
+            Submercado = int.Parse(dados[0, 1].ToString());
+            CMO = Math.Round(Double.Parse(dados[0, 2].ToString()), 2);
+            PLD = Math.Round(Double.Parse(dados[0, 3].ToString()), 2);
+            // Mes = int.Parse(dados[0, 4].ToString());
+            Mes = data.Month;
+            Tipo = dados[0, 5].ToString();
+            PLD_Mensal = Math.Round(Double.Parse(dados[0, 6].ToString()), 2);
+        }
     }
     public class Result {
 

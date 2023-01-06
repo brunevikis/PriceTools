@@ -221,7 +221,7 @@ namespace Compass.CommomLibrary.Newave
 
 
         Result result = null;
-        public override Result GetResults()
+        public override Result GetResults(bool alternativo = false)
         {
 
             if (result != null) return result;
