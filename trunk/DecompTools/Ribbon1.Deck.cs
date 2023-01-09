@@ -1294,6 +1294,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                 {
 
                     Encadeado.Estudo estudo = new Encadeado.Estudo();
+                    estudo.ExecutavelNewave = w.ExecutavelNewave;
                     bool tesets = estudo.execucaoConsistDC(consistFolders);
                 }
 

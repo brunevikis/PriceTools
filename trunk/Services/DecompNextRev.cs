@@ -47,10 +47,10 @@ namespace Compass.Services
         public static double GetpercentAlvo(Compass.CommomLibrary.Decomp.ConfigH configH, List<int> UHs)
         {
             double percentAlvo = configH.GetpercentAlvo(UHs);
-            
+
             return percentAlvo;
         }
-     
+
 
 
         public static double GetLimitesPorFaixa(double voliniPerc, WorkbookMensal.FAIXALIMITES faixaLimite, WorkbookMensal.FAIXAPERCENTS faixaPercent)
@@ -2194,6 +2194,10 @@ namespace Compass.Services
                         var countCq = rest.Value.Where(y => (y is CqLine)).ToList();
                         if (rhq.Usinas != null && countCq.Count() == rhq.Usinas.Count() || rhq.Usina == 0)
                         {
+                            if (rhq.Usina == 0)
+                            {
+
+                            }
                             //rest.Value.ToList().ForEach(x => dadger.BlocoRhq.Remove(x));
                             //rests.SelectMany(x => x.Value).ToList().ForEach(x => dadger.BlocoRhq.Remove(x));
                             //rests.Clear();
@@ -2232,6 +2236,23 @@ namespace Compass.Services
 
 
                 }
+                
+
+                var restsUsiZero = dadger.BlocoRhq.RhqGrouped
+                        .Where(x => x.Value.Any(y => (y is CqLine) && y[3] == 0))
+                        //.Select(x => x.Value).FirstOrDefault();
+                        .ToList();
+
+                foreach (var re in restsUsiZero)//limpar hqs com usina numero zero
+                {
+
+                    re.Value.ToList().ForEach(x => dadger.BlocoRhq.Remove(x));
+
+
+                }
+
+
+
             };
 
             overrideRHQ(dtEstudo.Month, dtEstudo.Year, 1);
