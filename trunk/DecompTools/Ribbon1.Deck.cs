@@ -1509,11 +1509,11 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 }
                                 File.WriteAllLines(Path.Combine(estudoPath, "UhFixados.txt"), fixaUhTxtLines);
 
-                                //Services.Reservatorio.SetUHBlockFixado(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax, dadosFixas);
+                                Services.Reservatorio.SetUHBlockFixado(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax, dadosFixas);
                             }
                             else
                             {
-                                //Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
+                                Services.Reservatorio.SetUHBlock(configH, w.Earm.Select(u => u.Value[mesEarmFinal]).ToArray(), earmMax);
                             }
 
                         }
