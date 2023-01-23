@@ -57,6 +57,8 @@ namespace Compass.DecompToolsShellX
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
             actions.Add("getpatamares", getPatamares);
+            actions.Add("vertermicas", vertermicas);
+
 
             //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
 
@@ -298,7 +300,7 @@ namespace Compass.DecompToolsShellX
 
             try
             {
-                for (DateTime d = inicio;d  <= fim; d = d.AddDays(1))
+                for (DateTime d = inicio; d <= fim; d = d.AddDays(1))
                 {
                     DateTime semanaInicio = d;
                     DateTime semanaFim = d;
@@ -307,13 +309,13 @@ namespace Compass.DecompToolsShellX
                         semanaFim = semanaFim.AddDays(1);
                     }
                     var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023);
-                    patamareDeCarga.Add("(" + semanaInicio.ToString("yyyyMM") + numeroSemana.ToString() + "," + pat.Item1.ToString() + "," + pat.Item2.ToString() + "," + pat.Item3 +"),");
+                    patamareDeCarga.Add("(" + semanaInicio.ToString("yyyyMM") + numeroSemana.ToString() + "," + pat.Item1.ToString() + "," + pat.Item2.ToString() + "," + pat.Item3 + "),");
                     d = semanaFim;
-                    numeroSemana = d.AddDays(1).Month == semanaInicio.Month ? numeroSemana+1 : 1;
+                    numeroSemana = d.AddDays(1).Month == semanaInicio.Month ? numeroSemana + 1 : 1;
 
                 }
                 patamareDeCarga.Add("GO");
-                File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA"+anoArg+".txt", patamareDeCarga);
+                File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA" + anoArg + ".txt", patamareDeCarga);
 
             }
             catch (Exception ex)
@@ -630,6 +632,50 @@ namespace Compass.DecompToolsShellX
             }
         }
 
+        static void vertermicas(string path)
+        {
+            try
+            {
+                string dir;
+                if (Directory.Exists(path))
+                {
+                    dir = path;
+                }
+                else if (File.Exists(path))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Diretorio não encontrado");
+                    return;
+                }
+                //else
+                //{
+                //    FormViewer.Show("", new Result());
+                //    return;
+                //}
+
+                var deck = DeckFactory.CreateDeck(dir) as Compass.CommomLibrary.Decomp.Deck;
+
+                if (deck is CommomLibrary.Decomp.Deck)
+                {
+                    Compass.CommomLibrary.Dadger.Dadger dadger = deck[CommomLibrary.Decomp.DeckDocument.dadger].Document as CommomLibrary.Dadger.Dadger;
+                    var results = deck.GetResults();
+                    FrmTermicasGraph.Show(dir, dadger, results);
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Diretório inválido");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+            }
+        }
+
         static void resultado(string path)
         {
             try
@@ -686,7 +732,7 @@ namespace Compass.DecompToolsShellX
                 {
                     var frm = new FrmPldAlter();
                     frm.ShowDialog();
-                    alternativo =  frm.usar;
+                    alternativo = frm.usar;
 
                 }
 
@@ -701,7 +747,7 @@ namespace Compass.DecompToolsShellX
                 var dirsTets = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).Where(x => Directory.GetFiles(x).Any(y => y.EndsWith(".dat", StringComparison.OrdinalIgnoreCase))).ToList();
                 var dirsTets2 = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).ToList();
 
-                var dirs = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).Where(x => Directory.GetFiles(x).Any(y => y.EndsWith(".dat",StringComparison.OrdinalIgnoreCase)))
+                var dirs = Directory.GetDirectories(dir, "*", SearchOption.AllDirectories).Where(x => Directory.GetFiles(x).Any(y => y.EndsWith(".dat", StringComparison.OrdinalIgnoreCase)))
                     .AsParallel()//.WithDegreeOfParallelism(4)                       
                     .Select(x => new
                     {
@@ -717,7 +763,7 @@ namespace Compass.DecompToolsShellX
                         result = x.deck.GetResults()
                     }).Where(x => x.result != null).ToList();
 
-                var dDcMensal = dirs.Where(x => x.deck is CommomLibrary.Decomp.Deck && (DocumentFactory.Create( x.deck.Documents["DADGER."].Document.File) as Compass.CommomLibrary.Dadger.Dadger).VAZOES_NumeroDeSemanas == 0 && Directory.GetFiles(x.deck.BaseFolder).Any(y => y.EndsWith("dec_oper_sist.csv",StringComparison.OrdinalIgnoreCase))).AsParallel()
+                var dDcMensal = dirs.Where(x => x.deck is CommomLibrary.Decomp.Deck && (DocumentFactory.Create(x.deck.Documents["DADGER."].Document.File) as Compass.CommomLibrary.Dadger.Dadger).VAZOES_NumeroDeSemanas == 0 && Directory.GetFiles(x.deck.BaseFolder).Any(y => y.EndsWith("dec_oper_sist.csv", StringComparison.OrdinalIgnoreCase))).AsParallel()
                     .Select(x => new
                     {
                         x.dir,
@@ -741,10 +787,10 @@ namespace Compass.DecompToolsShellX
                         result = x.deck.GetResults()
                     }).Where(x => x.result != null).ToList();
 
-                if (dNw.Count() > 0) FormViewer.Show("NEWAVE",true, dNw.Select(x => x.result).ToArray());
-                if (dDcMensal.Count() > 0) FormViewer.Show("DECOMP",true, dDcMensal.Select(x => x.result).ToArray());
-                if (dDcSem.Count() > 0) FormViewer.Show("DECOMP",true, dDcSem.Select(x => x.result).ToArray());
-                if (dDs.Count() > 0) FormViewer.Show("DESSEM",true, dDs.Select(x => x.result).ToArray());
+                if (dNw.Count() > 0) FormViewer.Show("NEWAVE", true, dNw.Select(x => x.result).ToArray());
+                if (dDcMensal.Count() > 0) FormViewer.Show("DECOMP", true, dDcMensal.Select(x => x.result).ToArray());
+                if (dDcSem.Count() > 0) FormViewer.Show("DECOMP", true, dDcSem.Select(x => x.result).ToArray());
+                if (dDs.Count() > 0) FormViewer.Show("DESSEM", true, dDs.Select(x => x.result).ToArray());
 
             }
             catch (Exception ex)
@@ -881,14 +927,14 @@ namespace Compass.DecompToolsShellX
                     var GTMIN_CCEEFileAtual = Directory.GetFiles(deck.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("GTMIN_CCEE_", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                     if (GTMIN_CCEEFileAtual != null && File.Exists(GTMIN_CCEEFileAtual))
                     {
-                        File.Copy(GTMIN_CCEEFileAtual, Path.Combine(cloneDir, GTMIN_CCEEFileAtual.Split('\\').Last()),true);
+                        File.Copy(GTMIN_CCEEFileAtual, Path.Combine(cloneDir, GTMIN_CCEEFileAtual.Split('\\').Last()), true);
 
                     }
                 }
                 catch (Exception ed)
                 {
 
-                    
+
                 }
 
                 dynamic cceeDeck = DeckFactory.CreateDeck(cloneDir);
@@ -1618,7 +1664,7 @@ namespace Compass.DecompToolsShellX
                                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                                             }
                                             bool pat2023 = d.Year >= 2023;
-                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d,pat2023);
+                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023);
 
                                             foreach (var inter in intervalosAgruped)
                                             {
@@ -1697,7 +1743,7 @@ namespace Compass.DecompToolsShellX
                 var excelname = Path.Combine(dir, "Coleta_Limites.xlsm");//  Acompanhamento_Limites_Elétricos.xlsm
                 //var template = @"C:\Development\Implementacoes\TESTES_PEGALIMITES\Acompanhamento_Limites_Elétricos.xlsm";
                 var template = @"K:\enercore_ctl_common\Coleta\Coleta_Limites.xlsm";
-                File.Copy(template, excelname,true);
+                File.Copy(template, excelname, true);
                 //Microsoft.Office.Interop.Excel.Application xlApp = null;
                 Microsoft.Office.Interop.Excel.Application xlApp = ExcelTools.Helper.StartExcelInvisible();
                 //xlApp = ExcelTools.Helper.StartExcelInvisible();
@@ -1713,7 +1759,7 @@ namespace Compass.DecompToolsShellX
                 foreach (var di in dirs.ToList())
                 {
                     var relato = Directory.GetFiles(di).Where(x => Path.GetFileName(x).ToLower().Equals("relato.rv0")).FirstOrDefault();
-                    
+
                     if (relato != null)
                     {
                         string anoMes = di.Split('\\').Last();
@@ -1814,9 +1860,9 @@ namespace Compass.DecompToolsShellX
                                         limites[patamar + 2] = double.TryParse(partes.Last().Replace('.', ','), out v) ? v : 0;
                                         indice = lines.IndexOf(l);
                                         bool ftotal = false;
-                                        while(ftotal == false)
+                                        while (ftotal == false)
                                         {
-                                            var npartes = lines[indice +1].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                            var npartes = lines[indice + 1].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
                                             if (npartes[0] == "Total")
                                             {
                                                 double x;
@@ -1834,7 +1880,7 @@ namespace Compass.DecompToolsShellX
                                 patamar++;
                             }
                             dados.Add(new Tuple<int, double[]>(ree, limites));
-                           
+
                         }
 
                         int row = 4;
@@ -1865,7 +1911,7 @@ namespace Compass.DecompToolsShellX
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show(ex.Message);
-               
+
             }
         }
         static void uhDessem(string path)
@@ -2848,7 +2894,7 @@ namespace Compass.DecompToolsShellX
             #region BLOCO TM
             bool patamres2023 = dataEstudo.Year >= 2023;
 
-            var intervalos = Tools.GetIntervalosHoararios(dataEstudo,patamres2023);
+            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamres2023);
             string comentario = entdados.BlocoTm.First().Comment;
             for (DateTime d = dataEstudo.AddDays(-7); d <= dataEstudo; d = d.AddDays(1))
             {
@@ -4152,7 +4198,7 @@ namespace Compass.DecompToolsShellX
                     if (Directory.Exists(camDecomp))
                     {
                         var arqs = Directory.GetFiles(camDecomp).ToList();
-                        if (arqs.All(x =>Path.GetFileName(x).ToLower()!= mapcut) && arqs.All(x => Path.GetFileName(x).ToLower() != cortdeco))
+                        if (arqs.All(x => Path.GetFileName(x).ToLower() != mapcut) && arqs.All(x => Path.GetFileName(x).ToLower() != cortdeco))
                         {
                             Ionic.Zip.ZipFile arquivoZip = Ionic.Zip.ZipFile.Read(etcFile);
                             try
@@ -4959,7 +5005,7 @@ namespace Compass.DecompToolsShellX
                 System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
 
                 //var responseTsk = httpClient.PostAsync("http://azcpspldv02.eastus.cloudapp.azure.com:5015/api/Command", cont);
-               // var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
+                // var responseTsk = httpClient.PostAsync("http://10.206.194.196:5015/api/Command", cont);
                 var responseTsk = httpClient.PostAsync("http://10.206.194.210:5015/api/Command", cont);
                 responseTsk.Wait();
                 var response = responseTsk.Result;
@@ -5358,7 +5404,7 @@ namespace Compass.DecompToolsShellX
             var frm = new FrmExtriDE((string)path);
             frm.ShowDialog();
         }
-        
+
 
         static void cortesTHSTA(object paths)
         {

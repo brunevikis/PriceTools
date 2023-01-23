@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>247</ApplicationRevision>
+    <ApplicationRevision>248</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -207,6 +207,18 @@
     <Compile Include="FrmTendenciaHidr.Designer.cs">
       <DependentUpon>FrmTendenciaHidr.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmTermicasGraph.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmTermicasGraph.Designer.cs">
+      <DependentUpon>FrmTermicasGraph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmTeste.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmTeste.Designer.cs">
+      <DependentUpon>FrmTeste.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -303,6 +315,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPldAlter.resx">
       <DependentUpon>FrmPldAlter.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPldDessem.resx">
       <DependentUpon>FrmPldDessem.cs</DependentUpon>
@@ -314,6 +327,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmTendenciaHidr.resx">
       <DependentUpon>FrmTendenciaHidr.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmTermicasGraph.resx">
+      <DependentUpon>FrmTermicasGraph.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmTeste.resx">
+      <DependentUpon>FrmTeste.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmViewer.resx">

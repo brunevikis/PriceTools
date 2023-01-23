@@ -213,7 +213,6 @@ namespace Compass.CommomLibrary {
                 CMO_Men = Math.Round(Double.Parse(dados[0, 2].ToString()), 2);
             }
 
-
         }
         public List<PLD_DESSEM> PLD_DESSEM_Result { get; set; }
 

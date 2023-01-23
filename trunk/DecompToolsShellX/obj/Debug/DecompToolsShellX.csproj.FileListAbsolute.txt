@@ -257,3 +257,5 @@ C:\Development\price_toolsVMAlfa\trunk\DecompToolsShellX\obj\Debug\Compass.Decom
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\DecompToolsShellX.csproj.CopyComplete
 C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\Ionic.Zip.dll
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmPldAlter.resources
+C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmTermicasGraph.resources
+C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmTeste.resources
