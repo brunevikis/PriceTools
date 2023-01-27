@@ -126,14 +126,13 @@ namespace Compass.DeployActions
                 {"Conversão Decodess", exe + " convdecodess " + "\"%1\""},
                 {"PLD Dessem", exe + " plddessem " + "\"%1\""},
                 {"Dessem Tools", exe + " dessemtools " + "\"%1\""},
-                {"Previvaz Local", exe + " previvazlocal " + "\"%1\""},
-                {"Resultados DataBase", exe + " resdatabase " + "\"%1\""},
-                {"Ver Térmicas Despachadas" , exe + " vertermicas " + "\"%1\"" },
+                {"Ver Térmicas Despachadas" , exe + " vertermicas " + "\"%1\""},
 
 
             };
 
-
+            // {"Previvaz Local", exe + " previvazlocal " + "\"%1\""},
+            //{"Resultados DataBase", exe + " resdatabase " + "\"%1\""},
             {
                 var k = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(anchorKeyD);
                 k.SetValue("ExtendedSubCommandsKey", ctxMenuD.Replace(@"SOFTWARE\Classes\", ""), Microsoft.Win32.RegistryValueKind.String);

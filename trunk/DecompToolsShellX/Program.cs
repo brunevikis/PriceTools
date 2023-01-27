@@ -56,7 +56,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("carregarprevs", carregaPrevs);
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
-            actions.Add("getpatamares", getPatamares);
+            //actions.Add("getpatamares", getPatamares);
             actions.Add("vertermicas", vertermicas);
 
 
