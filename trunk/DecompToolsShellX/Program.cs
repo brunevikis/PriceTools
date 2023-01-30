@@ -3864,7 +3864,8 @@ namespace Compass.DecompToolsShellX
 
                 //string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem191412.sh";
                 //string comandoDS = "/mnt/Fsx/AWS/enercore_ctl_common/scripts/dessem190243.sh";
-                string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem190243.sh";
+               // string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem190243.sh";
+                string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem.sh";
 
                 bool status = DessemAutorun(cloneDir, comandoDS);
                 if (status)
