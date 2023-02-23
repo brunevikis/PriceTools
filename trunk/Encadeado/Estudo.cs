@@ -1278,7 +1278,7 @@ namespace Encadeado
                     {
 
                         var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                        if (dad.Minemonico == "VMINT")
+                        if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
                         {
                             newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
                         }
@@ -1294,7 +1294,7 @@ namespace Encadeado
                     }
                     else
                     {
-                        if (dad.Minemonico == "VMINT")
+                        if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
                         {
                             modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
                         }
