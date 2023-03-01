@@ -483,6 +483,7 @@ namespace Compass.DecompToolsShellX
             var dtGerHidr = new DataTable();
             var dtGerTerm = new DataTable();
             var dtGNL = new DataTable();
+            var dtGerEol = new DataTable();
 
             var dataSources = new ResultDataSource[] {
              new ResultDataSource(){ DataSource =  dtCmo   , Title = "Cmo" },
@@ -496,6 +497,7 @@ namespace Compass.DecompToolsShellX
              new ResultDataSource(){ DataSource =  dtDemanda , Title = "Demanda" },
              new ResultDataSource(){ DataSource =  dtGerHidr , Title = "Ger Hidr" },
              new ResultDataSource(){ DataSource =  dtGerTerm , Title = "Ger Term" },
+             new ResultDataSource(){ DataSource =  dtGerEol , Title = "Ger Eol" },
              new ResultDataSource(){ DataSource =  dtCortes, Title = "Cortes" },
               new ResultDataSource(){ DataSource =  dtGNL, Title = "Despacho GNL" }
 
@@ -740,6 +742,26 @@ namespace Compass.DecompToolsShellX
                 l1 = orderedResults.Select(x => x[i].GerTermMedia.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
                 dtGerTerm.Rows.Add(l1.ToArray());
             }
+            /////
+            for (int i = 1; i <= 4; i++)
+            {
+                l1 = orderedResults.Select(x => x[i].GerEol.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
+                dtGerEol.Rows.Add(l1.ToArray());
+            }
+
+            dtGerEol.Rows.Add();
+            dtGerEol.Rows.Add("Média 1° Mês");
+
+            for (int i = 1; i <= 4; i++)
+            {
+                l1 = orderedResults.Select(x => x[i].GerEolMedia.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
+                dtGerEol.Rows.Add(l1.ToArray());
+            }
+
+
+            ///
+
+
 
             this.Text = "Resultados - " + commonPath;
 
@@ -754,6 +776,7 @@ namespace Compass.DecompToolsShellX
 
             if (_results.First().Value.PDO_Sist_Result == null)//Mostra os resultados de decks decomp e newave
             {
+                bool modeloNovo = _results.First().Value.novo;
                 var dtResumo = new System.Data.DataTable();
                 var dtCmo = new System.Data.DataTable();
 
@@ -773,7 +796,17 @@ namespace Compass.DecompToolsShellX
                 dtResumo.Columns.Add("DEMANDA");
                 dtResumo.Columns.Add("GERHIDR");
                 dtResumo.Columns.Add("GERTERM");
+
+
                 dtResumo.Columns.Add("GERPEQ");
+
+                //
+                if (modeloNovo)
+                {
+                    dtResumo.Columns.Add("GEREOL");
+                }
+                //
+
                 //dt[0].Columns.Add("DEMANDA 2o MES");
 
 
@@ -787,12 +820,24 @@ namespace Compass.DecompToolsShellX
                 _results.First().Value.Sistemas.Select(
                     x =>
                     {
-                        dtResumo.Rows.Add(
+                        if (modeloNovo)
+                        {
+                            dtResumo.Rows.Add(
+                            new object[] { x.Sistema.ToString(), x.Cmo.ToString("N2"), x.EarmI.ToString("P1"), x.EnaSemCV.ToString("N0"), x.Ena.ToString("N0"), x.EnaMLT.ToString("P0"), x.EnaTH.ToString("N0"), x.EnaTHMLT.ToString("P0")
+                                , x.DemandaMes.ToString("N0"), x.GerHidr.ToString("N0"), x.GerTerm.ToString("N0"), x.GerPeq.ToString("N0"),x.GerEol.ToString("N0")
+                                //, x.DemandaMesSeguinte.ToString("N0")
+                            }
+                            );
+                        }
+                        else
+                        {
+                            dtResumo.Rows.Add(
                             new object[] { x.Sistema.ToString(), x.Cmo.ToString("N2"), x.EarmI.ToString("P1"), x.EnaSemCV.ToString("N0"), x.Ena.ToString("N0"), x.EnaMLT.ToString("P0"), x.EnaTH.ToString("N0"), x.EnaTHMLT.ToString("P0")
                                 , x.DemandaMes.ToString("N0"), x.GerHidr.ToString("N0"), x.GerTerm.ToString("N0"), x.GerPeq.ToString("N0")
                                 //, x.DemandaMesSeguinte.ToString("N0")
                             }
                             );
+                        }
 
                         dtCmo.Rows.Add(
                             new object[] { x.Sistema.ToString(), x.Cmo_pat1.ToString("N2"), x.Cmo_pat2.ToString("N2"), x.Cmo_pat3.ToString("N2"), x.Cmo.ToString("N2") }

@@ -135,6 +135,7 @@ namespace Compass.CommomLibrary {
 
         public List<SistResult> Sistemas { get; set; }
 
+        public bool novo = false;
         public string Dir { get; set; }
         public string Cortes { get; set; }
 
@@ -142,6 +143,7 @@ namespace Compass.CommomLibrary {
             
 
             public SistemaEnum Sistema { get; set; }
+
 
             public double EarmI { get; set; }
             public double EarmF { get; set; }
@@ -167,6 +169,8 @@ namespace Compass.CommomLibrary {
             public double GerPeq { get; set; }
             public double GerHidrMedia { get; set; }
             public double GerTermMedia { get; set; }
+            public double GerEolMedia { get; set; }
+            public double GerEol { get; set; }
 
 
         }

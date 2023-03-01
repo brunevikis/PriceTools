@@ -375,6 +375,8 @@ namespace Compass.CommomLibrary.Decomp
                         double PLD_Max = pld_lim[1];
 
                         var dec_oper = Directory.GetFiles(dir, "dec_oper_sist.csv");
+                        bool modelonovo = verificaDec_OperVersion(dec_oper[0]);
+
                         double cmo = 0;
                         if (dec_oper.Length > 0)
                         {
@@ -387,12 +389,12 @@ namespace Compass.CommomLibrary.Decomp
 
                                 if ((dados.Count() > 20) && (int.TryParse(dados[0].Trim(), out semana)))
                                 {
-                                    if ((dados[0].Trim() == dados[1].Trim()) && (dados[4].Trim() != "11"))
+                                    if ((dados[0].Trim() == dados[1].Trim()) && (dados[modelonovo ? 5 : 4].Trim() != "11"))
                                     {
-                                        if (dados[3].Trim() != "-")
+                                        if (dados[modelonovo ? 4 : 3].Trim() != "-")
                                         {
-                                            cmo = Convert.ToDouble(dados[23].Trim().Replace('.',',').ToString());
-                                            var horas = Convert.ToDouble(dados[3].Trim().Replace('.', ',').ToString());
+                                            cmo = Convert.ToDouble(dados[modelonovo ? 25 : 23].Trim().Replace('.', ',').ToString());
+                                            var horas = Convert.ToDouble(dados[modelonovo ? 4 : 3].Trim().Replace('.', ',').ToString());
                                             if (cmo > PLD_limite)
                                             {
                                                 if (cmo > PLD_Max)
@@ -412,7 +414,7 @@ namespace Compass.CommomLibrary.Decomp
                                         }
                                         else
                                         {
-                                            cmo = Convert.ToDouble(dados[23].Trim().Replace('.', ',').ToString());
+                                            cmo = Convert.ToDouble(dados[modelonovo ? 25 : 23].Trim().Replace('.', ',').ToString());
                                             PLD = Soma_CMO / Soma_Horas;
                                             double Pld_Mensal = 0;
                                             int dias_Semana_Atual = 0;
@@ -442,7 +444,7 @@ namespace Compass.CommomLibrary.Decomp
                                             object[,] Conjunto_Dados = new object[1, 7] {
                                         {
                                             semana,
-                                            dados[4].Trim(),
+                                            dados[modelonovo ? 5 : 4].Trim(),
                                             cmo,
                                             PLD,
                                             dt_estudo,
@@ -482,9 +484,9 @@ namespace Compass.CommomLibrary.Decomp
                             tw.WriteLine(dir + "\n");
                             tw.WriteLine("Semana;Submercado;CMO;PLD;Mes;Tipo;PLD_Mensal");
                             foreach (var dado in Resu)
-                            { 
+                            {
                                 //tw.WriteLine(dado.Semana + ";" + dado.Submercado + ";" + dado.CMO + ";" + dado.PLD + ";" + dado.Mes + ";" + dado.Tipo + ";" + dado.PLD_Mensal); //escreve no arquivo novamente
-                                tw.WriteLine(dado.Semana + ";" + dado.Submercado + ";" + dado.CMO.ToString().Replace(',','.') + ";" + dado.PLD.ToString().Replace(',', '.') + ";" + dado.Mes + ";" + dado.Tipo + ";" + dado.PLD_Mensal.ToString().Replace(',', '.')); //escreve no arquivo novamente
+                                tw.WriteLine(dado.Semana + ";" + dado.Submercado + ";" + dado.CMO.ToString().Replace(',', '.') + ";" + dado.PLD.ToString().Replace(',', '.') + ";" + dado.Mes + ";" + dado.Tipo + ";" + dado.PLD_Mensal.ToString().Replace(',', '.')); //escreve no arquivo novamente
                             }
 
                             tw.Close();
@@ -512,6 +514,19 @@ namespace Compass.CommomLibrary.Decomp
             }
         }
 
+        public static bool verificaDec_OperVersion(string dec_Oper)
+        {
+            if (File.Exists(dec_Oper))
+            {
+                var infos = File.ReadAllLines(dec_Oper);
+                if (infos.Any(x => x.ToUpper().StartsWith("GEOL")))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public override Result GetResults(bool alternativo = false)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
@@ -528,6 +543,8 @@ namespace Compass.CommomLibrary.Decomp
                 var Bloco_GL = dadgnl.BlocoGL.ToList();
 
                 var dec_oper = Path.Combine(this.BaseFolder, "dec_oper_sist.csv");
+
+                bool modeloNovo = verificaDec_OperVersion(dec_oper);
 
                 var PLD_mensal = Path.Combine(this.BaseFolder, "PLD_Mensal.csv");
                 var PLD_mensalAlternativo = Path.Combine(this.BaseFolder, "PLD_Mensal_alternativo.csv");
@@ -741,60 +758,60 @@ namespace Compass.CommomLibrary.Decomp
 
                 datalines
                     .Where(x => x[0] == "1")
-                    .GroupBy(x => int.Parse(x[4]))
+                    .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
                     .Where(x => x.Key < 5).ToList()
                     .ForEach(x =>
                     {
 
                         double cmo1, cmo2, cmo3, cmo, earmI, earmf;
 
-                        double.TryParse(x.First(y => y[2].Trim() == "1")[23].Trim(),
+                        double.TryParse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "1")[modeloNovo ? 25 : 23].Trim(),
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                             out cmo1);
-                        double.TryParse(x.First(y => y[2].Trim() == "2")[23],
+                        double.TryParse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "2")[modeloNovo ? 25 : 23],
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                             out cmo2);
-                        double.TryParse(x.First(y => y[2].Trim() == "3")[23],
+                        double.TryParse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "3")[modeloNovo ? 25 : 23],
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                             out cmo3);
-                        double.TryParse(x.First(y => y[2].Trim() == "-")[23],
+                        double.TryParse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 25 : 23],
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                             out cmo);
-                        double.TryParse(x.First(y => y[2].Trim() == "-")[20],
+                        double.TryParse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 22 : 20],
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                             out earmI);
-                        double.TryParse(x.First(y => y[2].Trim() == "-")[22],
+                        double.TryParse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 24 : 22],
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                             out earmf);
                         //double.TryParse(x.First(y => y[2].Trim() == "-")[18].Trim(),
                         //    System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo,
                         //    out enaCV);
-                        result[x.Key].DemandaPrimeiroEstagio = double.Parse(x.First(y => y[2].Trim() == "-")[6],
+                        result[x.Key].DemandaPrimeiroEstagio = double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 7 : 6],
                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
 
 
                         if (x.Key == 1)
                         {
                             //som 1.900MW (IT50Hz) e geracao 60Hz                        
-                            result[x.Key].GerHidr = double.Parse(x.First(y => y[2].Trim() == "-")[10],
+                            result[x.Key].GerHidr = double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 11 : 10],
                                       System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
-                                      + double.Parse(x.First(y => y[2].Trim() == "-")[16].Replace("-", "0").Trim(),
+                                      + double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 18 : 16].Replace("-", "0").Trim(),
                                       System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
                                       + 1900d;
                         }
                         else
                         {
-                            result[x.Key].GerHidr = double.Parse(x.First(y => y[2].Trim() == "-")[10],
+                            result[x.Key].GerHidr = double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 11 : 10],
                                       System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
                         }
 
                         //Ter + TerAt
-                        result[x.Key].GerTerm = double.Parse(x.First(y => y[2].Trim() == "-")[8],
+                        result[x.Key].GerTerm = double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 9 : 8],
                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
-                          + double.Parse(x.First(y => y[2].Trim() == "-")[9].Replace("-", "0").Trim(),
+                          + double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 10 : 9].Replace("-", "0").Trim(),
                               System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
 
-                        result[x.Key].GerPeq = double.Parse(x.First(y => y[2].Trim() == "-")[7],
+                        result[x.Key].GerPeq = double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[modeloNovo ? 8 : 7],
                              System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
 
 
@@ -811,6 +828,16 @@ namespace Compass.CommomLibrary.Decomp
                             result[x.Key].EnaMLT = result[x.Key].Ena / BaseDeck.EnaMLT[(SistemaEnum)x.Key][mesEstudo];
                             result[x.Key].EnaTHMLT = result[x.Key].EnaTH / BaseDeck.EnaMLT[(SistemaEnum)x.Key][mesEstudo == 0 ? 11 : mesEstudo - 1];
 
+                        }
+
+                        if (modeloNovo)
+                        {
+                            result[x.Key].GerEol = double.Parse(x.First(y => y[modeloNovo ? 3 : 2].Trim() == "-")[12],
+                                      System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
+                        }
+                        else
+                        {
+                            result[x.Key].GerEol = 0.00f;
                         }
                     });
                 //int maxEstagios = datalines.Select(x => int.Parse(x[0])).Max() - 1;
@@ -866,13 +893,16 @@ namespace Compass.CommomLibrary.Decomp
                     for (int sis = 1; sis <= 4; sis++) result[sis].GerTermMedia = result[sis].GerTerm;
 
                     for (int sis = 1; sis <= 4; sis++) result[sis].DemandaMes = result[sis].DemandaPrimeiroEstagio;
+
+                    for (int sis = 1; sis <= 4; sis++) result[sis].GerEolMedia = result[sis].GerEol;
+
                     datalines
-                            .Where(x => x[2] == "-")
+                            .Where(x => x[modeloNovo ? 3 : 2] == "-")
                             .Where(x => x[0] == "2")
-                            .GroupBy(x => int.Parse(x[4]))
+                            .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
                             .Where(x => x.Key < 5).ToList().ForEach(x =>
                             {
-                                result[x.Key].DemandaMesSeguinte = double.Parse(x.First()[6],
+                                result[x.Key].DemandaMesSeguinte = double.Parse(x.First()[modeloNovo ? 7 : 6],
                                     System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
 
                             });
@@ -881,10 +911,46 @@ namespace Compass.CommomLibrary.Decomp
                 else
                 {
 
+
                     datalines
-                           .Where(x => x[2] == "-")
+                      .Where(x => x[modeloNovo ? 3 : 2] == "-")
+                      .Where(x => x[0] != (numEstagios + 1).ToString())
+                      .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
+                      .Where(x => x.Key < 5).ToList().ForEach(x =>
+                      {
+                          if (modeloNovo)
+                          {
+                              int totaldias = 0;
+                              result[x.Key].GerEolMedia =
+                                  x.Sum(y =>
+                                  {
+
+                                      int peso = (
+                                          y[0] == "1" ? (dadger.DataEstudo.Month != dadger.VAZOES_MesInicialDoEstudo ? dadger.DataEstudo.AddDays(6).Day : 7)
+                                          : (
+                                                   y[0] == numEstagios.ToString() ? 7 - dias2mes : 7
+                                               )
+                                          );
+                                      totaldias += peso;
+                                      return
+
+                                          double.Parse(y[12],
+                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
+                                          * peso;
+                                  }) / (totaldias);
+                          }
+                          else
+                          {
+                              result[x.Key].GerEolMedia = 0.00f;
+                          }
+
+                      });
+
+
+                    datalines
+                           .Where(x => x[modeloNovo ? 3 : 2] == "-")
                            .Where(x => x[0] != (numEstagios + 1).ToString())
-                           .GroupBy(x => int.Parse(x[4]))
+                           .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
                            .Where(x => x.Key < 5).ToList().ForEach(x =>
                            {
                                int totaldias = 0;
@@ -903,8 +969,8 @@ namespace Compass.CommomLibrary.Decomp
                                        {
                                            return
 
-                                          (double.Parse(y[10],
-                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[16].Replace("-", "0").Trim(),
+                                          (double.Parse(y[modeloNovo ? 11 : 10],
+                                          System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[modeloNovo ? 18 : 16].Replace("-", "0").Trim(),
                                               System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + 1900d)
                                           * peso;
                                        }
@@ -912,7 +978,7 @@ namespace Compass.CommomLibrary.Decomp
                                        {
                                            return
 
-                                           double.Parse(y[10],
+                                           double.Parse(y[modeloNovo ? 11 : 10],
                                            System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
                                            * peso;
                                        }
@@ -921,9 +987,9 @@ namespace Compass.CommomLibrary.Decomp
                            });
 
                     datalines
-                           .Where(x => x[2] == "-")
+                           .Where(x => x[modeloNovo ? 3 : 2] == "-")
                            .Where(x => x[0] != (numEstagios + 1).ToString())
-                           .GroupBy(x => int.Parse(x[4]))
+                           .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
                            .Where(x => x.Key < 5).ToList().ForEach(x =>
                            {
                                int totaldias = 0;
@@ -941,8 +1007,8 @@ namespace Compass.CommomLibrary.Decomp
 
                                        return
 
-                                      (double.Parse(y[8],
-                                      System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[9].Replace("-", "0").Trim(),
+                                      (double.Parse(y[modeloNovo ? 9 : 8],
+                                      System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo) + double.Parse(y[modeloNovo ? 10 : 9].Replace("-", "0").Trim(),
                                           System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo))
                                       * peso;
 
@@ -953,9 +1019,9 @@ namespace Compass.CommomLibrary.Decomp
 
 
                     datalines
-                           .Where(x => x[2] == "-")
+                           .Where(x => x[modeloNovo ? 3 : 2] == "-")
                            .Where(x => x[0] != (numEstagios + 1).ToString())
-                           .GroupBy(x => int.Parse(x[4]))
+                           .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
                            .Where(x => x.Key < 5).ToList().ForEach(x =>
                            {
                                int totaldias = 0;
@@ -972,19 +1038,19 @@ namespace Compass.CommomLibrary.Decomp
                                        totaldias += peso;
                                        return
 
-                                           double.Parse(y[6],
+                                           double.Parse(y[modeloNovo ? 7 : 6],
                                            System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo)
                                            * peso;
                                    }) / (totaldias);
                            });
 
                     datalines
-                          .Where(x => x[2] == "-")
+                          .Where(x => x[modeloNovo ? 3 : 2] == "-")
                           .Where(x => x[0] == (numEstagios + 1).ToString())
-                          .GroupBy(x => int.Parse(x[4]))
+                          .GroupBy(x => int.Parse(x[modeloNovo ? 5 : 4]))
                           .Where(x => x.Key < 5).ToList().ForEach(x =>
                           {
-                              result[x.Key].DemandaMesSeguinte = double.Parse(x.First()[6],
+                              result[x.Key].DemandaMesSeguinte = double.Parse(x.First()[modeloNovo ? 7 : 6],
                                             System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo);
 
                           });
@@ -1012,6 +1078,7 @@ namespace Compass.CommomLibrary.Decomp
 
 
                 }
+                result.novo = modeloNovo;
                 result.GNL_Result = Resu_GNL;
 
 
