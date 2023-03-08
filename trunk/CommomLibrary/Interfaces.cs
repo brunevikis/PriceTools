@@ -94,6 +94,13 @@ namespace Compass.CommomLibrary
         double Porc { get; set; }
     }
 
+    public interface IREEDAT
+    {
+       // int numREE { get; set; }
+        int mesesAvan { get; set; }
+        //int mesEst { get; set; }
+    }
+
     public interface IADTERMDAD
     {
         double usina { get; set; }

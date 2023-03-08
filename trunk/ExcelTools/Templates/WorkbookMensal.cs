@@ -768,6 +768,29 @@ namespace Compass.ExcelTools.Templates
                 else return null;
             }
         }
+        List<Compass.CommomLibrary.IREEDAT> reedads = null;
+
+        public List<Compass.CommomLibrary.IREEDAT> Reedads
+        {
+            get
+            {
+                if (Names.ContainsKey("_reedat"))
+                {
+                    reedads = new List<CommomLibrary.IREEDAT>();
+                    var ws = Names["_reedat"].Worksheet;
+                    var row = Names["_reedat"].Row;
+                    var col = Names["_reedat"].Column;
+
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        reedads.Add(new REEDAT(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 3]]));
+                    }
+                    return reedads;
+                }
+                else return null;
+            }
+            
+        }
 
         List<Compass.CommomLibrary.IADTERM> adterm = null;
         public List<Compass.CommomLibrary.IADTERM> adtermdat
@@ -1380,6 +1403,20 @@ namespace Compass.ExcelTools.Templates
                 if (rng[1, 5].Value is double) Porc = rng[1, 5].Value;
             }
 
+        }
+
+        public class REEDAT : Compass.CommomLibrary.IREEDAT
+        {
+           // public int numREE { get; set; }
+            public int mesesAvan { get; set; }
+            //public int mesEst { get; set; }
+
+            public REEDAT(Range rng)
+            {
+                //if (rng[1, 1].Value is int) numREE = (int)rng[1, 1].Value;
+                //if (rng[1, 2].Value is int) mesEst = (int)rng[1, 2].Value;
+               if (rng[1, 1].Value is double) mesesAvan = (int)rng[1, 1].Value;
+            }
         }
 
         public class ADTERMDAD : Compass.CommomLibrary.IADTERMDAD

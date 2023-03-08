@@ -25,7 +25,8 @@ namespace Compass.CommomLibrary.Dadger {
                 new BaseField( 45 , 46,"I2"    , "Estagio"),               
                 new BaseField( 50 , 59,"F10.0"    , "Volume Morto Ini"),               
                 new BaseField( 60 , 69,"F10.0"    , "Limite Vertimento"),               
-                new BaseField( 70 , 70,"I1"    , "Bal Hidr Patamar"),               
+                new BaseField( 70 , 70,"I1"    , "Bal Hidr Patamar"),
+                new BaseField( 72 , 73,"A2"    , "Flag NW"),
 
             };
 
@@ -50,6 +51,9 @@ namespace Compass.CommomLibrary.Dadger {
         public int Sistema { get { return (int)this[2]; } set { this[2] = value; } }
 
         public bool Evaporacao { get { return this[6] == 1 ? true : false; } set { this[6] = value ? 1 : 0; } }
+
+        public string NW { get { return (string)this[11]; } set { this[11] = value; } }
+
     }
 
 }

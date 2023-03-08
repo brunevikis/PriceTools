@@ -45,6 +45,7 @@ namespace Encadeado
         public string ExecutavelNewave { get; set; }
 
         public bool DefinirVolumesPO { get; set; }
+        public bool StartREEAgrupado { get; set; }
 
         public Dictionary<int, int[]> PrevisaoVazao { get; set; }
         public Dictionary<int, double[]> VolumesPO { get; set; }
@@ -64,6 +65,7 @@ namespace Encadeado
         public List<IADTERMDAD> Adtermdad { get; set; }
         public List<IINTERCAMBIO> Intercambios { get; set; }
         public List<IMODIF> Modifs { get; set; }
+        public List<IREEDAT> Reedads { get; set; }
 
         public Estudo()
         {
@@ -108,6 +110,8 @@ namespace Encadeado
 
             DeckMedia.SaveFilesToFolder(System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00")));
             AlterarModif(DeckMedia);
+            IncrementarREEDAT(DeckMedia, true);
+
             DeckMedia.EscreverListagemNwlistop();
 
 
@@ -1471,7 +1475,7 @@ namespace Encadeado
                 )).ToList();
 
                 var reedat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Document as Compass.CommomLibrary.ReeDat.ReeDat;
-
+                
                 deck.Dger.CalculaEarmInicial = false;
                 deck.Dger.Earms =
                 reedat.ToList().Select(ree =>
@@ -1516,6 +1520,39 @@ namespace Encadeado
             }
         }
 
+        public void IncrementarREEDAT(DeckNewave deck, bool gravar = false)
+        {
+            var reedat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Document as Compass.CommomLibrary.ReeDat.ReeDat;
+
+            if (reedat.temFict == true)
+            {
+                int avanco = this.Reedads.First().mesesAvan;
+                DateTime newDate = deck.Dger.DataEstudo.AddMonths(avanco);
+
+                foreach (var reeline in reedat)
+                {
+                    reeline.Mes = newDate.Month;
+                    reeline.Ano = newDate.Year;
+                }
+
+                //foreach (var reed in this.Reedads.Where(x => x.mesEst == deck.Dger.MesEstudo))
+                //{
+                //    var reeline = reedat.Where(x => x.Numero == reed.numREE).FirstOrDefault();
+                //    if (reeline != null)
+                //    {
+                //        DateTime newDate = deck.Dger.DataEstudo.AddMonths(reed.mesesAvan);
+                //        reeline.Mes = newDate.Month;
+                //        reeline.Ano = newDate.Year;
+                //    }
+                //}
+            }
+            if (gravar)
+            {
+                var reeFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Path;
+
+                reedat.SaveToFile(filePath:reeFile);
+            }
+        }
         private void IncrementarRE(DeckNewave deck)
         {
 
@@ -1658,6 +1695,7 @@ namespace Encadeado
                 IncrementarVAZAO(DeckMedia);
             }
 
+            IncrementarREEDAT(DeckMedia, false);
             IncrementarRE(DeckMedia);
             IncrementarAdterm(DeckMedia);
             IncrementarAgrInt(DeckMedia);
@@ -1697,9 +1735,9 @@ namespace Encadeado
             //ret = ConsisteRun(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3");
 
 
-           //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+           var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
 
-            var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
+            //var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
 
 
 

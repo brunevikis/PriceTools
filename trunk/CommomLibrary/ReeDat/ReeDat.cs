@@ -14,17 +14,32 @@ namespace Compass.CommomLibrary.ReeDat {
                 return blocos;
             }
         }
-        
+
+        public bool temFict = false;
         public override void Load(string fileContent) {
 
-            var lines = fileContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).Skip(3);
+            string isfictline = "";
 
+
+            var lines = fileContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).Skip(3);
+            if (lines.Any(x => x.StartsWith("FICT.")))
+            {
+                isfictline = lines.Where(x => x.StartsWith("FICT.")).First();
+                temFict = true;
+            }
             foreach (var line in lines) {
 
                 if (string.IsNullOrWhiteSpace(line)) continue;
+                if (line.StartsWith("FICT."))
+                {
+                    continue;
+                }
                 var newLine = Blocos["Ree"].CreateLine(line);
-                if (((ReeLine)newLine).Numero!=999) {
-                Blocos["Ree"].Add(newLine);
+                if (((ReeLine)newLine).Numero!=999) 
+                {
+                    newLine.FictLine = isfictline;
+                    Blocos["Ree"].Add(newLine);
+                   
                 }
             }
         }
@@ -86,16 +101,21 @@ namespace Compass.CommomLibrary.ReeDat {
             return (Blocos["Ree"] as ReeBlock).GetEnumerator();
         }
     }
+
     public class ReeBlock : BaseBlock<ReeLine> {
-        string header =
+        string header = 
 @" REES X SUBMERCADOS
  NUM|NOME REES.| SUBM
  XXX|XXXXXXXXXX|  XXX
 "
 ;
-
+        
         public override string ToText() {
-
+            string temFictLine = base.fictLine();
+            if (temFictLine.StartsWith("FICT"))
+            {
+                return header + base.ToText() + " 999\r\n" + temFictLine + "\r";
+            }
             return header + base.ToText() + " 999\r";
         }
     }
@@ -104,14 +124,21 @@ namespace Compass.CommomLibrary.ReeDat {
                 new BaseField(2  , 4 ,"I3"  , "Numero"),
                 new BaseField(6  , 15 ,"A10"  , "Nome"),
                 new BaseField(19  , 21 ,"I3"  , "Submercado"),
+                new BaseField(24  , 25 ,"I2"  , "Mes"),
+                new BaseField(27  , 30 ,"I4"  , "Ano"),
+
+
         };
 
         public override BaseField[] Campos {
             get { return campos; }
         }
-
         public int Numero { get { return this[0]; } set { this[0] = value; } }
         public string Nome { get { return this[1]; } set { this[1] = value; } }
         public int Submercado { get { return this[2]; } set { this[2] = value; } }
+        public int Mes { get { return this[3]; } set { this[3] = value; } }
+        public int Ano { get { return this[4]; } set { this[4] = value; } }
+
+
     }
 }

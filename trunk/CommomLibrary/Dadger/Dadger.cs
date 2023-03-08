@@ -10,6 +10,7 @@ namespace Compass.CommomLibrary.Dadger {
         Dictionary<string, IBlock<BaseLine>> blocos = new Dictionary<string, IBlock<BaseLine>>() {
                     {"TE"               , new TeBlock()},
                     {"SB"               , new SbBlock()},
+                    {"NW"               , new UhNwBlock()},
                     {"UH"               , new UhBlock()},    
                     {"CT"               , new CtBlock()},
                     {"CI CE"            , new DummyBlock()},
@@ -66,6 +67,7 @@ namespace Compass.CommomLibrary.Dadger {
                     {"QA"               , new DummyBlock()},
                     {"QV"               , new DummyBlock()},
                     {"FC"               , new FcBlock()},
+                    {"CX"               , new CxBlock()},
                     {"EA"               , new EaBlock()},
                     {"ES"               , new EsBlock()},
 
@@ -109,7 +111,10 @@ namespace Compass.CommomLibrary.Dadger {
         public MpBlock BlocoMp { get { return (MpBlock)Blocos["MP"]; } }
         public MtBlock BlocoMt { get { return (MtBlock)Blocos["MT"]; } }
         public CtBlock BlocoCT { get { return (CtBlock)Blocos["CT"]; } }
+        public UhNwBlock BlocoUhNw { get { return (UhNwBlock)Blocos["NW"]; } set { Blocos["NW"] = value; } }
+
         public UhBlock BlocoUh { get { return (UhBlock)Blocos["UH"]; } set { Blocos["UH"] = value; } }
+        public CxBlock BlocoCx { get { return (CxBlock)Blocos["CX"]; } set { Blocos["CX"] = value; } }
         public AcBlock BlocoAc { get { return (AcBlock)Blocos["AC"]; } }
         public DpBlock BlocoDp {
             get { return (DpBlock)Blocos["DP"]; }

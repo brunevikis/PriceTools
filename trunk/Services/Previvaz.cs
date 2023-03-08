@@ -2321,6 +2321,10 @@ namespace Compass.Services
                                 if (propinc.calMedSemanal.ContainsKey(SemanasPrevs[i].Item1) && i != 0 || propinc.calMedSemanal.ContainsKey(SemanasPrevs[i].Item1) && posto == 266)
                                 {
                                     str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = Math.Round(propinc.calMedSemanal[SemanasPrevs[i].Item1]);
+                                    if (str[inp.AnoPrevisao, SemanasPrevs[i].Item2] < 1)
+                                    {
+                                        str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = 1;
+                                    }
                                 }
                                 else if (i == 0 || propa.calMedSemanal.ContainsKey(SemanasPrevs[i].Item1))
                                 {
@@ -2329,6 +2333,10 @@ namespace Compass.Services
                                         if (propinc.calMedSemanal.ContainsKey(SemanasPrevs[i].Item1))
                                         {
                                             str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = Math.Round(propinc.calMedSemanal[SemanasPrevs[i].Item1]);
+                                            if (str[inp.AnoPrevisao, SemanasPrevs[i].Item2] < 1)
+                                            {
+                                                str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = 1;
+                                            }
                                         }
                                     }
                                     else
@@ -2337,6 +2345,10 @@ namespace Compass.Services
 
                                         var v = propa.calMedSemanal[SemanasPrevs[i].Item1] - vazMontantes.Sum(x => (double)x.Value);
                                         str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = Math.Max(v, 12);
+                                        if (str[inp.AnoPrevisao, SemanasPrevs[i].Item2] < 1)
+                                        {
+                                            str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = 1;
+                                        }
                                     }
 
                                 }
@@ -2351,6 +2363,10 @@ namespace Compass.Services
                                 var v = propa.calMedSemanal[SemanasPrevs[i].Item1] - barrBoni.calMedSemanal[SemanasPrevs[i].Item1];
                                 if (v < 1) v = 5;
                                 str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = v;
+                                if (str[inp.AnoPrevisao, SemanasPrevs[i].Item2] < 1)
+                                {
+                                    str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = 1;
+                                }
                             }
                             else if (posto == 242 && propa.calMedSemanal.ContainsKey(SemanasPrevs[i].Item1))//N.Avanhandava roda apenas com sua vazão incremental
                             {
@@ -2360,10 +2376,18 @@ namespace Compass.Services
 
                                 if (v < 1) v = 5;
                                 str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = v;
+                                if (str[inp.AnoPrevisao, SemanasPrevs[i].Item2] < 1)
+                                {
+                                    str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = 1;
+                                }
                             }
                             else if (propa.calMedSemanal.ContainsKey(SemanasPrevs[i].Item1) && propa.calMedSemanal[SemanasPrevs[i].Item1] > 0)
                             {
                                 str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = Math.Round(propa.calMedSemanal[SemanasPrevs[i].Item1]);
+                                if (str[inp.AnoPrevisao, SemanasPrevs[i].Item2] < 1)
+                                {
+                                    str[inp.AnoPrevisao, SemanasPrevs[i].Item2] = 1;
+                                }
                             }
                             else
                             {

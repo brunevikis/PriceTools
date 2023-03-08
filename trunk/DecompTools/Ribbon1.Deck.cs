@@ -127,8 +127,14 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
                     estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
                     estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
+                    estudo.Reedads = w.Reedads ?? new List<IREEDAT>();
 
-
+                    //string versaoNewave = w.versao_Newave.Trim();
+                    //int nwVer = Convert.ToInt32( w.versao_Newave.Trim()) * 100;
+                    //if (versaoNewave.StartsWith("281") || versaoNewave.StartsWith("29"))//versoes que tem o bloco RHC
+                    //{
+                    //    estudo.StartREEAgrupado = true;
+                    //}
 
 
 
@@ -451,7 +457,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 {
                                     DateTime mesSeg = dtEstudo.AddMonths(1);
                                     dadger = configH.baseDoc as Dadger;
-                                   // configH = new Compass.CommomLibrary.Decomp.ConfigH(dadger, hidrDat);
+                                    // configH = new Compass.CommomLibrary.Decomp.ConfigH(dadger, hidrDat);
 
                                     var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
                                     var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
@@ -1693,7 +1699,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                     if (lq.Estagio == dadger.VAZOES_NumeroDeSemanas + 1)
                                                     {
                                                         data = mesSeg;
-                                                       // var a = ints1.All(ints2.Contains) && ints1.Count == ints2.Count;
+                                                        // var a = ints1.All(ints2.Contains) && ints1.Count == ints2.Count;
                                                         var lHqSEg = w.Faixalimites.Where(x => x.MesIni <= mesSeg.Month && x.MesFim >= mesSeg.Month && x.Ativa == true && x.UsiRest == lHq.UsiRest && x.UH.All(lHq.UH.Contains) && x.UH.Count == lHq.UH.Count && x.InfSup == lHq.InfSup && x.TipoRest.ToUpper().Equals("HQ")).FirstOrDefault();
                                                         if (lHqSEg != null)
                                                         {

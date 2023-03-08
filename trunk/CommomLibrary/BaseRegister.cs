@@ -46,7 +46,10 @@ namespace Compass.CommomLibrary
                 else
                 {
                     var cod = (line + "  ").Substring(0, 2);
-
+                    if (line.Trim().StartsWith("UH") && line.Trim().EndsWith("NW"))
+                    {
+                        cod = "NW";
+                    }
                     if (Blocos.Keys.Any(k => k.Split(' ').Contains(cod)))
                     {
                         var block = Blocos.First(k => k.Key.Split(' ').Contains(cod)).Value;
@@ -300,9 +303,18 @@ namespace Compass.CommomLibrary
                 result.AppendLine(item.ToText());
             }
 
+
             return result.ToString();
         }
 
+        public string fictLine()
+        {
+            if (this.Any(x => x.FictLine.StartsWith("FICT.")))
+            {
+                return this.Where(x => x.FictLine.StartsWith("FICT.")).First().FictLine;
+            }
+            return "";
+        }
         public IEnumerator<T> GetEnumerator()
         {
             return lines.GetEnumerator();
@@ -401,6 +413,7 @@ namespace Compass.CommomLibrary
     {
 
         public string Comment { get; set; }
+        public string FictLine { get; set; }
 
         public virtual BaseField[] Campos { get; private set; }
         protected Dictionary<BaseField, dynamic> valores = new Dictionary<BaseField, dynamic>();
