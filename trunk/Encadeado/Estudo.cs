@@ -1545,13 +1545,14 @@ namespace Encadeado
                 //        reeline.Ano = newDate.Year;
                 //    }
                 //}
-            }
-            if (gravar)
-            {
-                var reeFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Path;
+                if (gravar)
+                {
+                    var reeFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Path;
 
-                reedat.SaveToFile(filePath:reeFile);
+                    reedat.SaveToFile(filePath: reeFile);
+                }
             }
+            
         }
         private void IncrementarRE(DeckNewave deck)
         {
@@ -1735,9 +1736,9 @@ namespace Encadeado
             //ret = ConsisteRun(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3");
 
 
-           var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+           //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
 
-            //var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
+            var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
 
 
 
