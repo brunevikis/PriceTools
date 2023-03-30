@@ -12,6 +12,8 @@ using System.IO;
 using Microsoft.Office.Interop.Excel;
 using Compass.CommomLibrary.HidrDat;
 using Compass.ExcelTools.Templates;
+using System.Windows.Forms;
+using DecompTools;
 
 namespace Compass.DecompTools
 {
@@ -666,6 +668,67 @@ namespace Compass.DecompTools
             }
 
         }
+
+        private void btn_CarregaEVT_Click(object sender, RibbonControlEventArgs e)
+        {
+            var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
+            Globals.ThisAddIn.Application.StatusBar = "INICIANDO PROCESSO";
+
+            try
+            {
+
+                Workbook wb = Globals.ThisAddIn.Application.ActiveWorkbook;
+                Services.EvtDB evtd = new Services.EvtDB();
+                evtd.CarregaEVT(wb);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                Globals.ThisAddIn.Application.StatusBar = false;
+                Globals.ThisAddIn.Application.DisplayStatusBar = statusBarState;
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+            }
+
+        }
+
+        private void btn_baixarEVT_Click(object sender, RibbonControlEventArgs e)
+        {
+            var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
+            Globals.ThisAddIn.Application.StatusBar = "INICIANDO PROCESSO";
+
+            try
+            {
+
+                Workbook wb = Globals.ThisAddIn.Application.ActiveWorkbook;
+                Services.EvtDB evtd = new Services.EvtDB();
+
+                var frm = new FormDateBd();
+                 frm.ShowDialog();
+                DateTime ini = frm.dataIni;
+                DateTime fim = frm.dataFim;
+
+
+
+
+                evtd.ConsultaEVT(wb, ini, fim);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                Globals.ThisAddIn.Application.StatusBar = false;
+                Globals.ThisAddIn.Application.DisplayStatusBar = statusBarState;
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+            }
+        }
+
         private void btnPrevivazM2_Click(object sender, RibbonControlEventArgs e)
         {
             var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;

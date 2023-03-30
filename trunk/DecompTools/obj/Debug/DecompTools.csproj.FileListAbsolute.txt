@@ -110,3 +110,4 @@ C:\Development\price_tools\trunk\DecompTools\bin\Debug\System.Net.Http.dll
 C:\Development\price_tools\trunk\DecompTools\bin\Debug\System.Net.Http.xml
 C:\Development\price_tools\trunk\DecompTools\bin\Debug\Ionic.Zip.dll
 C:\Development\price_tools\trunk\DecompTools\bin\Debug\Newtonsoft.Json.pdb
+C:\Development\price_tools\trunk\DecompTools\obj\Debug\DecompTools.FormDateBd.resources

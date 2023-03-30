@@ -172,6 +172,7 @@ namespace Compass.Services.DB
             int intRetorno;
             DbConnection objConn = GetConnection();
             DbCommand objCmd = new SqlCommand(p_strComandoSQL, (SqlConnection)objConn);
+            objCmd.CommandTimeout = 180;
             intRetorno = objCmd.ExecuteNonQuery();
             objConn.Close();
             return intRetorno;

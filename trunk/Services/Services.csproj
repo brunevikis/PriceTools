@@ -64,6 +64,7 @@
     <Compile Include="DB\SQLServerDB.cs" />
     <Compile Include="DB\SQLServerDBCompass.cs" />
     <Compile Include="DB\SQLServerQueryBuilder.cs" />
+    <Compile Include="EvtDB.cs" />
     <Compile Include="GeraDessem.cs" />
     <Compile Include="Linux.cs" />
     <Compile Include="Vazoes.cs" />

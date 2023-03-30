@@ -28,6 +28,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            Microsoft.Office.Tools.Ribbon.RibbonDialogLauncher ribbonDialogLauncherImpl1 = this.Factory.CreateRibbonDialogLauncher();
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group4 = this.Factory.CreateRibbonGroup();
             this.btnOpen = this.Factory.CreateRibbonSplitButton();
@@ -79,6 +80,9 @@
             this.btnPrevsProjetar = this.Factory.CreateRibbonButton();
             this.btnVazoes = this.Factory.CreateRibbonButton();
             this.btnTendHidr = this.Factory.CreateRibbonButton();
+            this.menu2 = this.Factory.CreateRibbonMenu();
+            this.btn_CarregaEVT = this.Factory.CreateRibbonButton();
+            this.btn_baixarEVT = this.Factory.CreateRibbonButton();
             this.btnRdh = this.Factory.CreateRibbonButton();
             this.group5 = this.Factory.CreateRibbonGroup();
             this.btnNovoEncadeado = this.Factory.CreateRibbonButton();
@@ -297,8 +301,10 @@
             // 
             // group2
             // 
+            this.group2.DialogLauncher = ribbonDialogLauncherImpl1;
             this.group2.Items.Add(this.menuReservatorio);
             this.group2.Items.Add(this.menu3);
+            this.group2.Items.Add(this.menu2);
             this.group2.Items.Add(this.btnRdh);
             this.group2.Label = "Hidro";
             this.group2.Name = "group2";
@@ -478,6 +484,28 @@
             this.btnTendHidr.ShowImage = true;
             this.btnTendHidr.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnTendHidr_Click);
             // 
+            // menu2
+            // 
+            this.menu2.Items.Add(this.btn_CarregaEVT);
+            this.menu2.Items.Add(this.btn_baixarEVT);
+            this.menu2.Label = "Banco";
+            this.menu2.Name = "menu2";
+            this.menu2.ShowImage = true;
+            // 
+            // btn_CarregaEVT
+            // 
+            this.btn_CarregaEVT.Label = "SalvarEVT";
+            this.btn_CarregaEVT.Name = "btn_CarregaEVT";
+            this.btn_CarregaEVT.ShowImage = true;
+            this.btn_CarregaEVT.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btn_CarregaEVT_Click);
+            // 
+            // btn_baixarEVT
+            // 
+            this.btn_baixarEVT.Label = "ConsultarEVT";
+            this.btn_baixarEVT.Name = "btn_baixarEVT";
+            this.btn_baixarEVT.ShowImage = true;
+            this.btn_baixarEVT.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btn_baixarEVT_Click);
+            // 
             // btnRdh
             // 
             this.btnRdh.Label = "RDH";
@@ -575,6 +603,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_AtingirMetaRee;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnPrevivazM2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnExpPevsM2;
+        internal Microsoft.Office.Tools.Ribbon.RibbonMenu menu2;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_CarregaEVT;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_baixarEVT;
     }
 
     partial class ThisRibbonCollection {
