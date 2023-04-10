@@ -2236,7 +2236,7 @@ namespace Compass.Services
 
 
                 }
-                
+
 
                 var restsUsiZero = dadger.BlocoRhq.RhqGrouped
                         .Where(x => x.Value.Any(y => (y is CqLine) && y[3] == 0))
@@ -2907,7 +2907,7 @@ namespace Compass.Services
             }
             for (int i = 0; i < 4; i++)
             {
-                cargasMediasSemanais[i, dtAtual.Estagios] = cargaMediaNext.First(x => x.mercado == mercados[i]).carga;
+                cargasMediasSemanais[i, dtAtual.Estagios] = cargaMediaNext.First(x => x.mercado == mercados[i]).carga + c_adic_SomaNext.Where(x => x.mercado == (i + 1) && x.carga > 0.0).Sum(x => x.carga);
             }
 
 
@@ -3208,7 +3208,7 @@ namespace Compass.Services
                         diasTotal += diasSemMes;
                     }
                     var cargaMediaTotal = cargasDps / diasTotal;
-                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.Ano && x.Mercado == i).Select(x => x[dtAtual.Mes]).First();
+                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.Ano && x.Mercado == i).Select(x => x[dtAtual.Mes]).First() + c_adic_Soma.Where(x => x.mercado == (i) && x.carga > 0.0).Sum(x => x.carga);
                     var correcao = cargaSistema / cargaMediaTotal;
                     var dpCorrecao = dadger.BlocoDp.Where(x => x[2] == i && x[1] <= dtAtual.Estagios).ToList();
 
@@ -3230,7 +3230,7 @@ namespace Compass.Services
 
                     double mediaCarga = (dps[4] * dps[5] + dps[6] * dps[7] + dps[8] * dps[9]) / (dps[5] + dps[7] + dps[9]);
 
-                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.AnoSeguinte && x.Mercado == i).Select(x => x[dtAtual.MesSeguinte]).First();
+                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.AnoSeguinte && x.Mercado == i).Select(x => x[dtAtual.MesSeguinte]).First() + c_adic_SomaNext.Where(x => x.mercado == (i) && x.carga > 0.0).Sum(x => x.carga);
                     var correcao = cargaSistema / mediaCarga;
 
                     dps[4] = dps[4] * correcao;
@@ -3251,7 +3251,7 @@ namespace Compass.Services
 
                     double mediaCarga = (dps[4] * dps[5] + dps[6] * dps[7] + dps[8] * dps[9]) / (dps[5] + dps[7] + dps[9]);
 
-                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.Ano && x.Mercado == i).Select(x => x[dtAtual.Mes]).First();
+                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.Ano && x.Mercado == i).Select(x => x[dtAtual.Mes]).First() + c_adic_Soma.Where(x => x.mercado == (i) && x.carga > 0.0).Sum(x => x.carga);
                     var correcao = cargaSistema / mediaCarga;
 
                     dps[4] = dps[4] * correcao;
@@ -3269,7 +3269,7 @@ namespace Compass.Services
 
                     double mediaCarga = (dps[4] * dps[5] + dps[6] * dps[7] + dps[8] * dps[9]) / (dps[5] + dps[7] + dps[9]);
 
-                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.AnoSeguinte && x.Mercado == i).Select(x => x[dtAtual.MesSeguinte]).First();
+                    var cargaSistema = sistema.Mercado.Where(x => x.Ano == dtAtual.AnoSeguinte && x.Mercado == i).Select(x => x[dtAtual.MesSeguinte]).First() + c_adic_SomaNext.Where(x => x.mercado == (i) && x.carga > 0.0).Sum(x => x.carga);
                     var correcao = cargaSistema / mediaCarga;
 
                     dps[4] = dps[4] * correcao;
