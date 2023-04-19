@@ -891,12 +891,23 @@ namespace Compass.Services
             #endregion
 
             #region Alteracoes Cadastrais (AC)
+            var testeaccotovol = dadger.BlocoAc.Where(x => x.Usina == 288 || x.Usina == 314).ToList();
+
+            List<string> minemonicosAlvo = new List<string> { "COTVOL", "VOLMIN", "VOLMAX", "VSVERT", "VMDESV" };
+            var bm_pLines = dadger.BlocoAc.Where(x => (x.Usina == 288 || x.Usina == 314) && minemonicosAlvo.Any(y => y.Contains(x.Mnemonico))).ToList();
+            bool temAcCOtvolBM_P = false;
+            if (bm_pLines.Count() > 0)
+            {
+                foreach (var item in bm_pLines) dadger.BlocoAc.Remove(item);
+                temAcCOtvolBM_P = true;
+            }
+            testeaccotovol = dadger.BlocoAc.Where(x => x.Usina == 288 || x.Usina == 314).ToList();
+
 
             foreach (var ac in dadger.BlocoAc.Where(x => !string.IsNullOrWhiteSpace(x.Mes)
                 || x.Mnemonico == "JUSMED" || x.Mnemonico == "NUMCON" || x.Mnemonico == "NUMMAQ"
                 ).ToArray())
                 dadger.BlocoAc.Remove(ac);
-
             var exph = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.exph].Document as Compass.CommomLibrary.ExphDat.ExphDat;
 
             //canal de fuga
@@ -2262,12 +2273,290 @@ namespace Compass.Services
 
             #region Sobreescrever Alteracoes Cadastrais (AC)
 
+            // parte cotvol de bm e pimental
+            var acsBM_P = w.Acs.Where(x => ((x.Mes == mesOperativo.Mes && x.Ano == mesOperativo.Ano || x.Mes == mesOperativo.MesSeguinte && x.Ano == mesOperativo.AnoSeguinte || x.Mes == 0) && (x.Usina == 288 || x.Usina == 314)) && minemonicosAlvo.Any(y => y.Contains(x.Mnemonico)));
+
+            //var bm_pLines = dadger.BlocoAc.Where(x => (x.Usina == 288 || x.Usina == 314) && minemonicosAlvo.Any(y => y.Contains(x.Mnemonico))).ToList();
+
+            var valsPadrao = getValsCotvolBM_P();
+
+            if (temAcCOtvolBM_P)
+            {
+                List<int> usinas = new List<int> { 288, 314 };
+
+                var padrao = valsPadrao[mesOperativo.Mes - 1];
+                var padrao2 = valsPadrao[mesOperativo.MesSeguinte - 1];
+
+                foreach (var usi in usinas)
+                {
+                    //1°mes cotvol
+                    var acsDummy = acsBM_P.Where(x => x.Mes == mesOperativo.Mes && x.Usina == usi && x.Mnemonico == "COTVOL").ToList();
+
+                    if (acsDummy.Count() > 0)
+                    {
+                        foreach (var acsbm in acsDummy)
+                        {
+                            var acL = dadger.BlocoAc.CreateLineFromMnemonico(acsbm.Mnemonico);
+                            acL.Usina = acsbm.Usina;
+                            acL.SetValue(3, acsbm.Valor1);
+                            acL.SetValue(4, acsbm.Valor2);
+                            if (acsbm.Valor3 != null)
+                                acL.SetValue(5, acsbm.Valor3);
+
+                            acL.Ano = acsbm.Ano;
+                            acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+
+
+                            dadger.BlocoAc.Add(acL);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= 5; i++)
+                        {
+                            var acL = dadger.BlocoAc.CreateLineFromMnemonico("COTVOL");
+                            acL.Usina = usi;
+                            acL.SetValue(3, i);
+                            acL.SetValue(4, i == 1 ? padrao.Item1 : 0.000);
+                            //if (acsbm.Valor3 != null)
+                            //    acL.SetValue(5, acsbm.Valor3);
+
+                            acL.Ano = mesOperativo.Ano;
+                            acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+
+
+                            dadger.BlocoAc.Add(acL);
+                        }
+                    }
+
+                    //2°mes cotvol
+                    var acsDummy2 = acsBM_P.Where(x => x.Mes == mesOperativo.MesSeguinte && x.Usina == usi && x.Mnemonico == "COTVOL").ToList();
+
+                    if (acsDummy2.Count() > 0)
+                    {
+                        foreach (var acsbm in acsDummy2)
+                        {
+                            var acL = dadger.BlocoAc.CreateLineFromMnemonico(acsbm.Mnemonico);
+                            acL.Usina = acsbm.Usina;
+                            acL.SetValue(3, acsbm.Valor1);
+                            acL.SetValue(4, acsbm.Valor2);
+                            if (acsbm.Valor3 != null)
+                                acL.SetValue(5, acsbm.Valor3);
+
+                            acL.Ano = acsbm.Ano;
+                            acL.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+
+
+                            dadger.BlocoAc.Add(acL);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= 5; i++)
+                        {
+                            var acL = dadger.BlocoAc.CreateLineFromMnemonico("COTVOL");
+                            acL.Usina = usi;
+                            acL.SetValue(3, i);
+                            acL.SetValue(4, i == 1 ? padrao2.Item1 : 0.000);
+                            //if (acsbm.Valor3 != null)
+                            //    acL.SetValue(5, acsbm.Valor3);
+
+                            acL.Ano = mesOperativo.AnoSeguinte;
+                            acL.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+
+
+                            dadger.BlocoAc.Add(acL);
+                        }
+                    }
+
+                    //1°mes  "VOLMIN", "VOLMAX", "VSVERT", "VMDESV"
+
+                    var VOLMINX = acsBM_P.Where(x => x.Mes == mesOperativo.Mes && x.Usina == usi && x.Mnemonico == "VOLMIN").FirstOrDefault();
+                    var VOLMAXX = acsBM_P.Where(x => x.Mes == mesOperativo.Mes && x.Usina == usi && x.Mnemonico == "VOLMAX").FirstOrDefault();
+                    var VSVERTX = acsBM_P.Where(x => x.Mes == mesOperativo.Mes && x.Usina == usi && x.Mnemonico == "VSVERT").FirstOrDefault();
+                    var VMDESVX = acsBM_P.Where(x => x.Mes == mesOperativo.Mes && x.Usina == usi && x.Mnemonico == "VMDESV").FirstOrDefault();
+
+                    double vminteste;
+                    double vmaxteste;
+
+                    var aclvolmin = dadger.BlocoAc.CreateLineFromMnemonico("VOLMIN");
+
+                    aclvolmin.Usina = usi;
+
+                    if (VOLMINX != null)
+                    {
+                        aclvolmin.SetValue(3, VOLMINX.Valor1 != null ? VOLMINX.Valor1 : padrao2.Item2);
+                        vminteste = Convert.ToDouble(VOLMINX.Valor1 != null ? VOLMINX.Valor1 : padrao2.Item2);
+                    }
+                    else
+                    {
+                        aclvolmin.SetValue(3, padrao.Item2);
+                        vminteste = padrao.Item2;
+                    }
+
+                    aclvolmin.Ano = mesOperativo.Ano;
+                    aclvolmin.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvolmin);
+
+
+                    var aclvolmax = dadger.BlocoAc.CreateLineFromMnemonico("VOLMAX");
+
+                    aclvolmax.Usina = usi;
+
+                    if (VOLMAXX != null)
+                    {
+                        aclvolmax.SetValue(3, VOLMAXX.Valor1 != null ? VOLMAXX.Valor1 : padrao2.Item2);
+                        vmaxteste = Convert.ToDouble(VOLMAXX.Valor1 != null ? VOLMAXX.Valor1 : padrao2.Item2);
+                    }
+                    else
+                    {
+                        aclvolmax.SetValue(3, padrao.Item2);
+                        vmaxteste = padrao.Item2;
+                    }
+                    aclvolmax.Ano = mesOperativo.Ano;
+                    aclvolmax.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvolmax);
+
+                    var aclvsvert = dadger.BlocoAc.CreateLineFromMnemonico("VSVERT");
+
+                    aclvsvert.Usina = usi;
+
+                    if (VSVERTX != null)
+                    {
+                        aclvsvert.SetValue(3, VSVERTX.Valor1 != null ? VSVERTX.Valor1 : padrao2.Item2);
+                    }
+                    else
+                    {
+                        aclvsvert.SetValue(3, padrao.Item2);
+                    }
+                    aclvsvert.Ano = mesOperativo.Ano;
+                    aclvsvert.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvsvert);
+
+                    var aclvmdesv = dadger.BlocoAc.CreateLineFromMnemonico("VMDESV");
+
+                    aclvmdesv.Usina = usi;
+
+                    if (VMDESVX != null)
+                    {
+                        aclvmdesv.SetValue(3, VMDESVX.Valor1 != null ? VMDESVX.Valor1 : padrao2.Item2);
+                    }
+                    else
+                    {
+                        aclvmdesv.SetValue(3, padrao.Item2);
+                    }
+                    aclvmdesv.Ano = mesOperativo.Ano;
+                    aclvmdesv.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvmdesv);
+
+                    //2°mes "VOLMIN", "VOLMAX", "VSVERT", "VMDESV"
+                    var VOLMINX_2 = acsBM_P.Where(x => x.Mes == mesOperativo.MesSeguinte && x.Usina == usi && x.Mnemonico == "VOLMIN").FirstOrDefault();
+                    var VOLMAXX_2 = acsBM_P.Where(x => x.Mes == mesOperativo.MesSeguinte && x.Usina == usi && x.Mnemonico == "VOLMAX").FirstOrDefault();
+                    var VSVERTX_2 = acsBM_P.Where(x => x.Mes == mesOperativo.MesSeguinte && x.Usina == usi && x.Mnemonico == "VSVERT").FirstOrDefault();
+                    var VMDESVX_2 = acsBM_P.Where(x => x.Mes == mesOperativo.MesSeguinte && x.Usina == usi && x.Mnemonico == "VMDESV").FirstOrDefault();
+
+                    //double volTeste = padrao2.Item2;
+
+                    string minemonicoLinha1 = "";
+                    string minemonicoLinha2 = "";
+                    double volLinha1;
+                    double volLinha2;
+
+                    double vminteste2 = VOLMINX_2 != null ? VOLMINX_2.Valor1 != null ? Convert.ToDouble(VOLMINX_2.Valor1) : padrao2.Item2 : padrao2.Item2;
+                    double vmaxteste2 = VOLMAXX_2 != null ? VOLMAXX_2.Valor1 != null ? Convert.ToDouble(VOLMAXX_2.Valor1) : padrao2.Item2 : padrao2.Item2;
+
+                    double vsvertSeguinte = VSVERTX_2 != null ? VSVERTX_2.Valor1 != null ? Convert.ToDouble(VSVERTX_2.Valor1) : padrao2.Item2 : padrao2.Item2;
+                    double vmdesvSeguinte = VMDESVX_2 != null ? VMDESVX_2.Valor1 != null ? Convert.ToDouble(VMDESVX_2.Valor1) : padrao2.Item2 : padrao2.Item2;
+
+                    if (vminteste2 <= vmaxteste)//verifica a ordem para inserir os limites se volmin maior que volmax anterior  primeiro inserir a linha de volmax 
+                    {
+                        minemonicoLinha1 = "VOLMIN";
+                        minemonicoLinha2 = "VOLMAX";
+                        volLinha1 = vminteste2;
+                        volLinha2 = vmaxteste2;
+                    }
+                    else
+                    {
+                        minemonicoLinha1 = "VOLMAX";
+                        minemonicoLinha2 = "VOLMIN";
+                        volLinha1 = vmaxteste2;
+                        volLinha2 = vminteste2;
+                    }
+
+                    var aclvolseguinte1 = dadger.BlocoAc.CreateLineFromMnemonico(minemonicoLinha1);
+                    aclvolseguinte1.Usina = usi;
+                    aclvolseguinte1.SetValue(3, volLinha1);
+                    aclvolseguinte1.Ano = mesOperativo.AnoSeguinte;
+                    aclvolseguinte1.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvolseguinte1);
+
+                    var aclvolseguinte2 = dadger.BlocoAc.CreateLineFromMnemonico(minemonicoLinha2);
+                    aclvolseguinte2.Usina = usi;
+                    aclvolseguinte2.SetValue(3, volLinha2);
+                    aclvolseguinte2.Ano = mesOperativo.AnoSeguinte;
+                    aclvolseguinte2.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvolseguinte2);
+
+                    var aclvsvertSeguinte = dadger.BlocoAc.CreateLineFromMnemonico("VSVERT");
+                    aclvsvertSeguinte.Usina = usi;
+                    aclvsvertSeguinte.SetValue(3, vsvertSeguinte);
+                    aclvsvertSeguinte.Ano = mesOperativo.AnoSeguinte;
+                    aclvsvertSeguinte.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvsvertSeguinte);
+
+                    var aclvmdesvSeguinte = dadger.BlocoAc.CreateLineFromMnemonico("VMDESV");
+                    aclvmdesvSeguinte.Usina = usi;
+                    aclvmdesvSeguinte.SetValue(3, vmdesvSeguinte);
+                    aclvmdesvSeguinte.Ano = mesOperativo.AnoSeguinte;
+                    aclvmdesvSeguinte.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    dadger.BlocoAc.Add(aclvmdesvSeguinte);
+
+                }
+
+                //foreach (var acsbm in acsBM_P.Where(x => x.Mes == mesOperativo.Mes))
+                //{
+                //    var acL = dadger.BlocoAc.CreateLineFromMnemonico(acsbm.Mnemonico);
+                //    acL.Usina = acsbm.Usina;
+                //    acL.SetValue(3, acsbm.Valor1);
+                //    acL.SetValue(4, acsbm.Valor2);
+                //    if (acsbm.Valor3 != null)
+                //        acL.SetValue(5, acsbm.Valor3);
+
+                //    acL.Ano = acsbm.Ano;
+                //    acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+
+
+                //    dadger.BlocoAc.Add(acL);
+                //}
+
+                //foreach (var acsbm in acsBM_P.Where(x => x.Mes == mesOperativo.MesSeguinte))
+                //{
+                //    var acL = dadger.BlocoAc.CreateLineFromMnemonico(acsbm.Mnemonico);
+                //    acL.Usina = acsbm.Usina;
+                //    acL.SetValue(3, acsbm.Valor1);
+                //    acL.SetValue(4, acsbm.Valor2);
+                //    if (acsbm.Valor3 != null)
+                //        acL.SetValue(5, acsbm.Valor3);
+
+                //    acL.Ano = acsbm.Ano;
+                //    acL.Mes = mesOperativo.Fim.AddDays(7).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+
+
+                //    dadger.BlocoAc.Add(acL);
+                //}
+            }
+            ///
+
+            //restante
             var acs = w.Acs.Where(x => (x.Mes == mesOperativo.Mes || x.Mes == mesOperativo.MesSeguinte || x.Mes == 0) &&
-                dadger.BlocoUh.Any(y => y.Usina == x.Usina));
+               dadger.BlocoUh.Any(y => y.Usina == x.Usina));
 
             foreach (var ac in acs)
             {
-
+                if ((ac.Usina == 288 || ac.Usina == 314) && minemonicosAlvo.Any(x => x.Contains(ac.Mnemonico)))
+                {
+                    continue;
+                }
                 //apagar outras modifs existentes
                 if (ac.Mes == 0)
                 {
@@ -2297,6 +2586,30 @@ namespace Compass.Services
             return dadger;
         }
 
+        private static List<Tuple<double, double>> getValsCotvolBM_P()
+        {
+            //& |   JAN   |   FEV   |   MAR   |   ABR   |   MAI   |   JUN   |   JUL   |   AGO   |   SET   |   OUT   |   NOV   |   DEZ   |
+            //& |  96.90  |  96.87  |  96.91  |  96.89  |  96.76  |  96.82  |  96.98  |  97.00  |  96.44  |  95.32  |  96.01  |  96.78  |  (m)
+            //& | 2240.45 | 2229.75 | 2244.02 | 2236.88 | 2190.77 | 2211.99 | 2269.10 | 2276.29 | 2079.48 | 1715.01 | 1934.91 | 2197.83 |  (Hm3)
+
+            List<Tuple<double, double>> vals = new List<Tuple<double, double>>
+            {
+               new Tuple<double, double>(96.90, 2240.45),//jan
+               new Tuple<double, double>(96.87, 2229.75),//fev
+               new Tuple<double, double>(96.91, 2244.02),//mar
+               new Tuple<double, double>(96.89, 2236.88),//abr
+               new Tuple<double, double>(96.76, 2190.77),//mai
+               new Tuple<double, double>(96.82, 2211.99),//jun
+               new Tuple<double, double>(96.98, 2269.10),//jul
+               new Tuple<double, double>(97.00, 2276.29),//ago
+               new Tuple<double, double>(96.44, 2079.48),//set
+               new Tuple<double, double>(95.32, 1715.01),//out
+               new Tuple<double, double>(96.01, 1934.91),//nov
+               new Tuple<double, double>(96.78, 2197.83),//dez
+
+            };
+            return vals;
+        }
         private static void trataRHEs(CommomLibrary.Newave.Deck deckNWEstudo, Dadger dadger, MesOperativo mesOperativo, CommomLibrary.PatamarDat.PatamarDat patamarDat, CommomLibrary.SistemaDat.SistemaDat sistemaDat)
         {
             foreach (var rh in dadger.BlocoRhe.RheGrouped)

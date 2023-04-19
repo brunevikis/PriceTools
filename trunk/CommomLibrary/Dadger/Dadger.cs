@@ -27,6 +27,7 @@ namespace Compass.CommomLibrary.Dadger {
                     {"RI"               , new RiBlock()},
                     {"VL"               , new DummyBlock()},
                     {"VU"               , new DummyBlock()},
+                    {"VA"               , new DummyBlock()},
 
                     {"IT"               , new ItBlock()},                    
                     {"IA"               , new IaBlock()},

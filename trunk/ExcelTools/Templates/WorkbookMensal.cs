@@ -551,8 +551,8 @@ namespace Compass.ExcelTools.Templates
         {
             get
             {
-                if (acs == null)
-                {
+               // if (acs == null)
+                //{
                     acs = new List<AC>();
 
                     var ws = Names["_alteracao"].Worksheet;
@@ -561,9 +561,9 @@ namespace Compass.ExcelTools.Templates
 
                     for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
                     {
-                        acs.Add(new AC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 4]]));
+                        acs.Add(new AC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
                     }
-                }
+                //}
 
                 return acs;
             }
@@ -1240,9 +1240,11 @@ namespace Compass.ExcelTools.Templates
             public int Usina { get; set; }
             public string Mnemonico { get; set; }
             public int Mes { get; set; }
+            public int Ano { get; set; }
             public object Valor1 { get; set; }
             public object Valor2 { get; set; }
             public object Valor3 { get; set; }
+            public object Valor4 { get; set; }
 
             public AC(Range rng)
             {
@@ -1254,9 +1256,13 @@ namespace Compass.ExcelTools.Templates
                 if (rng[1, 3].Value is double) Mes = (int)rng[1, 3].Value;
                 else Mes = 0;
 
+
                 Valor1 = rng[1, 4].Value;
                 Valor2 = rng[1, 5].Value;
                 Valor3 = rng[1, 6].Value;
+
+                if (rng[1, 3].Value is double) Ano = (int)rng[1, 7].Value;
+
             }
         }
 
