@@ -91,9 +91,11 @@
     <Compile Include="CurvaDat\CurvaDat.cs" />
     <Compile Include="CurvaDat\CurvaSeg.cs" />
     <Compile Include="Dadger\Cx.cs" />
+    <Compile Include="Dadger\Fa.cs" />
     <Compile Include="Dadger\Rhc.cs" />
     <Compile Include="Dadger\Ri.cs" />
     <Compile Include="Dadger\UhNw.cs" />
+    <Compile Include="Dadger\Vt.cs" />
     <Compile Include="Dadvaz\Dadvaz.cs" />
     <Compile Include="Dadvaz\Data.cs" />
     <Compile Include="Dadvaz\DiaInicial.cs" />

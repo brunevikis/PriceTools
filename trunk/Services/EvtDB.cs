@@ -56,7 +56,8 @@ namespace Compass.Services
         public void CarregaEVT(Workbook workb, string banco = "local")
         {
             Workbook wb = null;
-
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            //Convert.ToDateTime(coms[1], Culture.DateTimeFormat)
             //Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
 
             //path = @"D:\Compass\Acomph\ACOMPH_31.03.2020.xls";
@@ -114,7 +115,8 @@ namespace Compass.Services
                         string subistema;
                         if (!string.IsNullOrWhiteSpace(worksheet.Cells[dtLin, colSub].Text))
                         {
-                            DateTime data = Convert.ToDateTime(wb.Worksheets[sheetName].Cells[dtLin, colSub].Text);
+                            //DateTime data = Convert.ToDateTime(wb.Worksheets[sheetName].Cells[dtLin, colSub].Text);
+                            DateTime data = Convert.ToDateTime(wb.Worksheets[sheetName].Cells[dtLin, colSub].Text, Culture.DateTimeFormat);
                             if (data != null)
                             {
                                 for (int e = 0; e < 4; e++)

@@ -57,6 +57,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
             //actions.Add("getpatamares", getPatamares);
+           // actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
 
 
@@ -285,6 +286,119 @@ namespace Compass.DecompToolsShellX
             finally
             {
             }
+        }
+        static void getPatamaresExt(string teste)
+        {
+            int ano = 2023;
+            int anoFIm = 2033;
+            bool patamares2023 = false;
+
+
+            DateTime data = new DateTime(ano, 1, 1);
+            DateTime fim = new DateTime(anoFIm, 12,31);
+            List<string> patamareDeCarga = new List<string>();
+            patamareDeCarga.Add("DATA;PESADO;MEDIO;LEVE;DIA-SEMANA;TIPO");
+            var feriados = Tools.feriados;
+
+            for (DateTime i = data; i <= fim; i = i.AddDays(1))
+            {
+                patamares2023 = i.Year >= 2023;
+                string dia = "";
+                string tipo = "";
+
+                switch (i.DayOfWeek)
+                {
+                    case DayOfWeek.Sunday:
+                        dia = "DOMINGO";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "NAO-UTIL";
+                        }
+                        break;
+                    case DayOfWeek.Monday:
+                        dia = "SEGUNDA";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "UTIL";
+                        }
+                        break;
+                    case DayOfWeek.Tuesday:
+                        dia = "TERCA";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "UTIL";
+                        }
+                        break;
+                    case DayOfWeek.Wednesday:
+                        dia = "QUARTA";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "UTIL";
+                        }
+                        break;
+                    case DayOfWeek.Thursday:
+                        dia = "QUINTA";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "UTIL";
+                        }
+                        break;
+                    case DayOfWeek.Friday:
+                        dia = "SEXTA";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "UTIL";
+                        }
+                        break;
+                    case DayOfWeek.Saturday:
+                        dia = "SABADO";
+                        if (feriados.Any(x => x.Date == i.Date))
+                        {
+                            tipo = "FERIADO";
+                        }
+                        else
+                        {
+                            tipo = "NAO-UTIL";
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                var dados = Tools.GetIntervalosHoararios(i, patamares2023);
+
+                int pesado = dados.Where(x => x.Value.ToUpper() == "PESADA").Count();
+                int medio = dados.Where(x => x.Value.ToUpper() == "MEDIA").Count();
+                int leve = dados.Where(x => x.Value.ToUpper() == "LEVE").Count();
+
+                patamareDeCarga.Add($"{i:dd/MM/yyyy};{pesado};{medio};{leve};{dia};{tipo}");
+
+            }
+            File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA_EXT.csv", patamareDeCarga);
+
         }
 
         static void getPatamares(string anoArg)

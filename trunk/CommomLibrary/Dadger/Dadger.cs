@@ -89,6 +89,8 @@ namespace Compass.CommomLibrary.Dadger {
 
                     {"AR"               , new DummyBlock()},    
                     {"EV"               , new DummyBlock()},
+                    {"FA"               , new FaBlock()},
+                    {"VT"               , new VtBlock()},
                     {"FJ"               , new DummyBlock()},
 
                 };
@@ -115,6 +117,8 @@ namespace Compass.CommomLibrary.Dadger {
         public UhNwBlock BlocoUhNw { get { return (UhNwBlock)Blocos["NW"]; } set { Blocos["NW"] = value; } }
 
         public UhBlock BlocoUh { get { return (UhBlock)Blocos["UH"]; } set { Blocos["UH"] = value; } }
+        public FaBlock BlocoFa { get { return (FaBlock)Blocos["FA"]; } set { Blocos["FA"] = value; } }
+        public VtBlock BlocoVt { get { return (VtBlock)Blocos["VT"]; } set { Blocos["VT"] = value; } }
         public CxBlock BlocoCx { get { return (CxBlock)Blocos["CX"]; } set { Blocos["CX"] = value; } }
         public AcBlock BlocoAc { get { return (AcBlock)Blocos["AC"]; } }
         public DpBlock BlocoDp {
