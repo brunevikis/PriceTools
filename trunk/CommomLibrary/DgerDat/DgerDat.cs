@@ -80,7 +80,21 @@ namespace Compass.CommomLibrary.DgerDat {
             }
         }
 
-        
+        public int SetaTendenciaHidrologia
+        {
+            get
+            {
+                return
+                    int.Parse(dados[32].Params.Substring(5, 4).Trim());
+            }
+            set
+            {
+                string rest = dados[32].Params.Remove(0, 9);
+                dados[32].Params = ((int)value).ToString().PadLeft(4) + ((int)value).ToString().PadLeft(5) + rest;
+
+            }
+        }
+
 
         public int TipoTendenciaHidrologia {
             get {

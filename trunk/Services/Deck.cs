@@ -279,6 +279,7 @@ namespace Compass.Services
             var confT = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.conft].Document as Compass.CommomLibrary.ConftDat.ConftDat;
             var expt = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.expt].Document as Compass.CommomLibrary.ExptDat.ExptDat;
             var term = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.term].Document as Compass.CommomLibrary.TermDat.TermDat;
+            var dger = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.dger].Document as Compass.CommomLibrary.DgerDat.DgerDat;
 
             if (cadTermFile != null && File.Exists(cadTermFile) && !File.Exists(GTMIN_CCEEFile) && GTMIN_CCEEFile == null)
             {
@@ -457,6 +458,18 @@ namespace Compass.Services
                     }
                 }
             }
+
+            try
+            {
+                dger.SetaTendenciaHidrologia = 2;
+                //dger.SaveToFile(createBackup: true);
+            }
+            catch (Exception ex)
+            {
+
+                ex.ToString();
+            }
+
 
             term.SaveToFile(createBackup: true);
             expt.SaveToFile(createBackup: true);

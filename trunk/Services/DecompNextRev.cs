@@ -2693,7 +2693,13 @@ namespace Compass.Services
 
                 foreach (var re in reDat[dt.Item1])
                 {
+
                     var usinas = re.Key.Valores.Skip(1).TakeWhile(x => x is int).ToArray();
+
+                    if (usinas.First() == 139)
+                    {
+
+                    }
 
                     if (!usinas.All(x => dadger.BlocoUh.Any(y => y.Usina == x))) continue;
 
@@ -2714,9 +2720,17 @@ namespace Compass.Services
                     {
                         lu = (LuLine)rheEqu.FirstOrDefault(x => x is LuLine && ((LuLine)x).Estagio == dt.Item2);
 
+                        LuLine luAnt = (LuLine)rheEqu.Where(x => x is LuLine && ((LuLine)x).Estagio <= dt.Item2).OrderByDescending(x => ((LuLine)x).Estagio).FirstOrDefault();
+
                         if (lu == null)
                         {
                             lu = new LuLine() { Estagio = dt.Item2, Restricao = rheEqu.First().Restricao };
+                            if (luAnt != null)
+                            {
+                                lu[3] = luAnt[3];
+                                lu[5] = luAnt[5];
+                                lu[7] = luAnt[7];
+                            }           
                             dadger.BlocoRhe.Add(lu);
                         }
                         //}
