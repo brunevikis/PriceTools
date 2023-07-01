@@ -651,77 +651,80 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                             /////////
 
                                                             var modifline = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
-                                                            double modifval = lq[3];
-                                                            if (modifline != null)
+                                                            if (lHq.InfSup == "INF" && lq[3] != null)
                                                             {
-                                                                if (modifline.DataModif < data)
+                                                                double modifval = lq[3];
+                                                                if (modifline != null)
                                                                 {
-
-                                                                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                                    var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                                    var valorAntigo = modifline.ValorModif;
-
-
-                                                                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
-                                                                    newModifLine.Chave = "VAZMINT";
-                                                                    newModifLine.Usina = lHq.UsiRest;
-                                                                    int index = modif.IndexOf(modifline) + 1;
-                                                                    modif.Insert(index, newModifLine);
-
-                                                                    //mes seguinte verificação
-                                                                    var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
-                                                                    if (modiflineMesSeq == null)
+                                                                    if (modifline.DataModif < data)
                                                                     {
-                                                                        //newModifLine2 = modifline;
-                                                                        newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
-                                                                        //newModifLine2.DataModif = data.AddMonths(1);
-                                                                        newModifLine2.Chave = "VAZMINT";
-                                                                        newModifLine2.Usina = lHq.UsiRest;
-                                                                        int index2 = modif.IndexOf(newModifLine) + 1;
-                                                                        modif.Insert(index2, newModifLine2);
+
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var valorAntigo = modifline.ValorModif;
+
+
+                                                                        newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                                        newModifLine.Chave = "VAZMINT";
+                                                                        newModifLine.Usina = lHq.UsiRest;
+                                                                        int index = modif.IndexOf(modifline) + 1;
+                                                                        modif.Insert(index, newModifLine);
+
+                                                                        //mes seguinte verificação
+                                                                        var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                        if (modiflineMesSeq == null)
+                                                                        {
+                                                                            //newModifLine2 = modifline;
+                                                                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                            //newModifLine2.DataModif = data.AddMonths(1);
+                                                                            newModifLine2.Chave = "VAZMINT";
+                                                                            newModifLine2.Usina = lHq.UsiRest;
+                                                                            int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                            modif.Insert(index2, newModifLine2);
+                                                                        }
+
+
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var valorAntigo = modifline.ValorModif;
 
+                                                                        modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
 
+                                                                        //mes seguinte verificação
+                                                                        var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                        if (modiflineMesSeq == null)
+                                                                        {
+                                                                            //newModifLine2 = modifline;
+                                                                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                            //newModifLine2.DataModif = data.AddMonths(1);
+                                                                            newModifLine2.Chave = "VAZMINT";
+                                                                            newModifLine2.Usina = lHq.UsiRest;
+                                                                            int index2 = modif.IndexOf(modifline) + 1;
+                                                                            modif.Insert(index2, newModifLine2);
+                                                                        }
+
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                                    var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                                    var valorAntigo = modifline.ValorModif;
-
-                                                                    modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
-
-                                                                    //mes seguinte verificação
-                                                                    var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
-                                                                    if (modiflineMesSeq == null)
+                                                                    var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                                                                    if (mod != null)
                                                                     {
-                                                                        //newModifLine2 = modifline;
-                                                                        newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
-                                                                        //newModifLine2.DataModif = data.AddMonths(1);
-                                                                        newModifLine2.Chave = "VAZMINT";
-                                                                        newModifLine2.Usina = lHq.UsiRest;
-                                                                        int index2 = modif.IndexOf(modifline) + 1;
-                                                                        modif.Insert(index2, newModifLine2);
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                        newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                                        newModifLine.Chave = "VAZMINT";
+                                                                        newModifLine.Usina = lHq.UsiRest;
+                                                                        int index = modif.IndexOf(mod) + 1;
+                                                                        modif.Insert(index, newModifLine);
                                                                     }
 
+
                                                                 }
-                                                            }
-                                                            else
-                                                            {
-                                                                var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
-                                                                if (mod != null)
-                                                                {
-                                                                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-
-
-                                                                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
-                                                                    newModifLine.Chave = "VAZMINT";
-                                                                    newModifLine.Usina = lHq.UsiRest;
-                                                                    int index = modif.IndexOf(mod) + 1;
-                                                                    modif.Insert(index, newModifLine);
-                                                                }
-
-
                                                             }
 
                                                             modif.SaveToFile(filePath: modifFile);
@@ -1824,78 +1827,83 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                     /////////
 
                                                     var modifline = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
-                                                    double modifval = lq[3];
-                                                    if (modifline != null)
+
+                                                    if (lHq.InfSup == "INF" && lq[3] != null)
                                                     {
-                                                        if (modifline.DataModif < data)
+                                                        double modifval = lq[3];
+                                                        if (modifline != null)
                                                         {
-
-                                                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                            var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                            var valorAntigo = modifline.ValorModif;
-
-
-                                                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
-                                                            newModifLine.Chave = "VAZMINT";
-                                                            newModifLine.Usina = lHq.UsiRest;
-                                                            int index = modif.IndexOf(modifline) + 1;
-                                                            modif.Insert(index, newModifLine);
-
-                                                            //mes seguinte verificação
-                                                            var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
-                                                            if (modiflineMesSeq == null)
+                                                            if (modifline.DataModif < data)
                                                             {
-                                                                //newModifLine2 = modifline;
-                                                                newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
-                                                                //newModifLine2.DataModif = data.AddMonths(1);
-                                                                newModifLine2.Chave = "VAZMINT";
-                                                                newModifLine2.Usina = lHq.UsiRest;
-                                                                int index2 = modif.IndexOf(newModifLine) + 1;
-                                                                modif.Insert(index2, newModifLine2);
+
+                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var valorAntigo = modifline.ValorModif;
+
+
+                                                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                                newModifLine.Chave = "VAZMINT";
+                                                                newModifLine.Usina = lHq.UsiRest;
+                                                                int index = modif.IndexOf(modifline) + 1;
+                                                                modif.Insert(index, newModifLine);
+
+                                                                //mes seguinte verificação
+                                                                var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                if (modiflineMesSeq == null)
+                                                                {
+                                                                    //newModifLine2 = modifline;
+                                                                    newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                    //newModifLine2.DataModif = data.AddMonths(1);
+                                                                    newModifLine2.Chave = "VAZMINT";
+                                                                    newModifLine2.Usina = lHq.UsiRest;
+                                                                    int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                    modif.Insert(index2, newModifLine2);
+                                                                }
+
+
                                                             }
+                                                            else
+                                                            {
+                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                var valorAntigo = modifline.ValorModif;
 
+                                                                modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
 
+                                                                //mes seguinte verificação
+                                                                var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                if (modiflineMesSeq == null)
+                                                                {
+                                                                    //newModifLine2 = modifline;
+                                                                    newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                    //newModifLine2.DataModif = data.AddMonths(1);
+                                                                    newModifLine2.Chave = "VAZMINT";
+                                                                    newModifLine2.Usina = lHq.UsiRest;
+                                                                    int index2 = modif.IndexOf(modifline) + 1;
+                                                                    modif.Insert(index2, newModifLine2);
+                                                                }
+
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                            var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                                                            var valorAntigo = modifline.ValorModif;
-
-                                                            modifline.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
-
-                                                            //mes seguinte verificação
-                                                            var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "VAZMINT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
-                                                            if (modiflineMesSeq == null)
+                                                            var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                                                            if (mod != null)
                                                             {
-                                                                //newModifLine2 = modifline;
-                                                                newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
-                                                                //newModifLine2.DataModif = data.AddMonths(1);
-                                                                newModifLine2.Chave = "VAZMINT";
-                                                                newModifLine2.Usina = lHq.UsiRest;
-                                                                int index2 = modif.IndexOf(modifline) + 1;
-                                                                modif.Insert(index2, newModifLine2);
+                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
+                                                                newModifLine.Chave = "VAZMINT";
+                                                                newModifLine.Usina = lHq.UsiRest;
+                                                                int index = modif.IndexOf(mod) + 1;
+                                                                modif.Insert(index, newModifLine);
                                                             }
 
+
                                                         }
                                                     }
-                                                    else
-                                                    {
-                                                        var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
-                                                        if (mod != null)
-                                                        {
-                                                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-
-
-                                                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), modifval.ToString().Replace(',', '.'));
-                                                            newModifLine.Chave = "VAZMINT";
-                                                            newModifLine.Usina = lHq.UsiRest;
-                                                            int index = modif.IndexOf(mod) + 1;
-                                                            modif.Insert(index, newModifLine);
-                                                        }
-
-
-                                                    }
+                                                    
 
                                                     modif.SaveToFile(filePath: modifFile);
                                                     /////////

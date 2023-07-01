@@ -2302,8 +2302,8 @@ namespace Compass.Services
                             acL.SetValue(4, acsbm.Valor2);
                             if (acsbm.Valor3 != null)
                                 acL.SetValue(5, acsbm.Valor3);
-
-                            acL.Ano = acsbm.Ano;
+                            acL.Semana = 1;
+                            //acL.Ano = acsbm.Ano;
                             acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
 
 
@@ -2321,7 +2321,8 @@ namespace Compass.Services
                             //if (acsbm.Valor3 != null)
                             //    acL.SetValue(5, acsbm.Valor3);
 
-                            acL.Ano = mesOperativo.Ano;
+                            acL.Semana = 1;
+                            //acL.Ano = mesOperativo.Ano;
                             acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
 
 
@@ -2394,7 +2395,8 @@ namespace Compass.Services
                         vminteste = padrao.Item2;
                     }
 
-                    aclvolmin.Ano = mesOperativo.Ano;
+                    aclvolmin.Semana = 1;
+                    //aclvolmin.Ano = mesOperativo.Ano;
                     aclvolmin.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvolmin);
 
@@ -2413,7 +2415,9 @@ namespace Compass.Services
                         aclvolmax.SetValue(3, padrao.Item2);
                         vmaxteste = padrao.Item2;
                     }
-                    aclvolmax.Ano = mesOperativo.Ano;
+
+                    aclvolmax.Semana = 1;
+                    //aclvolmax.Ano = mesOperativo.Ano;
                     aclvolmax.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvolmax);
 
@@ -2429,7 +2433,9 @@ namespace Compass.Services
                     {
                         aclvsvert.SetValue(3, padrao.Item2);
                     }
-                    aclvsvert.Ano = mesOperativo.Ano;
+
+                    aclvsvert.Semana = 1;
+                    //aclvsvert.Ano = mesOperativo.Ano;
                     aclvsvert.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvsvert);
 
@@ -2445,7 +2451,9 @@ namespace Compass.Services
                     {
                         aclvmdesv.SetValue(3, padrao.Item2);
                     }
-                    aclvmdesv.Ano = mesOperativo.Ano;
+
+                    aclvmdesv.Semana = 1;
+                    //aclvmdesv.Ano = mesOperativo.Ano;
                     aclvmdesv.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvmdesv);
 
