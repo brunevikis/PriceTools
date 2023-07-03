@@ -189,6 +189,65 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                     }
 
                     var dadgerBase = deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
+
+                    #region verifica rests faixa limites decomp mensal
+                    string avisos = "";
+                    List<int> hqsErr = new List<int>();
+                    List<int> hvsErr = new List<int>();
+
+                    bool verificaRESTS = false;
+
+                    var limitesHQver = w.Faixalimites.Where(x => x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
+                    var limitesHVver = w.Faixalimites.Where(x => x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
+
+                    foreach (var lim in limitesHQver)
+                    {
+                        var restshq = dadgerBase.BlocoRhq.Where(x => x.Restricao == lim.CodRest);
+                        if (restshq.Count() > 0)
+                        {
+                            var le = restshq.Where(x => x is Compass.CommomLibrary.Dadger.CqLine).Select(x => (Compass.CommomLibrary.Dadger.CqLine)x).First();
+                            if (le.Usina == lim.UsiRest)
+                            {
+                                continue;
+                            }
+                            else if(hqsErr.All(x => x != lim.CodRest))
+                            {
+                                avisos = avisos + $"HQ {lim.CodRest} Usina Deck: {le.Usina} Usina Informada: {lim.UsiRest} \r\n";
+                                hqsErr.Add(lim.CodRest);
+                                verificaRESTS = true;
+                            }
+                        }
+                    }
+
+                    foreach (var lim in limitesHVver)
+                    {
+                        var restshv = dadgerBase.BlocoRhv.Where(x => x.Restricao == lim.CodRest);
+                        if (restshv.Count() > 0)
+                        {
+                            var le = restshv.Where(x => x is Compass.CommomLibrary.Dadger.CvLine).Select(x => (Compass.CommomLibrary.Dadger.CvLine)x).First();
+                            if (le.Usina == lim.UsiRest)
+                            {
+                                continue;
+                            }
+                            else if (hvsErr.All(x => x != lim.CodRest))
+                            {
+                                avisos = avisos + $"HV {lim.CodRest} Usina Deck: {le.Usina} Usina Informada: {lim.UsiRest} \r\n";
+                                hvsErr.Add(lim.CodRest);
+                                verificaRESTS = true;
+                            }
+                        }
+                    }
+                    if (verificaRESTS == true)
+                    {
+                        if (System.Windows.Forms.MessageBox.Show($"Divergência de dados \r\nVerifique Deck Decomp de entrada! \r\n{avisos}\r\nDeseja continuar?"
+                   , "Faixa Limites", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                        {
+                            return;
+                        }
+
+                    }
+
+                    #endregion
                     dadgerBase.VAZOES_NumeroDeSemanas = 0;
                     dadgerBase.VAZOES_NumeroDeSemanasPassadas = 0;
 
@@ -1414,7 +1473,66 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                     var deckDCBase = DeckFactory.CreateDeck(dc) as Compass.CommomLibrary.Decomp.Deck;
 
+                    #region verifica rests faixa limites Decomp rv0
+                    var dadgerBaseVer = deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
 
+                    string avisos = "";
+                    List<int> hqsErr = new List<int>();
+                    List<int> hvsErr = new List<int>();
+
+                    bool verificaRESTS = false;
+
+                    var limitesHQver = w.Faixalimites.Where(x => x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
+                    var limitesHVver = w.Faixalimites.Where(x => x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
+
+                    foreach (var lim in limitesHQver)
+                    {
+                        var restshq = dadgerBaseVer.BlocoRhq.Where(x => x.Restricao == lim.CodRest);
+                        if (restshq.Count() > 0)
+                        {
+                            var le = restshq.Where(x => x is Compass.CommomLibrary.Dadger.CqLine).Select(x => (Compass.CommomLibrary.Dadger.CqLine)x).First();
+                            if (le.Usina == lim.UsiRest)
+                            {
+                                continue;
+                            }
+                            else if (hqsErr.All(x => x != lim.CodRest))
+                            {
+                                avisos = avisos + $"HQ {lim.CodRest} Usina Deck: {le.Usina} Usina Informada: {lim.UsiRest} \r\n";
+                                hqsErr.Add(lim.CodRest);
+                                verificaRESTS = true;
+                            }
+                        }
+                    }
+
+                    foreach (var lim in limitesHVver)
+                    {
+                        var restshv = dadgerBaseVer.BlocoRhv.Where(x => x.Restricao == lim.CodRest);
+                        if (restshv.Count() > 0)
+                        {
+                            var le = restshv.Where(x => x is Compass.CommomLibrary.Dadger.CvLine).Select(x => (Compass.CommomLibrary.Dadger.CvLine)x).First();
+                            if (le.Usina == lim.UsiRest)
+                            {
+                                continue;
+                            }
+                            else if (hvsErr.All(x => x != lim.CodRest))
+                            {
+                                avisos = avisos + $"HV {lim.CodRest} Usina Deck: {le.Usina} Usina Informada: {lim.UsiRest} \r\n";
+                                hvsErr.Add(lim.CodRest);
+                                verificaRESTS = true;
+                            }
+                        }
+                    }
+                    if (verificaRESTS == true)
+                    {
+                        if (System.Windows.Forms.MessageBox.Show($"Divergência de dados \r\nVerifique Deck Decomp de entrada! \r\n{avisos}\r\nDeseja continuar?"
+                   , "Faixa Limites", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                        {
+                            return;
+                        }
+
+                    }
+
+                    #endregion
 
 
 

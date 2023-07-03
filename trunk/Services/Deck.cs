@@ -462,7 +462,7 @@ namespace Compass.Services
             try
             {
                 dger.SetaTendenciaHidrologia = 2;
-                //dger.SaveToFile(createBackup: true);
+                dger.SaveToFile();
             }
             catch (Exception ex)
             {

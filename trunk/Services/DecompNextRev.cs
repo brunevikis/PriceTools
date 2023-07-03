@@ -2302,9 +2302,9 @@ namespace Compass.Services
                             acL.SetValue(4, acsbm.Valor2);
                             if (acsbm.Valor3 != null)
                                 acL.SetValue(5, acsbm.Valor3);
-                            acL.Semana = 1;
-                            //acL.Ano = acsbm.Ano;
-                            acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                            //acL.Semana = 1;
+                            ////acL.Ano = acsbm.Ano;
+                            //acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
 
 
                             dadger.BlocoAc.Add(acL);
@@ -2321,9 +2321,9 @@ namespace Compass.Services
                             //if (acsbm.Valor3 != null)
                             //    acL.SetValue(5, acsbm.Valor3);
 
-                            acL.Semana = 1;
-                            //acL.Ano = mesOperativo.Ano;
-                            acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                            //acL.Semana = 1;
+                            ////acL.Ano = mesOperativo.Ano;
+                            //acL.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
 
 
                             dadger.BlocoAc.Add(acL);
@@ -2395,9 +2395,9 @@ namespace Compass.Services
                         vminteste = padrao.Item2;
                     }
 
-                    aclvolmin.Semana = 1;
-                    //aclvolmin.Ano = mesOperativo.Ano;
-                    aclvolmin.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    //aclvolmin.Semana = 1;
+                   // //aclvolmin.Ano = mesOperativo.Ano;
+                    //aclvolmin.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvolmin);
 
 
@@ -2416,9 +2416,9 @@ namespace Compass.Services
                         vmaxteste = padrao.Item2;
                     }
 
-                    aclvolmax.Semana = 1;
-                    //aclvolmax.Ano = mesOperativo.Ano;
-                    aclvolmax.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                   // aclvolmax.Semana = 1;
+                    ////aclvolmax.Ano = mesOperativo.Ano;
+                    //aclvolmax.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvolmax);
 
                     var aclvsvert = dadger.BlocoAc.CreateLineFromMnemonico("VSVERT");
@@ -2434,9 +2434,9 @@ namespace Compass.Services
                         aclvsvert.SetValue(3, padrao.Item2);
                     }
 
-                    aclvsvert.Semana = 1;
-                    //aclvsvert.Ano = mesOperativo.Ano;
-                    aclvsvert.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    //aclvsvert.Semana = 1;
+                   /// //aclvsvert.Ano = mesOperativo.Ano;
+                    //aclvsvert.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvsvert);
 
                     var aclvmdesv = dadger.BlocoAc.CreateLineFromMnemonico("VMDESV");
@@ -2452,9 +2452,9 @@ namespace Compass.Services
                         aclvmdesv.SetValue(3, padrao.Item2);
                     }
 
-                    aclvmdesv.Semana = 1;
-                    //aclvmdesv.Ano = mesOperativo.Ano;
-                    aclvmdesv.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                    //aclvmdesv.Semana = 1;
+                    ////aclvmdesv.Ano = mesOperativo.Ano;
+                    //aclvmdesv.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvmdesv);
 
                     //2°mes "VOLMIN", "VOLMAX", "VSVERT", "VMDESV"
