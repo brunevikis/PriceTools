@@ -107,6 +107,23 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        public bool NwHibrido
+        {
+            get
+            {
+                string hibrido = this.Names["_NwHibrido"].Value;
+                if (this.Wb.Worksheets["Geral"].Range("AC18").Text.ToUpper() == "SIM")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+
         public string NewaveBase
         {
             get
@@ -629,6 +646,34 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<Compass.CommomLibrary.IREMODIF> remodifwb = null;
+
+        public List<Compass.CommomLibrary.IREMODIF> ReModifwb
+        {
+            get
+            {
+                if (Names.ContainsKey("_reModif"))
+                {
+                    if (remodifwb == null)
+                    {
+                        remodifwb = new List<Compass.CommomLibrary.IREMODIF>();
+
+                        var ws = Names["_reModif"].Worksheet;
+                        var row = Names["_reModif"].Row;
+                        var col = Names["_reModif"].Column;
+
+                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                        {
+                            remodifwb.Add(new ReModifWb(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 4]]));
+                        }
+                    }
+
+                    return remodifwb;
+                }
+                else return null;
+            }
+        }
+
         List<Compass.CommomLibrary.IAGRIGNT> agrint = null;
         public List<Compass.CommomLibrary.IAGRIGNT> AgrintDats
         {
@@ -976,6 +1021,26 @@ namespace Compass.ExcelTools.Templates
                 //if (rng[1, 7].Value is double) LimSup2 = rng[1, 7].Value;
                 //if (rng[1, 8].Value is double) LimInf3 = rng[1, 8].Value;
                 //if (rng[1, 9].Value is double) LimSup3 = rng[1, 9].Value;
+            }
+        }
+
+        public class ReModifWb : Compass.CommomLibrary.IREMODIF
+        {
+            public int Usina { get; set; }
+
+            public int MesInicio { get; set; }
+
+            public int AnoInicio { get; set; }
+            public double Valor { get; set; }
+
+            public ReModifWb(Range rng)
+            {
+
+                if (rng[1, 1].Value is double) Usina = (int)rng[1, 1].Value;
+                if (rng[1, 3].Value is double) MesInicio = (int)rng[1, 2].Value;
+
+                if (rng[1, 4].Value is double) AnoInicio = (int)rng[1, 3].Value;
+                if (rng[1, 5].Value is double) Valor = rng[1, 4].Value;
             }
         }
 

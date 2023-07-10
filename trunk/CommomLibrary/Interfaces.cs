@@ -56,6 +56,16 @@ namespace Compass.CommomLibrary
         string Minemonico { get; set; }
     }
 
+    public interface IREMODIF
+    {
+        int Usina { get; set; }
+
+        int MesInicio { get; set; }
+
+        int AnoInicio { get; set; }
+        double Valor { get; set; }
+    }
+
     public interface IINTERCAMBIO
     {
         int AnoFim { get; set; }

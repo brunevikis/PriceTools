@@ -43,6 +43,7 @@ namespace Encadeado
 
         public int IteracaoAtual { get; set; }
         public string ExecutavelNewave { get; set; }
+        public bool NwHibrido { get; set; }
 
         public bool DefinirVolumesPO { get; set; }
         public bool StartREEAgrupado { get; set; }
@@ -65,6 +66,7 @@ namespace Encadeado
         public List<IADTERMDAD> Adtermdad { get; set; }
         public List<IINTERCAMBIO> Intercambios { get; set; }
         public List<IMODIF> Modifs { get; set; }
+        public List<IREMODIF> ReModifs { get; set; }
         public List<IREEDAT> Reedads { get; set; }
 
         public Estudo()
@@ -96,7 +98,7 @@ namespace Encadeado
             {
                 consists.Add(IterarConsist(conF));
             }
-          
+
 
             Task.WaitAll(consists.ToArray());
             return true;
@@ -408,7 +410,7 @@ namespace Encadeado
 
                 }
             }
-            
+
             foreach (var adt in adtermDat.Despachos.Where(x => x.String != "            "))
             {
 
@@ -1269,48 +1271,121 @@ namespace Encadeado
 
         private void AlterarModif(DeckNewave deck)
         {
+            bool nwHibrido = this.NwHibrido;
             var modifs = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
             var modifFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Path;
 
             foreach (var dad in this.Modifs.Where(x => x.MesEstudo == deck.Dger.MesEstudo && ((x.Mes >= deck.Dger.MesEstudo && x.Ano >= deck.Dger.AnoEstudo) || (x.Mes < deck.Dger.MesEstudo && x.Ano > deck.Dger.AnoEstudo))).ToList())
             {
-                DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
-                var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
-                if (modifline != null)
+                if (dad.Minemonico != "TURBMAXT")
                 {
-                    if (modifline.DataModif < data)
+                    DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
+                    var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+                    if (modifline != null)
                     {
-
-                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
-                        if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
+                        if (modifline.DataModif < data)
                         {
-                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
+
+                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                            if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
+                            {
+                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
+                            }
+                            else
+                            {
+                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
+                            }
+                            newModifLine.Chave = dad.Minemonico;
+                            newModifLine.Usina = dad.Usina;
+                            int index = modifs.IndexOf(modifline) + 1;
+                            modifs.Insert(index, newModifLine);
+
                         }
                         else
                         {
-                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
+                            if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
+                            {
+                                modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
+                            }
+                            else
+                            {
+                                modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
+                            }
                         }
-                        newModifLine.Chave = dad.Minemonico;
-                        newModifLine.Usina = dad.Usina;
-                        int index = modifs.IndexOf(modifline) + 1;
-                        modifs.Insert(index, newModifLine);
+                    }
 
-                    }
-                    else
-                    {
-                        if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
-                        {
-                            modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
-                        }
-                        else
-                        {
-                            modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
-                        }
-                    }
                 }
 
-
             }
+
+            if (NwHibrido)
+            {
+                foreach (var dad in this.Modifs.Where(x => x.MesEstudo == deck.Dger.MesEstudo && ((x.Mes >= deck.Dger.MesEstudo && x.Ano >= deck.Dger.AnoEstudo) || (x.Mes < deck.Dger.MesEstudo && x.Ano > deck.Dger.AnoEstudo))).ToList())
+                {
+                    if (dad.Minemonico == "TURBMAXT")
+                    {
+                        DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
+
+                        if (!modifs.Any(x => x.Usina == dad.Usina))
+                        {
+                            modifs.Add(new Compass.CommomLibrary.ModifDatNW.ModifLine()
+                            {
+                                Usina = dad.Usina,
+                                Chave = "USINA",
+                                NovosValores = new string[] { dad.Usina.ToString() }
+                            });
+                            
+
+                        }
+                        var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+                        if (modifline != null)
+                        {
+                            if (modifline.DataModif < data)
+                            {
+
+                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
+                                {
+                                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
+                                }
+                                else
+                                {
+                                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
+                                }
+                                newModifLine.Chave = dad.Minemonico;
+                                newModifLine.Usina = dad.Usina;
+                                int index = modifs.IndexOf(modifline) + 1;
+                                modifs.Insert(index, newModifLine);
+
+                            }
+                            else
+                            {
+                                if (dad.Minemonico == "VMINT" || dad.Minemonico == "VMAXT")
+                                {
+                                    modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'), "'%'");
+                                }
+                                else
+                                {
+                                    modifline.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var modifLineUsi = modifs.Where(x => x.Usina == dad.Usina && x.Chave == "USINA").FirstOrDefault();
+                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                            newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), dad.Valor.ToString().Replace(',', '.'));
+                            newModifLine.Chave = dad.Minemonico;
+                            newModifLine.Usina = dad.Usina;
+                            int index = modifs.IndexOf(modifLineUsi) + 1;
+
+                            modifs.Insert(index,newModifLine);
+                        }
+                    }
+
+                }
+            }
+
             modifs.SaveToFile(filePath: modifFile);
 
         }
@@ -1475,7 +1550,7 @@ namespace Encadeado
                 )).ToList();
 
                 var reedat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Document as Compass.CommomLibrary.ReeDat.ReeDat;
-                
+
                 deck.Dger.CalculaEarmInicial = false;
                 deck.Dger.Earms =
                 reedat.ToList().Select(ree =>
@@ -1552,58 +1627,89 @@ namespace Encadeado
                     reedat.SaveToFile(filePath: reeFile);
                 }
             }
-            
+
         }
         private void IncrementarRE(DeckNewave deck)
         {
 
             var reDat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.re].Document as Compass.CommomLibrary.ReDat.ReDat;
 
-            foreach (var re in reDat.Restricoes.ToList())
+            if (this.NwHibrido)
             {
-                foreach (var reDet in reDat.Detalhes.Where(x => x.Numero == re.Numero).ToList())
-                {
+                //foreach (var re in reDat.Restricoes.ToList())
+                //{
+                //    foreach (var reDet in reDat.Detalhes.Where(x => x.Numero == re.Numero).ToList())
+                //    {
+                //        reDat.Detalhes.Remove(reDet);
+                //    }
 
-                    if (reDet.Inicio < deck.Dger.DataEstudo && reDet.Fim >= deck.Dger.DataEstudo)
+                //    if (reDat.Detalhes.Where(x => x.Numero == re.Numero).Count() == 0) reDat.Restricoes.Remove(re);
+                //}
+            }
+            else
+            {
+                foreach (var re in reDat.Restricoes.ToList())
+                {
+                    foreach (var reDet in reDat.Detalhes.Where(x => x.Numero == re.Numero).ToList())
                     {
-                        reDet.Inicio = deck.Dger.DataEstudo;
+
+                        if (reDet.Inicio < deck.Dger.DataEstudo && reDet.Fim >= deck.Dger.DataEstudo)
+                        {
+                            reDet.Inicio = deck.Dger.DataEstudo;
+                        }
+                        else if (reDet.Fim < deck.Dger.DataEstudo)
+                        {
+                            reDat.Detalhes.Remove(reDet);
+                        }
                     }
-                    else if (reDet.Fim < deck.Dger.DataEstudo)
-                    {
-                        reDat.Detalhes.Remove(reDet);
-                    }
+
+                    if (reDat.Detalhes.Where(x => x.Numero == re.Numero).Count() == 0) reDat.Restricoes.Remove(re);
                 }
 
-                if (reDat.Detalhes.Where(x => x.Numero == re.Numero).Count() == 0) reDat.Restricoes.Remove(re);
-            }
 
-
-            foreach (var rest in this.Restricoes.Where(x => x.MesEstudo == deck.Dger.MesEstudo))
-            {
-
-                //procura restricao
-                var re = reDat.Restricoes.Where(
-                    x => String.Join("", x.Valores.Skip(1).Where(y => y != null).OrderBy(y => y).Select(y => y.ToString().Trim()))
-                        == String.Join("", rest.Usinas.OrderBy(y => y).Select(y => y.ToString()))
-                    ).FirstOrDefault();
-
-                //se nao exite insere
-                if (re == null)
+                foreach (var rest in this.Restricoes.Where(x => x.MesEstudo == deck.Dger.MesEstudo))
                 {
-                    if (rest.AnoIni >= deck.Dger.AnoEstudo)
-                    {
-                        re = new Compass.CommomLibrary.ReDat.ReLine()
-                        {
-                            Numero = reDat.Restricoes.Max(x => x.Numero) + 1
-                        };
 
-                        for (int i = 0; i < rest.Usinas.Count; i++)
+                    //procura restricao
+                    var re = reDat.Restricoes.Where(
+                        x => String.Join("", x.Valores.Skip(1).Where(y => y != null).OrderBy(y => y).Select(y => y.ToString().Trim()))
+                            == String.Join("", rest.Usinas.OrderBy(y => y).Select(y => y.ToString()))
+                        ).FirstOrDefault();
+
+                    //se nao exite insere
+                    if (re == null)
+                    {
+                        if (rest.AnoIni >= deck.Dger.AnoEstudo)
                         {
-                            re[i + 1] = rest.Usinas[i];
+                            re = new Compass.CommomLibrary.ReDat.ReLine()
+                            {
+                                Numero = reDat.Restricoes.Max(x => x.Numero) + 1
+                            };
+
+                            for (int i = 0; i < rest.Usinas.Count; i++)
+                            {
+                                re[i + 1] = rest.Usinas[i];
+                            }
+
+                            reDat.Restricoes.Add(re);
+
+
+                            var val = new Compass.CommomLibrary.ReDat.ReValLine()
+                            {
+                                Numero = re.Numero,
+                                Patamar = rest.Patamar,
+                                ValorRestricao = rest.Restricao,
+                                Inicio = new DateTime(rest.AnoIni, rest.MesIni, 1),
+                                Fim = new DateTime(rest.AnoFim, rest.MesFim, 1),
+                            };
+
+                            reDat.Detalhes.Add(val);
                         }
 
-                        reDat.Restricoes.Add(re);
-
+                    }
+                    //altera ou insere novo valor
+                    else
+                    {
 
                         var val = new Compass.CommomLibrary.ReDat.ReValLine()
                         {
@@ -1614,58 +1720,44 @@ namespace Encadeado
                             Fim = new DateTime(rest.AnoFim, rest.MesFim, 1),
                         };
 
+                        var anterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                            .Where(x => x.Inicio < val.Inicio && x.Fim >= val.Inicio).FirstOrDefault();
+                        var posterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                            .Where(x => x.Inicio <= val.Fim && x.Fim > val.Fim).FirstOrDefault();
+
+                        if (anterior != null)
+                        {
+                            var anteriorSplit = anterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
+                            anterior.Inicio = val.Inicio;
+                            anteriorSplit.Fim = val.Inicio.AddMonths(-1);
+
+                            reDat.Detalhes.Add(anteriorSplit);
+                        }
+
+                        if (posterior != null)
+                        {
+                            var posteriorSplit = posterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
+                            posterior.Fim = val.Fim; ;
+                            posteriorSplit.Inicio = val.Fim.AddMonths(1);
+
+                            reDat.Detalhes.Add(posteriorSplit);
+                        }
+
+                        reDat.Detalhes.Where(x => x.Numero == val.Numero)
+                            .Where(x => x.Inicio >= val.Inicio && x.Fim <= val.Fim).ToList().ForEach(x =>
+                                reDat.Detalhes.Remove(x)
+                                );
+
                         reDat.Detalhes.Add(val);
                     }
-
                 }
-                //altera ou insere novo valor
-                else
-                {
 
-                    var val = new Compass.CommomLibrary.ReDat.ReValLine()
-                    {
-                        Numero = re.Numero,
-                        Patamar = rest.Patamar,
-                        ValorRestricao = rest.Restricao,
-                        Inicio = new DateTime(rest.AnoIni, rest.MesIni, 1),
-                        Fim = new DateTime(rest.AnoFim, rest.MesFim, 1),
-                    };
+                var newl = reDat.Detalhes.OrderBy(x => x.Numero).ThenBy(x => x.Inicio).ToList();
+                reDat.Detalhes.Clear();
+                newl.ForEach(x => reDat.Detalhes.Add(x));
 
-                    var anterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
-                        .Where(x => x.Inicio < val.Inicio && x.Fim >= val.Inicio).FirstOrDefault();
-                    var posterior = reDat.Detalhes.Where(x => x.Numero == val.Numero)
-                        .Where(x => x.Inicio <= val.Fim && x.Fim > val.Fim).FirstOrDefault();
-
-                    if (anterior != null)
-                    {
-                        var anteriorSplit = anterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
-                        anterior.Inicio = val.Inicio;
-                        anteriorSplit.Fim = val.Inicio.AddMonths(-1);
-
-                        reDat.Detalhes.Add(anteriorSplit);
-                    }
-
-                    if (posterior != null)
-                    {
-                        var posteriorSplit = posterior.Clone() as Compass.CommomLibrary.ReDat.ReValLine;
-                        posterior.Fim = val.Fim; ;
-                        posteriorSplit.Inicio = val.Fim.AddMonths(1);
-
-                        reDat.Detalhes.Add(posteriorSplit);
-                    }
-
-                    reDat.Detalhes.Where(x => x.Numero == val.Numero)
-                        .Where(x => x.Inicio >= val.Inicio && x.Fim <= val.Fim).ToList().ForEach(x =>
-                            reDat.Detalhes.Remove(x)
-                            );
-
-                    reDat.Detalhes.Add(val);
-                }
             }
 
-            var newl = reDat.Detalhes.OrderBy(x => x.Numero).ThenBy(x => x.Inicio).ToList();
-            reDat.Detalhes.Clear();
-            newl.ForEach(x => reDat.Detalhes.Add(x));
 
         }
 
@@ -1736,9 +1828,14 @@ namespace Encadeado
             //ret = ConsisteRun(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3");
 
 
-           //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+            //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+            
+            
+            //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/FT/newave2812.sh 3", "NewaveConsist", true, true, "hide");// para debug  nw hibrido usar essa funçao
 
-            var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");
+
+            ///home/producao/PrevisaoPLD/enercore_ctl_common/scripts/FT/newave2812.sh 3
+            var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");//para publicar 
 
 
 
@@ -1756,8 +1853,8 @@ namespace Encadeado
             {
                 var nameCommand = "DcNwPreli" + DateTime.Now.ToString("yyyyMMddHHmmss");
 
-               var comm = new { CommandName = nameCommand, EnviarEmail = false, WorkingDirectory = path, Command = comando, User = "AutoRun", IgnoreQueue = true };
-                
+                var comm = new { CommandName = nameCommand, EnviarEmail = false, WorkingDirectory = path, Command = comando, User = "AutoRun", IgnoreQueue = true };
+
                 var cont = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(comm));
                 cont.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
 

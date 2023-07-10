@@ -103,7 +103,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.VolumesPO = w.Earm;
                     estudo.PrevisaoVazao = w.Cenarios.First().Vazoes;
                     estudo.ExecutavelNewave = w.ExecutavelNewave;
-
+                    estudo.NwHibrido = w.NwHibrido;
 
                     if (w.ReDats == null)
                     {
@@ -125,6 +125,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.MERCADO = w.MercadosSisdat ?? new List<IMERCADO>();
 
                     estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
+                    estudo.ReModifs = w.ReModifwb ?? new List<IREMODIF>();
                     estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
                     estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
                     estudo.Reedads = w.Reedads ?? new List<IREEDAT>();
@@ -210,7 +211,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             {
                                 continue;
                             }
-                            else if(hqsErr.All(x => x != lim.CodRest))
+                            else if (hqsErr.All(x => x != lim.CodRest))
                             {
                                 avisos = avisos + $"HQ {lim.CodRest} Usina Deck: {le.Usina} Usina Informada: {lim.UsiRest} \r\n";
                                 hqsErr.Add(lim.CodRest);
@@ -521,6 +522,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
                                     var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
 
+                                    bool nwhibrido = w.NwHibrido;
+
                                     Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;
 
                                     //string redatBase = Path.Combine(deckNWEstudo.BaseFolder, "re_base.dat");
@@ -599,7 +602,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                                 lq[6] = valor < lq[3] ? lq[3] : valor;
                                                                 lq[8] = valor < lq[3] ? lq[3] : valor;
 
-                                                                if (produt65 >= 0) // alteração do arquivo re.dat caso necessario 
+                                                                if (produt65 >= 0 && nwhibrido == false) // alteração do arquivo re.dat caso necessario e nw NÃO hibrido
                                                                 {
                                                                     double restValor = lq[4];
                                                                     foreach (var reRest in reDat.Restricoes.ToList())
@@ -698,6 +701,93 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                                     reDat.Detalhes.Clear();
                                                                     newl.ForEach(x => reDat.Detalhes.Add(x));
                                                                     reDat.SaveToFile();
+                                                                }
+                                                                else // alterar modif com turbmaxt
+                                                                {
+                                                                    if (nwhibrido)
+                                                                    {
+                                                                        if (!modif.Any(x => x.Usina == lHq.UsiRest))
+                                                                        {
+                                                                            modif.Add(new Compass.CommomLibrary.ModifDatNW.ModifLine()
+                                                                            {
+                                                                                Usina = lHq.UsiRest,
+                                                                                Chave = "USINA",
+                                                                                NovosValores = new string[] { lHq.UsiRest.ToString() }
+                                                                            });
+
+                                                                        }
+                                                                        var modiflineTurb = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "TURBMAXT" && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+
+                                                                        if (modiflineTurb != null)
+                                                                        {
+                                                                            if (modiflineTurb.DataModif < data)
+                                                                            {
+
+                                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                                var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                                var valorAntigo = modiflineTurb.ValorModif;
+
+
+                                                                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), lq[4].ToString().Replace(',', '.'));
+                                                                                newModifLine.Chave = "TURBMAXT";
+                                                                                newModifLine.Usina = lHq.UsiRest;
+                                                                                int index = modif.IndexOf(modiflineTurb) + 1;
+                                                                                modif.Insert(index, newModifLine);
+
+                                                                                //mes seguinte verificação
+                                                                                var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "TURBMAXT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                                if (modiflineMesSeq == null)
+                                                                                {
+                                                                                    //newModifLine2 = modifline;
+                                                                                    newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                                    //newModifLine2.DataModif = data.AddMonths(1);
+                                                                                    newModifLine2.Chave = "TURBMAXT";
+                                                                                    newModifLine2.Usina = lHq.UsiRest;
+                                                                                    int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                                    modif.Insert(index2, newModifLine2);
+                                                                                }
+
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                                var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                                var valorAntigo = modiflineTurb.ValorModif;
+
+                                                                                modiflineTurb.SetValores(data.Month.ToString(), data.Year.ToString(), lq[4].ToString().Replace(',', '.'));
+
+                                                                                //mes seguinte verificação
+                                                                                var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "TURBMAXT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                                if (modiflineMesSeq == null)
+                                                                                {
+                                                                                    //newModifLine2 = modifline;
+                                                                                    newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                                    //newModifLine2.DataModif = data.AddMonths(1);
+                                                                                    newModifLine2.Chave = "TURBMAXT";
+                                                                                    newModifLine2.Usina = lHq.UsiRest;
+                                                                                    int index2 = modif.IndexOf(modiflineTurb) + 1;
+                                                                                    modif.Insert(index2, newModifLine2);
+                                                                                }
+
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                                                                            if (mod != null)
+                                                                            {
+                                                                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                                newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), lq[4].ToString().Replace(',', '.'));
+                                                                                newModifLine.Chave = "TURBMAXT";
+                                                                                newModifLine.Usina = lHq.UsiRest;
+                                                                                int indexT = modif.IndexOf(mod) + 1;
+                                                                                modif.Insert(indexT, newModifLine);
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                             else
@@ -1754,7 +1844,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
 
                             Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;
-
+                            bool nwhibrido = w.NwHibrido;
                             //string redatBase = Path.Combine(deckNWEstudo.BaseFolder, "re_base.dat");
                             //var redatFile = Directory.GetFiles(deckNWEstudo.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Equals("re.dat")).FirstOrDefault();
                             //if (redatFile != null && !File.Exists(redatBase))
@@ -1834,7 +1924,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                         lq[6] = valor < lq[3] ? lq[3] : valor;
                                                         lq[8] = valor < lq[3] ? lq[3] : valor;
 
-                                                        if (produt65 >= 0) // alteração do arquivo re.dat caso necessario 
+                                                        if (produt65 >= 0 && nwhibrido == false) // alteração do arquivo re.dat caso necessario e nw NÃO hibrido
                                                         {
                                                             double restValor = lq[4];
                                                             foreach (var reRest in reDat.Restricoes.ToList())
@@ -1934,6 +2024,93 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                                             newl.ForEach(x => reDat.Detalhes.Add(x));
                                                             reDat.SaveToFile();
                                                         }
+                                                        else // alterar modif com turbmaxt
+                                                        {
+                                                            if (nwhibrido)
+                                                            {
+                                                                if (!modif.Any(x => x.Usina == lHq.UsiRest))
+                                                                {
+                                                                    modif.Add(new Compass.CommomLibrary.ModifDatNW.ModifLine()
+                                                                    {
+                                                                        Usina = lHq.UsiRest,
+                                                                        Chave = "USINA",
+                                                                        NovosValores = new string[] { lHq.UsiRest.ToString() }
+                                                                    });
+
+                                                                }
+                                                                var modiflineTurb = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "TURBMAXT" && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+
+                                                                if (modiflineTurb != null)
+                                                                {
+                                                                    if (modiflineTurb.DataModif < data)
+                                                                    {
+
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var valorAntigo = modiflineTurb.ValorModif;
+
+
+                                                                        newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), lq[4].ToString().Replace(',', '.'));
+                                                                        newModifLine.Chave = "TURBMAXT";
+                                                                        newModifLine.Usina = lHq.UsiRest;
+                                                                        int index = modif.IndexOf(modiflineTurb) + 1;
+                                                                        modif.Insert(index, newModifLine);
+
+                                                                        //mes seguinte verificação
+                                                                        var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "TURBMAXT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                        if (modiflineMesSeq == null)
+                                                                        {
+                                                                            //newModifLine2 = modifline;
+                                                                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                            //newModifLine2.DataModif = data.AddMonths(1);
+                                                                            newModifLine2.Chave = "TURBMAXT";
+                                                                            newModifLine2.Usina = lHq.UsiRest;
+                                                                            int index2 = modif.IndexOf(newModifLine) + 1;
+                                                                            modif.Insert(index2, newModifLine2);
+                                                                        }
+
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                                                                        var valorAntigo = modiflineTurb.ValorModif;
+
+                                                                        modiflineTurb.SetValores(data.Month.ToString(), data.Year.ToString(), lq[4].ToString().Replace(',', '.'));
+
+                                                                        //mes seguinte verificação
+                                                                        var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == "TURBMAXT" && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                                                                        if (modiflineMesSeq == null)
+                                                                        {
+                                                                            //newModifLine2 = modifline;
+                                                                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                                                                            //newModifLine2.DataModif = data.AddMonths(1);
+                                                                            newModifLine2.Chave = "TURBMAXT";
+                                                                            newModifLine2.Usina = lHq.UsiRest;
+                                                                            int index2 = modif.IndexOf(modiflineTurb) + 1;
+                                                                            modif.Insert(index2, newModifLine2);
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                                                                    if (mod != null)
+                                                                    {
+                                                                        var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                                                                        newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), lq[4].ToString().Replace(',', '.'));
+                                                                        newModifLine.Chave = "TURBMAXT";
+                                                                        newModifLine.Usina = lHq.UsiRest;
+                                                                        int indexT = modif.IndexOf(mod) + 1;
+                                                                        modif.Insert(indexT, newModifLine);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                     else
                                                     {
@@ -2021,7 +2198,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                                         }
                                                     }
-                                                    
+
 
                                                     modif.SaveToFile(filePath: modifFile);
                                                     /////////
