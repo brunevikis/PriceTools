@@ -4,6 +4,7 @@ using Compass.CommomLibrary.SistemaDat;
 using Compass.ExcelTools;
 using Compass.ExcelTools.Templates;
 using Microsoft.Office.Tools.Ribbon;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,6 +46,154 @@ namespace Compass.DecompTools
             }
         }
 
+        private List<Tuple<int, int, DateTime, double>> getEolicasplan(string planMemo)//sub,pat,data,dado
+        {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            List<Tuple<int, int, DateTime, double>> eolicasDados = new List<Tuple<int, int, DateTime, double>>();
+            List<string> nomeSheets = new List<string>
+                        {
+                            "Geração Não Simuladas (P)",
+                            "Geração Não Simuladas (M)",
+                            "Geração Não Simuladas (L)"
+                        };
+            //Microsoft.Office.Interop.Excel.Application xlApp = ExcelTools.Helper.StartExcelInvisible();
+            using (ExcelPackage xlPackage = new ExcelPackage(new FileInfo(planMemo)))
+            {
+
+                foreach (var nome in nomeSheets)
+                {
+                    var myWorksheet = xlPackage.Workbook.Worksheets[nome]; //select sheet here
+                    var totalRows = myWorksheet.Dimension.End.Row;
+                    var totalColumns = myWorksheet.Dimension.End.Column;
+                    bool find = false;
+                    int rowTD = 1;
+
+                    int pat;
+                    switch (nome)
+                    {
+                        case "Geração Não Simuladas (P)":
+                            pat = 1;
+                            break;
+                        case "Geração Não Simuladas (M)":
+                            pat = 2;
+                            break;
+                        case "Geração Não Simuladas (L)":
+                            pat = 3;
+                            break;
+
+                        default:
+                            pat = 0;
+                            break;
+                    }
+
+                    while (find == false)
+                    {
+                        try
+                        {
+                            string texto = myWorksheet.Cells["A" + rowTD].Value.ToString();
+                            if (texto == "Total")
+                            {
+                                int rowSub = rowTD;
+
+
+                                bool findSUL = false;
+                                bool findNE = false;
+
+                                while (findSUL == false)
+                                {
+                                    try
+                                    {
+                                        string sub = myWorksheet.Cells["B" + rowSub].Value.ToString();
+                                        if (sub == "S")
+                                        {
+                                            int rowFont = rowSub;
+                                            bool findfont = false;
+                                            while (findfont == false)
+                                            {
+                                                try
+                                                {
+                                                    string font = myWorksheet.Cells["C" + rowFont].Value.ToString();
+                                                    if (font == "EOL")
+                                                    {
+                                                        int rowDado = rowFont;
+                                                        for (var c = 4; !string.IsNullOrWhiteSpace(myWorksheet.Cells[rowTD, c].Text); c++)
+                                                        {
+                                                            var dt = Convert.ToDateTime(myWorksheet.Cells[rowTD, c].Value, Culture.DateTimeFormat);
+                                                            DateTime data = Convert.ToDateTime(myWorksheet.Cells[rowTD, c].Value, Culture.DateTimeFormat);
+                                                            if (myWorksheet.Cells[rowDado, c].Value != null)
+                                                            {
+                                                                double eolicasul = Convert.ToDouble(myWorksheet.Cells[rowDado, c].Value.ToString());
+                                                                eolicasDados.Add(new Tuple<int, int, DateTime, double>(2, pat, data, eolicasul));
+                                                            }
+
+                                                        }
+                                                        findfont = true;
+                                                    }
+                                                }
+                                                catch { }
+                                                rowFont++;
+                                            }
+                                            findSUL = true;
+                                        }
+                                    }
+                                    catch { }
+                                    rowSub++;
+                                }
+                                //
+                                rowSub = rowTD;
+
+                                while (findNE == false)
+                                {
+                                    try
+                                    {
+                                        string sub = myWorksheet.Cells["B" + rowSub].Value.ToString();
+                                        if (sub == "NE")
+                                        {
+                                            int rowFont = rowSub;
+                                            bool findfont = false;
+                                            while (findfont == false)
+                                            {
+                                                try
+                                                {
+                                                    string font = myWorksheet.Cells["C" + rowFont].Value.ToString();
+                                                    if (font == "EOL")
+                                                    {
+                                                        int rowDado = rowFont;
+                                                        for (var c = 4; !string.IsNullOrWhiteSpace(myWorksheet.Cells[rowTD, c].Text); c++)
+                                                        {
+                                                            DateTime data = Convert.ToDateTime(myWorksheet.Cells[rowTD, c].Value, Culture.DateTimeFormat);
+                                                            if (myWorksheet.Cells[rowDado, c].Value != null)
+                                                            {
+                                                                double eolicaNe = Convert.ToDouble(myWorksheet.Cells[rowDado, c].Value.ToString());
+                                                                eolicasDados.Add(new Tuple<int, int, DateTime, double>(3, pat, data, eolicaNe));
+                                                            }
+
+                                                        }
+                                                        findfont = true;
+                                                    }
+                                                }
+                                                catch { }
+                                                rowFont++;
+                                            }
+                                            findNE = true;
+                                        }
+                                    }
+                                    catch { }
+                                    rowSub++;
+                                }
+                                //
+                                find = true;
+                                break;
+                            }
+                        }
+                        catch { }
+                        rowTD++;
+                    }
+                }
+
+            }
+            return eolicasDados;
+        }
         private void btnCreateMensal_Click(object sender, RibbonControlEventArgs e)
         {
             var planilhaAdterm = new List<IADTERM>();
@@ -249,6 +398,17 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                     }
 
                     #endregion
+
+                    #region planMemoria de calculo
+
+                    string planMemo = Directory.GetFiles(w.NewaveOrigem).Where(x => Path.GetFileName(x).StartsWith("Memória de Cálculo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    List<Tuple<int,int, DateTime, double>> eolicasDados = null;
+                    if (planMemo != null && File.Exists(planMemo))
+                    {
+                        eolicasDados = getEolicasplan(planMemo);
+                    }
+
+                    #endregion
                     dadgerBase.VAZOES_NumeroDeSemanas = 0;
                     dadgerBase.VAZOES_NumeroDeSemanasPassadas = 0;
 
@@ -368,7 +528,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             }
                             else
                             {
-                                dadger = Services.DecompNextRev.CreateRv0(deckEstudo, deckNWEstudo, dtEstudo, w, mesOperativo, pmoBase);
+                                dadger = Services.DecompNextRev.CreateRv0(deckEstudo, deckNWEstudo, dtEstudo, w, mesOperativo, pmoBase, eolicasDados);
                                 dadger.SaveToFile(createBackup: true);
 
                                 #region Armazenamento
@@ -1624,7 +1784,16 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                     #endregion
 
+                    #region planMemoria de calculo
 
+                    string planMemo = Directory.GetFiles(w.NewaveOrigem).Where(x => Path.GetFileName(x).StartsWith("Memória de Cálculo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    List<Tuple<int, int, DateTime, double>> eolicasDados = null;
+                    if (planMemo != null && File.Exists(planMemo))
+                    {
+                        eolicasDados = getEolicasplan(planMemo);
+                    }
+
+                    #endregion
 
                     Directory.CreateDirectory(outPath);
 
@@ -1655,7 +1824,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                         //  if (dtEstudo != (deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger).VAZOES_DataDoEstudo)
                         // {
-                        var dadger = Services.DecompNextRev.CreateRv0(deckEstudo, deckNWEstudo, dtEstudo, w, mesOperativo, pmoBase);
+                        var dadger = Services.DecompNextRev.CreateRv0(deckEstudo, deckNWEstudo, dtEstudo, w, mesOperativo, pmoBase, eolicasDados);
 
                         dadger.VAZOES_ArquivoPrevs = "prevs.rv0";
                         dadger.SaveToFile(createBackup: true);

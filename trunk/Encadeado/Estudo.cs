@@ -109,8 +109,14 @@ namespace Encadeado
 
             Incrementar(DeckMedia);
             SetNomeDeck(DeckMedia);
+            string planMemo = Directory.GetFiles(Origem).Where(x => Path.GetFileName(x).StartsWith("Memória de Cálculo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
 
             DeckMedia.SaveFilesToFolder(System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00")));
+            string cam = System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00"));
+            if (planMemo != null && File.Exists(planMemo))
+            {
+                File.Copy(planMemo, Path.Combine(cam, Path.GetFileName(planMemo)), true);
+            }
             AlterarModif(DeckMedia);
             IncrementarREEDAT(DeckMedia, true);
 
@@ -1774,11 +1780,11 @@ namespace Encadeado
             DeckMedia.EstudoPai = this;
 
             DeckMedia.GetFiles(Origem);
-
+           
             SetNomeDeck(DeckMedia);
 
             DeckMedia.BaseFolder = System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00"));
-
+           
             DeckMedia.Dger.Flags = new int[] { 1, 1, 1, 0, 0 };
 
 
@@ -1799,6 +1805,12 @@ namespace Encadeado
             AlterarModif(DeckMedia);
             DeckMedia.EscreverListagemNwlistop();
 
+            string planMemo = Directory.GetFiles(Origem).Where(x => Path.GetFileName(x).StartsWith("Memória de Cálculo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+
+            if (planMemo != null && File.Exists(planMemo))
+            {
+                File.Copy(planMemo, Path.Combine(DeckMedia.BaseFolder, Path.GetFileName(planMemo)), true);
+            }
 
             var path = DeckMedia.BaseFolder;
             //TODO: executar consistencia

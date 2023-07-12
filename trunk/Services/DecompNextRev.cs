@@ -67,7 +67,7 @@ namespace Compass.Services
             return valor;
         }
 
-        public static Dadger CreateRv0(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo, WorkbookMensal w, MesOperativo mesOperativo, Compass.CommomLibrary.Pmo.Pmo pmoBase)
+        public static Dadger CreateRv0(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo, WorkbookMensal w, MesOperativo mesOperativo, Compass.CommomLibrary.Pmo.Pmo pmoBase, List<Tuple<int, int, DateTime, double>> eolicasDados = null)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var dadger = deckEstudo[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
@@ -86,7 +86,7 @@ namespace Compass.Services
             var patamarDat = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as Compass.CommomLibrary.PatamarDat.PatamarDat;
             var modifNW = BaseDocument.Create<Compass.CommomLibrary.ModifDatNW.ModifDatNw>(System.IO.File.ReadAllText(deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.modif].BasePath));
             var sistemaDat = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.sistema].Document as CommomLibrary.SistemaDat.SistemaDat;
-
+            bool pees = w.PEEs;
 
             #region ct
 
@@ -310,7 +310,7 @@ namespace Compass.Services
 
             #region DP / IT ou RI / PQ
 
-            trataCarga(mesOperativo, dadger, deckNWEstudo, pmoBase);
+            trataCarga(mesOperativo, dadger, deckNWEstudo, pmoBase, pees, eolicasDados);
 
             #endregion
 
@@ -2396,7 +2396,7 @@ namespace Compass.Services
                     }
 
                     //aclvolmin.Semana = 1;
-                   // //aclvolmin.Ano = mesOperativo.Ano;
+                    // //aclvolmin.Ano = mesOperativo.Ano;
                     //aclvolmin.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvolmin);
 
@@ -2416,7 +2416,7 @@ namespace Compass.Services
                         vmaxteste = padrao.Item2;
                     }
 
-                   // aclvolmax.Semana = 1;
+                    // aclvolmax.Semana = 1;
                     ////aclvolmax.Ano = mesOperativo.Ano;
                     //aclvolmax.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvolmax);
@@ -2435,7 +2435,7 @@ namespace Compass.Services
                     }
 
                     //aclvsvert.Semana = 1;
-                   /// //aclvsvert.Ano = mesOperativo.Ano;
+                    /// //aclvsvert.Ano = mesOperativo.Ano;
                     //aclvsvert.Mes = mesOperativo.Fim.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
                     dadger.BlocoAc.Add(aclvsvert);
 
@@ -2738,7 +2738,7 @@ namespace Compass.Services
                                 lu[3] = luAnt[3];
                                 lu[5] = luAnt[5];
                                 lu[7] = luAnt[7];
-                            }           
+                            }
                             dadger.BlocoRhe.Add(lu);
                         }
                         //}
@@ -3139,7 +3139,7 @@ namespace Compass.Services
             return lstCTM;
         }
 
-        private static void trataCarga(MesOperativo dtAtual, Dadger dadger, CommomLibrary.Newave.Deck deckNWEstudo, CommomLibrary.Pmo.Pmo pmoBase)
+        private static void trataCarga(MesOperativo dtAtual, Dadger dadger, CommomLibrary.Newave.Deck deckNWEstudo, CommomLibrary.Pmo.Pmo pmoBase, bool pees = false, List<Tuple<int, int, DateTime, double>> eolicasDados = null)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var c_adicA = (deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.cadic].Document as Compass.CommomLibrary.C_AdicDat.C_AdicDat).Adicao
@@ -3150,7 +3150,6 @@ namespace Compass.Services
             var patamares = (deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as CommomLibrary.PatamarDat.PatamarDat);
 
             var sistema = (deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.sistema].Document as CommomLibrary.SistemaDat.SistemaDat);
-
 
 
 
@@ -3316,6 +3315,19 @@ namespace Compass.Services
                 var numMercado = 0;
                 foreach (var m in mercados)
                 {
+                    bool zerarEol = false;
+                    bool usarPlanEol = false;
+                    bool adicionado = false;
+
+                    if ((m == "SUL" || m == "NORDESTE") && estagio == dtAtual.SemanasOperativas.Last() && pees == true)
+                    {
+                        zerarEol = true;
+                    }
+
+                    if ((m == "SUL" || m == "NORDESTE") && estagio != dtAtual.SemanasOperativas.Last() && pees == true)
+                    {
+                        usarPlanEol = true;
+                    }
 
                     var nLine = lTemp.Clone();
                     nLine[2] = numMercado + 1;
@@ -3439,6 +3451,10 @@ namespace Compass.Services
                                     if (dado.Ano == Ano && dado.Tipo_Usina == i && dado.Mercado == (numMercado + 1))
                                     {
                                         Valor_Sis = dado[Convert.ToInt32(Mes)];
+                                        if (zerarEol && dado.Desc_Usina.ToUpper().Contains("EOL"))
+                                        {
+                                            Valor_Sis = 0;
+                                        }
                                     }
                                 }
 
@@ -3455,6 +3471,18 @@ namespace Compass.Services
                                 p2 = p2 + Valor_Sis * Convert.ToDouble(Pq2);
                                 p3 = p3 + Valor_Sis * Convert.ToDouble(Pq3);
 
+                                if (usarPlanEol && adicionado == false)
+                                {
+                                    var eolP1 = eolicasDados.Where(x => x.Item1 == numMercado + 1 && x.Item2 == 1 && x.Item3.Month == Mes && x.Item3.Year == Ano).Select(x => x.Item4).FirstOrDefault();
+                                    var eolP2 = eolicasDados.Where(x => x.Item1 == numMercado + 1 && x.Item2 == 2 && x.Item3.Month == Mes && x.Item3.Year == Ano).Select(x => x.Item4).FirstOrDefault();
+                                    var eolP3 = eolicasDados.Where(x => x.Item1 == numMercado + 1 && x.Item2 == 3 && x.Item3.Month == Mes && x.Item3.Year == Ano).Select(x => x.Item4).FirstOrDefault();
+
+                                    p1 = p1 + eolP1;
+                                    p2 = p2 + eolP2;
+                                    p3 = p3 + eolP3;
+
+                                    adicionado = true;
+                                }
 
                             }
 

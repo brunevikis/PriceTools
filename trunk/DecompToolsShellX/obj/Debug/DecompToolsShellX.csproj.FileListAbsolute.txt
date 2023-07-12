@@ -259,3 +259,7 @@ C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\Ionic.Zip.dll
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmPldAlter.resources
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmTermicasGraph.resources
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmTeste.resources
+C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\EPPlus.dll
+C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\EPPlus.Interfaces.dll
+C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\EPPlus.System.Drawing.dll
+C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\EPPlus.xml

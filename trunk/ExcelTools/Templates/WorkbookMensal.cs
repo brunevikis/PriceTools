@@ -112,7 +112,8 @@ namespace Compass.ExcelTools.Templates
             get
             {
                 string hibrido = this.Names["_NwHibrido"].Value;
-                if (this.Wb.Worksheets["Geral"].Range("AC18").Text.ToUpper() == "SIM")
+
+                if (hibrido != null && hibrido.ToUpper() == "SIM")
                 {
                     return true;
                 }
@@ -120,6 +121,39 @@ namespace Compass.ExcelTools.Templates
                 {
                     return false;
                 }
+                //if (this.Wb.Worksheets["Geral"].Range("AC18").Text.ToUpper() == "SIM")
+                //{
+                //    return true;
+                //}
+                //else
+                //{
+                //    return false;
+                //}
+
+            }
+        }
+
+        public bool PEEs
+        {
+            get
+            {
+                string pees = this.Names["_pees"].Value;
+                if (pees != null && pees.ToUpper() == "SIM")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                //if (this.Wb.Worksheets["Geral"].Range("AC21").Text.ToUpper() == "SIM")
+                //{
+                //    return true;
+                //}
+                //else
+                //{
+                //    return false;
+                //}
 
             }
         }
