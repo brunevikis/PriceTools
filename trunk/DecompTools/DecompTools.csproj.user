@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <PublishUrlHistory>C:\Development\Publish\</PublishUrlHistory>
+    <PublishUrlHistory>
+    </PublishUrlHistory>
     <InstallUrlHistory />
     <SupportUrlHistory />
     <ProjectView>ProjectFiles</ProjectView>
@@ -9,6 +10,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE</StartProgram>
-    <StartArguments>"K:\teste\PEE_NW\pee_sem_hibrido\2024_Mensal_oficial_stress_MMGD-expansao_ATUALIZADA_0607.xlsm"</StartArguments>
+    <StartArguments>"C:\Files\erro thamires\2023_Mensal_oficial_base_2807.xlsm"</StartArguments>
   </PropertyGroup>
 </Project>

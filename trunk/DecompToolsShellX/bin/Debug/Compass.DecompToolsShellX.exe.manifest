@@ -61,7 +61,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>wDhzIBwEalg1r7qbqwoUk/5lY+I=</dsig:DigestValue>
+        <dsig:DigestValue>SnCM7SZN8hIMtoYdWEh2soA2+Y4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -78,14 +78,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.Services.dll" size="428544">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.Services.dll" size="429056">
       <assemblyIdentity name="Compass.Services" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>FejO6h6as/ZpZmOWJPQiUCLU/38=</dsig:DigestValue>
+        <dsig:DigestValue>8diOlZnP8CN/epGxdjMTlNI9gYk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

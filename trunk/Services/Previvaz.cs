@@ -41,6 +41,10 @@ namespace Compass.Services
                 };
 
         static List<Acomph> acompH = null;
+        static List<int> comPrevivaz = new List<int>()
+        {
+            287,  296,  291 ,279, 145, 288, 229, 290, 190,168,156,158 // 168,156,158 = calculo de sobradinho MVP etc
+        };
 
         public static void RunCenario(string caminhoWbCenario, bool useAcomph, bool encad = false)// bool encad)
         {
@@ -2149,7 +2153,7 @@ namespace Compass.Services
         }
 
 
-        public static void ProcessResultsPart2(string path, bool encad)
+        public static void ProcessResultsPart2(string path, bool encad, bool smapExt = false)
         {
             prevDeck = null;
 
@@ -2279,11 +2283,17 @@ namespace Compass.Services
                     Directory.Delete(tempFolder, true);
                 Directory.CreateDirectory(tempFolder);
 
+                
+
                 var postosPrevivaz = Directory.GetFiles(pathPrevivaz).GroupBy(x =>
                     System.Text.RegularExpressions.Regex.Match(
                     Path.GetFileNameWithoutExtension(x),
                     @"^\d+").Value
                    );
+                if (smapExt)
+                {
+                    postosPrevivaz = postosPrevivaz.Where(x => comPrevivaz.Any(y => y.ToString() == x.Key));
+                }
 
                 Dictionary<int, List<object>> results = new Dictionary<int, List<object>>();
 
@@ -2706,6 +2716,11 @@ namespace Compass.Services
                 Propagacoes = IncluiPostos(Propagacoes);
 
                 CalcularPostRegre(Propagacoes, SemanasPrevs);
+
+                if (smapExt)
+                {
+                    CopiaResultados(SemanasPrevs);
+                }
 
                 CalcularPostCalculados(SemanasPrevs);
 

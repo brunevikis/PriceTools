@@ -91,6 +91,8 @@ namespace Compass.DecompToolsShellX
             //   previvaz "N:\Middle - Preço\16_Chuva_Vazao\2020_07\RV4\20-07-20\testeBruno\CPM_CV_FUNC_d-1_EURO\Propagacoes_Automaticas.txt""
             //resultados "C:\Development\Implementacoes\verResultados\202210_oficial_umido_3009\RV0_70_30_50_80"
 
+            //ons2ccee "K:\4_curto_prazo\2023_07\deck_newave_2023_07_Preliminar"
+
             if (args.Length > 1)
             {
                 var action = args[0].ToLower();
@@ -238,20 +240,28 @@ namespace Compass.DecompToolsShellX
         {
             Previvaz previvaz = null;
             bool encad = false;
+            bool smapExt = false;
             if (path.Contains("true"))
             {
                 var command = path.Split('|');
                 path = command[0];
                 encad = Convert.ToBoolean(command[1]);
+                smapExt = command.Any(x => x.Contains("ext")) ? true : false;
             }
 
+            if (path.Contains("ext"))
+            {
+                smapExt = true;
+                var command = path.Split('|');
+                path = command[0];
+            }
 
             try
             {
                 if (!string.IsNullOrWhiteSpace(path) && File.Exists(path) && path.EndsWith("Propagacoes_Automaticas.txt"))
                 {
                     path = path.Substring(0, path.IndexOf("Propagacoes_Automaticas.txt"));
-                    Previvaz.ProcessResultsPart2(path, encad);
+                    Previvaz.ProcessResultsPart2(path, encad, smapExt);
                 }
                 else
                 {
