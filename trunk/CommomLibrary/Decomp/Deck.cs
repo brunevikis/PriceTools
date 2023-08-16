@@ -45,6 +45,19 @@ namespace Compass.CommomLibrary.Decomp
             {"ARQUIVOS.DAT", null},
             {"GEVAZP.CFG", null},
             {"POLINJUS.DAT", null},
+            //
+            {"hist-ventos.csv", null},
+            {"indices.csv", null},
+            {"indices_gevazp.csv", null},
+            {"parque_eolico_cadastro.csv", null},
+            {"parque_eolico_config.csv", null},
+            {"parque_eolico_fte.csv", null},
+            {"parque_eolico_geracao.csv", null},
+            {"parque_eolico_pot_instalada.csv", null},
+            {"parque_eolico_subm.csv", null},
+            {"pee-posto.csv", null},
+            {"posto-cadastro.csv", null},
+            {"prevsvel.", null},
 
         };
 

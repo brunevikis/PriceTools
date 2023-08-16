@@ -86,7 +86,15 @@ namespace Compass.CommomLibrary.Newave
             {"ABERTURA.DAT"    , null},
             {"GEE.DAT"    , null},
             {"CLASGAS.DAT"    , null},
-
+            //
+            {"eolica-cadastro.csv"    , null},
+            {"eolica-config.csv"    , null},
+            {"eolica-fte.csv"    , null},
+            {"eolica-geracao.csv"    , null},
+            {"eolica-posto.csv"    , null},
+            {"eolica-submercado.csv"    , null},
+            {"hist-ventos.csv"    , null},
+            {"indices.csv"    , null},
         };
 
         public override Dictionary<string, DeckFile> Documents { get { return documents; } }
