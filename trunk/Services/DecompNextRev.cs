@@ -3268,6 +3268,10 @@ namespace Compass.Services
                 .Where(x => x.Ano == dtAtual.Ano.ToString() && (x.Descricao.ToUpper().Contains("ITAIPU") || x.Descricao.ToUpper().Contains("ANDE")))
                 .Select(x => new { mercado = x.Mercado, carga = (double)x[dtAtual.Mes.ToString()] }).ToList();
 
+            var c_adic_ANDE = c_adicA
+                .Where(x => x.Ano == dtAtual.Ano.ToString() && x.Descricao.ToUpper().Contains("ANDE"))
+                .Select(x => new { mercado = x.Mercado, carga = (double)x[dtAtual.Mes.ToString()] }).ToList();
+
             var pequenas = pmoBase.Blocos["PEQUENAS"].Where(x => x[2] == dtAtual.Ano)
                 .Select(x => new { mercado = x[0], carga = x[dtAtual.Mes.ToString()] });
 
@@ -3298,6 +3302,10 @@ namespace Compass.Services
 
                     c_adic_RI = c_adicA
                         .Where(x => x.Ano == estagio.Inicio.Year.ToString() && (x.Descricao.ToUpper().Contains("ITAIPU") || x.Descricao.ToUpper().Contains("ANDE")))
+                        .Select(x => new { mercado = x.Mercado, carga = (double)x[estagio.Inicio.Month.ToString()] }).ToList();
+
+                    c_adic_ANDE = c_adicA
+                        .Where(x => x.Ano == estagio.Inicio.Year.ToString() && x.Descricao.ToUpper().Contains("ANDE"))
                         .Select(x => new { mercado = x.Mercado, carga = (double)x[estagio.Inicio.Month.ToString()] }).ToList();
 
                     pequenas = pmoBase.Blocos["PEQUENAS"].Where(x => x[2] == estagio.Inicio.Year)
@@ -3399,9 +3407,13 @@ namespace Compass.Services
 
 
                             //ande
-                            riTemp[8] = 1.4378 * riCarga;     //fc1[numMercado] * riCarga; // fc1 deveria ser em jan/2020 = 1.4378
-                            riTemp[13] = 1.1388 * riCarga;       //fc2[numMercado] * riCarga; // 1.1388
-                            riTemp[18] = 0.7118 * riCarga;     //fc3[numMercado] * riCarga; // 0.6696
+                            //riTemp[8] = fc1[numMercado] * riCarga;  //riTemp[8] = 1.4378 * riCarga;     //fc1[numMercado] * riCarga; // fc1 deveria ser em jan/2020 = 1.4378
+                            //riTemp[13] = fc2[numMercado] * riCarga;// riTemp[13] = 1.1388 * riCarga;       //fc2[numMercado] * riCarga; // 1.1388
+                            //riTemp[18] = fc3[numMercado] * riCarga; //riTemp[18] = 0.7118 * riCarga;     //fc3[numMercado] * riCarga; // 0.6696
+
+                            riTemp[8] = 1.4378 * riCarga; 
+                            riTemp[13] = 1.1388 * riCarga;
+                            riTemp[18] = 0.7118 * riCarga;
 
 
                             //MIN50 antigo

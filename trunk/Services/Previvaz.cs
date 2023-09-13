@@ -2158,9 +2158,11 @@ namespace Compass.Services
             prevDeck = null;
 
             DateTime Data = DateTime.Today;// TODO: TEMPORÁRIO
+            DateTime DataR = Data;
+
             DateTime dtTemp = new DateTime();
             var rev = Tools.GetCurrRev(Data);
-
+            
 
             if (rev.rev == 0 && Data.Day > 23 && Data.Day <= 31)
             {
@@ -2293,6 +2295,15 @@ namespace Compass.Services
                 if (smapExt)
                 {
                     postosPrevivaz = postosPrevivaz.Where(x => comPrevivaz.Any(y => y.ToString() == x.Key));
+                    while (DataR.DayOfWeek != DayOfWeek.Friday) DataR = DataR.AddDays(1);
+
+                    DataR = DataR.AddDays(14);
+                  
+                    foreach (var prop in Propagacoes.Where(x => comPrevivaz.Any(y => y == x.IdPosto)))
+                    {
+                        var datas = prop.calMedSemanal.Select(x => x.Key).Where(x => x.Date > DataR).ToList();
+                        datas.ForEach(x => prop.calMedSemanal.Remove(x));
+                    }
                 }
 
                 Dictionary<int, List<object>> results = new Dictionary<int, List<object>>();
