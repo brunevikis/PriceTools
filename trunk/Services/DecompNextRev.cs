@@ -3381,6 +3381,9 @@ namespace Compass.Services
                                .Sum(x => x.carga);
                             riCarga = riCargaNew;
 
+                            double riCargaANDE = c_adic_ANDE.Where(x => x.mercado == (numMercado + 1) && x.carga > 0.0)
+                               .Sum(x => x.carga);
+
                             riTemp[1] = 66;
                             riTemp[2] = e + 1;
                             riTemp[3] = 1;
@@ -3407,13 +3410,13 @@ namespace Compass.Services
 
 
                             //ande
-                            //riTemp[8] = fc1[numMercado] * riCarga;  //riTemp[8] = 1.4378 * riCarga;     //fc1[numMercado] * riCarga; // fc1 deveria ser em jan/2020 = 1.4378
-                            //riTemp[13] = fc2[numMercado] * riCarga;// riTemp[13] = 1.1388 * riCarga;       //fc2[numMercado] * riCarga; // 1.1388
-                            //riTemp[18] = fc3[numMercado] * riCarga; //riTemp[18] = 0.7118 * riCarga;     //fc3[numMercado] * riCarga; // 0.6696
+                            riTemp[8] = fc1[numMercado] * riCargaANDE;  //riTemp[8] = 1.4378 * riCarga;     //fc1[numMercado] * riCarga; // fc1 deveria ser em jan/2020 = 1.4378
+                            riTemp[13] = fc2[numMercado] * riCargaANDE;// riTemp[13] = 1.1388 * riCarga;       //fc2[numMercado] * riCarga; // 1.1388
+                            riTemp[18] = fc3[numMercado] * riCargaANDE; //riTemp[18] = 0.7118 * riCarga;     //fc3[numMercado] * riCarga; // 0.6696
 
-                            riTemp[8] = 1.4378 * riCarga; 
-                            riTemp[13] = 1.1388 * riCarga;
-                            riTemp[18] = 0.7118 * riCarga;
+                            //riTemp[8] = 1.4378 * riCarga; 
+                            //riTemp[13] = 1.1388 * riCarga;
+                            //riTemp[18] = 0.7118 * riCarga;
 
 
                             //MIN50 antigo
