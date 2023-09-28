@@ -53,6 +53,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                     {"SP", new SpBlock()},
                     {"PS", new PsBlock()},
                     {"PP", new PpBlock()},
+                    {"PE", new PeBlock()},
 
 
 
@@ -73,6 +74,7 @@ namespace Compass.CommomLibrary.EntdadosDat
         public ShBlock BlocoSh { get { return (ShBlock)Blocos["SH"]; } set { Blocos["SH"] = value; } }
         public NiBlock BlocoNi { get { return (NiBlock)Blocos["NI"]; } set { Blocos["NI"] = value; } }
         public GpBlock BlocoGp { get { return (GpBlock)Blocos["GP"]; } set { Blocos["GP"] = value; } }
+        public PeBlock BlocoPe { get { return (PeBlock)Blocos["PE"]; } set { Blocos["PE"] = value; } }
         public AgBlock BlocoAg { get { return (AgBlock)Blocos["AG"]; } set { Blocos["AG"] = value; } }
         public DaBlock BlocoDa { get { return (DaBlock)Blocos["DA"]; } set { Blocos["DA"] = value; } }
         public VrBlock BlocoVr { get { return (VrBlock)Blocos["VR"]; } set { Blocos["VR"] = value; } }

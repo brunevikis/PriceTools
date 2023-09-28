@@ -31,6 +31,9 @@ namespace Compass.CommomLibrary.EntdadosDat
         public float EnergiaMax { get { return (float)this[13]; } set { this[13] = value; } }
         public float Preco { get { return (float)this[14]; } set { this[14] = value; } }
         public float EnergiaMeiaAnt { get { return (float)this[15]; } set { this[15] = value; } }
+        public int TitIni { get { return (int)this[16]; } set { this[16] = value; } }
+        public float MontInflex { get { return (float)this[17]; } set { this[17] = value; } }
+
 
         public override BaseField[] Campos { get { return CiceCampos; } }
 
@@ -51,6 +54,8 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(54  , 63 ,"F10.2"    , "EnergiaMax"),//
                 new BaseField(64  , 73 ,"F10.2"    , "Preco"),
                 new BaseField(74  , 83 ,"F10.0"    , "EnergiaMeiaAnt"),
+                new BaseField(86  , 86 ,"I1"    , "Titulacao_Inicial"),//
+                new BaseField(89  , 98 ,"F10.0"    , "Montante_Inflex"),
 
 
             };

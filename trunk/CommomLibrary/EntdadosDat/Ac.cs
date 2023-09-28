@@ -46,6 +46,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 case "POTEFE":
                 case "ALTEFE":
                 case "NCHAVE":
+                case "VAZEFE"://esta aqui pq no manual estainformando campos errados()segundo deck oficial reria que ficar aqui 
                     l = (AcLine)BaseLine.Create<AcI5F10Line>();
                     l.Mnemonico = mnemonico;
                     return l;
@@ -66,18 +67,17 @@ namespace Compass.CommomLibrary.EntdadosDat
                     return l;
                 case "COFEVA":
                 case "NUMMAQ":
-                case "VAZEFE":
                     l = (AcLine)BaseLine.Create<Ac2I5Line>();
                     l.Mnemonico = mnemonico;
                     return l;
                 case "COTVOL":
                 case "COTARE":
+                case "COTTAR":
                     l = (AcLine)BaseLine.Create<AcI5E15Line>();
                     l.Mnemonico = mnemonico;
                     return l;
                 case "COTVAZ":
-                case "COTTAR":
-                    l = (AcLine)BaseLine.Create<Ac2I5E15Line>();
+                    l = (AcLine)BaseLine.Create<AcI5E15I5Line>();
                     l.Mnemonico = mnemonico;
                     return l;
                 case "VAZCCF":
@@ -333,6 +333,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField( 10 , 15,"A6"    , "Mnemonico"),
                 new BaseField( 20 , 24,"I5"    , "p1"), // replace
                 new BaseField( 25 , 39,"E15.0"    , "p2"), // replace
+                new BaseField( 40 , 44,"I5"    , "p2"), // replace
             };
 
         public override BaseField[] Campos
@@ -340,4 +341,22 @@ namespace Compass.CommomLibrary.EntdadosDat
             get { return AcCampos; }
         }
     }
+
+    public class AcI5E15I5Line : AcLine
+    {
+        static readonly BaseField[] AcCampos = new BaseField[] {
+                new BaseField( 1  , 2 ,"A2"    , "Id"),
+                new BaseField( 5  , 7 ,"I3"    , "Usina"),
+                new BaseField( 10 , 15,"A6"    , "Mnemonico"),
+                new BaseField( 20 , 24,"I5"    , "p1"), // replace
+                new BaseField( 25 , 39,"A15"    , "p2"), // replace
+                new BaseField( 40 , 44,"I5"    , "p2"), // replace
+            };
+
+        public override BaseField[] Campos
+        {
+            get { return AcCampos; }
+        }
+    }
+
 }

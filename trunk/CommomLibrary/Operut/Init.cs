@@ -37,22 +37,26 @@ namespace Compass.CommomLibrary.Operut
         public int Tempo { get { return (int)this[5]; } set { this[5] = value; } }
         public int MeiaHora { get { return (int)this[6]; } set { this[6] = value; } }
         public int AD { get { return (int)this[7]; } set { this[7] = value; } }
+        public int TitIni { get { return (int)this[8]; } set { this[8] = value; } }
+        public float TitIflex { get { return (float)this[9]; } set { this[9] = value; } }
 
 
-      
+
 
         public override BaseField[] Campos { get { return InitCampos; } }
 
         static readonly BaseField[] InitCampos = new BaseField[] {
                 new BaseField(1  , 3 ,"I3"    , "Usina"),
-                new BaseField(5  , 17 ,"A12"    , "Nome Usina"),
+                new BaseField(5  , 16 ,"A12"    , "Nome Usina"),
                 new BaseField(19 , 21,"I3"    , "Indice"),
                 new BaseField(25 , 26,"I2"    , "Status"),
                 new BaseField(30 , 39,"F10.0" , "Geracao"),
                 new BaseField(42 , 46,"I5"  , "Tempo"),
                 new BaseField(49 , 49,"I1" , "MH"),
                 new BaseField(52 , 52,"I1"  , "A/D"),
-               
+                new BaseField(55 , 55,"I1"  , "Titulacao_inicial"),
+                new BaseField(58 , 67,"F10.0" , "Titulacao_Inflex"),
+
             };
     }
 }

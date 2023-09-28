@@ -27,7 +27,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(23  , 23 ,"I1"    , "NumSemana"),//
                 new BaseField(25  , 34 ,"F10.0"    , "Meta"),//
                 new BaseField(35  , 44 ,"F10.0"    , "tolABS"),//
-                new BaseField(445  , 54 ,"F10.0"    , "tolperc"),//
+                new BaseField(45  , 54 ,"F10.0"    , "tolperc"),//
 
 
             };

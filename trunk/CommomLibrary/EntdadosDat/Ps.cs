@@ -21,7 +21,7 @@ namespace Compass.CommomLibrary.EntdadosDat
 
         static readonly BaseField[] PsCampos = new BaseField[] {
                 new BaseField(1  , 2 ,"A2"    , "IdBloco"),//
-                new BaseField(5  , 5 ,"I3"    , "FlagPausar"),//
+                new BaseField(4  , 4 ,"I1"    , "FlagPausar"),//
 
 
             };

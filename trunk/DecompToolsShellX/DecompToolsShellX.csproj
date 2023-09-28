@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>272</ApplicationRevision>
+    <ApplicationRevision>273</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -159,6 +159,12 @@
     </Compile>
     <Compile Include="FrmDataDessemDp.Designer.cs">
       <DependentUpon>FrmDataDessemDp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmDsOns2CCEE.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDsOns2CCEE.Designer.cs">
+      <DependentUpon>FrmDsOns2CCEE.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmDSresulGraph.cs">
       <SubType>Form</SubType>
@@ -309,6 +315,9 @@
     <EmbeddedResource Include="FrmCortes.resx">
       <DependentUpon>FrmCortes.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmDsOns2CCEE.resx">
+      <DependentUpon>FrmDsOns2CCEE.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmDSresulGraph.resx">
       <DependentUpon>FrmDSresulGraph.cs</DependentUpon>

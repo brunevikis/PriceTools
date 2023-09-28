@@ -57,7 +57,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
             //actions.Add("getpatamares", getPatamares);
-           // actions.Add("getpatamaresext", getPatamaresExt);
+            // actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
 
 
@@ -306,7 +306,7 @@ namespace Compass.DecompToolsShellX
 
 
             DateTime data = new DateTime(ano, 1, 1);
-            DateTime fim = new DateTime(anoFIm, 12,31);
+            DateTime fim = new DateTime(anoFIm, 12, 31);
             List<string> patamareDeCarga = new List<string>();
             patamareDeCarga.Add("DATA;PESADO;MEDIO;LEVE;DIA-SEMANA;TIPO");
             var feriados = Tools.feriados;
@@ -2119,6 +2119,25 @@ namespace Compass.DecompToolsShellX
 
 
 
+        }
+        static void DirectoryPath(object caminho)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.SelectedPath = @"C:\";
+            fbd.Description = "SELECIONE O DECK DECOMP";
+
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var folderName = fbd.SelectedPath;
+                if (Directory.Exists(folderName))
+                {
+                    File.WriteAllText(Path.Combine(caminho.ToString(), "dir.txt"), folderName);
+                }
+            }
+            else
+            {
+                File.WriteAllText(Path.Combine(caminho.ToString(), "dir.txt"), "");
+            }
         }
 
         static void MapcutCortedeco(object caminho)
@@ -3989,7 +4008,7 @@ namespace Compass.DecompToolsShellX
 
                 //string comandoDS = "/home/compass/sacompass/previsaopld/cpas_ctl_common/scripts/dessem191412.sh";
                 //string comandoDS = "/mnt/Fsx/AWS/enercore_ctl_common/scripts/dessem190243.sh";
-               // string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem190243.sh";
+                // string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem190243.sh";
                 string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem.sh";
 
                 bool status = DessemAutorun(cloneDir, comandoDS);
@@ -4140,6 +4159,10 @@ namespace Compass.DecompToolsShellX
                 else
                 {
                     var texto = "Deck não reconhecido para a execução por falta de arquivos! Erro: " + ex.ToString();
+                    if (ex.ToString().Contains("Processo Interrompido!!!convertdstoccee"))
+                    {
+                        texto = "Processo Interrompido!!!";
+                    }
                     Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
                     if (Directory.Exists(cloneDir))
                     {
@@ -4162,7 +4185,55 @@ namespace Compass.DecompToolsShellX
             var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             DateTime dataEstudo = new DateTime(Convert.ToInt32(dados[3]), Convert.ToInt32(dados[2]), Convert.ToInt32(dados[1]));
 
+            if (command.Count() == 1)
+            {
+                Thread thread = new Thread(dsOns2CceeSTA);
+                thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+                thread.Start(dir);
+                thread.Join();
+            }
+
             Boolean continua = CopiaArqDecomp(dataEstudo, dir, command);
+
+            string deckRefCCEE = string.Empty;
+
+            if (command.Count() > 1 && command[1] == "true")
+            {
+                DateTime dat = dataEstudo;
+                DateTime datVE = dataEstudo;
+
+                if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
+                {
+                    datVE = dat.AddDays(-1);
+                }
+                var rev = Tools.GetCurrRev(datVE);
+
+                deckRefCCEE = Services.GeraDessem.GetPastaRecente(rev.revDate);
+            }
+            else
+            {
+                //Thread thread = new Thread(DirectoryPath);
+                //thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+                //thread.Start(dir);
+                //thread.Join(); //Wait for the thread to end      
+
+                deckRefCCEE = File.ReadAllText(Path.Combine(dir, "dir.txt"));
+                if (!Directory.Exists(deckRefCCEE))
+                {
+                    throw new NotImplementedException("Processo Interrompido!!!convertdstoccee");
+                }
+            }
+
+            var deckCCEEref = DeckFactory.CreateDeck(deckRefCCEE);
+
+            if (!(deckCCEEref is Compass.CommomLibrary.Dessem.Deck))
+            {
+                throw new NotImplementedException("Deck não reconhecido para a execução");
+            }
+
+            var deckCCEErefDS = DeckFactory.CreateDeck(deckRefCCEE) as Compass.CommomLibrary.Dessem.Deck;
+
+
 
             if (continua)
             {
@@ -4244,6 +4315,10 @@ namespace Compass.DecompToolsShellX
                 #region trata entdados
 
                 var entdados = deckestudo[CommomLibrary.Dessem.DeckDocument.entdados].Document as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
+                var entdadosCCEEref = deckCCEErefDS[CommomLibrary.Dessem.DeckDocument.entdados].Document as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
+                var entdadosCCEErefFile = deckCCEErefDS[CommomLibrary.Dessem.DeckDocument.entdados].Document.File;
+                var entdadosFile = deckestudo[CommomLibrary.Dessem.DeckDocument.entdados].Document.File;
+
                 foreach (var line in entdados.BlocoRd.ToList())
                 {
                     line[0] = "&" + line[0];
@@ -4268,19 +4343,19 @@ namespace Compass.DecompToolsShellX
                 ComentaCICE(entdados);
                 //TrataIa(entdados, dataEstudo);
 
-                TrataRhe(entdados, dataEstudo);
+                TrataRhe(entdados, dataEstudo, entdadosCCEEref, entdadosCCEErefFile, entdadosFile);
 
                 //TrataDP(entdados, dataEstudo);//foi uma demanda temporaria em que se somava um valor fixo na demanda durante a conversão, caso a demanda volte apenas descomente a chamada da função
-                entdados.SaveToFile(createBackup: true);
+                //entdados.SaveToFile(createBackup: true);
                 if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
                 {
-                    TrataRheSexta(dataEstudo, dir);
+                    //TrataRheSexta(dataEstudo, dir);
                 }
-                DescomentaRhe(dataEstudo, dir);
+                // DescomentaRhe(dataEstudo, dir);
 
 
 
-                RestsegRstlpp(dataEstudo, dir);
+                RestsegRstlpp(dataEstudo, dir, deckRefCCEE);
                 #endregion
 
                 return continua;
@@ -4362,13 +4437,13 @@ namespace Compass.DecompToolsShellX
             else
             {
 
-                var texto = "Defina um diretório Decomp para copiar MAPCUT e CORTDECO";
-                MessageBox.Show(texto, "ATENCÃO!");
+                //var texto = "Defina um diretório Decomp para copiar MAPCUT e CORTDECO";
+                //MessageBox.Show(texto, "ATENCÃO!");
 
-                Thread thread = new Thread(MapcutCortedeco);
-                thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-                thread.Start(dirTosave);
-                thread.Join(); //Wait for the thread to end      
+                //Thread thread = new Thread(MapcutCortedeco);
+                //thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+               // thread.Start(dirTosave);
+                //thread.Join(); //Wait for the thread to end      
 
                 var arqMapcut = Directory.GetFiles(dirTosave).Where(x => Path.GetFileName(x).ToLower() == (mapcut)).FirstOrDefault();
                 var arqCortdeco = Directory.GetFiles(dirTosave).Where(x => Path.GetFileName(x).ToLower() == (cortdeco)).FirstOrDefault();
@@ -4385,7 +4460,7 @@ namespace Compass.DecompToolsShellX
 
         }
 
-        public static void RestsegRstlpp(DateTime dataEstudo, string dir)
+        public static void RestsegRstlpp(DateTime dataEstudo, string dir, string folderCCEEref)
         {
             //H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\2020\12_dez\RV2\DS_CCEE_122020_SEMREDE_RV2D18
             var novoRestseg = new List<string>();
@@ -4394,189 +4469,219 @@ namespace Compass.DecompToolsShellX
             DateTime dat = dataEstudo;
             DateTime datVE = dataEstudo;
 
-            if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
-            {
-                datVE = dat.AddDays(-1);
-            }
-            var rev = Tools.GetCurrRev(datVE);
+            //if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
+            //{
+            //    datVE = dat.AddDays(-1);
+            //}
+            //var rev = Tools.GetCurrRev(datVE);
 
-            var camRef = Services.GeraDessem.GetPastaRecente(rev.revDate);
+            //var camRef = Services.GeraDessem.GetPastaRecente(rev.revDate);
 
             var dtAtual = DateTime.Today.AddDays(1);
             var datalimite = DateTime.Today.AddDays(-180);
             string restsegRef = null;
             string rstlppRef = null;
 
-            if (Directory.Exists(camRef))
+            string restseg = null;
+            string rstlpp = null;
+
+
+           
+            if (Directory.Exists(folderCCEEref))
             {
-                restsegRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
-                rstlppRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+                string restONSbak = "restsegONS.bak";
+                string rstlppONSbak = "rstlppONS.bak";
 
-            }
+                restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+                rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+                if (restseg != null && rstlpp != null)
+                {
+                    File.Move(restseg, Path.Combine(dir, restONSbak));
+                    File.Move(rstlpp, Path.Combine(dir, rstlppONSbak));
+                }
 
-
-            var restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
-            var rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
-
-            if (restseg == null)
-            {
+                restsegRef = Directory.GetFiles(folderCCEEref).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+                rstlppRef = Directory.GetFiles(folderCCEEref).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+               
                 File.Copy(restsegRef, Path.Combine(dir, restsegRef.Split('\\').Last()), true);
-            }
-            if (rstlpp == null)
-            {
                 File.Copy(rstlppRef, Path.Combine(dir, rstlppRef.Split('\\').Last()), true);
+
             }
 
-            restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
-            rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+            #region codigo antigo
+                //if (Directory.Exists(camRef))
+                //{
+                //    restsegRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+                //    rstlppRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
 
-            #region rstlpp
-            //var rstlppLines = File.ReadAllLines(rstlpp, Encoding.GetEncoding("iso-8859-1")).ToList();
-            var rstlppLines = File.ReadAllLines(rstlpp).ToList();
-            // var rstlppRefLines = File.ReadAllLines(rstlppRef, Encoding.GetEncoding("iso-8859-1")).ToList();
-            var rstlppRefLines = File.ReadAllLines(rstlppRef).ToList();
+                //}
 
-            foreach (var line in rstlppLines)
-            {
-                var nline = line;
-                if (line.StartsWith("&"))
-                {
-                    nline = line.Substring(1);
+                //var restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+                //var rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
 
-                    //novoRstlpp.Add(line);
-                }
-                // else
-                // {
-                var minemonico = nline.Split(' ').First();
-                var texto = "";
-                switch (minemonico)
-                {
-                    case "RSTSEG":
-                    case "ADICRS":
-                        texto = nline.Substring(0, 19);
-                        break;
-                    case "PARAM":
-                        texto = nline.Substring(0, 10);
-                        break;
-                    case "RESLPP":
-                        texto = nline.Substring(0, 15);
-                        break;
-                    case "VPARM":
-                        texto = nline.Substring(0, 19);
-                        break;
-                    default:
-                        texto = nline;
-                        break;
-                }
-                if (texto != "")
-                {
-                    var linha = rstlppRefLines.Where(x => x.Contains(texto)).FirstOrDefault();
-                    if (linha != null)
-                    {
-                        if (linha.StartsWith("&"))
-                        {
-                            novoRstlpp.Add("&" + nline);
-                        }
-                        else
-                        {
-                            novoRstlpp.Add(nline);
-                        }
-                    }
-                    else
-                    {
-                        novoRstlpp.Add(line);
-                    }
-                }
-                else
-                {
-                    novoRstlpp.Add(line);
-                }
-                //// }
-            }
-            // File.WriteAllLines(rstlpp, novoRstlpp, Encoding.GetEncoding("iso-8859-1"));
-            File.WriteAllLines(rstlpp, novoRstlpp);
+                //if (restseg == null)
+                //{
+                //    File.Copy(restsegRef, Path.Combine(dir, restsegRef.Split('\\').Last()), true);
+                //}
+                //if (rstlpp == null)
+                //{
+                //    File.Copy(rstlppRef, Path.Combine(dir, rstlppRef.Split('\\').Last()), true);
+                //}
+
+                //restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+                //rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+
+                //#region rstlpp
+                ////var rstlppLines = File.ReadAllLines(rstlpp, Encoding.GetEncoding("iso-8859-1")).ToList();
+                //var rstlppLines = File.ReadAllLines(rstlpp).ToList();
+                //// var rstlppRefLines = File.ReadAllLines(rstlppRef, Encoding.GetEncoding("iso-8859-1")).ToList();
+                //var rstlppRefLines = File.ReadAllLines(rstlppRef).ToList();
+
+                //foreach (var line in rstlppLines)
+                //{
+                //    var nline = line;
+                //    if (line.StartsWith("&"))
+                //    {
+                //        nline = line.Substring(1);
+
+                //        //novoRstlpp.Add(line);
+                //    }
+                //    // else
+                //    // {
+                //    var minemonico = nline.Split(' ').First();
+                //    var texto = "";
+                //    switch (minemonico)
+                //    {
+                //        case "RSTSEG":
+                //        case "ADICRS":
+                //            texto = nline.Substring(0, 19);
+                //            break;
+                //        case "PARAM":
+                //            texto = nline.Substring(0, 10);
+                //            break;
+                //        case "RESLPP":
+                //            texto = nline.Substring(0, 15);
+                //            break;
+                //        case "VPARM":
+                //            texto = nline.Substring(0, 19);
+                //            break;
+                //        default:
+                //            texto = nline;
+                //            break;
+                //    }
+                //    if (texto != "")
+                //    {
+                //        var linha = rstlppRefLines.Where(x => x.Contains(texto)).FirstOrDefault();
+                //        if (linha != null)
+                //        {
+                //            if (linha.StartsWith("&"))
+                //            {
+                //                novoRstlpp.Add("&" + nline);
+                //            }
+                //            else
+                //            {
+                //                novoRstlpp.Add(nline);
+                //            }
+                //        }
+                //        else
+                //        {
+                //            novoRstlpp.Add(line);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        novoRstlpp.Add(line);
+                //    }
+                //    //// }
+                //}
+                //// File.WriteAllLines(rstlpp, novoRstlpp, Encoding.GetEncoding("iso-8859-1"));
+                //File.WriteAllLines(rstlpp, novoRstlpp);
+                //#endregion
+
+                //#region restseg
+
+                //// var restsegLines = File.ReadAllLines(restseg, Encoding.GetEncoding("iso-8859-1")).ToList();
+                //var restsegLines = File.ReadAllLines(restseg).ToList();
+                ////var restsegRefLines = File.ReadAllLines(restsegRef, Encoding.GetEncoding("iso-8859-1")).ToList();
+                //var restsegRefLines = File.ReadAllLines(restsegRef).ToList();
+
+
+
+                //List<Tuple<string, bool>> restcoment = new List<Tuple<string, bool>>();
+
+                //foreach (var refl in restsegRefLines)
+                //{
+                //    var partes = refl.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                //    bool comentar = false;
+                //    int i;
+                //    if (partes.Count() >= 3)//filtro para pegar as linhas que possuem numero de restrição
+                //    {
+                //        if (int.TryParse(partes[2], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out i))
+                //        {
+                //            if (refl.StartsWith("&"))
+                //            {
+                //                comentar = true;
+                //            }
+                //            if (restcoment.Count() == 0 || restcoment.All(x => !x.Item1.Equals(partes[2])))
+                //            {
+                //                restcoment.Add(new Tuple<string, bool>(partes[2], comentar));//num restrição, comentar?
+                //            }
+                //        }
+
+                //    }
+                //}
+
+                //foreach (var restL in restsegLines)
+                //{
+                //    var partRes = restL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+                //    if (partRes.Count() >= 3)
+                //    {
+                //        var restricao = restcoment.Where(x => x.Item1.Equals(partRes[2])).FirstOrDefault();
+                //        if (restricao != null)
+                //        {
+                //            if (restricao.Item2 == true)
+                //            {
+                //                if (restL.StartsWith("&"))
+                //                {
+                //                    novoRestseg.Add(restL);
+                //                }
+                //                else
+                //                {
+                //                    novoRestseg.Add("&" + restL);
+                //                }
+                //            }
+                //            else
+                //            {
+                //                if (restL.StartsWith("&"))
+                //                {
+                //                    novoRestseg.Add(restL.Substring(1));
+                //                }
+                //                else
+                //                {
+                //                    novoRestseg.Add(restL);
+                //                }
+                //            }
+                //        }
+                //        else
+                //        {
+                //            novoRestseg.Add(restL);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        novoRestseg.Add(restL);
+
+                //    }
+                //}
+
+                ////File.WriteAllLines(restseg, novoRestseg, Encoding.GetEncoding("iso-8859-1"));
+                //File.WriteAllLines(restseg, novoRestseg);
+
+                //#endregion
+
             #endregion
 
-            #region restseg
-
-            // var restsegLines = File.ReadAllLines(restseg, Encoding.GetEncoding("iso-8859-1")).ToList();
-            var restsegLines = File.ReadAllLines(restseg).ToList();
-            //var restsegRefLines = File.ReadAllLines(restsegRef, Encoding.GetEncoding("iso-8859-1")).ToList();
-            var restsegRefLines = File.ReadAllLines(restsegRef).ToList();
-
-
-
-            List<Tuple<string, bool>> restcoment = new List<Tuple<string, bool>>();
-
-            foreach (var refl in restsegRefLines)
-            {
-                var partes = refl.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                bool comentar = false;
-                int i;
-                if (partes.Count() >= 3)//filtro para pegar as linhas que possuem numero de restrição
-                {
-                    if (int.TryParse(partes[2], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out i))
-                    {
-                        if (refl.StartsWith("&"))
-                        {
-                            comentar = true;
-                        }
-                        if (restcoment.Count() == 0 || restcoment.All(x => !x.Item1.Equals(partes[2])))
-                        {
-                            restcoment.Add(new Tuple<string, bool>(partes[2], comentar));//num restrição, comentar?
-                        }
-                    }
-
-                }
-            }
-
-            foreach (var restL in restsegLines)
-            {
-                var partRes = restL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (partRes.Count() >= 3)
-                {
-                    var restricao = restcoment.Where(x => x.Item1.Equals(partRes[2])).FirstOrDefault();
-                    if (restricao != null)
-                    {
-                        if (restricao.Item2 == true)
-                        {
-                            if (restL.StartsWith("&"))
-                            {
-                                novoRestseg.Add(restL);
-                            }
-                            else
-                            {
-                                novoRestseg.Add("&" + restL);
-                            }
-                        }
-                        else
-                        {
-                            if (restL.StartsWith("&"))
-                            {
-                                novoRestseg.Add(restL.Substring(1));
-                            }
-                            else
-                            {
-                                novoRestseg.Add(restL);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        novoRestseg.Add(restL);
-                    }
-                }
-                else
-                {
-                    novoRestseg.Add(restL);
-                }
-            }
-
-            //File.WriteAllLines(restseg, novoRestseg, Encoding.GetEncoding("iso-8859-1"));
-            File.WriteAllLines(restseg, novoRestseg);
-
-            #endregion
 
         }
 
@@ -4706,13 +4811,107 @@ namespace Compass.DecompToolsShellX
             entdados.SaveToFile();
         }
 
-        public static void TrataRhe(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo)
+        public static void TrataRhe(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo, Compass.CommomLibrary.EntdadosDat.EntdadosDat entdadosRef, string fileEntdadosRef, string entdadosFile)
         {
-            //914
-            List<int> restComent = new List<int> { 141, 142, 143, 144, 145, 146, 147, 272, 654, 800, 801, 802, 803, 804, 805, 827, 828, 840, 844, 846, 847, 845, 854, 904, 919, 920, 921, 922, 923, 937, 948, 984, 985, 990 };
-            foreach (var rest in restComent)
+            #region codigo antigo
+            ////914
+            //List<int> restComent = new List<int> { 141, 142, 143, 144, 145, 146, 147, 272, 654, 800, 801, 802, 803, 804, 805, 827, 828, 840, 844, 846, 847, 845, 854, 904, 919, 920, 921, 922, 923, 937, 948, 984, 985, 990 };
+            //foreach (var rest in restComent)
+            //{
+            //    foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == rest))
+            //    {
+            //        foreach (var rh in rhe.Value)
+            //        {
+            //            rh[0] = "&" + rh[0];
+            //        }
+            //    }
+            //}
+            //for (int i = 602; i <= 649; i++)
+            //{
+            //    foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == i))
+            //    {
+            //        foreach (var rh in rhe.Value)
+            //        {
+            //            rh[0] = "&" + rh[0];
+            //        }
+            //    }
+            //}
+            ////
+
+            ////
+            ////for (int i = 901; i <= 991; i++)
+            ////{
+            ////foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == i))
+            //foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] >= 900))
+            //{
+            //    foreach (var rh in rhe.Value)
+            //    {
+            //        rh[2] = " I";
+            //    }
+            //}
+            ////}
+
+            ////inverter linhas da RE 433 linha LU
+            //var luMod = entdados.BlocoRhe.Where(x => x is LuLine && x.Restricao == 433 && x[9] == 99999).FirstOrDefault();
+            //if (luMod != null)
+            //{
+            //    string texto = null;
+            //    if (luMod.Comment != null)
+            //    {
+            //        var linhas = luMod.Comment.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+            //        foreach (var linha in linhas)
+            //        {
+            //            if (linha.StartsWith("&LU"))
+            //            {
+            //                texto = texto == null ? linha.Substring(1) : texto + Environment.NewLine + linha.Substring(1);
+
+            //            }
+            //            else
+            //            {
+            //                texto = texto == null ? linha : texto + Environment.NewLine + linha;
+            //            }
+            //        }
+            //        luMod.Comment = texto;
+            //    }
+            //    luMod[0] = "&" + luMod[0];
+            //}
+            #endregion
+
+            List<int> restComment = new List<int>();
+            List<int> restUnComment = new List<int>();
+
+            var entLinhas = File.ReadAllLines(fileEntdadosRef).ToList();
+
+            var blocosId = "RE LU FH FT FI FE FR FC".Split(' ').ToList();
+            foreach (var linha in entLinhas)
             {
-                foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == rest))
+                string texto = linha;
+                if (linha.StartsWith("&") && linha != "")
+                {
+                    var indice = entLinhas.IndexOf(linha);
+                    var l = linha.Substring(1);
+                    var cod = (l + "  ").Split(' ').First();
+                    if (blocosId.Any(k => k.Equals(cod)))
+                    {
+                        var newBlock = new Compass.CommomLibrary.EntdadosDat.RheBlock();
+                        var newL = newBlock.CreateLine(l);
+                        if (restComment.All(x => x != newL.Restricao))
+                        {
+                            restComment.Add(newL.Restricao);
+                        }
+                    }
+                }
+            }
+            foreach (var rhe in entdadosRef.BlocoRhe.RheGrouped)
+            {
+                if (restUnComment.All(x => x != rhe.Key.Restricao))
+                {
+                    restUnComment.Add(rhe.Key.Restricao);
+                }
+            }
+            foreach (var com in restComment)
+            {
+                foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == com))
                 {
                     foreach (var rh in rhe.Value)
                     {
@@ -4720,56 +4919,46 @@ namespace Compass.DecompToolsShellX
                     }
                 }
             }
-            for (int i = 602; i <= 649; i++)
-            {
-                foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == i))
-                {
-                    foreach (var rh in rhe.Value)
-                    {
-                        rh[0] = "&" + rh[0];
-                    }
-                }
-            }
-            //chamar funcao pra acahar rest e descomentar aqui 913 915 
+            entdados.SaveToFile();
 
-            //
-            for (int i = 901; i <= 991; i++)
-            {
-                foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] == i))
-                {
-                    foreach (var rh in rhe.Value)
-                    {
-                        rh[2] = " I";
-                    }
-                }
-            }
 
-            //inverter linhas da RE 433 linha LU
-            var luMod = entdados.BlocoRhe.Where(x => x is LuLine && x.Restricao == 433 && x[9] == 99999).FirstOrDefault();
-            if (luMod != null)
+            List<string> newTexto = new List<string>();
+
+            entLinhas = null;
+
+            entLinhas = File.ReadAllLines(entdadosFile).ToList();
+            foreach (var linha in entLinhas)
             {
-                string texto = null;
-                if (luMod.Comment != null)
+                string texto = linha;
+                //retirando comentarios "&" das restrições
+                if (linha.StartsWith("&") && linha != "")
                 {
-                    var linhas = luMod.Comment.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                    foreach (var linha in linhas)
+                    var indice = entLinhas.IndexOf(linha);
+                    var l = linha.Substring(1);
+                    var cod = (l + "  ").Split(' ').First();
+                    if (blocosId.Any(k => k.Equals(cod)))
                     {
-                        if (linha.StartsWith("&LU"))
+                        var newBlock = new Compass.CommomLibrary.EntdadosDat.RheBlock();
+                        var newL = newBlock.CreateLine(l);
+                        if (restUnComment.Any(x => x == newL.Restricao))
                         {
-                            texto = texto == null ? linha.Substring(1) : texto + Environment.NewLine + linha.Substring(1);
-
-                        }
-                        else
-                        {
-                            texto = texto == null ? linha : texto + Environment.NewLine + linha;
+                            texto = l;
                         }
                     }
-                    luMod.Comment = texto;
                 }
-                luMod[0] = "&" + luMod[0];
+                newTexto.Add(texto);
             }
+            File.WriteAllLines(entdadosFile, newTexto);
+            entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
 
-
+            foreach (var rhe in entdados.BlocoRhe.RheGrouped.Where(x => x.Key[1] >= 900))
+            {
+                foreach (var rh in rhe.Value)
+                {
+                    rh[2] = " I";
+                }
+            }
+            entdados.SaveToFile();
 
         }
 
@@ -5693,5 +5882,15 @@ namespace Compass.DecompToolsShellX
 
             frm.ShowDialog();
         }
+
+        static void dsOns2CceeSTA(object dsDeck)
+        {
+            string deck = dsDeck.ToString();
+            var frm = new FrmDsOns2CCEE(deck);
+            //frm.Deck = deck;
+
+            frm.ShowDialog();
+        }
+
     }
 }

@@ -157,6 +157,7 @@
     <Compile Include="EntdadosDat\Mt.cs" />
     <Compile Include="EntdadosDat\NI.cs" />
     <Compile Include="EntdadosDat\Pd.cs" />
+    <Compile Include="EntdadosDat\Pe.cs" />
     <Compile Include="EntdadosDat\Pp.cs" />
     <Compile Include="EntdadosDat\Pq.cs" />
     <Compile Include="EntdadosDat\Ps.cs" />
