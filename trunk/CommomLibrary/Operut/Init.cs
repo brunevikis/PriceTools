@@ -50,7 +50,7 @@ namespace Compass.CommomLibrary.Operut
                 new BaseField(5  , 16 ,"A12"    , "Nome Usina"),
                 new BaseField(19 , 21,"I3"    , "Indice"),
                 new BaseField(25 , 26,"I2"    , "Status"),
-                new BaseField(30 , 39,"F10.0" , "Geracao"),
+                new BaseField(30 , 39,"F10.3" , "Geracao"),
                 new BaseField(42 , 46,"I5"  , "Tempo"),
                 new BaseField(49 , 49,"I1" , "MH"),
                 new BaseField(52 , 52,"I1"  , "A/D"),

@@ -33,29 +33,61 @@ namespace Compass.DecompToolsShellX
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var data = DateTime.Today;
+            var dataDC = DateTime.Today;
             DateTime dataRef = data;
 
-            DateTime Ve;
-            if (data.DayOfWeek == DayOfWeek.Friday)
-            {
-                Ve = data.AddDays(-1);
-            }
-            else
-            {
-                Ve = data;
-            }
-            var revDc = GetCurrRev(Ve);
-            //string mapcut = "mapcut.rv" + rev.rev.ToString();
-            //tring cortdeco = "cortdeco.rv" + rev.rev.ToString();
 
-            for (int i = 1; i <= 10; i++)
+            int contDc = 0;
+            bool OkDc = false;
+            while (OkDc == false && contDc < 30)
             {
-                string camDecomp = @"K:\4_curto_prazo\" + revDc.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + revDc.revDate.ToString("MMyyyy") + "_RV" + revDc.rev.ToString() + $"_VE_ccee ({i})";
-                if (Directory.Exists(camDecomp))
+                DateTime dat = dataDC;
+                DateTime datVE = dataDC;
+                if (dat.DayOfWeek == DayOfWeek.Friday)
                 {
-                    TextBoxDcRef.Text = camDecomp;
+                    datVE = dat.AddDays(-1);
+                }
+                var rev = GetCurrRev(datVE);
+                //H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\2023\09_set\Relatorio_Sumario-202309-sem5
+                int semana = rev.rev + 1;
+                var mes = GetMonthNumAbrev(rev.revDate.Month);//dataRef
+                var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-202309-sem" + semana.ToString();
+                if (Directory.Exists(cam))
+                {
+                    TextBoxDcRef.Text = cam;
+                    OkDc = true;
+                }
+                else
+                {
+                    contDc++;
+                    dataDC = dataDC.AddDays(-1);
                 }
             }
+
+
+
+            //DateTime Ve;
+            //if (data.DayOfWeek == DayOfWeek.Friday)
+            //{
+            //    Ve = data.AddDays(-1);
+            //}
+            //else
+            //{
+            //    Ve = data;
+            //}
+            //var revDc = GetCurrRev(Ve);
+            ////string mapcut = "mapcut.rv" + rev.rev.ToString();
+            ////tring cortdeco = "cortdeco.rv" + rev.rev.ToString();
+
+            //for (int i = 1; i <= 10; i++)
+            //{
+            //    //H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\2023\09_set\Relatorio_Sumario-202309-sem5
+            //    string camDecomp = @"K:\4_curto_prazo\" + revDc.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + revDc.revDate.ToString("MMyyyy") + "_RV" + revDc.rev.ToString() + $"_VE_ccee ({i})";
+            //    if (Directory.Exists(camDecomp))
+            //    {
+            //        TextBoxDcRef.Text = camDecomp;
+            //    }
+            //}
 
             int cont = 0;
             bool Ok = false;

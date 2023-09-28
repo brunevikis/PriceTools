@@ -4391,10 +4391,11 @@ namespace Compass.DecompToolsShellX
 
             if (command.Count() > 1 && command[1] == "true")
             {
-                for (int i = 1; i <= 10; i++)
-                {
+                //for (int i = 1; i <= 10; i++)
+               // {
                     //string camDecomp = @"X:\AWS\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
-                    string camDecomp = @"K:\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                    //string camDecomp = @"K:\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                    string camDecomp = Tools.GetDCref(dataEstudo);
                     string etcFile = Path.Combine(camDecomp, "etc.zip");
                     if (Directory.Exists(camDecomp))
                     {
@@ -4432,7 +4433,7 @@ namespace Compass.DecompToolsShellX
                             return Ok;
                         }
                     }
-                }
+                //}
             }
             else
             {

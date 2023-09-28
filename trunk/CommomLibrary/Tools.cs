@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -1126,6 +1127,43 @@ new DateTime(2033,12,25),
             var currRevNum = currRevDate.Day / 7 - (currRevDate.Day % 7 == 0 ? 1 : 0);
 
             return (currRevDate, currRevNum);
+        }
+
+        public static string GetDCref(DateTime dt)
+        {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var data = dt;
+            var dataDC = dt;
+            DateTime dataRef = data;
+
+            string folder = "";
+            int contDc = 0;
+            bool OkDc = false;
+            while (OkDc == false && contDc < 30)
+            {
+                DateTime dat = dataDC;
+                DateTime datVE = dataDC;
+                if (dat.DayOfWeek == DayOfWeek.Friday)
+                {
+                    datVE = dat.AddDays(-1);
+                }
+                var rev = GetCurrRev(datVE);
+                //H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\2023\09_set\Relatorio_Sumario-202309-sem5
+                int semana = rev.rev + 1;
+                var mes = GetMonthNumAbrev(rev.revDate.Month);//dataRef
+                var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-202309-sem" + semana.ToString();
+                if (Directory.Exists(cam))
+                {
+                    folder = cam;
+                    OkDc = true;
+                }
+                else
+                {
+                    contDc++;
+                    dataDC = dataDC.AddDays(-1);
+                }
+            }
+            return folder;
         }
     }
 
