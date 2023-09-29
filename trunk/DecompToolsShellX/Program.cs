@@ -62,10 +62,10 @@ namespace Compass.DecompToolsShellX
 
 
             //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
-                      //C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_d-1_ECENS45
+            //C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_d-1_ECENS45
 
             //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
-
+            //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
             //resultados "C:\Development\Implementacoes\verResultados\202210_oficial_umido_3009\bkprvo"
 
             //< add key = "passwordlogin" value = "Pas5Word" />

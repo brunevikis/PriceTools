@@ -51,7 +51,7 @@ namespace Compass.DecompToolsShellX
                 //H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\2023\09_set\Relatorio_Sumario-202309-sem5
                 int semana = rev.rev + 1;
                 var mes = GetMonthNumAbrev(rev.revDate.Month);//dataRef
-                var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-202309-sem" + semana.ToString();
+                var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString();
                 if (Directory.Exists(cam))
                 {
                     TextBoxDcRef.Text = cam;
