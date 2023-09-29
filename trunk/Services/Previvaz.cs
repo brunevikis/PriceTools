@@ -43,8 +43,8 @@ namespace Compass.Services
         static List<Acomph> acompH = null;
         static List<int> comPrevivaz = new List<int>()
         {
-            287,  296,  291 ,279, 145, 288, 229, 290, 190,168,156,158 // 168,156,158 = calculo de sobradinho MVP etc
-        };
+            287,  296,  291 ,279, 145, 288, 229, 290, 190/*,168,156,158*/ // 168,156,158 = calculo de sobradinho MVP etc
+        };//145 190 229 279 288 290 291 296 
 
         public static void RunCenario(string caminhoWbCenario, bool useAcomph, bool encad = false)// bool encad)
         {
@@ -2715,8 +2715,16 @@ namespace Compass.Services
                     var dat = sem.Item1;
                     if (!p169.calMedSemanal.ContainsKey(dat))
                     {
+                        try
+                        {
+                            p169.calMedSemanal[dat] = p168.calMedSemanal[dat] + p156.calMedSemanal[dat.AddDays(-14)] + p158.calMedSemanal[dat.AddDays(-14)];
+                        }
+                        catch (Exception e)
+                        {
+
+                            e.ToString();
+                        }
                         //(-14) = duas semanas atrás
-                        p169.calMedSemanal[dat] = p168.calMedSemanal[dat] + p156.calMedSemanal[dat.AddDays(-14)] + p158.calMedSemanal[dat.AddDays(-14)];
                     }
                 }
                 #endregion
