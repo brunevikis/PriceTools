@@ -21,7 +21,7 @@ namespace Compass.CommomLibrary.EntdadosDat
 
         static readonly BaseField[] TxCampos = new BaseField[] {
                 new BaseField(1  , 2 ,"A2"    , "IdBloco"),//
-                new BaseField(5  , 14 ,"F10.0"    , "Taxa"),//
+                new BaseField(5  , 14 ,"F10.2"    , "Taxa"),//
 
 
             };

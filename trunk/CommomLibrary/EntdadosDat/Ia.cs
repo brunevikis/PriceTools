@@ -40,8 +40,8 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(22  , 23 ,"A2"    , "dia final"),//pode ser letra
                 new BaseField(25  , 26 ,"I2"    , "Hora dia final"),//
                 new BaseField(28  , 28 ,"I1"    , "meia hora final"),//
-                new BaseField(30  , 39 ,"F10.0"    , "Intercambio AB"),//
-                new BaseField(40  , 49 ,"F10.0"    , "Intercambio BA"),//
+                new BaseField(30  , 39 ,"F10.2"    , "Intercambio AB"),//
+                new BaseField(40  , 49 ,"F10.2"    , "Intercambio BA"),//
 
 
             };

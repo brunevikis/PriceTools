@@ -24,7 +24,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(8  , 10 ,"I3"    , "Nnumero"),//
                 new BaseField(12  , 14 ,"I3"    , "Para"),//
                 new BaseField(16  , 17 ,"I2"    , "Tipo"),//
-                new BaseField(20  , 29 ,"F10.0"    , "Penalidade"),//
+                new BaseField(20  , 29 ,"F10.2"    , "Penalidade"),//
 
 
             };

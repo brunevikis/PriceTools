@@ -46,9 +46,9 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(39  , 40 ,"I2"    , "HoraFinal"),//
                 new BaseField(42  , 42 ,"I1"    , "MeiaHoraFinal"),//
                 new BaseField(47  , 47 ,"I1"    , "UnidRest"),//
-                new BaseField(48  , 57 ,"F10.0"    , "GeracaoMinPorRest"),//para rest de rampa é variacao max de decrescimo
-                new BaseField(58  , 67 ,"F10.0"    , "GeracaoMaxPorRest"),//para rest de rampa é variacao max de acrescimo
-                new BaseField(68  , 77 ,"F10.0"    , "GeracaoMeiaHoraAnt"),//
+                new BaseField(48  , 57 ,"F10.3"    , "GeracaoMinPorRest"),//para rest de rampa é variacao max de decrescimo
+                new BaseField(58  , 67 ,"F10.3"    , "GeracaoMaxPorRest"),//para rest de rampa é variacao max de acrescimo
+                new BaseField(68  , 77 ,"F10.3"    , "GeracaoMeiaHoraAnt"),//
 
 
             };

@@ -35,8 +35,8 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(16  , 18 ,"I3"    , "PontoVolArm"),//
                 new BaseField(21  , 21 ,"I1"    , "Concavidade"),//
                 new BaseField(25  , 25 ,"I1"    , "Quadraticos"),//
-                new BaseField(30  , 39 ,"F10.0"    , "VolUtilPerc"),//
-                new BaseField(40  , 49 ,"F10.0"    , "TolPerc"),//
+                new BaseField(30  , 39 ,"F10.2"    , "VolUtilPerc"),//
+                new BaseField(40  , 49 ,"F10.2"    , "TolPerc"),//
                 
 
             };

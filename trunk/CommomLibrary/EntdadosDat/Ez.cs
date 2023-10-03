@@ -24,7 +24,7 @@ namespace Compass.CommomLibrary.EntdadosDat
         static readonly BaseField[] EzCampos = new BaseField[] {
                 new BaseField(1  , 2 ,"A2"    , "IdBloco"),//
                 new BaseField(5  , 7 ,"I3"    , "Usina"),//
-                new BaseField(10  , 14 ,"F5.0"    , "PercMaxVol"),//
+                new BaseField(10  , 14 ,"F5.1"    , "PercMaxVol"),//
 
 
             };

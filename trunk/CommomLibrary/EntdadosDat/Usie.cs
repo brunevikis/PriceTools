@@ -34,9 +34,9 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(15 , 26 ,"A12"    , "NomeUsina"),//
                 new BaseField(30 , 32 ,"I3"    , "UsinaMontante"),//
                 new BaseField(35 , 37 ,"I3"    , "UsinaJusante"),//
-                new BaseField(40 , 49 ,"F10.0"    , "VazMin"),//
-                new BaseField(50 , 59 ,"F10.0"    , "VazMax"),//
-                new BaseField(60 , 69 ,"F10.0"    , "TaxaConsumo"),//
+                new BaseField(40 , 49 ,"F10.3"    , "VazMin"),//
+                new BaseField(50 , 59 ,"F10.3"    , "VazMax"),//
+                new BaseField(60 , 69 ,"F10.3"    , "TaxaConsumo"),//
 
 
             };

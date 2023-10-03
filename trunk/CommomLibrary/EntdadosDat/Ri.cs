@@ -38,11 +38,11 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(17  , 18 ,"A2"    , "DiaFinal"),//pode ter letra
                 new BaseField(20  , 21 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
-                new BaseField(27  , 36 ,"F10.0"    , "LimInf50hz"),//
-                new BaseField(37  , 46 ,"F10.0"    , "LimSup50hz"),//
-                new BaseField(47  , 56 ,"F10.0"    , "LimInf60hz"),//
-                new BaseField(57  , 66 ,"F10.0"    , "LimSup60hz"),//
-                new BaseField(67  , 76 ,"F10.0"    , "CargaAnde"),//
+                new BaseField(27  , 36 ,"F10.2"    , "LimInf50hz"),//
+                new BaseField(37  , 46 ,"F10.2"    , "LimSup50hz"),//
+                new BaseField(47  , 56 ,"F10.2"    , "LimInf60hz"),//
+                new BaseField(57  , 66 ,"F10.2"    , "LimSup60hz"),//
+                new BaseField(67  , 76 ,"F10.2"    , "CargaAnde"),//
 
 
             };

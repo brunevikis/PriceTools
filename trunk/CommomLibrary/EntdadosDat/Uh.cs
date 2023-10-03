@@ -50,12 +50,12 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(5  , 7 ,"I3"    , "UsinaNum"),//
                 new BaseField(10  , 21 ,"A12"    , "NomeUsina"),//
                 new BaseField(25  , 26 ,"I2"    , "NumRee"),//
-                new BaseField(30  , 39 ,"F10.0"    , "Volarm%"),//
+                new BaseField(30  , 39 ,"F10.2"    , "Volarm%"),//
                 new BaseField(40  , 40 ,"I1"    , "FlagEvap"),//
                 new BaseField(42  , 43 ,"A2"    , "dia inicial op"),//string pq pode ser letra
                 new BaseField(45  , 46 ,"I2"    , "Hora inicial op"),//
                 new BaseField(48  , 48 ,"I1"    , "Meia Hora inicial op"),//
-                new BaseField(50  , 59 ,"F10.0"    , "VolMorto"),//
+                new BaseField(50  , 59 ,"F10.2"    , "VolMorto"),//
                 new BaseField(65  , 65 ,"I1"    , "FlagProd"),//
                 new BaseField(70  , 70 ,"I1"    , "FlagRest"),//
 

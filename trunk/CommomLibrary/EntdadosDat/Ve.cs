@@ -36,7 +36,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(17  , 18 ,"A2"    , "DiaFinal"),//pode ter letra
                 new BaseField(20  , 21 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
-                new BaseField(25  , 34 ,"F10.0"    , "VolumeEspera"),//
+                new BaseField(25  , 34 ,"F10.2"    , "VolumeEspera"),//
 
 
             };

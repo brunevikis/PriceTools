@@ -40,7 +40,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(33  , 34 ,"A2"    , "DiaFinal"),//
                 new BaseField(36  , 37 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(39  , 39 ,"I1"    , "MeiaHoraDiaFinal"),//
-                new BaseField(41  , 50 ,"F10.0"    , "Geracao"),//
+                new BaseField(41  , 50 ,"F10.2"    , "Geracao"),//
 
 
             };

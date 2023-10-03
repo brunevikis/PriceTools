@@ -148,8 +148,8 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(17  , 18 ,"A2"    , "DiaFinal"),//pode ter letra
                 new BaseField(20  , 21 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
-                new BaseField( 25 , 34,"F10.0" , "Limite Inf"),
-                new BaseField( 35 , 44,"F10.0" , "Limite Sup"),
+                new BaseField( 25 , 34,"F10.2" , "Limite Inf"),
+                new BaseField( 35 , 44,"F10.2" , "Limite Sup"),
             };
 
 
@@ -190,7 +190,8 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
                 new BaseField(25  , 27 ,"I3"    , "NumUsina"),//
                 new BaseField( 28 , 29,"I2"    , "NumConjMaq"),
-                new BaseField( 35 , 44,"F10.0" , "Fator"),
+                new BaseField( 30 , 30,"I1"    , "Dummy"),
+                new BaseField( 35 , 44,"F10.2" , "Fator"),
             };
 
 
@@ -207,7 +208,7 @@ namespace Compass.CommomLibrary.EntdadosDat
         public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
         public int Usina { get { return this[8]; } set { this[8] = value; } }
         public int NumConjMaq { get { return this[9]; } set { this[9] = value; } }
-        public float Fator { get { return (float)this[10]; } set { this[10] = value; } }
+        public float Fator { get { return (float)this[11]; } set { this[11] = value; } }
 
 
 
@@ -233,7 +234,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(20  , 21 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
                 new BaseField( 25 , 27,"I3"    , "NumUsina"),
-                new BaseField( 35 , 44,"F10.0" , "Fator"),
+                new BaseField( 35 , 44,"F10.2" , "Fator"),
             };
 
 
@@ -273,7 +274,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
                 new BaseField( 25 , 26,"A2"    , "De"),
                 new BaseField( 30 , 31,"A2"    , "Para"),
-                new BaseField( 35 , 44,"F10.0" , "Fator"),
+                new BaseField( 35 , 44,"F10.2" , "Fator"),
             };
 
 
@@ -315,7 +316,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(20  , 21 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(23  , 23 ,"I1"    , "MeiaHoraDiaFinal"),//
                 new BaseField( 25 , 27,"I3"    , "NumContrato"),
-                new BaseField( 35 , 44,"F10.0" , "Fator"),
+                new BaseField( 35 , 44,"F10.2" , "Fator"),
             };
 
 
@@ -355,7 +356,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(22  , 23 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(25  , 25 ,"I1"    , "MeiaHoraDiaFinal"),//
                 new BaseField( 27 , 30,"I4"    , "NumEolica"),
-                new BaseField( 35 , 44,"F10.0" , "Fator"),
+                new BaseField( 35 , 44,"F10.2" , "Fator"),
             };
 
 
@@ -395,7 +396,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField(22  , 23 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField(25  , 25 ,"I1"    , "MeiaHoraDiaFinal"),//
                 new BaseField( 27 , 29,"I3"    , "NumDemanda"),
-                new BaseField( 35 , 44,"F10.0" , "Fator"),
+                new BaseField( 35 , 44,"F10.2" , "Fator"),
             };
 
 
