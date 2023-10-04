@@ -4180,6 +4180,7 @@ namespace Compass.DecompToolsShellX
 
         public static Boolean ConverteDessem(string dir, string[] command)
         {
+            string diretorioBase = command[0];
 
             var deckestudo = DeckFactory.CreateDeck(dir) as Compass.CommomLibrary.Dessem.Deck;
 
@@ -4359,6 +4360,9 @@ namespace Compass.DecompToolsShellX
 
 
                 RestsegRstlpp(dataEstudo, dir, deckRefCCEE);
+
+                TrataMT(entdados, entdadosFile, diretorioBase, dataEstudo);
+
                 #endregion
 
                 return continua;
@@ -4395,47 +4399,47 @@ namespace Compass.DecompToolsShellX
             if (command.Count() > 1 && command[1] == "true")
             {
                 //for (int i = 1; i <= 10; i++)
-               // {
-                    //string camDecomp = @"X:\AWS\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
-                    //string camDecomp = @"K:\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
-                    string camDecomp = Tools.GetDCref(dataEstudo);
-                    string etcFile = Path.Combine(camDecomp, "etc.zip");
-                    if (Directory.Exists(camDecomp))
+                // {
+                //string camDecomp = @"X:\AWS\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                //string camDecomp = @"K:\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+                string camDecomp = Tools.GetDCref(dataEstudo);
+                string etcFile = Path.Combine(camDecomp, "etc.zip");
+                if (Directory.Exists(camDecomp))
+                {
+                    var arqs = Directory.GetFiles(camDecomp).ToList();
+                    if (arqs.All(x => Path.GetFileName(x).ToLower() != mapcut) && arqs.All(x => Path.GetFileName(x).ToLower() != cortdeco))
                     {
-                        var arqs = Directory.GetFiles(camDecomp).ToList();
-                        if (arqs.All(x => Path.GetFileName(x).ToLower() != mapcut) && arqs.All(x => Path.GetFileName(x).ToLower() != cortdeco))
+                        Ionic.Zip.ZipFile arquivoZip = Ionic.Zip.ZipFile.Read(etcFile);
+                        try
                         {
-                            Ionic.Zip.ZipFile arquivoZip = Ionic.Zip.ZipFile.Read(etcFile);
-                            try
+                            foreach (ZipEntry e in arquivoZip)
                             {
-                                foreach (ZipEntry e in arquivoZip)
-                                {
-                                    e.Extract(camDecomp, ExtractExistingFileAction.OverwriteSilently);
-                                }
-                                arquivoZip.Dispose();
-                                arqs = Directory.GetFiles(camDecomp).ToList();
+                                e.Extract(camDecomp, ExtractExistingFileAction.OverwriteSilently);
+                            }
+                            arquivoZip.Dispose();
+                            arqs = Directory.GetFiles(camDecomp).ToList();
 
-                            }
-                            catch (Exception ex)
-                            {
-                                throw ex;
-                            }
                         }
-                        foreach (var arq in arqs)
+                        catch (Exception ex)
                         {
-                            var filename = Path.GetFileName(arq);
-                            if ((filename.ToLower() == mapcut) || (filename.ToLower() == cortdeco))
-                            {
-                                File.Copy(arq, Path.Combine(dirTosave, filename), true);
-                                contArq++;
-                            }
-                        }
-                        if (contArq == 2)
-                        {
-                            Ok = true;
-                            return Ok;
+                            throw ex;
                         }
                     }
+                    foreach (var arq in arqs)
+                    {
+                        var filename = Path.GetFileName(arq);
+                        if ((filename.ToLower() == mapcut) || (filename.ToLower() == cortdeco))
+                        {
+                            File.Copy(arq, Path.Combine(dirTosave, filename), true);
+                            contArq++;
+                        }
+                    }
+                    if (contArq == 2)
+                    {
+                        Ok = true;
+                        return Ok;
+                    }
+                }
                 //}
             }
             else
@@ -4446,7 +4450,7 @@ namespace Compass.DecompToolsShellX
 
                 //Thread thread = new Thread(MapcutCortedeco);
                 //thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-               // thread.Start(dirTosave);
+                // thread.Start(dirTosave);
                 //thread.Join(); //Wait for the thread to end      
 
                 var arqMapcut = Directory.GetFiles(dirTosave).Where(x => Path.GetFileName(x).ToLower() == (mapcut)).FirstOrDefault();
@@ -4463,6 +4467,8 @@ namespace Compass.DecompToolsShellX
             return Ok;
 
         }
+
+
 
         public static void RestsegRstlpp(DateTime dataEstudo, string dir, string folderCCEEref)
         {
@@ -4490,7 +4496,7 @@ namespace Compass.DecompToolsShellX
             string rstlpp = null;
 
 
-           
+
             if (Directory.Exists(folderCCEEref))
             {
                 string restONSbak = "restsegONS.bak";
@@ -4506,183 +4512,183 @@ namespace Compass.DecompToolsShellX
 
                 restsegRef = Directory.GetFiles(folderCCEEref).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
                 rstlppRef = Directory.GetFiles(folderCCEEref).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
-               
+
                 File.Copy(restsegRef, Path.Combine(dir, restsegRef.Split('\\').Last()), true);
                 File.Copy(rstlppRef, Path.Combine(dir, rstlppRef.Split('\\').Last()), true);
 
             }
 
             #region codigo antigo
-                //if (Directory.Exists(camRef))
-                //{
-                //    restsegRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
-                //    rstlppRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+            //if (Directory.Exists(camRef))
+            //{
+            //    restsegRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+            //    rstlppRef = Directory.GetFiles(camRef).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
 
-                //}
+            //}
 
-                //var restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
-                //var rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+            //var restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+            //var rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
 
-                //if (restseg == null)
-                //{
-                //    File.Copy(restsegRef, Path.Combine(dir, restsegRef.Split('\\').Last()), true);
-                //}
-                //if (rstlpp == null)
-                //{
-                //    File.Copy(rstlppRef, Path.Combine(dir, rstlppRef.Split('\\').Last()), true);
-                //}
+            //if (restseg == null)
+            //{
+            //    File.Copy(restsegRef, Path.Combine(dir, restsegRef.Split('\\').Last()), true);
+            //}
+            //if (rstlpp == null)
+            //{
+            //    File.Copy(rstlppRef, Path.Combine(dir, rstlppRef.Split('\\').Last()), true);
+            //}
 
-                //restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
-                //rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+            //restseg = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
+            //rstlpp = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
 
-                //#region rstlpp
-                ////var rstlppLines = File.ReadAllLines(rstlpp, Encoding.GetEncoding("iso-8859-1")).ToList();
-                //var rstlppLines = File.ReadAllLines(rstlpp).ToList();
-                //// var rstlppRefLines = File.ReadAllLines(rstlppRef, Encoding.GetEncoding("iso-8859-1")).ToList();
-                //var rstlppRefLines = File.ReadAllLines(rstlppRef).ToList();
+            //#region rstlpp
+            ////var rstlppLines = File.ReadAllLines(rstlpp, Encoding.GetEncoding("iso-8859-1")).ToList();
+            //var rstlppLines = File.ReadAllLines(rstlpp).ToList();
+            //// var rstlppRefLines = File.ReadAllLines(rstlppRef, Encoding.GetEncoding("iso-8859-1")).ToList();
+            //var rstlppRefLines = File.ReadAllLines(rstlppRef).ToList();
 
-                //foreach (var line in rstlppLines)
-                //{
-                //    var nline = line;
-                //    if (line.StartsWith("&"))
-                //    {
-                //        nline = line.Substring(1);
+            //foreach (var line in rstlppLines)
+            //{
+            //    var nline = line;
+            //    if (line.StartsWith("&"))
+            //    {
+            //        nline = line.Substring(1);
 
-                //        //novoRstlpp.Add(line);
-                //    }
-                //    // else
-                //    // {
-                //    var minemonico = nline.Split(' ').First();
-                //    var texto = "";
-                //    switch (minemonico)
-                //    {
-                //        case "RSTSEG":
-                //        case "ADICRS":
-                //            texto = nline.Substring(0, 19);
-                //            break;
-                //        case "PARAM":
-                //            texto = nline.Substring(0, 10);
-                //            break;
-                //        case "RESLPP":
-                //            texto = nline.Substring(0, 15);
-                //            break;
-                //        case "VPARM":
-                //            texto = nline.Substring(0, 19);
-                //            break;
-                //        default:
-                //            texto = nline;
-                //            break;
-                //    }
-                //    if (texto != "")
-                //    {
-                //        var linha = rstlppRefLines.Where(x => x.Contains(texto)).FirstOrDefault();
-                //        if (linha != null)
-                //        {
-                //            if (linha.StartsWith("&"))
-                //            {
-                //                novoRstlpp.Add("&" + nline);
-                //            }
-                //            else
-                //            {
-                //                novoRstlpp.Add(nline);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            novoRstlpp.Add(line);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        novoRstlpp.Add(line);
-                //    }
-                //    //// }
-                //}
-                //// File.WriteAllLines(rstlpp, novoRstlpp, Encoding.GetEncoding("iso-8859-1"));
-                //File.WriteAllLines(rstlpp, novoRstlpp);
-                //#endregion
+            //        //novoRstlpp.Add(line);
+            //    }
+            //    // else
+            //    // {
+            //    var minemonico = nline.Split(' ').First();
+            //    var texto = "";
+            //    switch (minemonico)
+            //    {
+            //        case "RSTSEG":
+            //        case "ADICRS":
+            //            texto = nline.Substring(0, 19);
+            //            break;
+            //        case "PARAM":
+            //            texto = nline.Substring(0, 10);
+            //            break;
+            //        case "RESLPP":
+            //            texto = nline.Substring(0, 15);
+            //            break;
+            //        case "VPARM":
+            //            texto = nline.Substring(0, 19);
+            //            break;
+            //        default:
+            //            texto = nline;
+            //            break;
+            //    }
+            //    if (texto != "")
+            //    {
+            //        var linha = rstlppRefLines.Where(x => x.Contains(texto)).FirstOrDefault();
+            //        if (linha != null)
+            //        {
+            //            if (linha.StartsWith("&"))
+            //            {
+            //                novoRstlpp.Add("&" + nline);
+            //            }
+            //            else
+            //            {
+            //                novoRstlpp.Add(nline);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            novoRstlpp.Add(line);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        novoRstlpp.Add(line);
+            //    }
+            //    //// }
+            //}
+            //// File.WriteAllLines(rstlpp, novoRstlpp, Encoding.GetEncoding("iso-8859-1"));
+            //File.WriteAllLines(rstlpp, novoRstlpp);
+            //#endregion
 
-                //#region restseg
+            //#region restseg
 
-                //// var restsegLines = File.ReadAllLines(restseg, Encoding.GetEncoding("iso-8859-1")).ToList();
-                //var restsegLines = File.ReadAllLines(restseg).ToList();
-                ////var restsegRefLines = File.ReadAllLines(restsegRef, Encoding.GetEncoding("iso-8859-1")).ToList();
-                //var restsegRefLines = File.ReadAllLines(restsegRef).ToList();
+            //// var restsegLines = File.ReadAllLines(restseg, Encoding.GetEncoding("iso-8859-1")).ToList();
+            //var restsegLines = File.ReadAllLines(restseg).ToList();
+            ////var restsegRefLines = File.ReadAllLines(restsegRef, Encoding.GetEncoding("iso-8859-1")).ToList();
+            //var restsegRefLines = File.ReadAllLines(restsegRef).ToList();
 
 
 
-                //List<Tuple<string, bool>> restcoment = new List<Tuple<string, bool>>();
+            //List<Tuple<string, bool>> restcoment = new List<Tuple<string, bool>>();
 
-                //foreach (var refl in restsegRefLines)
-                //{
-                //    var partes = refl.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                //    bool comentar = false;
-                //    int i;
-                //    if (partes.Count() >= 3)//filtro para pegar as linhas que possuem numero de restrição
-                //    {
-                //        if (int.TryParse(partes[2], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out i))
-                //        {
-                //            if (refl.StartsWith("&"))
-                //            {
-                //                comentar = true;
-                //            }
-                //            if (restcoment.Count() == 0 || restcoment.All(x => !x.Item1.Equals(partes[2])))
-                //            {
-                //                restcoment.Add(new Tuple<string, bool>(partes[2], comentar));//num restrição, comentar?
-                //            }
-                //        }
+            //foreach (var refl in restsegRefLines)
+            //{
+            //    var partes = refl.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            //    bool comentar = false;
+            //    int i;
+            //    if (partes.Count() >= 3)//filtro para pegar as linhas que possuem numero de restrição
+            //    {
+            //        if (int.TryParse(partes[2], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out i))
+            //        {
+            //            if (refl.StartsWith("&"))
+            //            {
+            //                comentar = true;
+            //            }
+            //            if (restcoment.Count() == 0 || restcoment.All(x => !x.Item1.Equals(partes[2])))
+            //            {
+            //                restcoment.Add(new Tuple<string, bool>(partes[2], comentar));//num restrição, comentar?
+            //            }
+            //        }
 
-                //    }
-                //}
+            //    }
+            //}
 
-                //foreach (var restL in restsegLines)
-                //{
-                //    var partRes = restL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            //foreach (var restL in restsegLines)
+            //{
+            //    var partRes = restL.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
-                //    if (partRes.Count() >= 3)
-                //    {
-                //        var restricao = restcoment.Where(x => x.Item1.Equals(partRes[2])).FirstOrDefault();
-                //        if (restricao != null)
-                //        {
-                //            if (restricao.Item2 == true)
-                //            {
-                //                if (restL.StartsWith("&"))
-                //                {
-                //                    novoRestseg.Add(restL);
-                //                }
-                //                else
-                //                {
-                //                    novoRestseg.Add("&" + restL);
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (restL.StartsWith("&"))
-                //                {
-                //                    novoRestseg.Add(restL.Substring(1));
-                //                }
-                //                else
-                //                {
-                //                    novoRestseg.Add(restL);
-                //                }
-                //            }
-                //        }
-                //        else
-                //        {
-                //            novoRestseg.Add(restL);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        novoRestseg.Add(restL);
+            //    if (partRes.Count() >= 3)
+            //    {
+            //        var restricao = restcoment.Where(x => x.Item1.Equals(partRes[2])).FirstOrDefault();
+            //        if (restricao != null)
+            //        {
+            //            if (restricao.Item2 == true)
+            //            {
+            //                if (restL.StartsWith("&"))
+            //                {
+            //                    novoRestseg.Add(restL);
+            //                }
+            //                else
+            //                {
+            //                    novoRestseg.Add("&" + restL);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (restL.StartsWith("&"))
+            //                {
+            //                    novoRestseg.Add(restL.Substring(1));
+            //                }
+            //                else
+            //                {
+            //                    novoRestseg.Add(restL);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            novoRestseg.Add(restL);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        novoRestseg.Add(restL);
 
-                //    }
-                //}
+            //    }
+            //}
 
-                ////File.WriteAllLines(restseg, novoRestseg, Encoding.GetEncoding("iso-8859-1"));
-                //File.WriteAllLines(restseg, novoRestseg);
+            ////File.WriteAllLines(restseg, novoRestseg, Encoding.GetEncoding("iso-8859-1"));
+            //File.WriteAllLines(restseg, novoRestseg);
 
-                //#endregion
+            //#endregion
 
             #endregion
 
@@ -4813,6 +4819,98 @@ namespace Compass.DecompToolsShellX
                 }
             }
             entdados.SaveToFile();
+        }
+
+        public static void TrataMT(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, string entdadosFile, string diretorioBase,DateTime dataEstudo)
+        {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+
+            List<string> UsiLInes = new List<string>();
+            List<string> UsiLInesERRO = new List<string>();
+            var patsFiles = System.IO.Directory.GetFiles(diretorioBase, "pat*", SearchOption.AllDirectories).ToList();
+            if (patsFiles.Count() > 0)
+            {
+                foreach (var pat in patsFiles)
+                {
+                    var linhas = File.ReadAllLines(pat).ToList();
+                    int start = linhas.IndexOf(linhas.Where(x => x.StartsWith("( *** USINAS TERMELETRICAS *** )")).First()) + 1;
+                    int end = start;
+                    while (!linhas[end].StartsWith("( *** ") && !linhas[end].StartsWith("FIM"))
+                    {
+                        end++;
+                    }
+                    linhas.Where(x => x.StartsWith("( Usi:")).ToList().ForEach(x =>
+                    {
+                        int n;
+                        n = linhas.IndexOf(x);
+                        string lComment = "&" + x;
+                        if (n > start && n < end && UsiLInes.All(y => y != lComment))
+                        {
+                            UsiLInes.Add("&" + x);
+                        }
+                    }
+                    );
+                }
+                foreach (var usil in UsiLInes)
+                {
+                    try
+                    {
+                        //&( Usi: ANGRA 2 - Qtd. Orig:1 - Gerador:RJUSAN0UG2 - SGI:202300053695 - Ini:29/09/2023 08:00 - Fim:14/10/2023 23:59
+                        var usiName = usil.Split(new string[] { "Usi:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split(new string[] { " -" }, StringSplitOptions.RemoveEmptyEntries).First().Replace("230", "").Trim();//230 é tratamento pra L.LACERDA-A 230
+                        int usiNum = entdados.BlocoUt.Where(x => x.NomeUsina.Trim().ToUpper() == usiName.Trim().ToUpper()).Select(x => x.Usina).First();
+                        int unidGer = Convert.ToInt32(usil.Split(new string[] { "Qtd. Orig:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split('-').First().Trim());
+                        DateTime dataIni = Convert.ToDateTime(usil.Split(new string[] { "Ini:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split('-').First().Trim(), Culture.DateTimeFormat);
+                        DateTime dataFim = Convert.ToDateTime(usil.Split(new string[] { "Fim:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split('-').First().Trim(), Culture.DateTimeFormat);
+
+                        if (dataIni.Minute == 29 || dataIni.Minute == 59)// trata meias horas
+                        {
+                            dataIni = dataIni.AddMinutes(1);
+                        }
+                        if (dataFim.Minute == 29 || dataFim.Minute == 59)// trata meias horas
+                        {
+                            dataFim = dataFim.AddMinutes(1);
+                        }
+
+                        if (dataFim > dataEstudo)
+                        {
+                            var mtl = entdados.BlocoMt.CreateLine();
+                            mtl.Comment = usil;
+                            mtl.IdBloco = "MT";
+                            mtl.Usina = usiNum;
+                            mtl.UnidadeGeradora = unidGer;
+                            mtl.DispUnidade = 0;
+
+                            mtl.DiaInic = dataIni < dataEstudo ? dataEstudo.Day.ToString("00") : dataIni.Day.ToString("00");
+                            mtl.HoraInic = dataIni < dataEstudo ? dataEstudo.Hour : dataIni.Hour;
+                            mtl.MeiaHoraInic = dataIni < dataEstudo ? 0 : dataIni.Minute < 29 ? 0 : dataIni.Minute < 59 ? 1 : 0;
+
+                            mtl.DiaFinal = dataFim.Day.ToString("00");
+                            mtl.HoraFinal = dataFim.Hour;
+                            mtl.MeiaHoraFinal = dataFim.Minute < 29 ? 0 : dataFim.Minute < 59 ? 1 : 0;
+                            entdados.BlocoMt.Add(mtl);
+
+                           // UsiLInes.Remove(usil);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        UsiLInesERRO.Add(usil);
+                        e.ToString();
+                        
+                    }
+                    
+                   
+                }
+                entdados.SaveToFile();
+
+                var entlines = File.ReadAllLines(entdadosFile).ToList();
+                entlines.Add("&BLOCO-MT USINAS NAO ENCONTRATADAS DE ACORDO COM BLOCO UT");
+                UsiLInesERRO.ForEach(x =>
+                {
+                    entlines.Add(x);
+                });
+                File.WriteAllLines(entdadosFile, entlines);
+            }
         }
 
         public static void TrataRhe(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo, Compass.CommomLibrary.EntdadosDat.EntdadosDat entdadosRef, string fileEntdadosRef, string entdadosFile)

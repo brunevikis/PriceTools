@@ -8,7 +8,20 @@ namespace Compass.CommomLibrary.EntdadosDat
     public class MtBlock : BaseBlock<MtLine>
     {
 
+        string header =
+@"&
+&
+&   MANUTENCAO TERMELETRICA
+&
+&   ute  ug  di hi m df hf m F
+&X  XXX XXX  xx xx x xx xx x x
+";
 
+        public override string ToText()
+        {
+
+            return header + base.ToText();
+        }
 
 
     }
@@ -24,7 +37,7 @@ namespace Compass.CommomLibrary.EntdadosDat
         public string DiaFinal { get { return this[6].ToString(); } set { this[6] = value; } }
         public int HoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
         public int MeiaHoraFinal { get { return (int)this[8]; } set { this[8] = value; } }
-        public int Dispunidade { get { return (int)this[9]; } set { this[9] = value; } }
+        public int DispUnidade { get { return (int)this[9]; } set { this[9] = value; } }
 
         public override BaseField[] Campos { get { return MtCampos; } }
 
