@@ -4119,8 +4119,20 @@ namespace Compass.DecompToolsShellX
                     if (command.Count() > 1 && command[1] == "true")
                     {
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 5000);
+                        string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem.sh";
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
+                        bool sucesso = DessemAutorun(cloneDir, comandoDS);
+                        if (sucesso)
+                        {
+                            string frase = "Deck convertido ONS->CCEE encaminhado para fila de execução. Caminho = " + cloneDir;
+                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; thamires.baptista@enercore.com.br", "AUTORUN DESSEM ONS->CCEE");
+                        }
+                        else
+                        {
+                            string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução. Caminho = " + cloneDir;
+                            Compass.CommomLibrary.Tools.SendMail(info, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
+                        }
+
                     }
                     else
                     {
@@ -4360,8 +4372,9 @@ namespace Compass.DecompToolsShellX
 
 
                 RestsegRstlpp(dataEstudo, dir, deckRefCCEE);
+                var entdadosNew = deckestudo[CommomLibrary.Dessem.DeckDocument.entdados].Document as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
 
-                TrataMT(entdados, entdadosFile, diretorioBase, dataEstudo);
+                TrataMT( entdadosFile, diretorioBase, dataEstudo);
 
                 #endregion
 
@@ -4821,10 +4834,11 @@ namespace Compass.DecompToolsShellX
             entdados.SaveToFile();
         }
 
-        public static void TrataMT(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, string entdadosFile, string diretorioBase, DateTime dataEstudo)
+        public static void TrataMT( string entdadosFile, string diretorioBase, DateTime dataEstudo)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
-
+            var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
+            //
             List<string> UsiLInes = new List<string>();
             List<string> UsiLInesERRO = new List<string>();
             var patsFiles = System.IO.Directory.GetFiles(diretorioBase, "pat*", SearchOption.AllDirectories).ToList();
