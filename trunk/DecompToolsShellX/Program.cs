@@ -4448,7 +4448,7 @@ namespace Compass.DecompToolsShellX
                 //var texto = "Defina um diretório Decomp para copiar MAPCUT e CORTDECO";
                 //MessageBox.Show(texto, "ATENCÃO!");
 
-                //Thread thread = new Thread(MapcutCortedeco);
+                Thread thread = new Thread(MapcutCortedeco);
                 //thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
                 // thread.Start(dirTosave);
                 //thread.Join(); //Wait for the thread to end      
@@ -4821,7 +4821,7 @@ namespace Compass.DecompToolsShellX
             entdados.SaveToFile();
         }
 
-        public static void TrataMT(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, string entdadosFile, string diretorioBase,DateTime dataEstudo)
+        public static void TrataMT(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, string entdadosFile, string diretorioBase, DateTime dataEstudo)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
 
@@ -4889,17 +4889,17 @@ namespace Compass.DecompToolsShellX
                             mtl.MeiaHoraFinal = dataFim.Minute < 29 ? 0 : dataFim.Minute < 59 ? 1 : 0;
                             entdados.BlocoMt.Add(mtl);
 
-                           // UsiLInes.Remove(usil);
+                            // UsiLInes.Remove(usil);
                         }
                     }
                     catch (Exception e)
                     {
                         UsiLInesERRO.Add(usil);
                         e.ToString();
-                        
+
                     }
-                    
-                   
+
+
                 }
                 entdados.SaveToFile();
 
@@ -5301,14 +5301,50 @@ namespace Compass.DecompToolsShellX
             else
                 return;
 
-            corte_tendencia(new string[] { dir });
+            var deck = DeckFactory.CreateDeck(dir);
+
+            if ((deck is Compass.CommomLibrary.Dessem.Deck))
+            {
+                corte_Dessem(dir);
+            }
+            else
+            {
+                corte_tendencia(new string[] { dir });
+
+            }
+
+        }
+
+        static void corte_Dessem(string deck)
+        {
+            try
+            {
+
+                if (deck.Count() > 0)
+                {
+                    Thread thread = new Thread(cortesDessemTHSTA);
+                    thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+                    thread.Start(deck);
+                    thread.Join(); //Wait for the thread to end      
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+
+            }
         }
 
         static void corte_tendencia(params string[] decks)
         {
             try
             {
-
+                
                 if (decks.Count() > 0)
                 {
                     Thread thread = new Thread(cortesTHSTA);
@@ -5822,6 +5858,11 @@ namespace Compass.DecompToolsShellX
             frm.ShowDialog();
         }
 
+        static void cortesDessemTHSTA(object paths)
+        {
+            var frm = new FrmMapCorteDS((string)paths);
+            frm.ShowDialog();
+        }
 
         static void cortesTHSTA(object paths)
         {

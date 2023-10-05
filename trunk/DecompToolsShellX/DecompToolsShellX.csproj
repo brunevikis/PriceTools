@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>281</ApplicationRevision>
+    <ApplicationRevision>282</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -184,6 +184,12 @@
     <Compile Include="FrmGraphDp.Designer.cs">
       <DependentUpon>FrmGraphDp.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmMapCorteDS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMapCorteDS.Designer.cs">
+      <DependentUpon>FrmMapCorteDS.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPldAlter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -330,6 +336,9 @@
     <EmbeddedResource Include="FrmGraphDp.resx">
       <DependentUpon>FrmGraphDp.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMapCorteDS.resx">
+      <DependentUpon>FrmMapCorteDS.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmOnsReCcee .resx">
       <DependentUpon>FrmOnsReCcee .cs</DependentUpon>
