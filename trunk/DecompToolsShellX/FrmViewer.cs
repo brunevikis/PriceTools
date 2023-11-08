@@ -456,6 +456,18 @@ namespace Compass.DecompToolsShellX
 
             }
 
+            foreach (var sub in submercados)
+            {
+                foreach (var item in orderedResults)
+                {
+                    l1.Add(item.PLD_DESSEM_Result.Where(x => x.submercado == sub).Select(x => x.PLD).Average().ToString("N2"));
+                }
+                l1.Insert(0, "MEDIA");
+
+                l1.Insert(1, sub);
+                dtPld.Rows.Add(l1.ToArray());
+                l1.Clear();
+            }
 
             this.Text = "Resultados - " + commonPath;
 
@@ -925,6 +937,14 @@ namespace Compass.DecompToolsShellX
                     dtPld.Rows.Add(l1.ToArray());
                     l1.Clear();
                 }
+                l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "SE").Select(x => x.PLD).Average().ToString("N2"));
+                l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "S").Select(x => x.PLD).Average().ToString("N2"));
+                l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "NE").Select(x => x.PLD).Average().ToString("N2"));
+                l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "N").Select(x => x.PLD).Average().ToString("N2"));
+                l1.Insert(0,"MEDIA");
+                dtPld.Rows.Add(l1.ToArray());
+
+                l1.Clear();
 
                 dataSources[i] = rdsPld;//
 

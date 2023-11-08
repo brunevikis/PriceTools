@@ -123,6 +123,7 @@ namespace Compass.DecompToolsShellX
             string decompRef = TextBoxDcRef.Text;
             string dessemRef = TextBoxDsRef.Text;
 
+            bool copiouMapCort = false;
 
             string mapcut = "mapcut.rv";
             string cortdeco = "cortdeco.rv";
@@ -136,8 +137,13 @@ namespace Compass.DecompToolsShellX
                     if ((filename.ToLower().Contains(mapcut)) || (filename.ToLower().Contains(cortdeco)))
                     {
                         File.Copy(arq, Path.Combine(WorkDir, filename), true);
+                        copiouMapCort = true;
                     }
                 }
+            }
+            if (copiouMapCort)
+            {
+                File.WriteAllText(Path.Combine(WorkDir, "CopiMapCort.log"), "OK");
             }
             if (Directory.Exists(dessemRef))
             {

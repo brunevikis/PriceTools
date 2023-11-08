@@ -67,7 +67,7 @@ namespace Compass.DecompToolsShellX
             //         < add key = "userlogin" value = "douglas.canducci@cpas.com.br" />
             //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
             //resultados "C:\Development\Implementacoes\verResultados\202210_oficial_umido_3009\bkprvo"
-
+            //resultado K:\teste\dessemTESTE\resultados\Dessem_RevExpand-09-11-2023_arquivos-renovaveis-NP_DP_Tucurui_+6GWm_Angra2
             //< add key = "passwordlogin" value = "Pas5Word" />
             //dessem2ccee "K:\5_dessem\2022_08\RV1\DS_ONS_082022_RV1D11|true"
             //previvaz "C:\Files\16_Chuva_Vazao\2022_05\RV3\22-05-18\testeSE_Bruno\SCP_CV_ACOMPH_FUNC_d-1_EURO\Propagacoes_Automaticas.txt"
@@ -4177,12 +4177,30 @@ namespace Compass.DecompToolsShellX
                     if (ex.ToString().Contains("Processo Interrompido!!!convertdstoccee"))
                     {
                         texto = "Processo Interrompido!!!";
+                        Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
+                        if (Directory.Exists(cloneDir))
+                        {
+                            Directory.Delete(cloneDir, true);
+                        }
                     }
-                    Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
-                    if (Directory.Exists(cloneDir))
+                    else if (ex.ToString().Contains("Processo Interrompido!!!Mapcut e Cortdeco do Decomp referência não encontrados"))
                     {
-                        Directory.Delete(cloneDir, true);
+                        texto = "Processo Interrompido!!!Mapcut e Cortdeco do Decomp referência não encontrados";
+                        MessageBox.Show(texto, "Caption");
+                        if (Directory.Exists(cloneDir))
+                        {
+                            Directory.Delete(cloneDir, true);
+                        }
                     }
+                    else
+                    {
+                        Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
+                        if (Directory.Exists(cloneDir))
+                        {
+                            Directory.Delete(cloneDir, true);
+                        }
+                    }
+                    
                 }
 
 
@@ -4232,7 +4250,11 @@ namespace Compass.DecompToolsShellX
                 //thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
                 //thread.Start(dir);
                 //thread.Join(); //Wait for the thread to end      
+                if (!File.Exists(Path.Combine(dir, "CopiMapCort.log")))
+                {
+                    throw new NotImplementedException("Processo Interrompido!!!Mapcut e Cortdeco do Decomp referência não encontrados");
 
+                }
                 deckRefCCEE = File.ReadAllText(Path.Combine(dir, "dir.txt"));
                 if (!Directory.Exists(deckRefCCEE))
                 {
@@ -4375,6 +4397,16 @@ namespace Compass.DecompToolsShellX
                 var entdadosNew = deckestudo[CommomLibrary.Dessem.DeckDocument.entdados].Document as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
 
                 TrataMT( entdadosFile, diretorioBase, dataEstudo);
+
+                #endregion
+
+                #region trata operuh
+
+                var operuhCCEErefFile = deckCCEErefDS[CommomLibrary.Dessem.DeckDocument.operuh].Document.File;
+                var operuhFile = deckestudo[CommomLibrary.Dessem.DeckDocument.operuh].Document.File;
+
+                TrataOperuh(operuhCCEErefFile, operuhFile);  
+
 
                 #endregion
 
@@ -4927,6 +4959,61 @@ namespace Compass.DecompToolsShellX
             }
         }
 
+        public static void TrataOperuh(string operuhRefFile, string operuhFile)
+        {
+            List<string> restComment = new List<string>();
+            List<string> restUnComment = new List<string>();
+
+            List<string> arquivoFinal = new List<string>();
+                //var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            //
+            var refLinhas = File.ReadAllLines(operuhRefFile).ToList();
+            var linhas = File.ReadAllLines(operuhFile).ToList();
+
+            refLinhas.Where(x => x.StartsWith("&OPERUH")).ToList().ForEach(x =>
+            {
+                string num = x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[2];
+                restComment.Add(num);
+            });
+
+            refLinhas.Where(x => x.StartsWith("OPERUH")).ToList().ForEach(x =>
+            {
+                string num = x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[2];
+                restUnComment.Add(num);
+            });
+
+            foreach (var lin in linhas)
+            {
+                string newline = lin;
+                if (newline.StartsWith("&OPERUH"))
+                {
+                    string numR = newline.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[2];
+                    if (restUnComment.Any(x => x == numR))
+                    {
+                        arquivoFinal.Add(newline.Substring(1));
+                        continue;
+                    }
+
+                }
+                else if (newline.StartsWith("OPERUH"))
+                {
+                    string numR = newline.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[2];
+                    if (restComment.Any(x => x == numR))
+                    {
+                        arquivoFinal.Add("&" + newline);
+                        continue;
+                    }
+                }
+                
+                
+                    arquivoFinal.Add(lin);
+                
+            }
+
+            File.WriteAllLines(operuhFile, arquivoFinal);
+            // restComment = refLinhas.Where(x => x.StartsWith("&OPERUH")).Select(x => x.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[2])
+
+        }
         public static void TrataRhe(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo, Compass.CommomLibrary.EntdadosDat.EntdadosDat entdadosRef, string fileEntdadosRef, string entdadosFile)
         {
             #region codigo antigo

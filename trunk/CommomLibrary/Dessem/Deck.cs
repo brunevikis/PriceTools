@@ -88,6 +88,8 @@ namespace Compass.CommomLibrary.Dessem
                         return Documents["renovaveis.dat"];
                     case DeckDocument.dadvaz:
                         return Documents["dadvaz.dat"];
+                    case DeckDocument.operuh:
+                        return Documents["operuh.dat"];
                     default:
                         return null;
                 }
@@ -113,6 +115,9 @@ namespace Compass.CommomLibrary.Dessem
                         break;
                     case DeckDocument.dadvaz:
                         documents["dadvaz.dat"] = value;
+                        break;
+                    case DeckDocument.operuh:
+                        documents["operuh.dat"] = value;
                         break;
                     default:
                         break;
