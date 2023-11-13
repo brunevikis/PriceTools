@@ -2318,6 +2318,13 @@ namespace Compass.DecompToolsShellX
             var partsDir = deck.BaseFolder.Split('\\').Last();
             int incremento = 1;
             string tipo = expandEst ? "Expand" : "";
+
+            //bool modifRenovaveis = false;
+            //if (System.Windows.Forms.MessageBox.Show("Deseja Modificar arquivo Renovavies?", "DESSEM-TOOLS", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            //{
+            //    modifRenovaveis = true;
+            //}
+
             for (DateTime d = dateIni; d <= dateFim; d = d.AddDays(1))
             {
                 string folder = Path.Combine(deck.BaseFolder.Replace(partsDir, ""), $"Dessem_Rev{tipo}-" + d.ToString("dd-MM-yyyy"));
@@ -2329,7 +2336,10 @@ namespace Compass.DecompToolsShellX
                 CriarPtoper(folder, incremento, dateDeck);
                 CriarOperuh(folder, incremento, dateDeck, d);
                 CriarEntdados(folder, incremento, dateDeck, d, expandEst);
-                CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
+                //if (modifRenovaveis)
+                //{
+                //    CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
+                //}
                 CriarRespot(folder, incremento, dateDeck, d, expandEst);
                 incremento++;
             }

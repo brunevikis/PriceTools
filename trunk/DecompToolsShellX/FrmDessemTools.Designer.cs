@@ -87,6 +87,7 @@ namespace Compass.DecompToolsShellX
             this.label5 = new System.Windows.Forms.Label();
             this.textResul = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.check_Expand = new System.Windows.Forms.CheckBox();
             this.Iniciar_CompSem = new System.Windows.Forms.Button();
             this.search_CompSem = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -100,7 +101,7 @@ namespace Compass.DecompToolsShellX
             this.Search_Ori = new System.Windows.Forms.Button();
             this.Search_Meta = new System.Windows.Forms.Button();
             this.Search_Exit = new System.Windows.Forms.Button();
-            this.check_Expand = new System.Windows.Forms.CheckBox();
+            this.check_modifRenovaveis = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -740,6 +741,7 @@ namespace Compass.DecompToolsShellX
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.check_modifRenovaveis);
             this.tabPage5.Controls.Add(this.check_Expand);
             this.tabPage5.Controls.Add(this.Iniciar_CompSem);
             this.tabPage5.Controls.Add(this.search_CompSem);
@@ -751,6 +753,16 @@ namespace Compass.DecompToolsShellX
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Dessem Rev";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // check_Expand
+            // 
+            this.check_Expand.AutoSize = true;
+            this.check_Expand.Location = new System.Drawing.Point(242, 82);
+            this.check_Expand.Name = "check_Expand";
+            this.check_Expand.Size = new System.Drawing.Size(110, 17);
+            this.check_Expand.TabIndex = 18;
+            this.check_Expand.Text = "Expandir Estágios";
+            this.check_Expand.UseVisualStyleBackColor = true;
             // 
             // Iniciar_CompSem
             // 
@@ -878,15 +890,16 @@ namespace Compass.DecompToolsShellX
             this.Search_Exit.UseVisualStyleBackColor = true;
             this.Search_Exit.Click += new System.EventHandler(this.Search_Exit_Click);
             // 
-            // check_Expand
+            // check_modifRenovaveis
             // 
-            this.check_Expand.AutoSize = true;
-            this.check_Expand.Location = new System.Drawing.Point(242, 82);
-            this.check_Expand.Name = "check_Expand";
-            this.check_Expand.Size = new System.Drawing.Size(110, 17);
-            this.check_Expand.TabIndex = 18;
-            this.check_Expand.Text = "Expandir Estágios";
-            this.check_Expand.UseVisualStyleBackColor = true;
+            this.check_modifRenovaveis.AutoSize = true;
+            this.check_modifRenovaveis.Location = new System.Drawing.Point(384, 82);
+            this.check_modifRenovaveis.Name = "check_modifRenovaveis";
+            this.check_modifRenovaveis.Size = new System.Drawing.Size(129, 17);
+            this.check_modifRenovaveis.TabIndex = 19;
+            this.check_modifRenovaveis.Text = "Modificar Renováveis";
+            this.check_modifRenovaveis.UseVisualStyleBackColor = true;
+            this.check_modifRenovaveis.Visible = false;
             // 
             // FrmDessemTools
             // 
@@ -1003,5 +1016,6 @@ namespace Compass.DecompToolsShellX
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox text_ComplDir;
         private System.Windows.Forms.CheckBox check_Expand;
+        private System.Windows.Forms.CheckBox check_modifRenovaveis;
     }
 }

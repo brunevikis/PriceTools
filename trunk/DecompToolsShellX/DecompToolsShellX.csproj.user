@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>resultados "K:\teste\dessemTESTE\resultados"</StartArguments>
+    <StartArguments>dessemtools "K:\teste\dessemTESTE\dstools\expand\debug\DS_CCEE_112023_SEMREDE_RV2D12"</StartArguments>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup>
