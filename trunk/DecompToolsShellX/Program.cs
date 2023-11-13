@@ -2961,8 +2961,9 @@ namespace Compass.DecompToolsShellX
         {
             float valor = 0;
 
-            var linhasDp = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia).Select(x => x.Demanda).Sum();
-            valor = linhasDp * 0.05f;
+            //var linhasDp = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia).Select(x => x.Demanda).Sum();
+            var linhasDpSeSul = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia &&( x.Subsist == 1 || x.Subsist == 2)).Select(x => x.Demanda).Sum();
+            valor = linhasDpSeSul * 0.05f;
             return valor;
         }
 
