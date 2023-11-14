@@ -2962,7 +2962,7 @@ namespace Compass.DecompToolsShellX
             float valor = 0;
 
             //var linhasDp = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia).Select(x => x.Demanda).Sum();
-            var linhasDpSeSul = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia &&( x.Subsist == 1 || x.Subsist == 2)).Select(x => x.Demanda).Sum();
+            var linhasDpSeSul = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia && (x.Subsist == 1 || x.Subsist == 2)).Select(x => x.Demanda).Sum();
             valor = linhasDpSeSul * 0.05f;
             return valor;
         }
@@ -3564,12 +3564,16 @@ namespace Compass.DecompToolsShellX
             diaLine.diainicial = dia;
 
             var vazoes = dadvaz.BlocoVazoes.ToList();
+            var comment = vazoes.First().Comment;
+
 
             foreach (var vaz in vazoes)
             {
-                int diateste = Convert.ToInt32(vaz.DiaInic);
+                int diateste = vaz.DiaInic.Trim().ToUpper() == "I" ? dateBase.Day : Convert.ToInt32(vaz.DiaInic);
+                float vazao = vaz.Vazao;
+
                 DateTime dataTest;
-                if (diateste < dateBase.Day)
+                if (diateste < dateBase.Day)//trata viradas de meses para fazer as comparaçoes com datas 
                 {
                     dataTest = new DateTime(dateBase.AddMonths(1).Year, dateBase.AddMonths(1).Month, diateste);
                 }
@@ -3578,17 +3582,58 @@ namespace Compass.DecompToolsShellX
                     dataTest = new DateTime(dateBase.Year, dateBase.Month, diateste);
                 }
 
-                dataTest = dataTest.AddDays(incremento);
+                int regs = vazoes.Where(x => x.Usina == vaz.Usina).ToList().Count();
 
-                if (dataTest > dataFim)
+                if (regs == 1)//só existe uma linha logo só e necessario ajustar a data 
                 {
-                    dadvaz.BlocoVazoes.Remove(vaz);
+                    vaz.DiaInic = $"{data.Day:00}";// altera o dia de acordo com a data do deck
                 }
-                else
+                else if(dataTest < data)
                 {
-                    vaz.DiaInic = $"{dataTest.Day:00}";
+                    var vazSeg = vazoes.Where(x => x.Usina == vaz.Usina && Convert.ToInt32(x.DiaInic) == dataTest.AddDays(1).Day).FirstOrDefault();
+                    if (vazSeg == null)
+                    {
+                        var newVaz = new CommomLibrary.Dadvaz.VazoesLine();
+                        newVaz.DiaInic = $"{dataTest.AddDays(1).Day:00}";
+                        newVaz.DiaFinal = $"F";
+                        newVaz.Usina = vaz.Usina;
+                        newVaz.Nome = vaz.Nome;
+                        newVaz.TipoVaz = vaz.TipoVaz;
+                        newVaz.Vazao = vaz.Vazao;
+
+                        dadvaz.BlocoVazoes.InsertAfter(vaz, newVaz);
+                        dadvaz.BlocoVazoes.Remove(vaz);
+                    }
+                    else if (dataTest < data)
+                    {
+                        dadvaz.BlocoVazoes.Remove(vaz);
+                    }
                 }
 
+                
+
+
+                //dataTest = dataTest.AddDays(incremento);
+
+                //if (dataTest > dataFim)
+                //{
+                //    dadvaz.BlocoVazoes.Remove(vaz);//remove linhas com data alem do horizonte do periodo
+                //    dadvaz.BlocoVazoes.inser
+                //}
+                //else
+                //{
+                //    vaz.DiaInic = $"{dataTest.Day:00}";// altera o dia de acordo com a data do deck
+                //}
+
+
+                //else //apenas vai apagar os dias passados 
+                //{
+                //    if (dataTest < data)
+                //    {
+                //        dadvaz.BlocoVazoes.Remove(vaz);
+                //    }
+                //}
+                /////////////
                 //if (data.Day >= 20)
                 //{
                 //    if (diateste < data.Day && diateste > 10)
@@ -3609,6 +3654,27 @@ namespace Compass.DecompToolsShellX
                 //}
             }
 
+            foreach (var item in dadvaz.BlocoVazoes.ToList())
+            {
+                int diateste = item.DiaInic.Trim().ToUpper() == "I" ? dateBase.Day : Convert.ToInt32(item.DiaInic);
+
+                DateTime dataTest;
+                if (diateste < dateBase.Day)//trata viradas de meses para fazer as comparaçoes com datas 
+                {
+                    dataTest = new DateTime(dateBase.AddMonths(1).Year, dateBase.AddMonths(1).Month, diateste);
+                }
+                else
+                {
+                    dataTest = new DateTime(dateBase.Year, dateBase.Month, diateste);
+                }
+
+                if (dataTest < data)
+                {
+                    dadvaz.BlocoVazoes.Remove(item);
+                }
+            }
+
+            dadvaz.BlocoVazoes.First().Comment = comment;
 
             dadvaz.SaveToFile(createBackup: true);
         }
@@ -4211,7 +4277,7 @@ namespace Compass.DecompToolsShellX
                             Directory.Delete(cloneDir, true);
                         }
                     }
-                    
+
                 }
 
 
@@ -4407,7 +4473,7 @@ namespace Compass.DecompToolsShellX
                 RestsegRstlpp(dataEstudo, dir, deckRefCCEE);
                 var entdadosNew = deckestudo[CommomLibrary.Dessem.DeckDocument.entdados].Document as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
 
-                TrataMT( entdadosFile, diretorioBase, dataEstudo);
+                TrataMT(entdadosFile, diretorioBase, dataEstudo);
 
                 #endregion
 
@@ -4416,7 +4482,7 @@ namespace Compass.DecompToolsShellX
                 var operuhCCEErefFile = deckCCEErefDS[CommomLibrary.Dessem.DeckDocument.operuh].Document.File;
                 var operuhFile = deckestudo[CommomLibrary.Dessem.DeckDocument.operuh].Document.File;
 
-                TrataOperuh(operuhCCEErefFile, operuhFile);  
+                TrataOperuh(operuhCCEErefFile, operuhFile);
 
 
                 #endregion
@@ -4877,7 +4943,7 @@ namespace Compass.DecompToolsShellX
             entdados.SaveToFile();
         }
 
-        public static void TrataMT( string entdadosFile, string diretorioBase, DateTime dataEstudo)
+        public static void TrataMT(string entdadosFile, string diretorioBase, DateTime dataEstudo)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
@@ -4976,7 +5042,7 @@ namespace Compass.DecompToolsShellX
             List<string> restUnComment = new List<string>();
 
             List<string> arquivoFinal = new List<string>();
-                //var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            //var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             //
             var refLinhas = File.ReadAllLines(operuhRefFile).ToList();
             var linhas = File.ReadAllLines(operuhFile).ToList();
@@ -5015,10 +5081,10 @@ namespace Compass.DecompToolsShellX
                         continue;
                     }
                 }
-                
-                
-                    arquivoFinal.Add(lin);
-                
+
+
+                arquivoFinal.Add(lin);
+
             }
 
             File.WriteAllLines(operuhFile, arquivoFinal);
@@ -5456,7 +5522,7 @@ namespace Compass.DecompToolsShellX
         {
             try
             {
-                
+
                 if (decks.Count() > 0)
                 {
                     Thread thread = new Thread(cortesTHSTA);
