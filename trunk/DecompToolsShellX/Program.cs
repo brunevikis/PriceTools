@@ -56,8 +56,8 @@ namespace Compass.DecompToolsShellX
             actions.Add("carregarprevs", carregaPrevs);
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
-            //actions.Add("getpatamares", getPatamares);
-            // actions.Add("getpatamaresext", getPatamaresExt);
+            actions.Add("getpatamares", getPatamares);
+            actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
 
 
@@ -303,9 +303,10 @@ namespace Compass.DecompToolsShellX
         }
         static void getPatamaresExt(string teste)
         {
-            int ano = 2023;
-            int anoFIm = 2033;
+            int ano = 2024;
+            int anoFIm = 2024;
             bool patamares2023 = false;
+            bool patamares2024 = false;
 
 
             DateTime data = new DateTime(ano, 1, 1);
@@ -316,7 +317,8 @@ namespace Compass.DecompToolsShellX
 
             for (DateTime i = data; i <= fim; i = i.AddDays(1))
             {
-                patamares2023 = i.Year >= 2023;
+                patamares2023 = i.Year == 2023;
+                patamares2024 = i.Year >= 2024;
                 string dia = "";
                 string tipo = "";
 
@@ -402,7 +404,7 @@ namespace Compass.DecompToolsShellX
                     default:
                         break;
                 }
-                var dados = Tools.GetIntervalosHoararios(i, patamares2023);
+                var dados = Tools.GetIntervalosHoararios(i, patamares2023, patamares2024);
 
                 int pesado = dados.Where(x => x.Value.ToUpper() == "PESADA").Count();
                 int medio = dados.Where(x => x.Value.ToUpper() == "MEDIA").Count();
@@ -418,8 +420,11 @@ namespace Compass.DecompToolsShellX
         static void getPatamares(string anoArg)
         {
             bool patamares2023 = false;
+            bool patamares2024 = false;
             int ano = Convert.ToInt32(anoArg);
-            patamares2023 = ano >= 2023;
+            patamares2023 = ano == 2023;
+            patamares2024 = ano >= 2024;
+
             DateTime inicio = new DateTime(ano, 1, 1);
             DateTime fim = new DateTime(ano, 12, 31);
             List<string> patamareDeCarga = new List<string>();
@@ -436,7 +441,7 @@ namespace Compass.DecompToolsShellX
                     {
                         semanaFim = semanaFim.AddDays(1);
                     }
-                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023);
+                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023, patamares2024);
                     patamareDeCarga.Add("(" + semanaInicio.ToString("yyyyMM") + numeroSemana.ToString() + "," + pat.Item1.ToString() + "," + pat.Item2.ToString() + "," + pat.Item3 + "),");
                     d = semanaFim;
                     numeroSemana = d.AddDays(1).Month == semanaInicio.Month ? numeroSemana + 1 : 1;
@@ -1107,7 +1112,7 @@ namespace Compass.DecompToolsShellX
                 {
                     texto = "Deck não reconhecido para a execução por falta de arquivos!";
                 }
-                Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
+                Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
 
 
             }
@@ -2526,7 +2531,7 @@ namespace Compass.DecompToolsShellX
                         if (command.Count() > 1 && command[1] == "true")
                         {
 
-                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Conversão Decodess");
+                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Conversão Decodess");
 
                         }
                     }
@@ -2545,7 +2550,7 @@ namespace Compass.DecompToolsShellX
                         {
                             texto = "Deck não reconhecido para a execução por falta de arquivos!";
                         }
-                        Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha na conversão Decodess");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha na conversão Decodess");
                         if (Directory.Exists(cloneDir))
                         {
                             Directory.Delete(cloneDir, true);
@@ -3050,9 +3055,10 @@ namespace Compass.DecompToolsShellX
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
 
             #region BLOCO TM
-            bool patamres2023 = dataEstudo.Year >= 2023;
+            bool patamres2023 = dataEstudo.Year == 2023;
+            bool patamares2024 = dataEstudo.Year >= 2024;
 
-            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamres2023);
+            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamres2023, patamares2024);
             string comentario = entdados.BlocoTm.First().Comment;
             for (DateTime d = dataEstudo.AddDays(-7); d <= dataEstudo; d = d.AddDays(1))
             {
@@ -3588,7 +3594,7 @@ namespace Compass.DecompToolsShellX
                 {
                     vaz.DiaInic = $"{data.Day:00}";// altera o dia de acordo com a data do deck
                 }
-                else if(dataTest < data)
+                else if (dataTest < data)
                 {
                     var vazSeg = vazoes.Where(x => x.Usina == vaz.Usina && Convert.ToInt32(x.DiaInic) == dataTest.AddDays(1).Day).FirstOrDefault();
                     if (vazSeg == null)
@@ -3610,7 +3616,7 @@ namespace Compass.DecompToolsShellX
                     }
                 }
 
-                
+
 
 
                 //dataTest = dataTest.AddDays(incremento);
@@ -4099,7 +4105,7 @@ namespace Compass.DecompToolsShellX
                         var texto = "Deck DESSEM CCEE agendado para execução!";
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; thamires.baptista@enercore.com.br", "AUTORUN DESSEM CCEE");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br", "AUTORUN DESSEM CCEE");
 
                     }
                     else
@@ -4119,7 +4125,7 @@ namespace Compass.DecompToolsShellX
                 {
                     var texto = "Erro: " + ex.ToString();
 
-                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; thamires.baptista@enercore.com.br", "Falha AUTORUN DESSEM CCEE");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br", "Falha AUTORUN DESSEM CCEE");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);
@@ -4202,12 +4208,12 @@ namespace Compass.DecompToolsShellX
                         if (sucesso)
                         {
                             string frase = "Deck convertido ONS->CCEE encaminhado para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; thamires.baptista@enercore.com.br", "AUTORUN DESSEM ONS->CCEE");
+                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br", "AUTORUN DESSEM ONS->CCEE");
                         }
                         else
                         {
                             string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(info, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
+                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
                         }
 
                     }
@@ -4227,7 +4233,7 @@ namespace Compass.DecompToolsShellX
                     if (command.Count() > 1 && command[1] == "true")
                     {
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
                     }
                 }
 
@@ -4242,7 +4248,7 @@ namespace Compass.DecompToolsShellX
                     {
                         texto = "Deck não reconhecido para a execução por falta de arquivos!";
                     }
-                    Compass.CommomLibrary.Tools.SendMail(texto, "thamires.baptista@enercore.com.br; bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);

@@ -348,7 +348,7 @@ new DateTime(2033,12,25),
 
             };
 
-        public static Tuple<int, int, int> GetHorasPatamares(DateTime ini, DateTime fim, bool patamares2019, bool patamares2023 = false)
+        public static Tuple<int, int, int> GetHorasPatamares(DateTime ini, DateTime fim, bool patamares2019, bool patamares2023 = false, bool patamares2024 = false)
         {
             Tuple<int, int, int>[,] horasPatamares;
 
@@ -402,6 +402,24 @@ new DateTime(2033,12,25),
                 { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
                 { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
                 { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) }//
+            };
+            }
+
+            if (patamares2024)
+            {
+                horasPatamares = new Tuple<int, int, int>[,] {
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//
+                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) }//
             };
             }
 
@@ -612,7 +630,7 @@ new DateTime(2033,12,25),
 
         }
 
-        public static Dictionary<int, string> GetIntervalosHoararios(DateTime data, bool pat2023 = false)
+        public static Dictionary<int, string> GetIntervalosHoararios(DateTime data, bool pat2023 = false, bool pat2024 = false)
         {
             var feriados = Tools.feriados;
             Boolean ehFeriado = false;
@@ -678,6 +696,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> NOVaMARutil2024 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "MEDIA"},
+                    {9, "MEDIA"},
+                    {10, "MEDIA"},
+                    {11, "MEDIA"},
+                    {12, "MEDIA"},
+                    {13, "MEDIA"},
+                    {14, "PESADA"},
+                    {15, "PESADA"},
+                    {16, "PESADA"},
+                    {17, "PESADA"},
+                    {18, "PESADA"},
+                    {19, "PESADA"},
+                    {20, "PESADA"},
+                    {21, "PESADA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             Dictionary<int, string> NOVaMARfer = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
@@ -707,6 +753,34 @@ new DateTime(2033,12,25),
                 };
 
             Dictionary<int, string> NOVaMARfer2023 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "LEVE"},
+                    {9, "LEVE"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "LEVE"},
+                    {14, "LEVE"},
+                    {15, "LEVE"},
+                    {16, "LEVE"},
+                    {17, "LEVE"},
+                    {18, "MEDIA"},
+                    {19, "MEDIA"},
+                    {20, "MEDIA"},
+                    {21, "MEDIA"},
+                    {22, "MEDIA"},
+                    {23, "LEVE"},
+
+                };
+
+            Dictionary<int, string> NOVaMARfer2024 = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
                     {2, "LEVE"},
@@ -790,6 +864,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> MAIOaAGOutil2024 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "MEDIA"},
+                    {9, "MEDIA"},
+                    {10, "MEDIA"},
+                    {11, "MEDIA"},
+                    {12, "MEDIA"},
+                    {13, "MEDIA"},
+                    {14, "MEDIA"},
+                    {15, "MEDIA"},
+                    {16, "PESADA"},
+                    {17, "PESADA"},
+                    {18, "PESADA"},
+                    {19, "PESADA"},
+                    {20, "PESADA"},
+                    {21, "PESADA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             Dictionary<int, string> MAIOaAGOfer = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
@@ -819,6 +921,34 @@ new DateTime(2033,12,25),
                 };
 
             Dictionary<int, string> MAIOaAGOfer2023 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "LEVE"},
+                    {9, "LEVE"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "LEVE"},
+                    {14, "LEVE"},
+                    {15, "LEVE"},
+                    {16, "LEVE"},
+                    {17, "LEVE"},
+                    {18, "MEDIA"},
+                    {19, "MEDIA"},
+                    {20, "MEDIA"},
+                    {21, "MEDIA"},
+                    {22, "LEVE"},
+                    {23, "LEVE"},
+
+                };
+
+            Dictionary<int, string> MAIOaAGOfer2024 = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
                     {2, "LEVE"},
@@ -902,6 +1032,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> ABRSETOUTutil2024 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "MEDIA"},
+                    {9, "MEDIA"},
+                    {10, "MEDIA"},
+                    {11, "MEDIA"},
+                    {12, "MEDIA"},
+                    {13, "MEDIA"},
+                    {14, "PESADA"},
+                    {15, "PESADA"},
+                    {16, "PESADA"},
+                    {17, "PESADA"},
+                    {18, "PESADA"},
+                    {19, "PESADA"},
+                    {20, "PESADA"},
+                    {21, "PESADA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             Dictionary<int, string> ABRSETOUTfer = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
@@ -958,6 +1116,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> ABRSETOUTfer2024 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "LEVE"},
+                    {9, "LEVE"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "LEVE"},
+                    {14, "LEVE"},
+                    {15, "LEVE"},
+                    {16, "LEVE"},
+                    {17, "LEVE"},
+                    {18, "MEDIA"},
+                    {19, "MEDIA"},
+                    {20, "MEDIA"},
+                    {21, "MEDIA"},
+                    {22, "LEVE"},
+                    {23, "LEVE"},
+
+                };
+
             switch (data.Month)
             {
                 case 1:
@@ -971,6 +1157,10 @@ new DateTime(2033,12,25),
                         {
                             return NOVaMARfer2023;
                         }
+                        else if (pat2024)
+                        {
+                            return NOVaMARfer2024;
+                        }
                         else
                             return NOVaMARfer;
                     }
@@ -979,6 +1169,10 @@ new DateTime(2033,12,25),
                         if (pat2023)
                         {
                             return NOVaMARutil2023;
+                        }
+                        else if (pat2024)
+                        {
+                            return NOVaMARutil2024;
                         }
                         else
                             return NOVaMARutil;
@@ -992,6 +1186,10 @@ new DateTime(2033,12,25),
                         {
                             return ABRSETOUTfer2023;
                         }
+                        else if (pat2024)
+                        {
+                            return ABRSETOUTfer2024;
+                        }
                         else
                             return ABRSETOUTfer;
                     }
@@ -1000,6 +1198,10 @@ new DateTime(2033,12,25),
                         if (pat2023)
                         {
                             return ABRSETOUTutil2023;
+                        }
+                        else if (pat2024)
+                        {
+                            return ABRSETOUTutil2024;
                         }
                         else
                             return ABRSETOUTutil;
@@ -1014,6 +1216,10 @@ new DateTime(2033,12,25),
                         {
                             return MAIOaAGOfer2023;
                         }
+                        else if (pat2024)
+                        {
+                            return MAIOaAGOfer2024;
+                        }
                         else
                             return MAIOaAGOfer;
                     }
@@ -1022,6 +1228,10 @@ new DateTime(2033,12,25),
                         if (pat2023)
                         {
                             return MAIOaAGOutil2023;
+                        }
+                        else if (pat2024)
+                        {
+                            return MAIOaAGOutil2024;
                         }
                         else
                             return MAIOaAGOutil;
@@ -1185,11 +1395,11 @@ new DateTime(2033,12,25),
         //    this.HorasPat3 = pat.Item3;
         //}
 
-        public SemanaOperativa(DateTime i, DateTime f, bool patamares2019, bool patamares2023 = false)
+        public SemanaOperativa(DateTime i, DateTime f, bool patamares2019, bool patamares2023 = false, bool patamares2024 = false)
         {
             this.Inicio = i;
             this.Fim = f;
-            var pat = Tools.GetHorasPatamares(i, f, patamares2019, patamares2023);
+            var pat = Tools.GetHorasPatamares(i, f, patamares2019, patamares2023, patamares2024);
             this.HorasPat1 = pat.Item1;
             this.HorasPat2 = pat.Item2;
             this.HorasPat3 = pat.Item3;
@@ -1228,7 +1438,7 @@ new DateTime(2033,12,25),
         {
             this.SemanasOperativas = new List<SemanaOperativa>();
         }
-        public static MesOperativo CreateSemanal(int ano, int mes, bool patamares2019, bool patamares2023 = false)
+        public static MesOperativo CreateSemanal(int ano, int mes, bool patamares2019, bool patamares2023 = false, bool patamares2024 = false)
         {
             var mOper = new MesOperativo();
             mOper.Ano = ano;
@@ -1242,7 +1452,7 @@ new DateTime(2033,12,25),
             while (datetime.Month == mes)
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2023)
+                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2023, patamares2024)
                     );
 
                 datetime = datetime.AddDays(7);
@@ -1251,7 +1461,7 @@ new DateTime(2033,12,25),
             if (datetime.Day == 7)
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa((new DateTime(ano, mes, 1)).AddMonths(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2023)
+                    new SemanaOperativa((new DateTime(ano, mes, 1)).AddMonths(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2023, patamares2024)
                     );
 
                 mOper.Fim = datetime.AddDays(-7);
@@ -1260,11 +1470,11 @@ new DateTime(2033,12,25),
             else
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2023)
+                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2023, patamares2024)
                     );
 
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2023)
+                    new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2023, patamares2024)
                     );
 
                 mOper.Fim = datetime.AddDays(-7);
@@ -1286,7 +1496,7 @@ new DateTime(2033,12,25),
             return mOper;
         }
 
-        public static MesOperativo CreateSemanalDadgnl(int ano, int mes, bool patamares2019)
+        public static MesOperativo CreateSemanalDadgnl(int ano, int mes, bool patamares2019, bool patamares2024 = false)
         {
             var mOper = new MesOperativo();
             mOper.Ano = ano;
@@ -1300,7 +1510,7 @@ new DateTime(2033,12,25),
             while (datetime.Month == mes)
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019)
+                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019,patamares2024)
                     );
 
                 datetime = datetime.AddDays(7);
@@ -1322,7 +1532,7 @@ new DateTime(2033,12,25),
             //    );
 
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019)
+                new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019,patamares2024)
                 );
 
             mOper.Fim = datetime.AddDays(-7);
@@ -1344,7 +1554,7 @@ new DateTime(2033,12,25),
             return mOper;
         }
 
-        public static MesOperativo CreateMensal(int ano, int mes, bool patamares2019, bool patamares2023 = false)
+        public static MesOperativo CreateMensal(int ano, int mes, bool patamares2019, bool patamares2023 = false, bool patamares2024 = false)
         {
             var mOper = new MesOperativo();
 
@@ -1357,10 +1567,10 @@ new DateTime(2033,12,25),
             mOper.Fim = datetime.AddMonths(1).AddDays(-1);
 
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(mOper.Inicio, mOper.Fim, patamares2019, patamares2023)
+                new SemanaOperativa(mOper.Inicio, mOper.Fim, patamares2019, patamares2023, patamares2024)
                 );
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(mOper.Inicio.AddMonths(1), datetime.AddMonths(2).AddDays(-1), patamares2019, patamares2023)
+                new SemanaOperativa(mOper.Inicio.AddMonths(1), datetime.AddMonths(2).AddDays(-1), patamares2019, patamares2023, patamares2024)
                 );
 
             mOper.DiasMes2 = 0;

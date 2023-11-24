@@ -29,4 +29,3 @@ C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.dll
 C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.WebRequest.dll
 C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.xml
 C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.WebRequest.xml
-C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.AssemblyReference.cache

@@ -258,8 +258,10 @@ namespace Compass.Services
             #endregion
 
             #region BLOCO TM
-            bool patamares2023 = dataEstudo.Year >= 2023;
-            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamares2023);
+            bool patamares2023 = dataEstudo.Year == 2023;
+            bool patamares2024 = dataEstudo.Year >= 2024;
+
+            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamares2023, patamares2024);
             string comentario = entdados.BlocoTm.First().Comment;
             for (DateTime d = dataEstudo.AddDays(-7); d <= dataEstudo; d = d.AddDays(1))
             {
@@ -492,7 +494,7 @@ namespace Compass.Services
                         }
                         bool pat2023 = d.Year >= 2023;
 
-                        var intervalosAgruped = Tools.GetIntervalosPatamares(d,pat2023);
+                        var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023);
 
                         foreach (var inter in intervalosAgruped)
                         {
@@ -878,7 +880,7 @@ namespace Compass.Services
                 var dateWeol = inicioRev.AddDays(-1);
 
                 string mesAbrev = Tools.GetMonthNumAbrev(dateWeol.Month);
-               string weolFolder = $@"H:\Middle - Preço\Resultados_Modelos\WEOL\{mesAbrev}\Deck_Previsao_{dateWeol:yyyyMMdd}";
+                string weolFolder = $@"H:\Middle - Preço\Resultados_Modelos\WEOL\{mesAbrev}\Deck_Previsao_{dateWeol:yyyyMMdd}";
                 //string weolFolder = $@"N:\Middle - Preço\Resultados_Modelos\WEOL\{mesAbrev}\Deck_Previsao_{dateWeol:yyyyMMdd}";
 
                 var conjUsiBarRat = File.ReadAllLines(Path.Combine(weolFolder, "Arquivos Entrada", "Conjunto Usina Barra Rateio.txt")).Skip(1).ToList();
@@ -955,7 +957,7 @@ namespace Compass.Services
                 foreach (var eolicaLine in blocoEolica)
                 {
                     var codigo = eolicaLine.NumCodigo;
-                    int codigoInt = Convert.ToInt32(eolicaLine.NumCodigo.Replace(';',' ').Trim());
+                    int codigoInt = Convert.ToInt32(eolicaLine.NumCodigo.Replace(';', ' ').Trim());
                     var nomeCodigo = eolicaLine.Nome.Split('_').First().Trim();
                     var barraReno = Convert.ToInt32(blocoEolicaBarra.Where(x => x.NumCodigo == codigo).Select(x => x.Barra.Replace(';', ' ').Trim()).First());
 
@@ -979,7 +981,7 @@ namespace Compass.Services
                             //{
                             for (int i = 0; i < weols.First().geracoes.Count(); i++)
                             {
-                                
+
 
                                 valorTotal = Math.Round(weols.Where(x => x.dataPrev == dt).Select(x => x.geracoes[i]).Sum());
 
@@ -994,7 +996,7 @@ namespace Compass.Services
 
                                 newl.MeiaHoraIni = fm.ToString() + " ;";
 
-                                if (i == weols.First().geracoes.Count()-1 && fm == 1)
+                                if (i == weols.First().geracoes.Count() - 1 && fm == 1)
                                 {
                                     newl.DiaFim = dt.AddDays(1).Day < 10 ? " " + dt.AddDays(1).Day.ToString() + " ;" : dt.AddDays(1).Day.ToString() + " ;";
                                     newl.HoraFim = " 0 ;";
@@ -1018,7 +1020,7 @@ namespace Compass.Services
                                         newl.MeiaHoraFim = fm.ToString() + " ;";
                                     }
                                 }
-                                
+
                                 string partVal = valorTotal.ToString() + " ;";
                                 while (partVal.Length < 12)
                                 {
@@ -1527,7 +1529,7 @@ namespace Compass.Services
             #region ajustaBlocoCICE
 
             //aqui é criado um bloco auxiliar usando alguns dados do dadger pra futuramente ser adicionado ao entdados 
-           string pathBlocos = "H:\\Middle - Preço\\Resultados_Modelos\\DECODESS\\Arquivos_Base\\BlocosFixos";
+            string pathBlocos = "H:\\Middle - Preço\\Resultados_Modelos\\DECODESS\\Arquivos_Base\\BlocosFixos";
             //string pathBlocos = "N:\\Middle - Preço\\Resultados_Modelos\\DECODESS\\Arquivos_Base\\BlocosFixos";
             var ciceLines = File.ReadAllLines(Path.Combine(pathBlocos, "blocoCICE.txt"));
 
