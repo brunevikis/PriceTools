@@ -56,8 +56,8 @@ namespace Compass.DecompToolsShellX
             actions.Add("carregarprevs", carregaPrevs);
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
-            actions.Add("getpatamares", getPatamares);
-            actions.Add("getpatamaresext", getPatamaresExt);
+            //actions.Add("getpatamares", getPatamares);
+            //actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
 
 
@@ -2340,7 +2340,7 @@ namespace Compass.DecompToolsShellX
                 CriarOperut(folder, incremento, dateDeck);
                 CriarPtoper(folder, incremento, dateDeck);
                 CriarOperuh(folder, incremento, dateDeck, d);
-                CriarEntdados(folder, incremento, dateDeck, d, expandEst);
+                CriarEntdados(folder, incremento, dateDeck, d, expandEst, dateFim);
                 //if (modifRenovaveis)
                 //{
                 //    CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
@@ -3049,10 +3049,11 @@ namespace Compass.DecompToolsShellX
 
             renovaveis.SaveToFile(createBackup: true);
         }
-        public static void CriarEntdados(string path, int incremento, DateTime dataBase, DateTime dataEstudo, bool expandEst)
+        public static void CriarEntdados(string path, int incremento, DateTime dataBase, DateTime dataEstudo, bool expandEst, DateTime fimrev)
         {
             var entdadosFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("entdados")).First();
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
+
 
             #region BLOCO TM
             bool patamres2023 = dataEstudo.Year == 2023;
@@ -3193,14 +3194,149 @@ namespace Compass.DecompToolsShellX
 
             #region BLOCO RHE
 
-            foreach (var rheLine in entdados.BlocoRhe.ToList())
+            //foreach (var rhe in entdados.BlocoRhe.RheGrouped.ToList())
+            //{
+            //    var re = rhe.Value.First();
+            //    if (re.Restricao == 656)
+            //    {
+
+            //    }
+            //    if (re.Restricao == 655)
+            //    {
+
+            //    }
+            //    DateTime dataInicial = new DateTime(dataBase.Year,dataBase.Month, re.DiaInic.Trim() == "I"? dataBase.Day: Convert.ToInt32(re.DiaInic));
+            //    int meiaIni = re.MeiaHoraInic ?? 0;
+            //    dataInicial = dataInicial.AddHours(re.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
+
+            //    DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, re.DiaFinal.Trim() == "F" ? fimrev.Day : Convert.ToInt32(re.DiaFinal));
+            //    int meiaFinal = re.MeiaHoraFinal ?? 0;
+            //    dataFinal = dataFinal.AddHours(re.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
+
+            //    //ajustando viradas de meses 
+            //    if (dataBase.Day < 10)
+            //    {
+            //        if (dataInicial.Day>20)
+            //        {
+            //            dataInicial = dataInicial.AddMonths(-1);
+            //        }
+            //    }
+            //    if (dataBase.Day> dataFinal.Day)
+            //    {
+            //        dataFinal = dataFinal.AddMonths(1);
+            //    }
+            //    //fim ajuste de meses
+            //    TimeSpan ts = dataFinal - dataInicial;
+            //    var difHoras2 = ts.TotalHours;
+            //    foreach (var rh in rhe.Value)
+            //    {
+            //        if (rh.DiaFinal.Trim() == "F")
+            //        {
+            //            continue;
+            //        }
+            //        if (Convert.ToInt32(rh.DiaFinal) <= dataEstudo.Day)
+            //        {
+            //            DateTime dat = dataEstudo;
+            //            int minutosF = rh.MeiaHoraFinal ?? 0;
+            //            dat = dat.AddHours(rh.HoraFinal ?? 0).AddMinutes(minutosF == 0 ? 0 : 30);
+            //            if (dat > fimrev.AddDays(1))
+            //            {
+            //                dat = fimrev.AddDays(1);
+            //            }
+            //            rh.DiaFinal = dat.Day.ToString("00");
+            //            rh.HoraFinal = dat.Hour;
+            //            rh.MeiaHoraFinal = dat.Minute == 30 ? 1 : 0;
+
+            //            rh.DiaInic = dat.AddHours(difHoras2).Day.ToString("00");
+            //            rh.HoraInic = dat.AddHours(difHoras2).Hour;
+            //            rh.MeiaHoraInic = dat.AddHours(difHoras2).Minute == 30 ? 1 : 0;
+            //        }
+            //    }
+
+
+            //}
+            //
+            foreach (var rhe in entdados.BlocoRhe.ToList())
             {
-                string rheDia = rheLine[2];
-                if (rheDia.Trim() != "I")
+                //var re = rhe.Value.First();
+                if (rhe.Restricao == 656)
                 {
-                    rheLine[2] = $"{dataEstudo.Day:00}";
+
                 }
+                if (rhe.Restricao == 181)
+                {
+
+                }
+                DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhe.DiaInic));
+                int meiaIni = rhe.MeiaHoraInic ?? 0;
+                dataInicial = dataInicial.AddHours(rhe.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
+
+                DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaFinal.Trim() == "F" ? fimrev.Day : Convert.ToInt32(rhe.DiaFinal));
+                int meiaFinal = rhe.MeiaHoraFinal ?? 0;
+                dataFinal = dataFinal.AddHours(rhe.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
+
+                //ajustando viradas de meses 
+                if (dataBase.Day < 10)
+                {
+                    if (dataInicial.Day > 20)
+                    {
+                        dataInicial = dataInicial.AddMonths(-1);
+                    }
+                }
+                if (dataBase.Day > dataFinal.Day)
+                {
+                    dataFinal = dataFinal.AddMonths(1);
+                }
+                //fim ajuste de meses
+                TimeSpan ts = dataFinal - dataInicial;
+                var difHoras2 = ts.TotalHours;
+                //foreach (var rh in rhe.Value)
+                //{
+                if (rhe.DiaFinal.Trim() == "F")
+                {
+                    continue;
+                }
+                if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
+                {
+                    DateTime dat = dataEstudo;
+                    if (dataFinal == dataEstudo)
+                    {
+                        dat = dat.AddDays(1);// trata diafinal hora = 0 meiahora = 0 somando 1 dia ja que dataestudo ja vem como zero na hora e meiahora evitando deixar dia ini = dia final na incrementação  
+                    }
+                    int minutosF = rhe.MeiaHoraFinal ?? 0;
+                    dat = dat.AddHours(rhe.HoraFinal ?? 0).AddMinutes(minutosF == 0 ? 0 : 30);
+                    if (dat > fimrev.AddDays(1))
+                    {
+                        dat = fimrev.AddDays(1);// limita pelo fim da semana caso estoure a periodo da semana
+                    }
+                    if (dat == dataEstudo)
+                    {
+                        dat = dat.AddDays(1);//tratamento caso diafinal fique igual inicial no caso do decks do ultimo dia da semana (hora ini = 0 meia ini = 0 hora fim =0 meiafim =0 ), então fica diafinal como o inicio do sabado seguinte
+                    }
+                    rhe.DiaFinal = dat.Day.ToString("D2");
+                    rhe.HoraFinal = dat.Hour;
+                    rhe.MeiaHoraFinal = dat.Minute == 30 ? 1 : 0;
+
+                    rhe.DiaInic = dat.AddHours(-difHoras2).Day.ToString("D2");
+                    rhe.HoraInic = dat.AddHours(-difHoras2).Hour;
+                    rhe.MeiaHoraInic = dat.AddHours(-difHoras2).Minute == 30 ? 1 : 0;
+                }
+                //}
+
+
             }
+
+
+
+            //
+            //foreach (var rheLine in entdados.BlocoRhe.ToList())
+            //{
+            //    string rheDia = rheLine[2];
+            //    if (rheDia.Trim() != "I")
+            //    {
+            //        rheLine[2] = $"{dataEstudo.Day:00}";
+            //    }
+            //}
 
             #endregion
 
@@ -3571,93 +3707,156 @@ namespace Compass.DecompToolsShellX
 
             var vazoes = dadvaz.BlocoVazoes.ToList();
             var comment = vazoes.First().Comment;
+            var usinas = dadvaz.BlocoVazoes.Select(x => x.Usina).Distinct().ToList();
+
+            //foreach (var vaz in vazoes)
+            //{
+            //    if (vaz.Usina == 21)
+            //    {
+
+            //    }
+            //    int diateste = vaz.DiaInic.Trim().ToUpper() == "I" ? dateBase.Day : Convert.ToInt32(vaz.DiaInic);
+            //    float vazao = vaz.Vazao;
+
+            //    DateTime dataTest;
+            //    if (diateste < dateBase.Day)//trata viradas de meses para fazer as comparaçoes com datas 
+            //    {
+            //        dataTest = new DateTime(dateBase.AddMonths(1).Year, dateBase.AddMonths(1).Month, diateste);
+            //    }
+            //    else
+            //    {
+            //        dataTest = new DateTime(dateBase.Year, dateBase.Month, diateste);
+            //    }
+
+            //    int regs = vazoes.Where(x => x.Usina == vaz.Usina).ToList().Count();
+
+            //    if (regs == 1)//só existe uma linha logo só e necessario ajustar a data 
+            //    {
+            //        vaz.DiaInic = $"{data.Day:00}";// altera o dia de acordo com a data do deck
+            //    }
+            //    else if (dataTest < data)
+            //    {
+            //        var vazSeg = vazoes.Where(x => x.Usina == vaz.Usina && Convert.ToInt32(x.DiaInic) == dataTest.AddDays(1).Day).FirstOrDefault();
+            //        if (vazSeg == null)
+            //        {
+            //            var newVaz = new CommomLibrary.Dadvaz.VazoesLine();
+            //            newVaz.DiaInic = $"{dataTest.AddDays(1).Day:00}";
+            //            newVaz.DiaFinal = $"F";
+            //            newVaz.Usina = vaz.Usina;
+            //            newVaz.Nome = vaz.Nome;
+            //            newVaz.TipoVaz = vaz.TipoVaz;
+            //            newVaz.Vazao = vaz.Vazao;
+
+            //            dadvaz.BlocoVazoes.InsertAfter(vaz, newVaz);
+            //            dadvaz.BlocoVazoes.Remove(vaz);
+            //        }
+            //        else if (dataTest < data)
+            //        {
+            //            dadvaz.BlocoVazoes.Remove(vaz);
+            //        }
+            //    }
 
 
-            foreach (var vaz in vazoes)
+
+
+            //    //dataTest = dataTest.AddDays(incremento);
+
+            //    //if (dataTest > dataFim)
+            //    //{
+            //    //    dadvaz.BlocoVazoes.Remove(vaz);//remove linhas com data alem do horizonte do periodo
+            //    //    dadvaz.BlocoVazoes.inser
+            //    //}
+            //    //else
+            //    //{
+            //    //    vaz.DiaInic = $"{dataTest.Day:00}";// altera o dia de acordo com a data do deck
+            //    //}
+
+
+            //    //else //apenas vai apagar os dias passados 
+            //    //{
+            //    //    if (dataTest < data)
+            //    //    {
+            //    //        dadvaz.BlocoVazoes.Remove(vaz);
+            //    //    }
+            //    //}
+            //    /////////////
+            //    //if (data.Day >= 20)
+            //    //{
+            //    //    if (diateste < data.Day && diateste > 10)
+            //    //    {
+            //    //        dadvaz.BlocoVazoes.Remove(vaz);
+            //    //    }
+            //    //}
+            //    //else
+            //    //{
+            //    //    if (diateste < data.Day)
+            //    //    {
+            //    //        dadvaz.BlocoVazoes.Remove(vaz);
+            //    //    }
+            //    //    if (data.Day < 10 && diateste > 20)
+            //    //    {
+            //    //        dadvaz.BlocoVazoes.Remove(vaz);
+            //    //    }
+            //    //}
+            //}
+
+            foreach (var u in usinas)
             {
-                int diateste = vaz.DiaInic.Trim().ToUpper() == "I" ? dateBase.Day : Convert.ToInt32(vaz.DiaInic);
-                float vazao = vaz.Vazao;
+                if (u == 21)
+                {
 
-                DateTime dataTest;
-                if (diateste < dateBase.Day)//trata viradas de meses para fazer as comparaçoes com datas 
-                {
-                    dataTest = new DateTime(dateBase.AddMonths(1).Year, dateBase.AddMonths(1).Month, diateste);
                 }
-                else
+                for (DateTime d = dateBase; d <= dataFim; d = d.AddDays(1))
                 {
-                    dataTest = new DateTime(dateBase.Year, dateBase.Month, diateste);
-                }
-
-                int regs = vazoes.Where(x => x.Usina == vaz.Usina).ToList().Count();
-
-                if (regs == 1)//só existe uma linha logo só e necessario ajustar a data 
-                {
-                    vaz.DiaInic = $"{data.Day:00}";// altera o dia de acordo com a data do deck
-                }
-                else if (dataTest < data)
-                {
-                    var vazSeg = vazoes.Where(x => x.Usina == vaz.Usina && Convert.ToInt32(x.DiaInic) == dataTest.AddDays(1).Day).FirstOrDefault();
-                    if (vazSeg == null)
+                    var vazoesL = dadvaz.BlocoVazoes.Where(x => x.Usina == u /*&& (x.DiaInic.Trim() == "I" ||Convert.ToInt32(x.DiaInic) == d.Day)*/).ToList();
+                    foreach (var vaz in vazoesL)
                     {
-                        var newVaz = new CommomLibrary.Dadvaz.VazoesLine();
-                        newVaz.DiaInic = $"{dataTest.AddDays(1).Day:00}";
-                        newVaz.DiaFinal = $"F";
-                        newVaz.Usina = vaz.Usina;
-                        newVaz.Nome = vaz.Nome;
-                        newVaz.TipoVaz = vaz.TipoVaz;
-                        newVaz.Vazao = vaz.Vazao;
+                        int diateste = vaz.DiaInic.Trim().ToUpper() == "I" ? dateBase.Day : Convert.ToInt32(vaz.DiaInic);
+                        float vazao = vaz.Vazao;
 
-                        dadvaz.BlocoVazoes.InsertAfter(vaz, newVaz);
-                        dadvaz.BlocoVazoes.Remove(vaz);
-                    }
-                    else if (dataTest < data)
-                    {
-                        dadvaz.BlocoVazoes.Remove(vaz);
+                        DateTime dataTest;
+                        if (diateste < dateBase.Day)//trata viradas de meses para fazer as comparaçoes com datas 
+                        {
+                            dataTest = new DateTime(dateBase.AddMonths(1).Year, dateBase.AddMonths(1).Month, diateste);
+                        }
+                        else
+                        {
+                            dataTest = new DateTime(dateBase.Year, dateBase.Month, diateste);
+                        }
+
+                        int regs = vazoesL.Where(x => x.Usina == vaz.Usina).ToList().Count();
+
+                        if (regs == 1)//só existe uma linha logo só e necessario ajustar a data 
+                        {
+                            vaz.DiaInic = $"{data.Day:00}";// altera o dia de acordo com a data do deck
+                        }
+                        else if (dataTest < data)
+                        {
+                            var vazSeg = vazoes.Where(x => x.Usina == vaz.Usina && Convert.ToInt32(x.DiaInic) == dataTest.AddDays(1).Day).FirstOrDefault();
+                            if (vazSeg == null)
+                            {
+                                var newVaz = new CommomLibrary.Dadvaz.VazoesLine();
+                                newVaz.DiaInic = $"{dataTest.AddDays(1).Day:00}";
+                                newVaz.DiaFinal = $"F";
+                                newVaz.Usina = vaz.Usina;
+                                newVaz.Nome = vaz.Nome;
+                                newVaz.TipoVaz = vaz.TipoVaz;
+                                newVaz.Vazao = vaz.Vazao;
+
+                                dadvaz.BlocoVazoes.InsertAfter(vaz, newVaz);
+                                dadvaz.BlocoVazoes.Remove(vaz);
+                            }
+                            //else if (dataTest < data)
+                            //{
+                            //    dadvaz.BlocoVazoes.Remove(vaz);
+                            //}
+                        }
                     }
                 }
+                
 
+               
 
-
-
-                //dataTest = dataTest.AddDays(incremento);
-
-                //if (dataTest > dataFim)
-                //{
-                //    dadvaz.BlocoVazoes.Remove(vaz);//remove linhas com data alem do horizonte do periodo
-                //    dadvaz.BlocoVazoes.inser
-                //}
-                //else
-                //{
-                //    vaz.DiaInic = $"{dataTest.Day:00}";// altera o dia de acordo com a data do deck
-                //}
-
-
-                //else //apenas vai apagar os dias passados 
-                //{
-                //    if (dataTest < data)
-                //    {
-                //        dadvaz.BlocoVazoes.Remove(vaz);
-                //    }
-                //}
-                /////////////
-                //if (data.Day >= 20)
-                //{
-                //    if (diateste < data.Day && diateste > 10)
-                //    {
-                //        dadvaz.BlocoVazoes.Remove(vaz);
-                //    }
-                //}
-                //else
-                //{
-                //    if (diateste < data.Day)
-                //    {
-                //        dadvaz.BlocoVazoes.Remove(vaz);
-                //    }
-                //    if (data.Day < 10 && diateste > 20)
-                //    {
-                //        dadvaz.BlocoVazoes.Remove(vaz);
-                //    }
-                //}
             }
 
             foreach (var item in dadvaz.BlocoVazoes.ToList())

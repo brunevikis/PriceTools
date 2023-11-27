@@ -97,6 +97,12 @@ namespace Compass.CommomLibrary.EntdadosDat
     {
 
         public int Restricao { get { return this[1]; } set { this[1] = value; } }
+        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
 
     }
 
@@ -124,12 +130,12 @@ namespace Compass.CommomLibrary.EntdadosDat
             get { return campos; }
         }
 
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
     }
     public class LuLine : RheLine
     {
@@ -158,12 +164,12 @@ namespace Compass.CommomLibrary.EntdadosDat
             get { return campos; }
         }
 
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public float LimInf { get { return (float)this[8]; } set { this[8] = value; } }
         public float Limsup { get { return (float)this[9]; } set { this[9] = value; } }
 
@@ -200,12 +206,12 @@ namespace Compass.CommomLibrary.EntdadosDat
             get { return campos; }
         }
 
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public int Usina { get { return this[8]; } set { this[8] = value; } }
         public int NumConjMaq { get { return this[9]; } set { this[9] = value; } }
         public float Fator { get { return (float)this[11]; } set { this[11] = value; } }
@@ -243,12 +249,12 @@ namespace Compass.CommomLibrary.EntdadosDat
             get { return campos; }
         }
 
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public int Usina { get { return this[8]; } set { this[8] = value; } }
         public float Fator { get { return (float)this[9]; } set { this[9] = value; } }
 
@@ -283,12 +289,12 @@ namespace Compass.CommomLibrary.EntdadosDat
             get { return campos; }
         }
 
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public string De { get { return this[8].Trim(); } set { this[8] = value; } }
         public string Para { get { return this[9].Trim(); } set { this[9] = value; } }
         public float Fator { get { return (float)this[10]; } set { this[10] = value; } }
@@ -324,12 +330,12 @@ namespace Compass.CommomLibrary.EntdadosDat
         {
             get { return campos; }
         }
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public int Contrato { get { return this[8]; } set { this[8] = value; } }
 
         public float Fator { get { return (float)this[9]; } set { this[9] = value; } }
@@ -364,12 +370,12 @@ namespace Compass.CommomLibrary.EntdadosDat
         {
             get { return campos; }
         }
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public int NumEolica { get { return this[8]; } set { this[8] = value; } }
 
         public float Fator { get { return (float)this[9]; } set { this[9] = value; } }
@@ -404,12 +410,12 @@ namespace Compass.CommomLibrary.EntdadosDat
         {
             get { return campos; }
         }
-        public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
-        public int HoraInic { get { return (int)this[3]; } set { this[3] = value; } }
-        public int MeiaHoraInic { get { return (int)this[4]; } set { this[4] = value; } }
-        public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
-        public int HoraFinal { get { return (int)this[6]; } set { this[6] = value; } }
-        public int MeiaHoraFinal { get { return (int)this[7]; } set { this[7] = value; } }
+        //public string DiaInic { get { return this[2].ToString(); } set { this[2] = value; } }
+        //public int? HoraInic { get { return (int?)this[3]; } set { this[3] = value; } }
+        //public int? MeiaHoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        //public string DiaFinal { get { return this[5].ToString(); } set { this[5] = value; } }
+        //public int? HoraFinal { get { return (int?)this[6]; } set { this[6] = value; } }
+        //public int? MeiaHoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
         public int NumDemanda { get { return this[8]; } set { this[8] = value; } }
 
         public float Fator { get { return (float)this[9]; } set { this[9] = value; } }
