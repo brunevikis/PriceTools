@@ -2337,9 +2337,9 @@ namespace Compass.DecompToolsShellX
                 CriarDadvazSemanal(folder, incremento, dateDeck, dateFim, d);
                 CriarCotasr11(folder, d);
                 CriarDeflant(folder, incremento, dateDeck);
-                CriarOperut(folder, incremento, dateDeck);
+                CriarOperut(folder, incremento, dateDeck, d);
                 CriarPtoper(folder, incremento, dateDeck);
-                CriarOperuh(folder, incremento, dateDeck, d);
+                CriarOperuh(folder, incremento, dateDeck, d, dateFim);
                 CriarEntdados(folder, incremento, dateDeck, d, expandEst, dateFim);
                 //if (modifRenovaveis)
                 //{
@@ -2908,15 +2908,16 @@ namespace Compass.DecompToolsShellX
 
         }
 
-        public static void CriarOperut(string path, int incremento, DateTime dataBase)
+        public static void CriarOperut(string path, int incremento, DateTime dataBase, DateTime dataEstudo)
         {
             var operutFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("operut.dat")).First();
 
             var operut = DocumentFactory.Create(operutFile) as Compass.CommomLibrary.Operut.Operut;
             foreach (var line in operut.BlocoOper.ToList())
             {
-                var datRef = new DateTime(dataBase.Year, dataBase.Month, Convert.ToInt32(line.DiaInicial));
-                datRef = datRef.AddDays(incremento);
+                //var datRef = new DateTime(dataBase.Year, dataBase.Month, Convert.ToInt32(line.DiaInicial));
+                var datRef = dataEstudo;
+                // datRef = datRef.AddDays(incremento);
                 line.DiaInicial = datRef.Day.ToString();
             }
 
@@ -3259,11 +3260,11 @@ namespace Compass.DecompToolsShellX
             foreach (var rhe in entdados.BlocoRhe.ToList())
             {
                 //var re = rhe.Value.First();
-                if (rhe.Restricao == 656)
+                if (rhe.Restricao == 657)
                 {
 
                 }
-                if (rhe.Restricao == 181)
+                if (rhe.Restricao == 655)
                 {
 
                 }
@@ -3283,10 +3284,15 @@ namespace Compass.DecompToolsShellX
                         dataInicial = dataInicial.AddMonths(-1);
                     }
                 }
+                if (dataBase.Day > 20 && dataInicial.Day < 10)
+                {
+                    dataInicial = dataInicial.AddMonths(1);
+                }
                 if (dataBase.Day > dataFinal.Day)
                 {
                     dataFinal = dataFinal.AddMonths(1);
                 }
+
                 //fim ajuste de meses
                 TimeSpan ts = dataFinal - dataInicial;
                 var difHoras2 = ts.TotalHours;
@@ -3294,9 +3300,16 @@ namespace Compass.DecompToolsShellX
                 //{
                 if (rhe.DiaFinal.Trim() == "F")
                 {
+                    if (dataEstudo.DayOfWeek == DayOfWeek.Friday && rhe.DiaInic.Trim() != "I")
+                    {
+                        rhe.DiaInic = dataEstudo.Day.ToString("D2");
+                        rhe.HoraInic = dataEstudo.Hour;
+                        rhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
+                    }
                     continue;
                 }
-                if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
+                //if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
+                if (dataFinal <= dataEstudo)
                 {
                     DateTime dat = dataEstudo;
                     if (dataFinal == dataEstudo)
@@ -3320,6 +3333,13 @@ namespace Compass.DecompToolsShellX
                     rhe.DiaInic = dat.AddHours(-difHoras2).Day.ToString("D2");
                     rhe.HoraInic = dat.AddHours(-difHoras2).Hour;
                     rhe.MeiaHoraInic = dat.AddHours(-difHoras2).Minute == 30 ? 1 : 0;
+                    continue;
+                }
+                if (dataInicial < dataEstudo)
+                {
+                    rhe.DiaInic = dataEstudo.Day.ToString("D2");
+                    rhe.HoraInic = dataEstudo.Hour;
+                    rhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
                 }
                 //}
 
@@ -3525,92 +3545,348 @@ namespace Compass.DecompToolsShellX
             entdados.SaveToFile(createBackup: true);
 
         }
-        public static void CriarOperuh(string path, int incremento, DateTime dataBase, DateTime dataEstudo)
+        public static void CriarOperuh(string path, int incremento, DateTime dataBase, DateTime dataEstudo, DateTime fimrev)
         {
             var operuhFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("operuh")).First();
             var operuh = DocumentFactory.Create(operuhFile) as Compass.CommomLibrary.Operuh.Operuh;
 
-            List<int> restricoes = new List<int> { 116, 979, 962, 1743, 1744, 1860, 1861, 99116 };
-            var restsLinesVerif = operuh.BlocoRhest.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
+            //novo codigo 
+            var rhesOperuhG = operuh.BlocoRhest.RhestGrouped.ToList();
 
-            foreach (var rest in restricoes)
+            foreach (var rhes in rhesOperuhG.ToList())
             {
-                var lines = restsLinesVerif.Where(x => Convert.ToInt32(x.Restricao.Trim()) == rest).ToList();
-                for (int i = 1; i <= incremento; i++)
+               
+                Compass.CommomLibrary.Operuh.RhestLine rh;
+                string restricao = rhes.Value.First().Restricao;
+                string texto = "";
+                bool existeInicial = true;
+
+                if (restricao == "99108")
                 {
-                    int diaRef = dataEstudo.AddDays(-i).Day;
 
-                    foreach (var l in lines)
-                    {
-                        string di = l[3];
-                        string df = l[6];
-                        if (di.Trim() != "I")
-                        {
-                            if (l == lines.Last() && df.Trim() == "F" && Convert.ToInt32(di.Trim()) < dataEstudo.Day)
-                            {
-                                l[3] = $"{dataEstudo.Day:00}";
-                                l[4] = 00;
-                                l[5] = 0;
-                            }
-                            else if (Convert.ToInt32(di.Trim()) == diaRef)
-                            {
-                                operuh.BlocoRhest.Remove(l);
-                            }
-                        }
-
-                    }
                 }
 
-                var restricoesPorNum = operuh.BlocoRhest.Where(x => Convert.ToInt32(x.Restricao) == rest).ToList();
+                var restricoesPorNum = operuh.BlocoRhest.Where(x => x.Restricao == restricao).ToList();
                 var restricoesCount = restricoesPorNum.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
-                if (restricoesCount.Count() == 0)//verifica se a restrição não possui nenhuma linha do tipo Lim ou Var caso a contagem seja 0 apaga a restrição
-                {
-                    restricoesPorNum.ForEach(x => operuh.BlocoRhest.Remove(x));
-                }
-            }
-            restsLinesVerif.Clear();// limpa a lista para varrer o operuh novamente 
-            restsLinesVerif = operuh.BlocoRhest.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
 
-            foreach (var lines in restsLinesVerif)
-            {
-                if (restricoes.All(x => x != Convert.ToInt32(lines.Restricao)))
+                if (restricoesCount.Count() == 1 && restricoesCount.First().DiaInic.Trim() == "I")//TODO ver se dia fim é maior que data do deck se não for fazer esquema de horas pra avançar 
                 {
-                    string di = lines[3];
-                    string df = lines[6];
-                    if (di.Trim() != "I")
+                    var rhF = restricoesCount.First();
+                    if (rhF.DiaFinal.Trim() == "F")
                     {
-                        int diaref = Convert.ToInt32(di.Trim());
-                        if (diaref < dataBase.Day)
-                        {
-                            DateTime datRef = new DateTime(dataBase.AddMonths(1).Year, dataBase.AddMonths(1).Month, diaref);
-                            datRef = datRef.AddDays(incremento);
-                            lines[3] = $"{datRef.Day:00}";
-                        }
-                        else
-                        {
-                            DateTime datRef = new DateTime(dataBase.Year, dataBase.Month, diaref);
-                            datRef = datRef.AddDays(incremento);
-                            lines[3] = $"{datRef.Day:00}";
-                        }
+                        continue;
                     }
-                    if (df.Trim() != "F")
+                    else
                     {
-                        int diaref = Convert.ToInt32(df.Trim());
-                        if (diaref < dataBase.Day)
+                        DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhF.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhF.DiaInic));
+                        int meiaIni = rhF.MeiaHoraInic ?? 0;
+                        dataInicial = dataInicial.AddHours(rhF.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
+
+                        DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, rhF.DiaFinal.Trim() == "F" ? fimrev.Day : Convert.ToInt32(rhF.DiaFinal));
+                        int meiaFinal = rhF.MeiaHoraFinal ?? 0;
+                        dataFinal = dataFinal.AddHours(rhF.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
+
+                        //ajustando viradas de meses 
+                        if (dataBase.Day < 10)
                         {
-                            DateTime datRef = new DateTime(dataBase.AddMonths(1).Year, dataBase.AddMonths(1).Month, diaref);
-                            datRef = datRef.AddDays(incremento);
-                            lines[6] = $"{datRef.Day:00}";
+                            if (dataInicial.Day > 20)
+                            {
+                                dataInicial = dataInicial.AddMonths(-1);
+                            }
                         }
-                        else
+                        if (dataBase.Day > 20 && dataInicial.Day < 10)
                         {
-                            DateTime datRef = new DateTime(dataBase.Year, dataBase.Month, diaref);
-                            datRef = datRef.AddDays(incremento);
-                            lines[6] = $"{datRef.Day:00}";
+                            dataInicial = dataInicial.AddMonths(1);
                         }
+                        if (dataBase.Day > dataFinal.Day)
+                        {
+                            dataFinal = dataFinal.AddMonths(1);
+                        }
+                        //fim ajuste de meses
+                        TimeSpan ts = dataFinal - dataInicial;
+                        var difHoras2 = ts.TotalHours;
+                        dataFinal = dataEstudo.AddHours(difHoras2);
+
+                        if (dataFinal > fimrev)
+                        {
+                            dataFinal = fimrev.AddDays(1);
+                        }
+
+
+                        rhF.DiaFinal = dataFinal.Day.ToString("D2");
+                        rhF.HoraFinal = dataFinal.Hour;
+                        rhF.MeiaHoraFinal = dataFinal.Minute == 30 ? 1 : 0;
+                        continue;
                     }
                 }
+
+                foreach (var rhe in rhes.Value)
+                {
+                    if (rhe is Compass.CommomLibrary.Operuh.LimLine || rhe is Compass.CommomLibrary.Operuh.VarLine)
+                    {
+                        //var re = rhe.Value.First();
+                        if (Convert.ToInt32(rhe.Restricao) == 656)
+                        {
+
+                        }
+                        if (Convert.ToInt32(rhe.Restricao) == 181)
+                        {
+
+                        }
+                        DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhe.DiaInic));
+                        int meiaIni = rhe.MeiaHoraInic ?? 0;
+                        dataInicial = dataInicial.AddHours(rhe.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
+
+                        DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaFinal.Trim() == "F" ? fimrev.Day : Convert.ToInt32(rhe.DiaFinal));
+                        int meiaFinal = rhe.MeiaHoraFinal ?? 0;
+                        dataFinal = dataFinal.AddHours(rhe.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
+
+                        //ajustando viradas de meses 
+                        if (dataBase.Day < 10)
+                        {
+                            if (dataInicial.Day > 20)
+                            {
+                                dataInicial = dataInicial.AddMonths(-1);
+                            }
+                        }
+                        if (dataBase.Day > 20 && dataInicial.Day < 10)
+                        {
+                            dataInicial = dataInicial.AddMonths(1);
+                        }
+                        if (dataBase.Day > dataFinal.Day)
+                        {
+                            dataFinal = dataFinal.AddMonths(1);
+                        }
+                        //fim ajuste de meses
+
+                        TimeSpan ts = dataFinal - dataInicial;
+                        var difHoras2 = ts.TotalHours;
+                        //foreach (var rh in rhe.Value)
+                        //{
+
+                        if (rhe.DiaFinal.Trim() == "F")//TODO ver se dia ini é menor que data do deck prar poder apagar
+                        {
+                            if (rhe.DiaInic.Trim() != "I")
+                            {
+                                if (dataInicial < dataEstudo)
+                                {
+                                    operuh.BlocoRhest.Remove(rhe);
+
+                                }
+                            }
+                            continue;
+                        }
+                        var rheInicial = rhes.Value.Where(x => x.DiaInic.Trim() != "I").Where(x => x.Minemonico == rhe.Minemonico && Convert.ToInt32(x.DiaInic) == dataEstudo.Day && x.HoraInic == 0 && x.MeiaHoraInic == 0).FirstOrDefault();
+                        if (dataFinal <= dataEstudo)
+                        {
+                            //rh = rhe.Clone() as Compass.CommomLibrary.Operuh.RhestLine;
+                            texto = rhe.ToText();
+                            if (rheInicial != null)
+                            {
+                                existeInicial = true;
+                            }
+                            else
+                            {
+                                existeInicial = false;
+                            }
+                            operuh.BlocoRhest.Remove(rhe);
+
+                        }
+                        //if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
+                        //{
+                        //    DateTime dat = dataEstudo;
+                        //    if (dataFinal == dataEstudo)
+                        //    {
+                        //        dat = dat.AddDays(1);// trata diafinal hora = 0 meiahora = 0 somando 1 dia ja que dataestudo ja vem como zero na hora e meiahora evitando deixar dia ini = dia final na incrementação  
+                        //    }
+                        //    int minutosF = rhe.MeiaHoraFinal ?? 0;
+                        //    dat = dat.AddHours(rhe.HoraFinal ?? 0).AddMinutes(minutosF == 0 ? 0 : 30);
+                        //    if (dat > fimrev.AddDays(1))
+                        //    {
+                        //        dat = fimrev.AddDays(1);// limita pelo fim da semana caso estoure a periodo da semana
+                        //    }
+                        //    if (dat == dataEstudo)
+                        //    {
+                        //        dat = dat.AddDays(1);//tratamento caso diafinal fique igual inicial no caso do decks do ultimo dia da semana (hora ini = 0 meia ini = 0 hora fim =0 meiafim =0 ), então fica diafinal como o inicio do sabado seguinte
+                        //    }
+                        //    rhe.DiaFinal = dat.Day.ToString("D2");
+                        //    rhe.HoraFinal = dat.Hour;
+                        //    rhe.MeiaHoraFinal = dat.Minute == 30 ? 1 : 0;
+
+                        //    rhe.DiaInic = dat.AddHours(-difHoras2).Day.ToString("D2");
+                        //    rhe.HoraInic = dat.AddHours(-difHoras2).Hour;
+                        //    rhe.MeiaHoraInic = dat.AddHours(-difHoras2).Minute == 30 ? 1 : 0;
+                        //}
+                        restricoesPorNum = operuh.BlocoRhest.Where(x => x.Restricao == restricao).ToList();
+                        restricoesCount = restricoesPorNum.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
+                        if (restricoesCount.Count() == 0)//verifica se a restrição não possui nenhuma linha do tipo Lim ou Var caso a contagem seja 0 cria uma linha para dia inicial com o mesmo range de horas do deck base
+                        {
+                            var rheClone = operuh.BlocoRhest.CreateLine(texto);
+
+                            rheClone.DiaInic = dataEstudo.Day.ToString("D2");
+                            rheClone.HoraInic = dataInicial.Hour;
+                            rheClone.MeiaHoraInic = dataInicial.Minute == 30 ? 1 : 0;
+                            DateTime novafinal = dataEstudo.AddHours(dataInicial.Hour).AddMinutes(dataInicial.Minute);
+                            DateTime novafinalAD = novafinal.AddHours(difHoras2);
+
+                            if (novafinal == novafinalAD)
+                            {
+                                novafinal = fimrev.AddDays(1);
+                            }
+                            else
+                            {
+                                novafinal = novafinalAD;
+                            }
+
+                            rheClone.DiaFinal = novafinal.Day.ToString("D2");
+                            rheClone.HoraFinal = novafinal.Hour;
+                            rheClone.MeiaHoraFinal = novafinal.Minute == 30 ? 1 : 0;
+
+                            operuh.BlocoRhest.InsertAfter(restricoesPorNum.Last(), rheClone);
+                            existeInicial = true;
+                            //restricoesPorNum.ForEach(x => operuh.BlocoRhest.Remove(x));
+                        }
+                        else if (restricoesCount.Count() == 1 && restricoesCount.First().DiaInic.Trim() == "I")
+                        {
+                            var rheClone = operuh.BlocoRhest.CreateLine(texto);
+
+                            rheClone.DiaInic = dataEstudo.Day.ToString("D2");
+                            rheClone.HoraInic = dataInicial.Hour;
+                            rheClone.MeiaHoraInic = dataInicial.Minute == 30 ? 1 : 0;
+                            DateTime novafinal = dataEstudo.AddHours(dataInicial.Hour).AddMinutes(dataInicial.Minute);
+                            DateTime novafinalAD = novafinal.AddHours(difHoras2);
+
+                            if (novafinal == novafinalAD)
+                            {
+                                novafinal = fimrev.AddDays(1);
+                            }
+                            else
+                            {
+                                novafinal = novafinalAD;
+                            }
+
+                            rheClone.DiaFinal = novafinal.Day.ToString("D2");
+                            rheClone.HoraFinal = novafinal.Hour;
+                            rheClone.MeiaHoraFinal = novafinal.Minute == 30 ? 1 : 0;
+
+                            operuh.BlocoRhest.InsertAfter(restricoesCount.First(), rheClone);
+                            existeInicial = true;
+                        }
+
+
+                    }
+
+                }
+
+
+
+                if (existeInicial == false)// caso não exista linha com dia inicial I ou com o dia inicial = dia do deck 00 hora 0 meia hora
+                {
+                    var rheClone = operuh.BlocoRhest.CreateLine(texto);
+                    var rhePrimeira = operuh.BlocoRhest.Where(x => x.Restricao == rheClone.Restricao && x.Minemonico == rheClone.Minemonico).FirstOrDefault();
+                    if (rhePrimeira != null)
+                    {
+                        rheClone.DiaInic = dataEstudo.Day.ToString("D2");
+                        rheClone.HoraInic = 00;
+                        rheClone.MeiaHoraInic = 0;
+
+                        rheClone.DiaFinal = rhePrimeira.DiaInic;
+                        rheClone.HoraFinal = rhePrimeira.HoraInic;
+                        rheClone.MeiaHoraFinal = rhePrimeira.MeiaHoraInic;
+
+                        operuh.BlocoRhest.InsertBefore(rhePrimeira, rheClone);
+
+                    }
+                }
+                //}
+
+
             }
+
+
+            //fim novo codigo
+
+            //List<int> restricoes = new List<int> { 116, 979, 962, 1743, 1744, 1860, 1861, 99116 };
+            //var restsLinesVerif = operuh.BlocoRhest.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
+
+            //foreach (var rest in restricoes)
+            //{
+            //    var lines = restsLinesVerif.Where(x => Convert.ToInt32(x.Restricao.Trim()) == rest).ToList();
+            //    for (int i = 1; i <= incremento; i++)
+            //    {
+            //        int diaRef = dataEstudo.AddDays(-i).Day;
+
+            //        foreach (var l in lines)
+            //        {
+            //            string di = l[3];
+            //            string df = l[6];
+            //            if (di.Trim() != "I")
+            //            {
+            //                if (l == lines.Last() && df.Trim() == "F" && Convert.ToInt32(di.Trim()) < dataEstudo.Day)
+            //                {
+            //                    l[3] = $"{dataEstudo.Day:00}";
+            //                    l[4] = 00;
+            //                    l[5] = 0;
+            //                }
+            //                else if (Convert.ToInt32(di.Trim()) == diaRef)
+            //                {
+            //                    operuh.BlocoRhest.Remove(l);
+            //                }
+            //            }
+
+            //        }
+            //    }
+
+            //    var restricoesPorNum = operuh.BlocoRhest.Where(x => Convert.ToInt32(x.Restricao) == rest).ToList();
+            //    var restricoesCount = restricoesPorNum.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
+            //    if (restricoesCount.Count() == 0)//verifica se a restrição não possui nenhuma linha do tipo Lim ou Var caso a contagem seja 0 apaga a restrição
+            //    {
+            //        restricoesPorNum.ForEach(x => operuh.BlocoRhest.Remove(x));
+            //    }
+            //}
+            //restsLinesVerif.Clear();// limpa a lista para varrer o operuh novamente 
+            //restsLinesVerif = operuh.BlocoRhest.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
+
+            //foreach (var lines in restsLinesVerif)
+            //{
+            //    if (restricoes.All(x => x != Convert.ToInt32(lines.Restricao)))
+            //    {
+            //        string di = lines[3];
+            //        string df = lines[6];
+            //        if (di.Trim() != "I")
+            //        {
+            //            int diaref = Convert.ToInt32(di.Trim());
+            //            if (diaref < dataBase.Day)
+            //            {
+            //                DateTime datRef = new DateTime(dataBase.AddMonths(1).Year, dataBase.AddMonths(1).Month, diaref);
+            //                datRef = datRef.AddDays(incremento);
+            //                lines[3] = $"{datRef.Day:00}";
+            //            }
+            //            else
+            //            {
+            //                DateTime datRef = new DateTime(dataBase.Year, dataBase.Month, diaref);
+            //                datRef = datRef.AddDays(incremento);
+            //                lines[3] = $"{datRef.Day:00}";
+            //            }
+            //        }
+            //        if (df.Trim() != "F")
+            //        {
+            //            int diaref = Convert.ToInt32(df.Trim());
+            //            if (diaref < dataBase.Day)
+            //            {
+            //                DateTime datRef = new DateTime(dataBase.AddMonths(1).Year, dataBase.AddMonths(1).Month, diaref);
+            //                datRef = datRef.AddDays(incremento);
+            //                lines[6] = $"{datRef.Day:00}";
+            //            }
+            //            else
+            //            {
+            //                DateTime datRef = new DateTime(dataBase.Year, dataBase.Month, diaref);
+            //                datRef = datRef.AddDays(incremento);
+            //                lines[6] = $"{datRef.Day:00}";
+            //            }
+            //        }
+            //    }
+            //}
             operuh.SaveToFile(createBackup: true);
 
         }
@@ -3853,9 +4129,9 @@ namespace Compass.DecompToolsShellX
                         }
                     }
                 }
-                
 
-               
+
+
 
             }
 
@@ -5445,6 +5721,29 @@ namespace Compass.DecompToolsShellX
             }
             entdados.SaveToFile();
 
+            //copia rests do entdados referencia que não existem no deck ons 
+            var restCopy = entdadosRef.BlocoRhe.RheGrouped.Where(x => x.Key.Restricao >= 800).ToList();
+            foreach (var restC in restCopy)
+            {
+                if (entdados.BlocoRhe.All(x => x.Restricao != restC.Key.Restricao))
+                {
+                    foreach (var res in restC.Value)
+                    {
+                        res.DiaInic = " I";
+                        res.HoraInic = null;
+                        res.MeiaHoraInic = null;
+
+                        res.DiaFinal = " F";
+                        res.HoraFinal = null;
+                        res.MeiaHoraFinal = null;
+
+                        entdados.BlocoRhe.Add(res);
+                    }
+                }
+            }
+            entdados.SaveToFile();
+
+            //
         }
 
         public static void TrataIa(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo)

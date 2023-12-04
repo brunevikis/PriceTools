@@ -40,10 +40,10 @@ namespace Compass.CommomLibrary.Operuh
                 foreach (var hv in this.Where(x => x is RestLine))
                 {
 
-                    var hvID = (int)hv[restID];
+                    var hvID = (string)hv[restID];
 
                     temp.Add(
-                        (RestLine)hv, this.Where(x => (int)x[restID] == hvID).ToList()
+                        (RestLine)hv, this.Where(x => (string)x[restID] == hvID).ToList()
                         );
                 }
 
@@ -93,7 +93,12 @@ namespace Compass.CommomLibrary.Operuh
         public string Restricao { get { return this[2].ToString(); } set { this[2] = value; } }
         public string Minemonico { get { return this[1].ToString(); } set { this[1] = value; } }
 
-
+        public string DiaInic { get { return this[3].ToString(); } set { this[3] = value; } }
+        public int? HoraInic { get { return (int?)this[4]; } set { this[4] = value; } }
+        public int? MeiaHoraInic { get { return (int?)this[5]; } set { this[5] = value; } }
+        public string DiaFinal { get { return this[6].ToString(); } set { this[6] = value; } }
+        public int? HoraFinal { get { return (int?)this[7]; } set { this[7] = value; } }
+        public int? MeiaHoraFinal { get { return (int?)this[8]; } set { this[8] = value; } }
     }
 
     public class RestLine : RhestLine
@@ -106,7 +111,7 @@ namespace Compass.CommomLibrary.Operuh
         static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 1  , 6 ,"A2"    , "Id"),
                 new BaseField( 8  , 13 ,"A6"   , "minemonico"),
-                new BaseField(15  , 19 ,"A5"    , "restricao"),//pode ter letra
+                new BaseField(15  , 19 ,"A5"    , "Restricao"),//pode ter letra
                 new BaseField(22  , 22 ,"A1"    , "tipo"),//
                 new BaseField(25  , 25, "I1"    , "flag incluir"),//
                 new BaseField(28  , 39 ,"A12"    , "justificativa"),//pode ter letra
@@ -132,7 +137,7 @@ namespace Compass.CommomLibrary.Operuh
         static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 1  , 6 ,"A6"    , "Id"),
                 new BaseField( 8  , 13 ,"A6"    , "minemonico"),
-                new BaseField(15  , 19 ,"A5"    , "restricao"),//pode ter letra
+                new BaseField(15  , 19 ,"A5"    , "Restricao"),//pode ter letra
                 new BaseField(21  , 23 ,"I3"    , "usina"),//
                 new BaseField(26  , 37 ,"A12"    , "nomeusina"),//
                 new BaseField(41  , 42 ,"I2"    , "Cod variavel"),//pode ter letra
@@ -161,7 +166,7 @@ namespace Compass.CommomLibrary.Operuh
         static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 1  , 6 ,"A6"    , "Id"),
                 new BaseField( 8  , 13 ,"A6"   , "minemonico"),
-                new BaseField(15  , 19 ,"A5"    , "restricao"),//pode ter letra
+                new BaseField(15  , 19 ,"A5"    , "Restricao"),//pode ter letra
                 new BaseField(21  , 22 ,"A2"    , "DiaInic"),//
                 new BaseField(24  , 25 ,"I2"    , "HoraDiaInic"),//
                 new BaseField(27  , 27 ,"I1"    , "meiahorainic"),//pode ter letra
@@ -191,7 +196,7 @@ namespace Compass.CommomLibrary.Operuh
         static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 1  , 6 ,"A6"    , "Id"),
                 new BaseField( 8  , 13 ,"A6"  , "minemonico"),
-                new BaseField(15  , 19 ,"A5"    , "rest"),//pode ter letra
+                new BaseField(15  , 19 ,"A5"    , "Restricao"),//pode ter letra
                 new BaseField(20  , 21 ,"A2"    , "DiaInic"),//
                 new BaseField(23  , 24 ,"I2"    , "HoraDiaInic"),//
                 new BaseField(26  , 26 ,"I1"    , "meiahorainic"),//pode ter letra
@@ -224,7 +229,7 @@ namespace Compass.CommomLibrary.Operuh
         static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 1  , 6 ,"A6"    , "Id"),
                 new BaseField( 8  , 13 ,"A6"   , "minemonico"),
-                new BaseField(15  , 19 ,"A5"    , "restricao"),//pode ter letra
+                new BaseField(15  , 19 ,"A5"    , "Restricao"),//pode ter letra
                 new BaseField(21  , 30 ,"F10.0"    , "deltax"),//
                 new BaseField(32  , 36 ,"I5"    , "restcontr"),//
                 new BaseField(38  , 47 ,"F10.0"    , "deltay"),//

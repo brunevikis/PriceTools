@@ -391,6 +391,11 @@ namespace Compass.CommomLibrary
             Insert(IndexOf(prevItem) + 1, itemToAdd);
         }
 
+        public void InsertBefore(T prevItem, T itemToAdd)
+        {
+            Insert(IndexOf(prevItem) - 1, itemToAdd);
+        }
+
         public void RemoveAt(int index)
         {
             lines.RemoveAt(index);
