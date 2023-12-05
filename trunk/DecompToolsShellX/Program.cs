@@ -3561,7 +3561,7 @@ namespace Compass.DecompToolsShellX
                 string texto = "";
                 bool existeInicial = true;
 
-                if (restricao == "99108")
+                if (restricao == "05397")
                 {
 
                 }
@@ -3666,14 +3666,14 @@ namespace Compass.DecompToolsShellX
 
                         if (rhe.DiaFinal.Trim() == "F")//TODO ver se dia ini é menor que data do deck prar poder apagar
                         {
-                            if (rhe.DiaInic.Trim() != "I")
-                            {
-                                if (dataInicial < dataEstudo)
-                                {
-                                    operuh.BlocoRhest.Remove(rhe);
+                            //if (rhe.DiaInic.Trim() != "I")
+                            //{
+                            //    if (dataInicial < dataEstudo)
+                            //    {
+                            //        operuh.BlocoRhest.Remove(rhe);
 
-                                }
-                            }
+                            //    }
+                            //}
                             continue;
                         }
                         var rheInicial = rhes.Value.Where(x => x.DiaInic.Trim() != "I").Where(x => x.Minemonico == rhe.Minemonico && Convert.ToInt32(x.DiaInic) == dataEstudo.Day && x.HoraInic == 0 && x.MeiaHoraInic == 0).FirstOrDefault();
