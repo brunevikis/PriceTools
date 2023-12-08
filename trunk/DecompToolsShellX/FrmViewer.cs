@@ -96,7 +96,7 @@ namespace Compass.DecompToolsShellX
 
         }
 
-        public static void Show(String caption,bool multi = true, params Result[] results)
+        public static void Show(String caption, bool multi = true, params Result[] results)
         {
             var frm = new FormViewer(caption);
 
@@ -432,11 +432,11 @@ namespace Compass.DecompToolsShellX
                     l1.Insert(1, sub);
                     dtSomaGT.Rows.Add(l1.ToArray());
                     l1.Clear();
-                    
+
                 }
 
             }
-            
+
             var estagios = _results.First().Value.PLD_DESSEM_Result.Select(x => x.estagio).Distinct().ToList();//
 
             for (int est = 1; est <= estagios.Count(); est++)
@@ -594,7 +594,7 @@ namespace Compass.DecompToolsShellX
             {
 
             }
-            
+
 
             for (int i = 1; i <= 4; i++)
             {
@@ -739,7 +739,7 @@ namespace Compass.DecompToolsShellX
                 l1 = orderedResults.Select(x => x[i].GerHidrMedia.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
                 dtGerHidr.Rows.Add(l1.ToArray());
             }
-           
+
             for (int i = 1; i <= 4; i++)
             {
                 l1 = orderedResults.Select(x => x[i].GerTerm.ToString("N0")).ToList(); l1.Insert(0, Enum.GetName(typeof(SistemaEnum), i));
@@ -866,7 +866,7 @@ namespace Compass.DecompToolsShellX
             {
                 var submercados = _results.First().Value.PDO_Sist_Result.Select(x => x.submercado).Distinct().ToList();//
 
-                var dataSources = new ResultDataSource[submercados.Count() + 1];//
+                var dataSources = new ResultDataSource[submercados.Count() + 2];//
                 int i = 0;//
                 foreach (var sub in submercados)//
                 {
@@ -880,6 +880,7 @@ namespace Compass.DecompToolsShellX
                     dtResumo.Columns.Add("CMO");
                     dtResumo.Columns.Add("CARGA");
                     dtResumo.Columns.Add("PQ");
+                    dtResumo.Columns.Add("CARGA LIQ.");
                     dtResumo.Columns.Add("SOMA GH");
                     dtResumo.Columns.Add("SOMA GT");
                     dtResumo.Columns.Add("CONS. ELEV.");
@@ -894,8 +895,9 @@ namespace Compass.DecompToolsShellX
                     _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == sub).Select(
                        x =>
                        {
+                           double cargaLiquida = x.Carga - x.PQ;
                            dtResumo.Rows.Add(
-                               new object[] { x.estagio.ToString(),/* x.submercado.ToString(),*/ x.CMO.ToString("N2"), x.Carga.ToString("N2"), x.PQ.ToString("N2"), x.SomaGH.ToString("N2"), x.SomaGT.ToString("N2"), x.ConsElev.ToString("N2")
+                               new object[] { x.estagio.ToString(),/* x.submercado.ToString(),*/ x.CMO.ToString("N2"), x.Carga.ToString("N2"), x.PQ.ToString("N2"),cargaLiquida, x.SomaGH.ToString("N2"), x.SomaGT.ToString("N2"), x.ConsElev.ToString("N2")
                                 , x.Import.ToString("N2"), x.Export.ToString("N2"), x.Saldo.ToString("N2"), x.GTMin.ToString("N2"), x.GTMax.ToString("N2"), x.Earm.ToString("N2")
                                    //, x.DemandaMesSeguinte.ToString("N0")
                                }
@@ -907,6 +909,76 @@ namespace Compass.DecompToolsShellX
                     dataSources[i] = rds;//
                     i++;//
                 }
+
+                //aba SIN
+                var dtSIN = new System.Data.DataTable();
+
+
+
+                var rdsSIN = new ResultDataSource() { DataSource = dtSIN, Title = "SIN" };//
+
+                dtSIN.Columns.Add("ESTÁGIO");
+                dtSIN.Columns.Add("CMO");
+                dtSIN.Columns.Add("CARGA");
+                dtSIN.Columns.Add("PQ");
+                dtSIN.Columns.Add("CARGA LIQ.");
+                dtSIN.Columns.Add("SOMA GH");
+                dtSIN.Columns.Add("SOMA GT");
+                dtSIN.Columns.Add("CONS. ELEV.");
+                dtSIN.Columns.Add("IMPORTAÇÃO");
+                dtSIN.Columns.Add("EXPORTAÇÃO");
+                dtSIN.Columns.Add("SALDO");
+                dtSIN.Columns.Add("GT MIN");
+                dtSIN.Columns.Add("GT MAX");
+                dtSIN.Columns.Add("EARM");
+
+                var estagiosSIN = _results.First().Value.PDO_Sist_Result.Select(x => x.estagio).Distinct().ToList();
+
+                for (int estS = 1; estS <= estagiosSIN.Count(); estS++)
+                {
+                    var resultSE = _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == "SE" && x.estagio == estS).First();
+                    var resultS = _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == "S" && x.estagio == estS).First();
+                    var resultNE = _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == "NE" && x.estagio == estS).First();
+                    var resultN = _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == "N" && x.estagio == estS).First();
+
+                    double cmoSin = resultSE.CMO;
+                    double CARGASin = (resultSE.Carga + resultS.Carga + resultNE.Carga + resultN.Carga);
+                    double PQSin = (resultSE.PQ + resultS.PQ + resultNE.PQ + resultN.PQ);
+                    double LIQSin = CARGASin - PQSin;
+                    double sghSin = (resultSE.SomaGH + resultS.SomaGH + resultNE.SomaGH + resultN.SomaGH);
+                    double sgtSin = (resultSE.SomaGT + resultS.SomaGT + resultNE.SomaGT + resultN.SomaGT);
+                    double consSin = (resultSE.ConsElev + resultS.ConsElev + resultNE.ConsElev + resultN.ConsElev);
+                    double importSin = (resultSE.Import + resultS.Import + resultNE.Import + resultN.Import);
+                    double exportSin = (resultSE.Export + resultS.Export + resultNE.Export + resultN.Export);
+                    double saldoSin = (resultSE.Saldo + resultS.Saldo + resultNE.Saldo + resultN.Saldo);
+                    double gtMinSin = (resultSE.GTMin + resultS.GTMin + resultNE.GTMin + resultN.GTMin);
+                    double gtMaxSin = (resultSE.GTMax + resultS.GTMax + resultNE.GTMax + resultN.GTMax);
+                    double earmSin = (resultSE.Earm + resultS.Earm + resultNE.Earm + resultN.Earm);
+
+                    List<string> lsin = new List<string>();
+                    lsin.Add(estS.ToString());
+                    lsin.Add(cmoSin.ToString("N2"));
+                    lsin.Add(CARGASin.ToString("N2"));
+                    lsin.Add(PQSin.ToString("N2"));
+                    lsin.Add(LIQSin.ToString("N2"));
+                    lsin.Add(sghSin.ToString("N2"));
+                    lsin.Add(sgtSin.ToString("N2"));
+                    lsin.Add(consSin.ToString("N2"));
+                    lsin.Add(importSin.ToString("N2"));
+                    lsin.Add(exportSin.ToString("N2"));
+                    lsin.Add(saldoSin.ToString("N2"));
+                    lsin.Add(gtMinSin.ToString("N2"));
+                    lsin.Add(gtMaxSin.ToString("N2"));
+                    lsin.Add(earmSin.ToString("N2"));
+
+                    dtSIN.Rows.Add(lsin.ToArray());
+                    lsin.Clear();
+                }
+
+                dataSources[i] = rdsSIN;
+                i++;
+
+                //PLD
 
                 var dtPld = new System.Data.DataTable();
 
@@ -920,7 +992,7 @@ namespace Compass.DecompToolsShellX
 
                 var estagios = _results.First().Value.PLD_DESSEM_Result.Select(x => x.estagio).Distinct().ToList();//
 
-                List<string> l1 = new List<string> {"#" ,"SE", "S", "NE","N"};
+                List<string> l1 = new List<string> { "#", "SE", "S", "NE", "N" };
 
                 dtPld.Rows.Add(l1.ToArray());
                 l1.Clear();
@@ -941,7 +1013,7 @@ namespace Compass.DecompToolsShellX
                 l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "S").Select(x => x.PLD).Average().ToString("N2"));
                 l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "NE").Select(x => x.PLD).Average().ToString("N2"));
                 l1.Add(_results.First().Value.PLD_DESSEM_Result.Where(x => x.submercado == "N").Select(x => x.PLD).Average().ToString("N2"));
-                l1.Insert(0,"MEDIA");
+                l1.Insert(0, "MEDIA");
                 dtPld.Rows.Add(l1.ToArray());
 
                 l1.Clear();
@@ -982,7 +1054,7 @@ namespace Compass.DecompToolsShellX
 
             if (p.Length < 2)
             {
-                if (p.Length >0 )
+                if (p.Length > 0)
                 {
                     string commonfolder = p.First().Replace(p.First().Split('\\').Last(), "");
                     //return "K:\\";
@@ -992,7 +1064,7 @@ namespace Compass.DecompToolsShellX
                 {
                     return "K:\\";
                 }
-              
+
             }
             List<string> folders = new List<string>();
 
@@ -1007,9 +1079,9 @@ namespace Compass.DecompToolsShellX
                     }
                 }
             }
-            if (folders.Count() >0)
+            if (folders.Count() > 0)
             {
-                string ret = string.Join("\\",folders.ToArray()) + "\\";
+                string ret = string.Join("\\", folders.ToArray()) + "\\";
                 return ret;
             }
             int idx = -1;

@@ -149,11 +149,11 @@ namespace Compass.DecompToolsShellX
                 arqsAgr.Add(textMeta.Text);
                 DateTime dat = DateTime.Now;
                 string folder = Path.Combine(textSaida.Text, $@"MultiDeck_{dat:HHmmss}_Agrupado");
-                
+
                 var deck = DeckFactory.CreateDeck(textOrigem.Text);
 
                 deck.CopyFilesToFolder(folder);
-               
+
 
                 foreach (var arq in arqsCopy)
                 {
@@ -175,7 +175,7 @@ namespace Compass.DecompToolsShellX
                     var deck = DeckFactory.CreateDeck(textOrigem.Text);
 
                     deck.CopyFilesToFolder(folder);
-                    
+
 
                     for (int i = 0; i <= it - 1; i++)
                     {
@@ -692,7 +692,7 @@ namespace Compass.DecompToolsShellX
                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                             }
                             bool pat2023 = dt.Year >= 2023;
-                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt,pat2023);
+                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt, pat2023);
 
                             foreach (var inter in intervalosAgruped)
                             {
@@ -1148,6 +1148,7 @@ namespace Compass.DecompToolsShellX
 
         private void Iniciar_CompSem_Click(object sender, EventArgs e)
         {
+
             if (text_ComplDir.Text == "" || !Directory.Exists(text_ComplDir.Text))
             {
                 string aviso = "Diretório inválido ou inexistente!";
@@ -1164,6 +1165,7 @@ namespace Compass.DecompToolsShellX
             Thread nthread = new Thread(Program.DStools_complSem);
             nthread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             nthread.Start(comando);
+
         }
     }
 

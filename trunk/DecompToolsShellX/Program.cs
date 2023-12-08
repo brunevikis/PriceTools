@@ -2336,7 +2336,7 @@ namespace Compass.DecompToolsShellX
                 deck.CopyFilesToFolder(folder);
                 CriarDadvazSemanal(folder, incremento, dateDeck, dateFim, d);
                 CriarCotasr11(folder, d);
-                CriarDeflant(folder, incremento, dateDeck);
+                CriarDeflant(folder, incremento, dateDeck, d);
                 CriarOperut(folder, incremento, dateDeck, d);
                 CriarPtoper(folder, incremento, dateDeck);
                 CriarOperuh(folder, incremento, dateDeck, d, dateFim);
@@ -2624,7 +2624,7 @@ namespace Compass.DecompToolsShellX
                 {
                     Services.GeraDessem.Renovaveis(path, d, rev.revDate);
                 }
-                // Services.GeraDessem.TrataDeflant(path, d);apenas testes
+                //Services.GeraDessem.TrataDeflant(path, d);apenas testes
             }
         }
 
@@ -3555,7 +3555,7 @@ namespace Compass.DecompToolsShellX
 
             foreach (var rhes in rhesOperuhG.ToList())
             {
-               
+
                 Compass.CommomLibrary.Operuh.RhestLine rh;
                 string restricao = rhes.Value.First().Restricao;
                 string texto = "";
@@ -3904,28 +3904,191 @@ namespace Compass.DecompToolsShellX
 
             ptoper.SaveToFile(createBackup: true);
         }
-        public static void CriarDeflant(string path, int incremento, DateTime dateDeck)
+
+        public static string GetNPTXT(DateTime d, bool recursivo = false)
         {
+            var oneDrive_DESSEM = Path.Combine(@"C:\Enercore\Energy Core Trading\Energy Core Pricing - Documents\Arquivos_DESSEM");
+            var kPath = @"K:\5_dessem\Arquivos_DESSEM";
+
+            string arqName = $"NP{d:ddMMyyyy}.txt";
+
+            if (!Directory.Exists(oneDrive_DESSEM))
+            {
+                oneDrive_DESSEM = oneDrive_DESSEM.Replace("Energy Core Pricing - Documents", "Energy Core Pricing - Documentos");
+            }
+
+            var oneDrive_DIA = Path.Combine(oneDrive_DESSEM, d.ToString("MM_yyyy"), d.ToString("dd"));
+            var k_DIA = Path.Combine(kPath, d.ToString("MM_yyyy"), d.ToString("dd"));
+
+            if (File.Exists(Path.Combine(k_DIA, arqName)))
+            {
+                return Path.Combine(k_DIA, arqName);
+            }
+            else if (File.Exists(Path.Combine(oneDrive_DIA, arqName)))
+            {
+                return Path.Combine(oneDrive_DIA, arqName);
+            }
+            else
+            {
+                //como pode estar criando um deck de um dia no futuro e tambem buscando dados de um NP do futuro, será usado o dados mais recente e caso não seja essa situação, uma exceção sera lançada interrompendo o processo
+                DateTime hoje = DateTime.Today;
+                if (d >= hoje || recursivo == true)
+                {
+                    string NP_recente = GetNPTXT(d.AddDays(-1),true);// chamada recursiva até encontrar o mais recente
+                    return NP_recente;
+                }
+                
+                throw new NotImplementedException($"Arquivo Níveis de partida não encontrados para criação do Deflant.dat, arquivo {arqName} necessário");
+
+            }
+
+            //return "";
+        }
+
+        public static float GetNPValue(string NPtxt,string montante)
+        {
+            float valor = 0f;
+            var linhas = File.ReadAllLines(NPtxt).ToList();
+
+            foreach (var l in linhas)
+            {
+                float d = 0f;
+                var campos = l.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (campos[0].Trim() == montante)
+                {
+                    valor = float.TryParse(campos[2].Replace(',','.'), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                    return valor;
+                }
+            }
+
+            return valor;
+        }
+
+        public static void CriarDeflant(string path, int incremento, DateTime dateDeck, DateTime dataEstudo)
+        {
+
+            //K:\5_dessem\Arquivos_DESSEM\12_2023\07\NP07122023.txt
+            //C:\Enercore\Energy Core Trading\Energy Core Pricing - Documentos\Arquivos_DESSEM\12_2023\07\NP07122023.txt
+
+            string arqNP = "";
+            float valor = 0f;
+
             var deflantFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("deflant")).First();
             var deflant = DocumentFactory.Create(deflantFile) as Compass.CommomLibrary.Deflant.Deflant;
 
+            var entdadosFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("entdados")).First();
+            var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
+            var tviag = entdados.BlocoTviag.ToList();
 
-            foreach (var line in deflant.BlocoDef.ToList())
+            string comentario = deflant.BlocoDef.First().Comment;
+
+            var montantes = deflant.BlocoDef.Select(x => x.Montante).Distinct().ToList();
+            var linhas66_83 = deflant.BlocoDef.Where(x => x.Montante == 66 || x.Montante == 83).ToList();
+            deflant.BlocoDef.Clear();
+
+
+            foreach (var tv in tviag)
             {
+                if (tv.Montante != 66 && tv.Montante != 83)
+                {
+                    if (tv.Montante == 156)
+                    {
+
+                    }
+                    var horas = tv.TempoViag;
+                    var dataAnt = dataEstudo.AddHours(-horas);
+                    for (int i = 0; i < horas; i += 24)
+                    {
+                        arqNP = GetNPTXT(dataAnt);
+                        if (arqNP != "")
+                        {
+                            valor = GetNPValue(arqNP, tv.Montante.ToString());
+                            var defline = new Compass.CommomLibrary.Deflant.DefLine();
+                            if (deflant.BlocoDef.Count() == 0)
+                            {
+                                defline.Comment = comentario;
+                            }
+                            defline.Montante = tv.Montante;
+                            defline.Jusante = tv.Jusante;
+                            defline.Tipo = tv.TipoJus;
+                            defline.Diainic = dataAnt.Day;
+                            defline.Horainic = 00;
+                            defline.Meiainic = 0;
+                            defline.Diafim = " F";
+                            defline.Defluencia = valor;
+                            deflant.BlocoDef.Add(defline);
+
+                            dataAnt = dataAnt.AddDays(1);
+                        }
+
+                    }
+                }
+
+            }
+
+            //foreach (var mont in montantes.Where(x => x != 66 && x != 83))
+            //{
+
+            //}
+            foreach (var def in linhas66_83)
+            {
+                deflant.BlocoDef.Add(def);
+            }
+            int tv83 = tviag.Where(x => x.Montante == 83).Select(x => x.TempoViag).FirstOrDefault();
+
+            arqNP = GetNPTXT(dataEstudo.AddHours(-tv83),true);
+            float valor83 = GetNPValue(arqNP, "83");
+
+            foreach (var line in deflant.BlocoDef.Where(x => x.Montante == 66 || x.Montante == 83).ToList())// as usinas 66 itaipu e 83 baixo iguaçu são preenchidas de forma diferente pq abri em 48 estagios 
+            {
+                //usina 66 só muda o dia inicial e usa os dados do deck base, usina 83 usa os dados do NP mais recente de acordo com a data do deck sendo criada
                 if (line.Diainic > dateDeck.Day)//significa que o dia do deflant base é do mes passado porque aqui olho só o dia 
                 {
                     var datRef = new DateTime(dateDeck.AddMonths(-1).Year, dateDeck.AddMonths(-1).Month, line.Diainic);
                     datRef = datRef.AddDays(incremento);//trata virada de meses
                     line.Diainic = datRef.Day;
-
+                    if (line.Montante == 83)
+                    {
+                        line.Defluencia = valor83;
+                    }
                 }
                 else
                 {
                     var datRef = new DateTime(dateDeck.Year, dateDeck.Month, line.Diainic);
                     datRef = datRef.AddDays(incremento);//trata virada de meses
                     line.Diainic = datRef.Day;
+                    if (line.Montante == 83)
+                    {
+                        line.Defluencia = valor83;
+                    }
                 }
             }
+
+         
+
+
+
+            #region codigo antigo
+
+            //foreach (var line in deflant.BlocoDef.ToList())
+            //{
+            //    if (line.Diainic > dateDeck.Day)//significa que o dia do deflant base é do mes passado porque aqui olho só o dia 
+            //    {
+            //        var datRef = new DateTime(dateDeck.AddMonths(-1).Year, dateDeck.AddMonths(-1).Month, line.Diainic);
+            //        datRef = datRef.AddDays(incremento);//trata virada de meses
+            //        line.Diainic = datRef.Day;
+
+            //    }
+            //    else
+            //    {
+            //        var datRef = new DateTime(dateDeck.Year, dateDeck.Month, line.Diainic);
+            //        datRef = datRef.AddDays(incremento);//trata virada de meses
+            //        line.Diainic = datRef.Day;
+            //    }
+            //}
+
+            #endregion
+
 
             deflant.SaveToFile(createBackup: true);
         }
@@ -6432,65 +6595,81 @@ namespace Compass.DecompToolsShellX
 
         public static void DStools_complSem(object comando)
         {
-            string dir;
-            bool expand;
-            string path;
-            string comandos = (string)comando;
-            var coms = comandos.Split('|').ToList();
-            if (coms.Count() > 1)
+            try
             {
-                path = coms[0];
-                expand = Convert.ToBoolean(coms[1]);
-            }
-            else
-            {
-                path = coms[0];
-                expand = false;
-            }
-
-            if (Directory.Exists(path))
-            {
-                dir = path;
-            }
-            else if (File.Exists(path))
-            {
-                dir = Path.GetDirectoryName(path);
-            }
-            else
-            {
-                return;
-            }
-            var deck = DeckFactory.CreateDeck(dir);
-
-            if (deck is CommomLibrary.Dessem.Deck)
-            {
-                //todo logica de verificar qual dia é o deck 
-                var dadvaz = Directory.GetFiles(deck.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Contains("dadvaz")).First();
-
-                var dadlinhas = File.ReadAllLines(dadvaz).ToList();
-                var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                DateTime dataDeck = new DateTime(Convert.ToInt32(dados[3]), Convert.ToInt32(dados[2]), Convert.ToInt32(dados[1]));
-                if (dataDeck.DayOfWeek != DayOfWeek.Friday)
+                string dir;
+                bool expand;
+                string path;
+                string comandos = (string)comando;
+                var coms = comandos.Split('|').ToList();
+                if (coms.Count() > 1)
                 {
-                    var revDate = Tools.GetCurrRev(dataDeck).revDate;
-                    Completa_SemanaDessem(deck as CommomLibrary.Dessem.Deck, dataDeck, revDate, expand);
-
-                    string aviso = "Processo concluído!";
-                    MessageBox.Show(aviso, "DESSEM-TOOLS");
+                    path = coms[0];
+                    expand = Convert.ToBoolean(coms[1]);
                 }
                 else
                 {
-                    string aviso = "Data do Deck é uma sexta-feira escolha outro deck!";
-                    MessageBox.Show(aviso, "DESSEM-TOOLS");
+                    path = coms[0];
+                    expand = false;
                 }
 
+                if (Directory.Exists(path))
+                {
+                    dir = path;
+                }
+                else if (File.Exists(path))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+                else
+                {
+                    return;
+                }
+                var deck = DeckFactory.CreateDeck(dir);
 
+                if (deck is CommomLibrary.Dessem.Deck)
+                {
+                    //todo logica de verificar qual dia é o deck 
+                    var dadvaz = Directory.GetFiles(deck.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Contains("dadvaz")).First();
+
+                    var dadlinhas = File.ReadAllLines(dadvaz).ToList();
+                    var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    DateTime dataDeck = new DateTime(Convert.ToInt32(dados[3]), Convert.ToInt32(dados[2]), Convert.ToInt32(dados[1]));
+                    if (dataDeck.DayOfWeek != DayOfWeek.Friday)
+                    {
+                        var revDate = Tools.GetCurrRev(dataDeck).revDate;
+                        Completa_SemanaDessem(deck as CommomLibrary.Dessem.Deck, dataDeck, revDate, expand);
+
+                        string aviso = "Processo concluído!";
+                        MessageBox.Show(aviso, "DESSEM-TOOLS");
+                    }
+                    else
+                    {
+                        string aviso = "Data do Deck é uma sexta-feira escolha outro deck!";
+                        MessageBox.Show(aviso, "DESSEM-TOOLS");
+                    }
+
+
+                }
+                else
+                {
+                    string aviso = "Deck não reconhecido!";
+                    MessageBox.Show(aviso, "DESSEM-TOOLS");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string aviso = "Deck não reconhecido!";
-                MessageBox.Show(aviso, "DESSEM-TOOLS");
+                if (ex.ToString().Contains("Arquivo Níveis de partida não encontrados para criação do Deflant.dat"))
+                {
+                    string texto = "Arquivo Níveis de partida não encontrados para criação do Deflant.dat, processo interrompido";
+                    texto = ex.ToString() + ", processo interrompido.";
+                    texto = ex.Message + ", processo interrompido.";
+                    MessageBox.Show(texto, "Dessem Tools");
+                   
+                }
+                
             }
+            
         }
 
         public static void DStools_resultado(object path)
