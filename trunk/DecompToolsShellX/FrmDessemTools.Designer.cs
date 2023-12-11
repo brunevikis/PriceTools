@@ -87,11 +87,28 @@ namespace Compass.DecompToolsShellX
             this.label5 = new System.Windows.Forms.Label();
             this.textResul = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.check_modifRenovaveis = new System.Windows.Forms.CheckBox();
             this.check_Expand = new System.Windows.Forms.CheckBox();
             this.Iniciar_CompSem = new System.Windows.Forms.Button();
             this.search_CompSem = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.text_ComplDir = new System.Windows.Forms.TextBox();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.progressPercent = new System.Windows.Forms.Label();
+            this.progressBarRVX = new System.Windows.Forms.ProgressBar();
+            this.btn_RVXStart = new System.Windows.Forms.Button();
+            this.btn_SaidaRVXProc = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.saidaRVXBox = new System.Windows.Forms.TextBox();
+            this.btn_DsBaseProc = new System.Windows.Forms.Button();
+            this.btn_DcBaseProc = new System.Windows.Forms.Button();
+            this.btn_DsSabProc = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.dessemBaseRVXbox = new System.Windows.Forms.TextBox();
+            this.decompBaseRVXbox = new System.Windows.Forms.TextBox();
+            this.dessemSabRVXbox = new System.Windows.Forms.TextBox();
             this.textOrigem = new System.Windows.Forms.TextBox();
             this.textSaida = new System.Windows.Forms.TextBox();
             this.textMeta = new System.Windows.Forms.TextBox();
@@ -101,7 +118,6 @@ namespace Compass.DecompToolsShellX
             this.Search_Ori = new System.Windows.Forms.Button();
             this.Search_Meta = new System.Windows.Forms.Button();
             this.Search_Exit = new System.Windows.Forms.Button();
-            this.check_modifRenovaveis = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -115,6 +131,7 @@ namespace Compass.DecompToolsShellX
             ((System.ComponentModel.ISupportInitialize)(this.fator1)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -125,6 +142,7 @@ namespace Compass.DecompToolsShellX
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Location = new System.Drawing.Point(26, 138);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -754,6 +772,17 @@ namespace Compass.DecompToolsShellX
             this.tabPage5.Text = "Dessem Rev";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // check_modifRenovaveis
+            // 
+            this.check_modifRenovaveis.AutoSize = true;
+            this.check_modifRenovaveis.Location = new System.Drawing.Point(384, 82);
+            this.check_modifRenovaveis.Name = "check_modifRenovaveis";
+            this.check_modifRenovaveis.Size = new System.Drawing.Size(129, 17);
+            this.check_modifRenovaveis.TabIndex = 19;
+            this.check_modifRenovaveis.Text = "Modificar Renováveis";
+            this.check_modifRenovaveis.UseVisualStyleBackColor = true;
+            this.check_modifRenovaveis.Visible = false;
+            // 
             // check_Expand
             // 
             this.check_Expand.AutoSize = true;
@@ -802,6 +831,173 @@ namespace Compass.DecompToolsShellX
             this.text_ComplDir.TabIndex = 14;
             this.text_ComplDir.DragDrop += new System.Windows.Forms.DragEventHandler(this.text_ComplDir_DragDrop);
             this.text_ComplDir.DragEnter += new System.Windows.Forms.DragEventHandler(this.text_ComplDir_DragEnter);
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.btn_RVXStart);
+            this.tabPage6.Controls.Add(this.btn_SaidaRVXProc);
+            this.tabPage6.Controls.Add(this.label10);
+            this.tabPage6.Controls.Add(this.saidaRVXBox);
+            this.tabPage6.Controls.Add(this.btn_DsBaseProc);
+            this.tabPage6.Controls.Add(this.btn_DcBaseProc);
+            this.tabPage6.Controls.Add(this.btn_DsSabProc);
+            this.tabPage6.Controls.Add(this.label9);
+            this.tabPage6.Controls.Add(this.label8);
+            this.tabPage6.Controls.Add(this.label7);
+            this.tabPage6.Controls.Add(this.dessemBaseRVXbox);
+            this.tabPage6.Controls.Add(this.decompBaseRVXbox);
+            this.tabPage6.Controls.Add(this.dessemSabRVXbox);
+            this.tabPage6.Location = new System.Drawing.Point(4, 25);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(916, 401);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Dessem RVX+1";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // progressPercent
+            // 
+            this.progressPercent.AutoSize = true;
+            this.progressPercent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.progressPercent.Location = new System.Drawing.Point(102, 109);
+            this.progressPercent.Name = "progressPercent";
+            this.progressPercent.Size = new System.Drawing.Size(23, 13);
+            this.progressPercent.TabIndex = 31;
+            this.progressPercent.Text = "0%";
+            // 
+            // progressBarRVX
+            // 
+            this.progressBarRVX.Location = new System.Drawing.Point(145, 109);
+            this.progressBarRVX.Name = "progressBarRVX";
+            this.progressBarRVX.Size = new System.Drawing.Size(448, 23);
+            this.progressBarRVX.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarRVX.TabIndex = 30;
+            // 
+            // btn_RVXStart
+            // 
+            this.btn_RVXStart.Location = new System.Drawing.Point(569, 304);
+            this.btn_RVXStart.Name = "btn_RVXStart";
+            this.btn_RVXStart.Size = new System.Drawing.Size(75, 23);
+            this.btn_RVXStart.TabIndex = 27;
+            this.btn_RVXStart.Text = "Iniciar";
+            this.btn_RVXStart.UseVisualStyleBackColor = true;
+            this.btn_RVXStart.Click += new System.EventHandler(this.btn_RVXStart_Click);
+            // 
+            // btn_SaidaRVXProc
+            // 
+            this.btn_SaidaRVXProc.Location = new System.Drawing.Point(569, 188);
+            this.btn_SaidaRVXProc.Name = "btn_SaidaRVXProc";
+            this.btn_SaidaRVXProc.Size = new System.Drawing.Size(75, 23);
+            this.btn_SaidaRVXProc.TabIndex = 26;
+            this.btn_SaidaRVXProc.Text = "Procurar";
+            this.btn_SaidaRVXProc.UseVisualStyleBackColor = true;
+            this.btn_SaidaRVXProc.Click += new System.EventHandler(this.btn_SaidaRVXProc_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(29, 198);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(80, 13);
+            this.label10.TabIndex = 25;
+            this.label10.Text = "Caminho Saída";
+            // 
+            // saidaRVXBox
+            // 
+            this.saidaRVXBox.AllowDrop = true;
+            this.saidaRVXBox.Location = new System.Drawing.Point(115, 191);
+            this.saidaRVXBox.Name = "saidaRVXBox";
+            this.saidaRVXBox.Size = new System.Drawing.Size(448, 20);
+            this.saidaRVXBox.TabIndex = 24;
+            this.saidaRVXBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.saidaRVXBox_DragDrop);
+            this.saidaRVXBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.saidaRVXBox_DragEnter);
+            // 
+            // btn_DsBaseProc
+            // 
+            this.btn_DsBaseProc.Location = new System.Drawing.Point(569, 101);
+            this.btn_DsBaseProc.Name = "btn_DsBaseProc";
+            this.btn_DsBaseProc.Size = new System.Drawing.Size(75, 23);
+            this.btn_DsBaseProc.TabIndex = 23;
+            this.btn_DsBaseProc.Text = "Procurar";
+            this.btn_DsBaseProc.UseVisualStyleBackColor = true;
+            this.btn_DsBaseProc.Click += new System.EventHandler(this.btn_DsBaseProc_Click);
+            // 
+            // btn_DcBaseProc
+            // 
+            this.btn_DcBaseProc.Location = new System.Drawing.Point(569, 146);
+            this.btn_DcBaseProc.Name = "btn_DcBaseProc";
+            this.btn_DcBaseProc.Size = new System.Drawing.Size(75, 23);
+            this.btn_DcBaseProc.TabIndex = 22;
+            this.btn_DcBaseProc.Text = "Procurar";
+            this.btn_DcBaseProc.UseVisualStyleBackColor = true;
+            this.btn_DcBaseProc.Click += new System.EventHandler(this.btn_DcBaseProc_Click);
+            // 
+            // btn_DsSabProc
+            // 
+            this.btn_DsSabProc.Location = new System.Drawing.Point(569, 49);
+            this.btn_DsSabProc.Name = "btn_DsSabProc";
+            this.btn_DsSabProc.Size = new System.Drawing.Size(75, 23);
+            this.btn_DsSabProc.TabIndex = 21;
+            this.btn_DsSabProc.Text = "Procurar";
+            this.btn_DsSabProc.UseVisualStyleBackColor = true;
+            this.btn_DsSabProc.Click += new System.EventHandler(this.btn_DsSabProc_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(24, 59);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(85, 13);
+            this.label9.TabIndex = 20;
+            this.label9.Text = "Dessem Sábado";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(15, 156);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(94, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Decomp BaseRef.";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(17, 111);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(92, 13);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "Dessem BaseRef.";
+            // 
+            // dessemBaseRVXbox
+            // 
+            this.dessemBaseRVXbox.AllowDrop = true;
+            this.dessemBaseRVXbox.Location = new System.Drawing.Point(115, 103);
+            this.dessemBaseRVXbox.Name = "dessemBaseRVXbox";
+            this.dessemBaseRVXbox.Size = new System.Drawing.Size(448, 20);
+            this.dessemBaseRVXbox.TabIndex = 17;
+            this.dessemBaseRVXbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.dessemBaseRVXbox_DragDrop);
+            this.dessemBaseRVXbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.dessemBaseRVXbox_DragEnter);
+            // 
+            // decompBaseRVXbox
+            // 
+            this.decompBaseRVXbox.AllowDrop = true;
+            this.decompBaseRVXbox.Location = new System.Drawing.Point(115, 149);
+            this.decompBaseRVXbox.Name = "decompBaseRVXbox";
+            this.decompBaseRVXbox.Size = new System.Drawing.Size(448, 20);
+            this.decompBaseRVXbox.TabIndex = 16;
+            this.decompBaseRVXbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.decompBaseRVXbox_DragDrop);
+            this.decompBaseRVXbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.decompBaseRVXbox_DragEnter);
+            // 
+            // dessemSabRVXbox
+            // 
+            this.dessemSabRVXbox.AllowDrop = true;
+            this.dessemSabRVXbox.Location = new System.Drawing.Point(115, 52);
+            this.dessemSabRVXbox.Name = "dessemSabRVXbox";
+            this.dessemSabRVXbox.Size = new System.Drawing.Size(448, 20);
+            this.dessemSabRVXbox.TabIndex = 15;
+            this.dessemSabRVXbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.dessemSabRVXbox_DragDrop);
+            this.dessemSabRVXbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.dessemSabRVXbox_DragEnter);
             // 
             // textOrigem
             // 
@@ -890,23 +1086,14 @@ namespace Compass.DecompToolsShellX
             this.Search_Exit.UseVisualStyleBackColor = true;
             this.Search_Exit.Click += new System.EventHandler(this.Search_Exit_Click);
             // 
-            // check_modifRenovaveis
-            // 
-            this.check_modifRenovaveis.AutoSize = true;
-            this.check_modifRenovaveis.Location = new System.Drawing.Point(384, 82);
-            this.check_modifRenovaveis.Name = "check_modifRenovaveis";
-            this.check_modifRenovaveis.Size = new System.Drawing.Size(129, 17);
-            this.check_modifRenovaveis.TabIndex = 19;
-            this.check_modifRenovaveis.Text = "Modificar Renováveis";
-            this.check_modifRenovaveis.UseVisualStyleBackColor = true;
-            this.check_modifRenovaveis.Visible = false;
-            // 
             // FrmDessemTools
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1007, 591);
+            this.Controls.Add(this.progressPercent);
             this.Controls.Add(this.Search_Exit);
+            this.Controls.Add(this.progressBarRVX);
             this.Controls.Add(this.Search_Meta);
             this.Controls.Add(this.Search_Ori);
             this.Controls.Add(this.Dir_Saida);
@@ -937,6 +1124,8 @@ namespace Compass.DecompToolsShellX
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage6.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1017,5 +1206,21 @@ namespace Compass.DecompToolsShellX
         private System.Windows.Forms.TextBox text_ComplDir;
         private System.Windows.Forms.CheckBox check_Expand;
         private System.Windows.Forms.CheckBox check_modifRenovaveis;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox dessemBaseRVXbox;
+        private System.Windows.Forms.TextBox decompBaseRVXbox;
+        private System.Windows.Forms.TextBox dessemSabRVXbox;
+        private System.Windows.Forms.Button btn_DsSabProc;
+        private System.Windows.Forms.Button btn_DsBaseProc;
+        private System.Windows.Forms.Button btn_DcBaseProc;
+        private System.Windows.Forms.Button btn_SaidaRVXProc;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox saidaRVXBox;
+        private System.Windows.Forms.Button btn_RVXStart;
+        private System.Windows.Forms.ProgressBar progressBarRVX;
+        private System.Windows.Forms.Label progressPercent;
     }
 }

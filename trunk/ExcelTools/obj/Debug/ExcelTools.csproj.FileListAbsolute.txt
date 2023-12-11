@@ -90,3 +90,4 @@ C:\Development\price_toolsVMAlfa\trunk\ExcelTools\obj\Debug\Compass.ExcelTools.p
 C:\Development\price_tools\trunk\ExcelTools\obj\Debug\ExcelTools.csproj.CopyComplete
 C:\Development\price_tools\trunk\ExcelTools\bin\Debug\System.Net.Http.dll
 C:\Development\price_tools\trunk\ExcelTools\bin\Debug\System.Net.Http.xml
+C:\Development\price_tools\trunk\ExcelTools\bin\Debug\Ionic.Zip.dll

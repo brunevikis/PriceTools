@@ -868,47 +868,6 @@ namespace Compass.DecompToolsShellX
 
                 var dataSources = new ResultDataSource[submercados.Count() + 2];//
                 int i = 0;//
-                foreach (var sub in submercados)//
-                {
-                    var dtResumo = new System.Data.DataTable();
-
-
-
-                    var rds = new ResultDataSource() { DataSource = dtResumo, Title = sub };//
-
-                    dtResumo.Columns.Add("ESTÁGIO");
-                    dtResumo.Columns.Add("CMO");
-                    dtResumo.Columns.Add("CARGA");
-                    dtResumo.Columns.Add("PQ");
-                    dtResumo.Columns.Add("CARGA LIQ.");
-                    dtResumo.Columns.Add("SOMA GH");
-                    dtResumo.Columns.Add("SOMA GT");
-                    dtResumo.Columns.Add("CONS. ELEV.");
-                    dtResumo.Columns.Add("IMPORTAÇÃO");
-                    dtResumo.Columns.Add("EXPORTAÇÃO");
-                    dtResumo.Columns.Add("SALDO");
-                    dtResumo.Columns.Add("GT MIN");
-                    dtResumo.Columns.Add("GT MAX");
-                    dtResumo.Columns.Add("EARM");
-
-
-                    _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == sub).Select(
-                       x =>
-                       {
-                           double cargaLiquida = x.Carga - x.PQ;
-                           dtResumo.Rows.Add(
-                               new object[] { x.estagio.ToString(),/* x.submercado.ToString(),*/ x.CMO.ToString("N2"), x.Carga.ToString("N2"), x.PQ.ToString("N2"),cargaLiquida, x.SomaGH.ToString("N2"), x.SomaGT.ToString("N2"), x.ConsElev.ToString("N2")
-                                , x.Import.ToString("N2"), x.Export.ToString("N2"), x.Saldo.ToString("N2"), x.GTMin.ToString("N2"), x.GTMax.ToString("N2"), x.Earm.ToString("N2")
-                                   //, x.DemandaMesSeguinte.ToString("N0")
-                               }
-                               );
-
-                           return true;
-                       }).ToList();
-
-                    dataSources[i] = rds;//
-                    i++;//
-                }
 
                 //aba SIN
                 var dtSIN = new System.Data.DataTable();
@@ -977,6 +936,51 @@ namespace Compass.DecompToolsShellX
 
                 dataSources[i] = rdsSIN;
                 i++;
+
+                //submercados
+                foreach (var sub in submercados)//
+                {
+                    var dtResumo = new System.Data.DataTable();
+
+
+
+                    var rds = new ResultDataSource() { DataSource = dtResumo, Title = sub };//
+
+                    dtResumo.Columns.Add("ESTÁGIO");
+                    dtResumo.Columns.Add("CMO");
+                    dtResumo.Columns.Add("CARGA");
+                    dtResumo.Columns.Add("PQ");
+                    dtResumo.Columns.Add("CARGA LIQ.");
+                    dtResumo.Columns.Add("SOMA GH");
+                    dtResumo.Columns.Add("SOMA GT");
+                    dtResumo.Columns.Add("CONS. ELEV.");
+                    dtResumo.Columns.Add("IMPORTAÇÃO");
+                    dtResumo.Columns.Add("EXPORTAÇÃO");
+                    dtResumo.Columns.Add("SALDO");
+                    dtResumo.Columns.Add("GT MIN");
+                    dtResumo.Columns.Add("GT MAX");
+                    dtResumo.Columns.Add("EARM");
+
+
+                    _results.First().Value.PDO_Sist_Result.Where(x => x.submercado == sub).Select(
+                       x =>
+                       {
+                           double cargaLiquida = x.Carga - x.PQ;
+                           dtResumo.Rows.Add(
+                               new object[] { x.estagio.ToString(),/* x.submercado.ToString(),*/ x.CMO.ToString("N2"), x.Carga.ToString("N2"), x.PQ.ToString("N2"),cargaLiquida, x.SomaGH.ToString("N2"), x.SomaGT.ToString("N2"), x.ConsElev.ToString("N2")
+                                , x.Import.ToString("N2"), x.Export.ToString("N2"), x.Saldo.ToString("N2"), x.GTMin.ToString("N2"), x.GTMax.ToString("N2"), x.Earm.ToString("N2")
+                                   //, x.DemandaMesSeguinte.ToString("N0")
+                               }
+                               );
+
+                           return true;
+                       }).ToList();
+
+                    dataSources[i] = rds;//
+                    i++;//
+                }
+
+                
 
                 //PLD
 

@@ -30,3 +30,4 @@ C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.WebRequ
 C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.xml
 C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\System.Net.Http.WebRequest.xml
 C:\Development\price_tools\trunk\CommomLibrary\obj\Debug\CommomLibrary.csproj.AssemblyReference.cache
+C:\Development\price_tools\trunk\CommomLibrary\bin\Debug\Ionic.Zip.dll

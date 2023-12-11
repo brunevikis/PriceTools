@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Ionic.Zip;
 
 namespace Compass.CommomLibrary
 {
@@ -1339,6 +1340,70 @@ new DateTime(2033,12,25),
             return (currRevDate, currRevNum);
         }
 
+        public static (DateTime revDate, int rev) GetNextRev(DateTime date, int increment = 1)
+        {
+            var currRevDate = GetCurrRev(date).revDate;
+
+            var nextRevDate = currRevDate.AddDays(7 * increment);
+            var nextRevNum = nextRevDate.Day / 7 - (nextRevDate.Day % 7 == 0 ? 1 : 0);
+
+            return (nextRevDate, nextRevNum);
+        }
+
+        public static string GetDecompRecentExec(DateTime data)
+        {
+            DateTime Ve;
+            DateTime dataEstudo = data;
+            if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
+            {
+                Ve = dataEstudo.AddDays(-1);
+            }
+            else
+            {
+                Ve = dataEstudo;
+            }
+
+            var rev = Tools.GetCurrRev(Ve);
+            string mapcut = "mapcut.rv" + rev.rev.ToString();
+            string cortdeco = "cortdeco.rv" + rev.rev.ToString();
+
+
+
+            for (int i = 1; i <= 10; i++)
+            {
+                string camDecomp = @"K:\4_curto_prazo\" + rev.revDate.ToString("yyyy_MM") + "\\DEC_ONS_" + rev.revDate.ToString("MMyyyy") + "_RV" + rev.rev.ToString() + $"_VE_ccee ({i})";
+
+                string etcFile = Path.Combine(camDecomp, "etc.zip");
+                if (Directory.Exists(camDecomp))
+                {
+                    var arqs = Directory.GetFiles(camDecomp).ToList();
+                    if (arqs.All(x => Path.GetFileName(x).ToLower() != mapcut) && arqs.All(x => Path.GetFileName(x).ToLower() != cortdeco))
+                    {
+                        if (File.Exists(etcFile))
+                        {
+                            Ionic.Zip.ZipFile arquivoZip = Ionic.Zip.ZipFile.Read(etcFile);
+                            try
+                            {
+                                foreach (ZipEntry e in arquivoZip)
+                                {
+                                    e.Extract(camDecomp, ExtractExistingFileAction.OverwriteSilently);
+                                }
+                                arquivoZip.Dispose();
+                                arqs = Directory.GetFiles(camDecomp).ToList();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                throw ex;
+                            }
+                        }
+                        
+                    }
+                    return camDecomp;
+                }
+            }
+            return "";
+        }
         public static string GetDCref(DateTime dt)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
@@ -1374,6 +1439,127 @@ new DateTime(2033,12,25),
                 }
             }
             return folder;
+        }
+
+        public static string GetDessemRecent(DateTime data, bool deckSabado = false)
+        {
+            DateTime dataRef = data;
+            string folder = "";
+            int cont = 0;
+            bool Ok = false;
+            if (deckSabado)
+            {
+                DateTime sabAnt = data;
+                while (Ok == false && cont < 30)
+                {
+                    while (sabAnt.DayOfWeek != DayOfWeek.Saturday) sabAnt = sabAnt.AddDays(-1);
+
+                    DateTime dat = sabAnt;
+                    DateTime datVE = sabAnt;
+
+                    var rev = Tools.GetCurrRev(sabAnt);
+                    //H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\2021\01_jan\RV3\DS_CCEE_012021_SEMREDE_RV3D19
+                    var mes = Tools.GetMonthNumAbrev(rev.revDate.Month);//dataRef
+                    var cam = $@"H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\DS_CCEE_{rev.revDate:MMyyyy}_SEMREDE_RV{rev.rev}D{sabAnt.Day:00}";
+                    if (Directory.Exists(cam))
+                    {
+                        folder = cam;
+                        Ok = true;
+                    }
+                    else
+                    {
+                        cont++;
+                        sabAnt = sabAnt.AddDays(-1);
+                    }
+                }
+            }
+            else
+            {
+                while (Ok == false && cont < 30)
+                {
+                    DateTime dat = dataRef;
+                    DateTime datVE = dataRef;
+                    if (dat.DayOfWeek == DayOfWeek.Friday)
+                    {
+                        datVE = dat.AddDays(-1);
+                    }
+                    var rev = Tools.GetCurrRev(datVE);
+                    //H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\2021\01_jan\RV3\DS_CCEE_012021_SEMREDE_RV3D19
+                    var mes = Tools.GetMonthNumAbrev(rev.revDate.Month);//dataRef
+                    var cam = $@"H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\DS_CCEE_{rev.revDate:MMyyyy}_SEMREDE_RV{rev.rev}D{dat.Day:00}";
+                    if (Directory.Exists(cam))
+                    {
+                        folder = cam;
+                        Ok = true;
+                    }
+                    else
+                    {
+                        cont++;
+                        dataRef = dataRef.AddDays(-1);
+                    }
+                }
+            }
+
+            return folder;
+        }
+
+        public static string GetNPTXT(DateTime d, bool recursivo = false)
+        {
+            var oneDrive_DESSEM = Path.Combine(@"C:\Enercore\Energy Core Trading\Energy Core Pricing - Documents\Arquivos_DESSEM");
+            var kPath = @"K:\5_dessem\Arquivos_DESSEM";
+
+            string arqName = $"NP{d:ddMMyyyy}.txt";
+
+            if (!Directory.Exists(oneDrive_DESSEM))
+            {
+                oneDrive_DESSEM = oneDrive_DESSEM.Replace("Energy Core Pricing - Documents", "Energy Core Pricing - Documentos");
+            }
+
+            var oneDrive_DIA = Path.Combine(oneDrive_DESSEM, d.ToString("MM_yyyy"), d.ToString("dd"));
+            var k_DIA = Path.Combine(kPath, d.ToString("MM_yyyy"), d.ToString("dd"));
+
+            if (File.Exists(Path.Combine(k_DIA, arqName)))
+            {
+                return Path.Combine(k_DIA, arqName);
+            }
+            else if (File.Exists(Path.Combine(oneDrive_DIA, arqName)))
+            {
+                return Path.Combine(oneDrive_DIA, arqName);
+            }
+            else
+            {
+                //como pode estar criando um deck de um dia no futuro e tambem buscando dados de um NP do futuro, será usado o dados mais recente e caso não seja essa situação, uma exceção sera lançada interrompendo o processo
+                DateTime hoje = DateTime.Today;
+                if (d >= hoje || recursivo == true)
+                {
+                    string NP_recente = GetNPTXT(d.AddDays(-1), true);// chamada recursiva até encontrar o mais recente
+                    return NP_recente;
+                }
+
+                throw new NotImplementedException($"Arquivo Níveis de partida não encontrados para criação do Deflant.dat, arquivo {arqName} necessário");
+
+            }
+
+            //return "";
+        }
+
+        public static float GetNPValue(string NPtxt, string montante)
+        {
+            float valor = 0f;
+            var linhas = File.ReadAllLines(NPtxt).ToList();
+
+            foreach (var l in linhas)
+            {
+                float d = 0f;
+                var campos = l.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (campos[0].Trim() == montante)
+                {
+                    valor = float.TryParse(campos[2].Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                    return valor;
+                }
+            }
+
+            return valor;
         }
     }
 
@@ -1510,7 +1696,7 @@ new DateTime(2033,12,25),
             while (datetime.Month == mes)
             {
                 mOper.SemanasOperativas.Add(
-                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019,patamares2024)
+                    new SemanaOperativa(datetime.AddDays(-6), datetime, patamares2019, patamares2024)
                     );
 
                 datetime = datetime.AddDays(7);
@@ -1532,7 +1718,7 @@ new DateTime(2033,12,25),
             //    );
 
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019,patamares2024)
+                new SemanaOperativa(datetime.AddDays(1), (new DateTime(ano, mes, 1)).AddMonths(2).AddDays(-1), patamares2019, patamares2024)
                 );
 
             mOper.Fim = datetime.AddDays(-7);

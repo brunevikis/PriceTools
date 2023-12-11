@@ -30,6 +30,8 @@ namespace Compass.DecompToolsShellX
 
         static void Main(string[] args)
         {
+            System.Windows.Forms.Application.EnableVisualStyles();
+
             actions.Add("abrir", open);
             actions.Add("vazoes", vazoes);
             actions.Add("vazoes6", vazoes6);
@@ -6593,6 +6595,10 @@ namespace Compass.DecompToolsShellX
             }
         }
 
+        public static void testeProgress()
+        {
+            Thread.Sleep(10000);
+        }
         public static void DStools_complSem(object comando)
         {
             try

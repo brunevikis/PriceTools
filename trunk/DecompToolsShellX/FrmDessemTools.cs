@@ -10,6 +10,7 @@ using System.IO;
 using Compass.CommomLibrary;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace Compass.DecompToolsShellX
 {
@@ -17,6 +18,8 @@ namespace Compass.DecompToolsShellX
     {
         public FrmDessemTools(string dir)
         {
+           // System.Windows.Forms.Application.EnableVisualStyles();
+
             InitializeComponent();
             this.textOrigem.Text = dir;
             this.textResul.Text = dir;
@@ -24,6 +27,19 @@ namespace Compass.DecompToolsShellX
 
 
             this.textSaida.Text = dir.Replace(partsDir, "");
+            CarregaDirs();
+        }
+
+        public void CarregaDirs()
+        {
+            DateTime hoje = DateTime.Today;
+            DateTime sabAnt = hoje.AddDays(-1);
+            while (sabAnt.DayOfWeek != DayOfWeek.Saturday) sabAnt = sabAnt.AddDays(-1);
+
+            dessemBaseRVXbox.Text = Tools.GetDessemRecent(hoje);
+            dessemSabRVXbox.Text = Tools.GetDessemRecent(hoje, deckSabado: true);
+            decompBaseRVXbox.Text = Tools.GetDecompRecentExec(hoje);
+
         }
 
         private void Search_Ori_Click(object sender, EventArgs e)
@@ -1167,7 +1183,198 @@ namespace Compass.DecompToolsShellX
             nthread.Start(comando);
 
         }
-    }
 
+        private void dessemSabRVXbox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                dessemSabRVXbox.Text = files.First();
+            }
+        }
+
+        private void dessemSabRVXbox_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+        private void dessemBaseRVXbox_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+        private void dessemBaseRVXbox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                dessemBaseRVXbox.Text = files.First();
+            }
+        }
+
+        private void decompBaseRVXbox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                decompBaseRVXbox.Text = files.First();
+            }
+        }
+
+        private void decompBaseRVXbox_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+        private string SearchDirectoryBottom()
+        {
+            string directory = "";
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            //fbd.SelectedPath = this.text_ComplDir.Text;
+            fbd.Description = "SELECIONE O DIRETÓRIO";
+
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                directory = fbd.SelectedPath;
+            }
+            return directory;
+        }
+
+        private void saidaRVXBox_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+        private void saidaRVXBox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                saidaRVXBox.Text = files.First();
+            }
+        }
+
+        private void btn_DsSabProc_Click(object sender, EventArgs e)
+        {
+            dessemSabRVXbox.Text = SearchDirectoryBottom();
+        }
+
+        private void btn_DsBaseProc_Click(object sender, EventArgs e)
+        {
+            dessemBaseRVXbox.Text = SearchDirectoryBottom();
+        }
+
+        private void btn_DcBaseProc_Click(object sender, EventArgs e)
+        {
+            decompBaseRVXbox.Text = SearchDirectoryBottom();
+        }
+
+        private void btn_SaidaRVXProc_Click(object sender, EventArgs e)
+        {
+            saidaRVXBox.Text = SearchDirectoryBottom();
+        }
+        
+        public bool VerificaDIRSRVX()
+        {
+            if (decompBaseRVXbox.Text == "" || !Directory.Exists(decompBaseRVXbox.Text))
+            {
+                string aviso = "Diretório inválido ou inexistente!";
+                MessageBox.Show(aviso, "DESSEM-TOOLS");
+                decompBaseRVXbox.Focus();
+                return false;
+            }
+            if (dessemBaseRVXbox.Text == "" || !Directory.Exists(dessemBaseRVXbox.Text))
+            {
+                string aviso = "Diretório inválido ou inexistente!";
+                MessageBox.Show(aviso, "DESSEM-TOOLS");
+                dessemBaseRVXbox.Focus();
+                return false;
+            }
+            if (dessemSabRVXbox.Text == "" || !Directory.Exists(dessemSabRVXbox.Text))
+            {
+                string aviso = "Diretório inválido ou inexistente!";
+                MessageBox.Show(aviso, "DESSEM-TOOLS");
+                dessemSabRVXbox.Focus();
+                return false;
+            }
+            if (saidaRVXBox.Text == "" || !Directory.Exists(saidaRVXBox.Text))
+            {
+                string aviso = "Diretório inválido ou inexistente!";
+                MessageBox.Show(aviso, "DESSEM-TOOLS");
+                saidaRVXBox.Focus();
+                return false;
+            }
+            return true;
+        }
+        private void btn_RVXStart_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                bool prosseguir = VerificaDIRSRVX();
+                if (prosseguir)
+                {
+                    var deckSab = DeckFactory.CreateDeck(dessemSabRVXbox.Text);
+                    var deckDESSEMref = DeckFactory.CreateDeck(dessemBaseRVXbox.Text);
+                    var deckDECOMPref = DeckFactory.CreateDeck(decompBaseRVXbox.Text);
+
+                    DateTime dat = DateTime.Today;
+                    DateTime sabFut = dat;
+                    while (sabFut.DayOfWeek != DayOfWeek.Saturday) sabFut = sabFut.AddDays(1);
+
+                    DateTime datVE = dat;
+                    if (dat.DayOfWeek == DayOfWeek.Friday)
+                    {
+                        datVE = dat.AddDays(-1);
+                    }
+                    var rev = Tools.GetNextRev(datVE);
+
+
+                    string dirSaida = Path.Combine(saidaRVXBox.Text, $"Dessem_RV{rev.rev}-" + dat.ToString("dd-MM-yyyy"));
+
+                    if (deckSab is CommomLibrary.Dessem.Deck && deckDESSEMref is CommomLibrary.Dessem.Deck && deckDECOMPref is CommomLibrary.Decomp.Deck)
+                    {
+                        deckDESSEMref.CopyFilesToFolder(dirSaida);
+
+                        bool copiarMapCorte = Services.DessemRVX.SalvarMapcutCortedeco(decompBaseRVXbox.Text, dirSaida);
+                        if (copiarMapCorte == false)
+                        {
+                            return;
+                        }
+
+                        Services.DessemRVX.CriarDeflant(dirSaida, sabFut);
+                        Services.DessemRVX.CriarCotasr11(dirSaida, sabFut);
+                        Services.DessemRVX.CriarPtoper(dirSaida, sabFut);
+
+
+                    }
+                    int p = 0;
+                    progressPercent.Text = p + "%";
+                    //progressPercent.Update();
+                    while (p < 100)
+                    {
+                        progressBarRVX.Value += 1;
+                        p++;
+                        progressPercent.Text = p + "%";
+
+                    }
+                    Program.testeProgress();
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                if (ex.ToString().Contains("Arquivo Níveis de partida não encontrados para criação do Deflant.dat"))
+                {
+                    
+                    string texto = ex.Message + ", processo interrompido.";
+                    MessageBox.Show(texto, "Dessem Tools");
+                    return;
+                }
+            }
+
+        }
+
+    }
 
 }

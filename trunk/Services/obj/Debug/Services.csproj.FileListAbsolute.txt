@@ -115,3 +115,4 @@ C:\Development\price_tools\trunk\Services\obj\Debug\Services.csproj.CopyComplete
 C:\Development\price_tools\trunk\Services\bin\Debug\System.Net.Http.dll
 C:\Development\price_tools\trunk\Services\bin\Debug\System.Net.Http.xml
 C:\Development\price_tools\trunk\Services\bin\Debug\LinuxQueue40.dll
+C:\Development\price_tools\trunk\Services\bin\Debug\Ionic.Zip.dll
