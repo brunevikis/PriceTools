@@ -118,3 +118,4 @@ C:\Development\price_tools\trunk\Encadeado\bin\Debug\System.Net.Http.xml
 C:\Development\price_tools\trunk\Encadeado\bin\Debug\Newtonsoft.Json.dll
 C:\Development\price_tools\trunk\Encadeado\bin\Debug\Newtonsoft.Json.xml
 C:\Development\price_tools\trunk\Encadeado\bin\Debug\Newtonsoft.Json.pdb
+C:\Development\price_tools\trunk\Encadeado\bin\Debug\Ionic.Zip.dll

@@ -94,8 +94,6 @@ namespace Compass.DecompToolsShellX
             this.label4 = new System.Windows.Forms.Label();
             this.text_ComplDir = new System.Windows.Forms.TextBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.progressPercent = new System.Windows.Forms.Label();
-            this.progressBarRVX = new System.Windows.Forms.ProgressBar();
             this.btn_RVXStart = new System.Windows.Forms.Button();
             this.btn_SaidaRVXProc = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
@@ -109,6 +107,8 @@ namespace Compass.DecompToolsShellX
             this.dessemBaseRVXbox = new System.Windows.Forms.TextBox();
             this.decompBaseRVXbox = new System.Windows.Forms.TextBox();
             this.dessemSabRVXbox = new System.Windows.Forms.TextBox();
+            this.progressPercent = new System.Windows.Forms.Label();
+            this.progressBarRVX = new System.Windows.Forms.ProgressBar();
             this.textOrigem = new System.Windows.Forms.TextBox();
             this.textSaida = new System.Windows.Forms.TextBox();
             this.textMeta = new System.Windows.Forms.TextBox();
@@ -855,24 +855,6 @@ namespace Compass.DecompToolsShellX
             this.tabPage6.Text = "Dessem RVX+1";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
-            // progressPercent
-            // 
-            this.progressPercent.AutoSize = true;
-            this.progressPercent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.progressPercent.Location = new System.Drawing.Point(102, 109);
-            this.progressPercent.Name = "progressPercent";
-            this.progressPercent.Size = new System.Drawing.Size(23, 13);
-            this.progressPercent.TabIndex = 31;
-            this.progressPercent.Text = "0%";
-            // 
-            // progressBarRVX
-            // 
-            this.progressBarRVX.Location = new System.Drawing.Point(145, 109);
-            this.progressBarRVX.Name = "progressBarRVX";
-            this.progressBarRVX.Size = new System.Drawing.Size(448, 23);
-            this.progressBarRVX.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBarRVX.TabIndex = 30;
-            // 
             // btn_RVXStart
             // 
             this.btn_RVXStart.Location = new System.Drawing.Point(569, 304);
@@ -998,6 +980,24 @@ namespace Compass.DecompToolsShellX
             this.dessemSabRVXbox.TabIndex = 15;
             this.dessemSabRVXbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.dessemSabRVXbox_DragDrop);
             this.dessemSabRVXbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.dessemSabRVXbox_DragEnter);
+            // 
+            // progressPercent
+            // 
+            this.progressPercent.AutoSize = true;
+            this.progressPercent.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.progressPercent.Location = new System.Drawing.Point(599, 116);
+            this.progressPercent.Name = "progressPercent";
+            this.progressPercent.Size = new System.Drawing.Size(80, 16);
+            this.progressPercent.TabIndex = 31;
+            this.progressPercent.Text = "Progresso";
+            // 
+            // progressBarRVX
+            // 
+            this.progressBarRVX.Location = new System.Drawing.Point(145, 109);
+            this.progressBarRVX.Name = "progressBarRVX";
+            this.progressBarRVX.Size = new System.Drawing.Size(448, 23);
+            this.progressBarRVX.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarRVX.TabIndex = 30;
             // 
             // textOrigem
             // 

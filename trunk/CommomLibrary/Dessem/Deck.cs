@@ -405,11 +405,17 @@ namespace Compass.CommomLibrary.Dessem
                 System.IO.File.Copy(doc.Value.BasePath, doc.Value.Path, true);
             }
 
-
-
-
         }
 
+        public DateTime GetDeckDate()
+        {
+            
+            var dadvaz = DocumentFactory.Create(this.documents["dadvaz.dat"].BasePath) as Compass.CommomLibrary.Dadvaz.Dadvaz;
+
+            var dataLine = dadvaz.BlocoData.First();
+            DateTime data= new DateTime(dataLine.Ano, dataLine.Mes, dataLine.Dia);
+            return data;
+        }
 
     }
 }

@@ -15,6 +15,11 @@ namespace Compass.CommomLibrary.Dadger {
                 this[0] = "VE";
         }
 
+        public int Usina { get { return (int)this[1]; } set { this[1] = value; } }
+
+        public float VolumeEspera1 { get { return (float)this[2]; } set { this[2] = value; } }
+
+
         public static readonly BaseField[] campos = new BaseField[] {
                 new BaseField( 1 , 2 ,"A2"  , "Id"),
                 new BaseField( 5 , 7 ,"I3", "Usina"  ),

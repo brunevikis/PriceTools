@@ -11,6 +11,7 @@ using Compass.CommomLibrary;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
 using System.Runtime.InteropServices;
+using Compass.CommomLibrary.Dadger;
 
 namespace Compass.DecompToolsShellX
 {
@@ -18,7 +19,7 @@ namespace Compass.DecompToolsShellX
     {
         public FrmDessemTools(string dir)
         {
-           // System.Windows.Forms.Application.EnableVisualStyles();
+            // System.Windows.Forms.Application.EnableVisualStyles();
 
             InitializeComponent();
             this.textOrigem.Text = dir;
@@ -38,7 +39,7 @@ namespace Compass.DecompToolsShellX
 
             dessemBaseRVXbox.Text = Tools.GetDessemRecent(hoje);
             dessemSabRVXbox.Text = Tools.GetDessemRecent(hoje, deckSabado: true);
-            decompBaseRVXbox.Text = Tools.GetDecompRecentExec(hoje);
+            decompBaseRVXbox.Text = Tools.GetDecompRecentExec(hoje.AddDays(4),nextRV: true);
 
         }
 
@@ -707,8 +708,9 @@ namespace Compass.DecompToolsShellX
                                 Tuple<int, int, float> Ndad = new Tuple<int, int, float>(Convert.ToInt32(Ndados[0]), Convert.ToInt32(Ndados[1]), float.Parse(Ndados[2]));
                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                             }
-                            bool pat2023 = dt.Year >= 2023;
-                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt, pat2023);
+                            bool pat2023 = dt.Year == 2023;
+                            bool pat2024 = dt.Year >= 2024;
+                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt, pat2023, pat2024);
 
                             foreach (var inter in intervalosAgruped)
                             {
@@ -1273,7 +1275,7 @@ namespace Compass.DecompToolsShellX
         {
             saidaRVXBox.Text = SearchDirectoryBottom();
         }
-        
+
         public bool VerificaDIRSRVX()
         {
             if (decompBaseRVXbox.Text == "" || !Directory.Exists(decompBaseRVXbox.Text))
@@ -1310,16 +1312,22 @@ namespace Compass.DecompToolsShellX
         {
             try
             {
+                //saidaRVXBox.Text = $@"K:\teste\dessemTESTE\dstools\RVX+1";
+
                 bool prosseguir = VerificaDIRSRVX();
                 if (prosseguir)
                 {
-                    var deckSab = DeckFactory.CreateDeck(dessemSabRVXbox.Text);
-                    var deckDESSEMref = DeckFactory.CreateDeck(dessemBaseRVXbox.Text);
-                    var deckDECOMPref = DeckFactory.CreateDeck(decompBaseRVXbox.Text);
+                    var deckSab = DeckFactory.CreateDeck(dessemSabRVXbox.Text) as CommomLibrary.Dessem.Deck;
+                    var deckDESSEMref = DeckFactory.CreateDeck(dessemBaseRVXbox.Text) as CommomLibrary.Dessem.Deck;
+                    var deckDECOMPref = DeckFactory.CreateDeck(decompBaseRVXbox.Text) as CommomLibrary.Decomp.Deck;
 
                     DateTime dat = DateTime.Today;
                     DateTime sabFut = dat;
                     while (sabFut.DayOfWeek != DayOfWeek.Saturday) sabFut = sabFut.AddDays(1);
+
+                    DateTime sabAnt = deckSab.GetDeckDate();
+                    DateTime dtdeckatual = deckDESSEMref.GetDeckDate();
+
 
                     DateTime datVE = dat;
                     if (dat.DayOfWeek == DayOfWeek.Friday)
@@ -1327,7 +1335,6 @@ namespace Compass.DecompToolsShellX
                         datVE = dat.AddDays(-1);
                     }
                     var rev = Tools.GetNextRev(datVE);
-
 
                     string dirSaida = Path.Combine(saidaRVXBox.Text, $"Dessem_RV{rev.rev}-" + dat.ToString("dd-MM-yyyy"));
 
@@ -1341,23 +1348,55 @@ namespace Compass.DecompToolsShellX
                             return;
                         }
 
+                        var dadger = deckDECOMPref[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
+                        UpdateBar(10);
+
                         Services.DessemRVX.CriarDeflant(dirSaida, sabFut);
+
+                        UpdateBar(10);
+
                         Services.DessemRVX.CriarCotasr11(dirSaida, sabFut);
+
+                        UpdateBar(10);
+
                         Services.DessemRVX.CriarPtoper(dirSaida, sabFut);
 
+                        UpdateBar(10);
+
+                        Services.DessemRVX.CriarDadvazSabado(dirSaida, dessemSabRVXbox.Text, sabFut);
+
+                        UpdateBar(10);
+
+                        Services.DessemRVX.CriarRenovaveis(dirSaida, sabFut, dessemSabRVXbox.Text, sabAnt);
+
+                        UpdateBar(10);
+
+                        Services.DessemRVX.CriarOperut(dirSaida, sabFut);
+
+                        UpdateBar(10);
+
+                        Services.DessemRVX.CriarOperuh(dirSaida, sabFut, dessemSabRVXbox.Text, sabAnt, sabAnt.AddDays(6));
+
+                        UpdateBar(10);
+
+                        Services.DessemRVX.CriarEntdados(dirSaida, dtdeckatual, sabFut, sabFut.AddDays(6), dessemSabRVXbox.Text, sabAnt, dadger);
+
+                        UpdateBar(10);
+
+                        Services.DessemRVX.CriarRespot(dirSaida, sabFut);// obrigatorio ser chamada depois da função CriarEntdados
+
+                        UpdateBar(100);
+
+                        if (progressBarRVX.Value == 100)
+                        {
+                            string texto = "Processo concluído!";
+
+                            MessageBox.Show(texto, "Dessem Tools");
+                            UpdateBar(0);
+                        }
 
                     }
-                    int p = 0;
-                    progressPercent.Text = p + "%";
-                    //progressPercent.Update();
-                    while (p < 100)
-                    {
-                        progressBarRVX.Value += 1;
-                        p++;
-                        progressPercent.Text = p + "%";
-
-                    }
-                    Program.testeProgress();
+                    
 
                 }
             }
@@ -1366,7 +1405,7 @@ namespace Compass.DecompToolsShellX
 
                 if (ex.ToString().Contains("Arquivo Níveis de partida não encontrados para criação do Deflant.dat"))
                 {
-                    
+
                     string texto = ex.Message + ", processo interrompido.";
                     MessageBox.Show(texto, "Dessem Tools");
                     return;
@@ -1375,6 +1414,19 @@ namespace Compass.DecompToolsShellX
 
         }
 
+        public void UpdateBar(int valor)
+        {
+            if (valor == 100 || valor == 0)
+            {
+                progressBarRVX.Value = valor;
+            }
+            else
+            {
+                progressBarRVX.Value += valor;
+            }
+            progressBarRVX.Show();
+            progressBarRVX.Refresh();
+        }
     }
 
 }

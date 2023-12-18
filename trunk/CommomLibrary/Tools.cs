@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Ionic.Zip;
 
 namespace Compass.CommomLibrary
@@ -468,7 +469,48 @@ new DateTime(2033,12,25),
             return new Tuple<int, int, int>(p1, p2, p3);
         }
 
-        public static List<Tuple<int, int>> GetIntervalosPatamares(DateTime data, bool pat2023 = false)
+        public static Tuple<DateTime, DateTime> GetRangeInicialFinal(DateTime dataBase, DateTime iniREVbase, string diaInicLine, string diaFimLine, DateTime dataEstudo, bool eRestricao = false)
+        {
+            DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, diaInicLine.Trim() == "I" ? dataBase.Day : Convert.ToInt32(diaInicLine));
+
+            DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, diaFimLine.Trim() == "F" ? iniREVbase.AddDays(6).Day : Convert.ToInt32(diaFimLine));
+
+            //ajustando viradas de meses 
+            if (dataBase.Day < 10)
+            {
+                if (dataInicial.Day > 20)
+                {
+                    dataInicial = dataInicial.AddMonths(-1);
+                }
+            }
+            if (dataBase.Day > 20 && dataInicial.Day < 10)
+            {
+                dataInicial = dataInicial.AddMonths(1);
+            }
+            if (dataBase.Day > dataFinal.Day)
+            {
+                dataFinal = dataFinal.AddMonths(1);
+            }
+            //fim ajuste de meses
+
+            TimeSpan tsinicial = dataInicial - dataBase;
+            TimeSpan tsFinal = dataFinal - dataInicial;
+
+            double diasInicio = tsinicial.TotalDays;
+            double diasfim = tsFinal.TotalDays;
+
+            DateTime novoInicio = dataEstudo.AddDays(diasInicio);
+            if (eRestricao && novoInicio < dataEstudo)
+            {
+                novoInicio = dataEstudo;
+            }
+
+            DateTime novoFim = novoInicio.AddDays(diasfim);
+
+            return new Tuple<DateTime, DateTime>(novoInicio, novoFim);
+        }
+
+        public static List<Tuple<int, int>> GetIntervalosPatamares(DateTime data, bool pat2023 = false, bool pat2024 = false)
         {
             var feriados = Tools.feriados;
             Boolean ehFeriado = false;
@@ -493,6 +535,13 @@ new DateTime(2033,12,25),
                 new Tuple<int, int>(23, 24)
             };
 
+            List<Tuple<int, int>> NOVaMARutil2024 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 8),
+                new Tuple<int, int>(9, 14),
+                new Tuple<int, int>(15, 22),
+                new Tuple<int, int>(23, 24)
+            };
+
             List<Tuple<int, int>> NOVaMARfer = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 19),
                 new Tuple<int, int>(20, 23),
@@ -500,6 +549,12 @@ new DateTime(2033,12,25),
             };
 
             List<Tuple<int, int>> NOVaMARfer2023 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 18),
+                new Tuple<int, int>(19, 23),
+                new Tuple<int, int>(24, 24)
+            };
+
+            List<Tuple<int, int>> NOVaMARfer2024 = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 18),
                 new Tuple<int, int>(19, 23),
                 new Tuple<int, int>(24, 24)
@@ -519,6 +574,13 @@ new DateTime(2033,12,25),
                 new Tuple<int, int>(23, 24)
             };
 
+            List<Tuple<int, int>> ABRSETOUTutil2024 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 8),
+                new Tuple<int, int>(9, 14),
+                new Tuple<int, int>(15, 22),
+                new Tuple<int, int>(23, 24)
+            };
+
             List<Tuple<int, int>> ABRSETOUTfer = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 18),
                 new Tuple<int, int>(19, 22),
@@ -526,6 +588,12 @@ new DateTime(2033,12,25),
             };
 
             List<Tuple<int, int>> ABRSETOUTfer2023 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 18),
+                new Tuple<int, int>(19, 22),
+                new Tuple<int, int>(23, 24)
+            };
+
+            List<Tuple<int, int>> ABRSETOUTfer2024 = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 18),
                 new Tuple<int, int>(19, 22),
                 new Tuple<int, int>(23, 24)
@@ -545,6 +613,13 @@ new DateTime(2033,12,25),
                 new Tuple<int, int>(23, 24)
             };
 
+            List<Tuple<int, int>> MAIaAGOutil2024 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 8),
+                new Tuple<int, int>(9, 16),
+                new Tuple<int, int>(17, 22),
+                new Tuple<int, int>(23, 24)
+            };
+
             List<Tuple<int, int>> MAIaAGOfer = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1,18),
                 new Tuple<int, int>(19,22),
@@ -552,6 +627,12 @@ new DateTime(2033,12,25),
             };
 
             List<Tuple<int, int>> MAIaAGOfer2023 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1,18),
+                new Tuple<int, int>(19,22),
+                new Tuple<int, int>(23,24)
+            };
+
+            List<Tuple<int, int>> MAIaAGOfer2024 = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1,18),
                 new Tuple<int, int>(19,22),
                 new Tuple<int, int>(23,24)
@@ -570,6 +651,10 @@ new DateTime(2033,12,25),
                         {
                             return NOVaMARfer2023;
                         }
+                        else if (pat2024)
+                        {
+                            return NOVaMARfer2024;
+                        }
                         else
                             return NOVaMARfer;
                     }
@@ -578,6 +663,10 @@ new DateTime(2033,12,25),
                         if (pat2023)
                         {
                             return NOVaMARutil2023;
+                        }
+                        else if (pat2024)
+                        {
+                            return NOVaMARutil2024;
                         }
                         else
                             return NOVaMARutil;
@@ -591,6 +680,10 @@ new DateTime(2033,12,25),
                         {
                             return ABRSETOUTfer2023;
                         }
+                        else if (pat2024)
+                        {
+                            return ABRSETOUTfer2024;
+                        }
                         else
                             return ABRSETOUTfer;
                     }
@@ -599,6 +692,10 @@ new DateTime(2033,12,25),
                         if (pat2023)
                         {
                             return ABRSETOUTutil2023;
+                        }
+                        else if (pat2024)
+                        {
+                            return ABRSETOUTutil2024;
                         }
                         else
                             return ABRSETOUTutil;
@@ -613,6 +710,10 @@ new DateTime(2033,12,25),
                         {
                             return MAIaAGOfer2023;
                         }
+                        else if (pat2024)
+                        {
+                            return MAIaAGOfer2024;
+                        }
                         else
                             return MAIaAGOfer;
                     }
@@ -621,6 +722,10 @@ new DateTime(2033,12,25),
                         if (pat2023)
                         {
                             return MAIaAGOutil2023;
+                        }
+                        else if (pat2024)
+                        {
+                            return MAIaAGOutil2024;
                         }
                         else
                             return MAIaAGOutil;
@@ -1350,7 +1455,7 @@ new DateTime(2033,12,25),
             return (nextRevDate, nextRevNum);
         }
 
-        public static string GetDecompRecentExec(DateTime data)
+        public static string GetDecompRecentExec(DateTime data, bool nextRV = false)
         {
             DateTime Ve;
             DateTime dataEstudo = data;
@@ -1364,6 +1469,10 @@ new DateTime(2033,12,25),
             }
 
             var rev = Tools.GetCurrRev(Ve);
+            if (nextRV == true)
+            {
+                rev = Tools.GetNextRev(Ve);
+            }
             string mapcut = "mapcut.rv" + rev.rev.ToString();
             string cortdeco = "cortdeco.rv" + rev.rev.ToString();
 
@@ -1390,19 +1499,26 @@ new DateTime(2033,12,25),
                                 }
                                 arquivoZip.Dispose();
                                 arqs = Directory.GetFiles(camDecomp).ToList();
-
+                                if (File.Exists(Path.Combine(camDecomp, mapcut)) && File.Exists(Path.Combine(camDecomp, cortdeco)))
+                                {
+                                    return camDecomp;
+                                }
                             }
                             catch (Exception ex)
                             {
                                 throw ex;
                             }
                         }
-                        
+
                     }
-                    return camDecomp;
+                    else if (File.Exists(Path.Combine(camDecomp, mapcut)) && File.Exists(Path.Combine(camDecomp, cortdeco)))
+                    {
+                        return camDecomp;
+                    }
+                    //return camDecomp;
                 }
             }
-            return "";
+            return GetDecompRecentExec(data.AddDays(-7), true);
         }
         public static string GetDCref(DateTime dt)
         {
@@ -1502,7 +1618,116 @@ new DateTime(2033,12,25),
 
             return folder;
         }
+        public static float GetRespotValor(string dia, int hora, int meia, Compass.CommomLibrary.EntdadosDat.DpBlock blocoDp)
+        {
+            float valor = 0;
 
+            //var linhasDp = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia).Select(x => x.Demanda).Sum();
+            var linhasDpSeSul = blocoDp.Where(x => x.DiaInic == dia && x.HoraInic == hora && x.MeiaHoraInic == meia && (x.Subsist == 1 || x.Subsist == 2)).Select(x => x.Demanda).Sum();
+            valor = linhasDpSeSul * 0.05f;
+            return valor;
+        }
+
+        public static string GetPrevCargaDsCSV(DateTime data, string submercado)
+        {
+            var oneDrive_DESSEM = Path.Combine(@"C:\Enercore\Energy Core Trading\Energy Core Pricing - Documents\Arquivos_DESSEM");
+            var kPath = @"K:\5_dessem\Arquivos_DESSEM";
+
+            if (!Directory.Exists(oneDrive_DESSEM))
+            {
+                oneDrive_DESSEM = oneDrive_DESSEM.Replace("Energy Core Pricing - Documents", "Energy Core Pricing - Documentos");
+            }
+            var oneDrive_MES = Path.Combine(oneDrive_DESSEM, data.ToString("MM_yyyy"));
+
+            var oneDrive_DIA = Path.Combine(oneDrive_DESSEM, data.ToString("MM_yyyy"), data.ToString("dd"), "DeckPrevCarga");
+            var k_DIA = Path.Combine(kPath, data.ToString("MM_yyyy"), data.ToString("dd"), "DeckPrevCarga");
+
+            string nameFolder = "PrevCargaDESSEM_" + data.ToString("yyyy-MM-dd");
+
+            var full_Path = Path.Combine(oneDrive_DIA, nameFolder, $"PrevCargaDESSEM_{submercado}_{data:yyyy-MM-dd}.csv");
+            var full_PathK = Path.Combine(k_DIA, nameFolder, $"PrevCargaDESSEM_{submercado}_{data:yyyy-MM-dd}.csv");
+
+            if (File.Exists(full_PathK))
+            {
+                return full_PathK;
+            }
+            else if (File.Exists(full_Path))
+            {
+                return full_Path;
+            }
+            else
+            {
+                string path = GetPrevCargaDsCSV(data.AddDays(-1), submercado);
+                return path;
+            }
+
+
+
+        }
+        
+
+        public static List<Tuple<int, DateTime, double, float>> GetDadosPrevCargaDS(DateTime data)
+        {
+            List<Tuple<int, DateTime, double, float>> dados = new List<Tuple<int, DateTime, double, float>>();//sub,data,estagio,carga
+            List<string> subs = new List<string> { "SECO", "S", "NE", "N" };
+
+            int subNum;
+            foreach (var submercado in subs)
+            {
+                switch (submercado)
+                {
+                    case "SECO":
+                        subNum = 1;
+                        break;
+
+                    case "S":
+                        subNum = 2;
+                        break;
+
+                    case "NE":
+                        subNum = 3;
+                        break;
+
+                    case "N":
+                        subNum = 4;
+                        break;
+
+                    default:
+                        subNum = 0;
+                        break;
+                }
+                string arq = GetPrevCargaDsCSV(data, submercado);
+
+                var linhas = File.ReadAllLines(arq).Skip(1).ToList();
+                foreach (var l in linhas)
+                {
+                    var partes = l.Split(';').ToList();
+                    DateTime dia = Convert.ToDateTime(partes[1]);
+                    float carga = float.Parse(partes[2]);
+                    double est = (dia.TimeOfDay.TotalMinutes / 30) + 1;
+                    dados.Add(new Tuple<int, DateTime, double, float>(subNum, dia, est, carga));
+                }
+
+                for (DateTime d = data; d <= data.AddDays(6); d = d.AddDays(1))//replica os dados do ultimo dia caso não exista os dados do dia no csv
+                {
+                    for (int i = 0; i <= 1440; i += 30)
+                    {
+                        var dadolin = dados.Where(x => x.Item1 == subNum && x.Item2 == d.AddMinutes(i)).FirstOrDefault();
+                        if (dadolin == null)
+                        {
+                            var dadolinAnt = dados.Where(x => x.Item1 == subNum && x.Item2 == d.AddDays(-1).AddMinutes(i)).FirstOrDefault();
+                            if (dadolinAnt != null)
+                            {
+                                dados.Add(new Tuple<int, DateTime, double, float>(subNum, d.AddMinutes(i), dadolinAnt.Item3, dadolinAnt.Item4));
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return dados;
+        }
         public static string GetNPTXT(DateTime d, bool recursivo = false)
         {
             var oneDrive_DESSEM = Path.Combine(@"C:\Enercore\Energy Core Trading\Energy Core Pricing - Documents\Arquivos_DESSEM");
@@ -1561,8 +1786,11 @@ new DateTime(2033,12,25),
 
             return valor;
         }
-    }
 
+        
+
+    }
+   
     public class SemanaOperativa
     {
         public int HorasPat1 { get; set; }
