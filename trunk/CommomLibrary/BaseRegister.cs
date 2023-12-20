@@ -393,7 +393,7 @@ namespace Compass.CommomLibrary
 
         public void InsertBefore(T prevItem, T itemToAdd)
         {
-            Insert(IndexOf(prevItem) - 1, itemToAdd);
+            Insert(IndexOf(prevItem), itemToAdd);
         }
 
         public void RemoveAt(int index)

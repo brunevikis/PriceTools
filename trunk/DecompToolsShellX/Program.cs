@@ -3564,7 +3564,7 @@ namespace Compass.DecompToolsShellX
                 string texto = "";
                 bool existeInicial = true;
 
-                if (restricao == "05397")
+                if (restricao == "05074")
                 {
 
                 }
@@ -3572,7 +3572,7 @@ namespace Compass.DecompToolsShellX
                 var restricoesPorNum = operuh.BlocoRhest.Where(x => x.Restricao == restricao).ToList();
                 var restricoesCount = restricoesPorNum.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
 
-                if (restricoesCount.Count() == 1 && restricoesCount.First().DiaInic.Trim() == "I")//TODO ver se dia fim é maior que data do deck se não for fazer esquema de horas pra avançar 
+                if (restricoesCount.Count() == 1 && restricoesCount.First().DiaInic.Trim() == "I") 
                 {
                     var rhF = restricoesCount.First();
                     if (rhF.DiaFinal.Trim() == "F")
@@ -3694,6 +3694,11 @@ namespace Compass.DecompToolsShellX
                             }
                             operuh.BlocoRhest.Remove(rhe);
 
+                        }
+                        var rheDiaInic_I = rhes.Value.Where(x => x.DiaInic.Trim() == "I").Where(x => x.Minemonico == rhe.Minemonico).FirstOrDefault();
+                        if (rheDiaInic_I != null)
+                        {
+                            existeInicial = true;
                         }
                         //if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
                         //{
