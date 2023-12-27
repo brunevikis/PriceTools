@@ -62,7 +62,7 @@ namespace Compass.DecompToolsShellX
             //actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
 
-
+            //dessemtools "K:\teste\dessemTESTE\resultados\DS_ONS_122023_RV1D08_ccee (1)"
             //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
             //C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_d-1_ECENS45
 
@@ -2332,7 +2332,7 @@ namespace Compass.DecompToolsShellX
             //{
             //    modifRenovaveis = true;
             //}
-
+            
             for (DateTime d = dateIni; d <= dateFim; d = d.AddDays(1))
             {
                 string folder = Path.Combine(deck.BaseFolder.Replace(partsDir, ""), $"Dessem_Rev{tipo}-" + d.ToString("dd-MM-yyyy"));
@@ -2346,7 +2346,7 @@ namespace Compass.DecompToolsShellX
                 CriarEntdados(folder, incremento, dateDeck, d, expandEst, dateFim);
                 //if (modifRenovaveis)
                 //{
-                   // CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
+                   //CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
                 //}
                 CriarRespot(folder, incremento, dateDeck, d, expandEst);
                 incremento++;
@@ -6605,6 +6605,8 @@ namespace Compass.DecompToolsShellX
         {
             Thread.Sleep(10000);
         }
+        
+
         public static void DStools_complSem(object comando)
         {
             try
@@ -6678,6 +6680,13 @@ namespace Compass.DecompToolsShellX
                     texto = ex.Message + ", processo interrompido.";
                     MessageBox.Show(texto, "Dessem Tools");
                    
+                }
+                else
+                {
+                    string texto = ex.Message;
+                    texto = texto + ", processo interrompido.";
+                    texto = ex.Message + ", processo interrompido.";
+                    MessageBox.Show(texto, "Dessem Tools");
                 }
                 
             }

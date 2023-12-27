@@ -39,7 +39,7 @@ namespace Compass.DecompToolsShellX
 
             dessemBaseRVXbox.Text = Tools.GetDessemRecent(hoje);
             dessemSabRVXbox.Text = Tools.GetDessemRecent(hoje, deckSabado: true);
-            decompBaseRVXbox.Text = Tools.GetDecompRecentExec(hoje.AddDays(4),nextRV: true);
+            decompBaseRVXbox.Text = Tools.GetDecompRecentExec(hoje.AddDays(4), nextRV: true);
 
         }
 
@@ -1179,10 +1179,14 @@ namespace Compass.DecompToolsShellX
             {
                 comando = comando + "|true";
             }
+            //
+            DStools_complSem(comando);
 
-            Thread nthread = new Thread(Program.DStools_complSem);
-            nthread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-            nthread.Start(comando);
+            //
+
+            //Thread nthread = new Thread(Program.DStools_complSem);
+            //nthread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+            //nthread.Start(comando);
 
         }
 
@@ -1275,6 +1279,154 @@ namespace Compass.DecompToolsShellX
         {
             saidaRVXBox.Text = SearchDirectoryBottom();
         }
+
+        public void Completa_SemanaDessem(Compass.CommomLibrary.Dessem.Deck deck, DateTime dateDeck, DateTime dateFim, bool expandEst = false)
+        {
+            DateTime dateIni = dateDeck.AddDays(1);
+            var partsDir = deck.BaseFolder.Split('\\').Last();
+            int incremento = 1;
+            string tipo = expandEst ? "Expand" : "";
+            TimeSpan ts = dateFim - dateDeck;
+            int dias = Convert.ToInt32(ts.TotalDays);
+            //bool modifRenovaveis = false;
+            //if (System.Windows.Forms.MessageBox.Show("Deseja Modificar arquivo Renovavies?", "DESSEM-TOOLS", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            //{
+            //    modifRenovaveis = true;
+            //}
+            int stepBar = (100 / dias)/9;//100% / por dias a criar / numero de funcoes a chamar
+
+            for (DateTime d = dateIni; d <= dateFim; d = d.AddDays(1))
+            {
+                string folder = Path.Combine(deck.BaseFolder.Replace(partsDir, ""), $"Dessem_Rev{tipo}-" + d.ToString("dd-MM-yyyy"));
+                deck.CopyFilesToFolder(folder);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarDadvazSemanal(folder, incremento, dateDeck, dateFim, d);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarCotasr11(folder, d);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarDeflant(folder, incremento, dateDeck, d);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarOperut(folder, incremento, dateDeck, d);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarPtoper(folder, incremento, dateDeck);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarOperuh(folder, incremento, dateDeck, d, dateFim);
+                UpdateBar(stepBar);
+
+                Services.DessemComplSem.CriarEntdados(folder, incremento, dateDeck, d, expandEst, dateFim);
+                UpdateBar(stepBar);
+
+                //if (modifRenovaveis)
+                //{
+                // CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
+                //}
+                Services.DessemComplSem.CriarRespot(folder, incremento, dateDeck, d, expandEst);
+                UpdateBar(stepBar);
+
+                incremento++;
+            }
+            UpdateBar(100);
+
+        }
+        private void DStools_complSem(object comando)
+        {
+            try
+            {
+                string dir;
+                bool expand;
+                string path;
+                string comandos = (string)comando;
+                var coms = comandos.Split('|').ToList();
+                if (coms.Count() > 1)
+                {
+                    path = coms[0];
+                    expand = Convert.ToBoolean(coms[1]);
+                }
+                else
+                {
+                    path = coms[0];
+                    expand = false;
+                }
+
+                if (Directory.Exists(path))
+                {
+                    dir = path;
+                }
+                else if (File.Exists(path))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+                else
+                {
+                    return;
+                }
+                var deck = DeckFactory.CreateDeck(dir);
+
+                if (deck is CommomLibrary.Dessem.Deck)
+                {
+                    //todo logica de verificar qual dia é o deck 
+                    var dadvaz = Directory.GetFiles(deck.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Contains("dadvaz")).First();
+
+                    var dadlinhas = File.ReadAllLines(dadvaz).ToList();
+                    var dados = dadlinhas[9].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    DateTime dataDeck = new DateTime(Convert.ToInt32(dados[3]), Convert.ToInt32(dados[2]), Convert.ToInt32(dados[1]));
+                    if (dataDeck.DayOfWeek != DayOfWeek.Friday)
+                    {
+                        var revDate = Tools.GetCurrRev(dataDeck).revDate;
+                        Completa_SemanaDessem(deck as CommomLibrary.Dessem.Deck, dataDeck, revDate, expand);
+
+                        if (progressBarRVX.Value == 100)
+                        {
+                            string texto = "Processo concluído!";
+
+                            MessageBox.Show(texto, "Dessem Tools");
+                            UpdateBar(0);
+                        }
+                      
+                    }
+                    else
+                    {
+                        string aviso = "Data do Deck é uma sexta-feira escolha outro deck!";
+                        MessageBox.Show(aviso, "DESSEM-TOOLS");
+                    }
+
+
+                }
+                else
+                {
+                    string aviso = "Deck não reconhecido!";
+                    MessageBox.Show(aviso, "DESSEM-TOOLS");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.ToString().Contains("Arquivo Níveis de partida não encontrados para criação do Deflant.dat"))
+                {
+                    string texto = "Arquivo Níveis de partida não encontrados para criação do Deflant.dat, processo interrompido";
+                    texto = ex.ToString() + ", processo interrompido.";
+                    texto = ex.Message + ", processo interrompido.";
+                    MessageBox.Show(texto, "Dessem Tools");
+
+                }
+                else
+                {
+                    string texto = ex.Message;
+                    texto = texto + ", processo interrompido.";
+                    texto = ex.Message + ", processo interrompido.";
+                    MessageBox.Show(texto, "Dessem Tools");
+                    UpdateBar(0);
+                }
+
+            }
+
+        }
+
 
         public bool VerificaDIRSRVX()
         {
@@ -1396,7 +1548,7 @@ namespace Compass.DecompToolsShellX
                         }
 
                     }
-                    
+
 
                 }
             }
@@ -1422,7 +1574,12 @@ namespace Compass.DecompToolsShellX
             }
             else
             {
-                progressBarRVX.Value += valor;
+                int valTemp = progressBarRVX.Value + valor;
+                if (valTemp > 100)
+                {
+                    valTemp = 98;
+                }
+                progressBarRVX.Value = valTemp;
             }
             progressBarRVX.Show();
             progressBarRVX.Refresh();
