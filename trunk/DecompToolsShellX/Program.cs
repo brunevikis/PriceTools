@@ -968,6 +968,11 @@ namespace Compass.DecompToolsShellX
 
             duplicar(path, out newPath);
 
+
+            string texto = "Processo concluído!";
+
+            MessageBox.Show(texto, "Price Tools");
+
         }
 
         static void duplicar(string path, out string newPath)

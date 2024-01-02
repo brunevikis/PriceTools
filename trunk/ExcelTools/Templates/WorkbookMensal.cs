@@ -1360,7 +1360,7 @@ namespace Compass.ExcelTools.Templates
                 Valor2 = rng[1, 5].Value;
                 Valor3 = rng[1, 6].Value;
 
-                if (rng[1, 3].Value is double) Ano = (int)rng[1, 7].Value;
+                if (rng[1, 7].Value is double) Ano = (int)rng[1, 7].Value;
 
             }
         }

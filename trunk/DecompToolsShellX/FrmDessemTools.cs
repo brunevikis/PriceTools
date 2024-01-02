@@ -1184,7 +1184,7 @@ namespace Compass.DecompToolsShellX
 
             //
 
-            //Thread nthread = new Thread(Program.DStools_complSem);
+            Thread nthread = new Thread(Program.DStools_complSem);
             //nthread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             //nthread.Start(comando);
 
@@ -1310,7 +1310,8 @@ namespace Compass.DecompToolsShellX
                 Services.DessemComplSem.CriarDeflant(folder, incremento, dateDeck, d);
                 UpdateBar(stepBar);
 
-                Services.DessemComplSem.CriarOperut(folder, incremento, dateDeck, d);
+                bool contemDessopc = Services.DessemComplSem.CriarDessopc(folder);//para versoes em que as informacoes de opçoes de execução do modelo estão separadas do operut.dat e informadas no dessopc.dat
+                Services.DessemComplSem.CriarOperut(folder, incremento, dateDeck, d,contemDessopc);
                 UpdateBar(stepBar);
 
                 Services.DessemComplSem.CriarPtoper(folder, incremento, dateDeck);
@@ -1522,8 +1523,8 @@ namespace Compass.DecompToolsShellX
                         Services.DessemRVX.CriarRenovaveis(dirSaida, sabFut, dessemSabRVXbox.Text, sabAnt);
 
                         UpdateBar(10);
-
-                        Services.DessemRVX.CriarOperut(dirSaida, sabFut);
+                        bool contemDessopc = Services.DessemRVX.CriarDessopc(dirSaida);//para versoes em que as informacoes de opçoes de execução do modelo estão separadas do operut.dat e informadas no dessopc.dat
+                        Services.DessemRVX.CriarOperut(dirSaida, sabFut, contemDessopc);
 
                         UpdateBar(10);
 

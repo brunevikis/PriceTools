@@ -384,7 +384,40 @@ namespace Compass.Services
             deflant.SaveToFile(createBackup: true);
         }
 
-        public static void CriarOperut(string path, int incremento, DateTime dataBase, DateTime dataEstudo)
+        public static bool CriarDessopc(string path)
+        {
+            bool alterou = false;
+            var dessopcFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("dessopc.dat")).FirstOrDefault();
+            if (dessopcFile != null && File.Exists(dessopcFile))
+            {
+                List<string> nlinhas = new List<string>();
+
+                var linhas = File.ReadAllLines(dessopcFile).ToList();
+                foreach (var l in linhas)
+                {
+                    if (l.ToUpper().Contains("UCTERM"))
+                    {
+                        string nl = l.Substring(l.IndexOf("U"));
+                        nlinhas.Add(nl);
+                        continue;
+                    }
+                    if (l.ToUpper().Contains("CROSSOVER"))
+                    {
+                        string nl = "&" + l.Substring(l.IndexOf("C"));
+                        nlinhas.Add(nl);
+                        continue;
+                    }
+                    nlinhas.Add(l);
+                }
+
+                File.WriteAllLines(dessopcFile, nlinhas);
+                alterou = true;
+            }
+
+            return alterou;
+        }
+
+        public static void CriarOperut(string path, int incremento, DateTime dataBase, DateTime dataEstudo, bool contemDessopc = false)
         {
             var operutFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("operut.dat")).First();
 
@@ -398,6 +431,31 @@ namespace Compass.Services
             }
 
             operut.SaveToFile(createBackup: true);
+
+            if (contemDessopc == false)
+            {
+                List<string> nlinhas = new List<string>();
+
+                var linhas = File.ReadAllLines(operutFile).ToList();
+                foreach (var l in linhas)
+                {
+                    if (l.ToUpper().Contains("UCTERM"))
+                    {
+                        string nl = l.Substring(l.IndexOf("U"));
+                        nlinhas.Add(nl);
+                        continue;
+                    }
+                    if (l.ToUpper().Contains("CROSSOVER"))
+                    {
+                        string nl = "&" + l.Substring(l.IndexOf("C"));
+                        nlinhas.Add(nl);
+                        continue;
+                    }
+                    nlinhas.Add(l);
+                }
+
+                File.WriteAllLines(operutFile, nlinhas);
+            }
         }
 
 
@@ -1255,6 +1313,25 @@ namespace Compass.Services
                         }
                     }
                 }
+            }
+
+            #endregion
+
+            #region BLOCO IT / AC
+
+            var polinjusFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("polinjus.csv")).FirstOrDefault();
+            if (polinjusFile != null && File.Exists(polinjusFile))
+            {
+                //var it = entdados.BlocoIt.ToList();
+                entdados.BlocoIt.Clear();
+
+                // var AC288_BeloMonte = entdados.BlocoAc.Where(x => x.Usina == 288 && x.Mnemonico.ToUpper() == "COTVAZ").ToList();
+                entdados.BlocoAc.Where(x => x.Usina == 288 && x.Mnemonico.ToUpper() == "COTVAZ").ToList().ForEach(y => entdados.BlocoAc.Remove(y));//belo monte
+
+                // var AC314_Pimental = entdados.BlocoAc.Where(x => x.Usina == 314 && x.Mnemonico.ToUpper() == "COTVAZ").ToList();
+                entdados.BlocoAc.Where(x => x.Usina == 314 && x.Mnemonico.ToUpper() == "COTVAZ").ToList().ForEach(y => entdados.BlocoAc.Remove(y));// pimental
+
+
             }
 
             #endregion
