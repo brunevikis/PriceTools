@@ -2920,6 +2920,8 @@ namespace Compass.Services
 
                         }
                     }
+
+
                     var ri = dadger.BlocoRi.FirstOrDefault(x => x.Estagio == dt.Item2);
                     if (ri != null)
                     {
@@ -3392,9 +3394,9 @@ namespace Compass.Services
                             //riTemp[4] = riTemp[9] = riTemp[14] = 1680;
 
                             //MIN60 novo
-                            riTemp[4] = (riCarga + 1900) / 2;
-                            riTemp[9] = (riCarga + 1900) / 2;
-                            riTemp[14] = (riCarga + 1900) / 2;
+                            riTemp[4] = 2000;   //riTemp[4] = (riCarga + 1900) / 2;
+                            riTemp[9] = 2000;   //riTemp[9] = (riCarga + 1900) / 2;
+                            riTemp[14] = 2000;   //riTemp[14] = (riCarga + 1900) / 2;
 
                             // MAX60
                             riTemp[5] = riTemp[10] = riTemp[15] = 7000;
@@ -3425,9 +3427,9 @@ namespace Compass.Services
                             // riTemp[16] = riTemp[18] + 1900;
 
                             //MIN50 novo
-                            riTemp[6] = (riCarga + 1900) / 2;
-                            riTemp[11] = (riCarga + 1900) / 2;
-                            riTemp[16] = (riCarga + 1900) / 2;
+                            riTemp[6] = (riCarga + (4 * 78.4)) * fc1[numMercado];//riTemp[6] = (riCarga + 1900) / 2;
+                            riTemp[11] = (riCarga + (4 * 78.4)) * fc2[numMercado];//riTemp[11] = (riCarga + 1900) / 2;
+                            riTemp[16] = (riCarga + (4 * 78.4)) * fc3[numMercado];//riTemp[16] = (riCarga + 1900) / 2;
 
                             //MAX50
                             riTemp[7] = riTemp[12] = riTemp[17] = 6500;
