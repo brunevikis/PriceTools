@@ -3427,9 +3427,14 @@ namespace Compass.Services
                             // riTemp[16] = riTemp[18] + 1900;
 
                             //MIN50 novo
-                            riTemp[6] = (riCarga + (4 * 78.4)) * fc1[numMercado];//riTemp[6] = (riCarga + 1900) / 2;
-                            riTemp[11] = (riCarga + (4 * 78.4)) * fc2[numMercado];//riTemp[11] = (riCarga + 1900) / 2;
-                            riTemp[16] = (riCarga + (4 * 78.4)) * fc3[numMercado];//riTemp[16] = (riCarga + 1900) / 2;
+
+                            var riMin1 = (riCarga + (4 * 78.4)) * fc1[numMercado];
+                            var riMin2 = (riCarga + (4 * 78.4)) * fc2[numMercado];
+                            var riMin3 = (riCarga + (4 * 78.4)) * fc3[numMercado];
+
+                            riTemp[6] = riMin1 > 2500 ? riMin1 : 2500;      //riTemp[6] = (riCarga + 1900) / 2;
+                            riTemp[11] = riMin2 > 2500 ? riMin2 : 2500;      //riTemp[11] = (riCarga + 1900) / 2;
+                            riTemp[16] = riMin3 > 2500 ? riMin3 : 2500;     //riTemp[16] = (riCarga + 1900) / 2;
 
                             //MAX50
                             riTemp[7] = riTemp[12] = riTemp[17] = 6500;
