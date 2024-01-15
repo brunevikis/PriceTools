@@ -309,9 +309,9 @@ namespace Compass.CommomLibrary
 
         public string fictLine()
         {
-            if (this.Any(x => x.FictLine.StartsWith("FICT.")))
+            if (this.Any(x => x.FictLine.Trim().StartsWith("FICT.")))
             {
-                return this.Where(x => x.FictLine.StartsWith("FICT.")).First().FictLine;
+                return this.Where(x => x.FictLine.Trim().StartsWith("FICT.")).First().FictLine;
             }
             return "";
         }

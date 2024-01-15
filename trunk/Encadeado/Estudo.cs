@@ -43,6 +43,7 @@ namespace Encadeado
 
         public int IteracaoAtual { get; set; }
         public string ExecutavelNewave { get; set; }
+        public string ExecutarConsist { get; set; }
         public bool NwHibrido { get; set; }
 
         public bool DefinirVolumesPO { get; set; }
@@ -1605,7 +1606,7 @@ namespace Encadeado
         {
             var reedat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Document as Compass.CommomLibrary.ReeDat.ReeDat;
 
-            if (reedat.temFict == true)
+            if (reedat.temFict == true && this.Reedads.Count() > 0)
             {
                 int avanco = this.Reedads.First().mesesAvan;
                 DateTime newDate = deck.Dger.DataEstudo.AddMonths(avanco);
@@ -1835,21 +1836,27 @@ namespace Encadeado
 
         private void ExecutarConsistencia(string destino)
         {
-            //bool ret;
+            bool ret;
 
             //ret = ConsisteRun(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3");
 
 
-            //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+            //var ret2 = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+            //var ret2 = Compass.Services.Linux.Run2(destino, this.ExecutavelNewave.Replace("cpas_ctl_common", "enercore_ctl_common") + " 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
             
             
             //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/FT/newave2812.sh 3", "NewaveConsist", true, true, "hide");// para debug  nw hibrido usar essa funçao
 
 
             ///home/producao/PrevisaoPLD/enercore_ctl_common/scripts/FT/newave2812.sh 3
-            var ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");//para publicar 
-
-
+            if (this.ExecutarConsist.ToUpper() == "SERVIDOR")
+            {
+                ret = Compass.Services.Linux.Run2(destino, this.ExecutavelNewave.Replace("cpas_ctl_common", "enercore_ctl_common") + " 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+            }
+            else
+            {
+                ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");//para publicar 
+            }
 
 
             if (!ret)

@@ -259,9 +259,15 @@ namespace Compass.Services
                     usinasremovidas.Add(cods.ToString());
                 }
             }
+            //var pred = rhe.Value.Where(x => x is FuLine).All(x => ((FuLine)x).Usina == 66);
+            //
+            var fts = dadger.BlocoRhe.Where(x => x is FtLine).Select(y => ((FtLine)y).Usina).Distinct().ToList();
             foreach (var ur in usinasRemover)
             {
-                dadger.BlocoCT.Where(x => x.Cod == ur).ToList().ForEach(y => dadger.BlocoCT.Remove(y));
+                if (fts.All(x => x != ur))
+                {
+                    dadger.BlocoCT.Where(x => x.Cod == ur).ToList().ForEach(y => dadger.BlocoCT.Remove(y));
+                }
             }
             // fim
 
@@ -1111,8 +1117,11 @@ namespace Compass.Services
 
             #region Rhc
             var decompBaseCam = w.DecompBase;
-            var versaoNewave = w.versao_Newave.Trim();
-            if (versaoNewave == "270405" || versaoNewave == "28" || versaoNewave == "270405aws" || versaoNewave == "28aws" || versaoNewave.StartsWith("28"))//versoes que tem o bloco RHC
+            var versaoNewave = w.versao_Newave.Trim().Substring(0,2);
+            int newaveNumVersion;//Convert.ToInt32(versaoNewave);
+            int newaveNumber = int.TryParse(versaoNewave, out newaveNumVersion) ? newaveNumVersion : 28;
+
+            if (versaoNewave == "270405" || versaoNewave == "28" || versaoNewave == "270405aws" || versaoNewave == "28aws" || versaoNewave.StartsWith("28") || newaveNumber > 27)//versoes que tem o bloco RHC
             {
                 var decompEntrada = DeckFactory.CreateDeck(decompBaseCam) as Compass.CommomLibrary.Decomp.Deck;
                 var dadgerEntrada = decompEntrada[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;

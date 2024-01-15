@@ -1684,6 +1684,31 @@ namespace Compass.ExcelTools.Templates
                     + "Cons.sh";
             }
         }
+
+        public string ExecutarConsist
+        {
+            get
+            {
+                if (this.Names.ContainsKey("_consist"))
+                {
+                    if (!string.IsNullOrWhiteSpace(this.Names["_consist"].Text))
+                    {
+                        return this.Names["_consist"].Text;
+                    }
+                    return "SERVIDOR";//padrão de execução de consistencia será no servidor
+
+                }
+                else
+                {
+                    string tipo = this.Wb.Worksheets["Geral"].Range("U5").Text;
+                    if (!string.IsNullOrWhiteSpace(tipo))
+                    {
+                        return tipo;
+                    }
+                    return "SERVIDOR";
+                }
+            }
+        }
     }
 
     public class WorkSheetCen : BaseWorksheet

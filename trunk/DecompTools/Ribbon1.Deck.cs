@@ -252,6 +252,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.VolumesPO = w.Earm;
                     estudo.PrevisaoVazao = w.Cenarios.First().Vazoes;
                     estudo.ExecutavelNewave = w.ExecutavelNewave;
+                    estudo.ExecutarConsist = w.ExecutarConsist;
                     estudo.NwHibrido = w.NwHibrido;
 
                     if (w.ReDats == null)
@@ -1621,6 +1622,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                     Encadeado.Estudo estudo = new Encadeado.Estudo();
                     estudo.ExecutavelNewave = w.ExecutavelNewave;
+                    estudo.ExecutarConsist = w.ExecutarConsist;
+
                     bool tesets = estudo.execucaoConsistDC(consistFolders);
                 }
 
