@@ -583,7 +583,7 @@ namespace Compass.CommomLibrary.Decomp
                         string com = $"result_{ arq}";
                         File.WriteAllText($@"K:\enercore_ctl_common\{com}", caminho);
 
-                        var response = httpClient.GetAsync(@"http://10.206.194.196:5015/api/" + "Command/PLD_Local-" + com);
+                        var response = httpClient.GetAsync(@"http://10.206.194.210:5015/api/" + "Command/PLD_Local-" + com);
                         response.Wait();
 
                         File.Delete($@"K:\enercore_ctl_common\{com}");
