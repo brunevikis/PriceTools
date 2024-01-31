@@ -479,6 +479,59 @@ new DateTime(2033,12,25),
             return new Tuple<int, int, int>(p1, p2, p3);
         }
 
+        public static Tuple<DateTime, DateTime, double, DateTime, DateTime> GetRangeDiasHorasRHE(DateTime dataBase,DateTime fimrev,Compass.CommomLibrary.EntdadosDat.RheLine rhe, DateTime dataEstudo)
+        {
+            DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhe.DiaInic));
+            int meiaIni = rhe.MeiaHoraInic ?? 0;
+            dataInicial = dataInicial.AddHours(rhe.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
+
+            DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaFinal.Trim() == "F" ? fimrev.AddDays(1).Day : Convert.ToInt32(rhe.DiaFinal));
+            int meiaFinal = rhe.MeiaHoraFinal ?? 0;
+            dataFinal = dataFinal.AddHours(rhe.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
+
+            //ajustando viradas de meses 
+            if (dataBase.Day < 10)
+            {
+                if (dataInicial.Day > 20)
+                {
+                    dataInicial = dataInicial.AddMonths(-1);
+                }
+            }
+            if (dataBase.Day > 20 && dataInicial.Day < 10)
+            {
+                dataInicial = dataInicial.AddMonths(1);
+            }
+            if (dataBase.Day > dataFinal.Day)
+            {
+                dataFinal = dataFinal.AddMonths(1);
+            }
+
+            //fim ajuste de meses
+            TimeSpan ts = dataFinal - dataInicial;
+            var difHoras2 = ts.TotalHours;
+            //return new Tuple<DateTime, DateTime,double>(dataInicial, dataFinal,difHoras2);
+
+
+            TimeSpan tsinicial = dataInicial - dataBase;
+            TimeSpan tsFinal = dataFinal - dataInicial;
+
+            double horasInicio = tsinicial.TotalHours;
+            double horasfim = tsFinal.TotalHours;
+
+            DateTime novoInicio = dataEstudo.AddHours(horasInicio);
+            //if ( novoInicio < dataEstudo)
+            //{
+            //    novoInicio = dataEstudo;
+            //}
+
+            DateTime novoFim = novoInicio.AddHours(horasfim);
+            if (novoFim > fimrev.AddDays(1) || novoFim<= dataEstudo)
+            {
+                novoFim = fimrev.AddDays(1);
+            }
+            return new Tuple<DateTime, DateTime,double,DateTime,DateTime>(dataInicial, dataFinal, difHoras2,novoInicio, novoFim);
+        }
+
         public static Tuple<DateTime, DateTime> GetRangeInicialFinal(DateTime dataBase, DateTime iniREVbase, string diaInicLine, string diaFimLine, DateTime dataEstudo, bool eRestricao = false)
         {
             DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, diaInicLine.Trim() == "I" ? dataBase.Day : Convert.ToInt32(diaInicLine));

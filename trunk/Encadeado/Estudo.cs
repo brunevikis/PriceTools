@@ -140,7 +140,7 @@ namespace Encadeado
             Thread.Sleep(1000);
             return Task.Factory.StartNew(() =>
             {
-                ExecutarConsistencia(path);
+                ExecutarConsistencia(path, path.Split('\\').Last());
                 Compass.Services.Deck.CreateDgerNewdesp(path);
             });
         }
@@ -1834,7 +1834,7 @@ namespace Encadeado
             throw new NotImplementedException();
         }
 
-        private void ExecutarConsistencia(string destino)
+        private void ExecutarConsistencia(string destino, string complemento = "")
         {
             bool ret;
 
@@ -1851,11 +1851,11 @@ namespace Encadeado
             ///home/producao/PrevisaoPLD/enercore_ctl_common/scripts/FT/newave2812.sh 3
             if (this.ExecutarConsist.ToUpper() == "SERVIDOR")
             {
-                ret = Compass.Services.Linux.Run2(destino, this.ExecutavelNewave.Replace("cpas_ctl_common", "enercore_ctl_common") + " 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
+                ret = Compass.Services.Linux.Run2(destino, this.ExecutavelNewave.Replace("cpas_ctl_common", "enercore_ctl_common") + " 3", $"NewaveConsist{complemento}", true, true, "hide");// para debug usar essa funçao
             }
             else
             {
-                ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", "NewaveConsist", true, true, "hide");//para publicar 
+                ret = Compass.Services.Linux.Run(destino, this.ExecutavelNewave + " 3", $"NewaveConsist{complemento}", true, true, "hide");//para publicar 
             }
 
 

@@ -829,7 +829,7 @@ namespace Compass.Services
         {
             var entdadosFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("entdados")).First();
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
-
+            bool viradaMes = dataBase.Day > dataEstudo.Day;
 
             #region BLOCO TM
             bool patamres2023 = dataEstudo.Year == 2023;
@@ -1032,106 +1032,261 @@ namespace Compass.Services
 
             //}
             //
-            foreach (var rhe in entdados.BlocoRhe.ToList())
-            {
-                //var re = rhe.Value.First();
-                if (rhe.Restricao == 657)
-                {
+            #region codigo producao
 
-                }
-                if (rhe.Restricao == 655)
-                {
+            //foreach (var rhe in entdados.BlocoRhe.ToList())
+            //{
+            //    var teste = rhe.GetType();
+            //    //var re = rhe.Value.First();
 
-                }
-                DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhe.DiaInic));
-                int meiaIni = rhe.MeiaHoraInic ?? 0;
-                dataInicial = dataInicial.AddHours(rhe.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
+            //    if (rhe.Restricao == 657)
+            //    {
 
-                DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaFinal.Trim() == "F" ? fimrev.Day : Convert.ToInt32(rhe.DiaFinal));
-                int meiaFinal = rhe.MeiaHoraFinal ?? 0;
-                dataFinal = dataFinal.AddHours(rhe.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
+            //    }
+            //    if (rhe.Restricao == 914)
+            //    {
 
-                //ajustando viradas de meses 
-                if (dataBase.Day < 10)
-                {
-                    if (dataInicial.Day > 20)
-                    {
-                        dataInicial = dataInicial.AddMonths(-1);
-                    }
-                }
-                if (dataBase.Day > 20 && dataInicial.Day < 10)
-                {
-                    dataInicial = dataInicial.AddMonths(1);
-                }
-                if (dataBase.Day > dataFinal.Day)
-                {
-                    dataFinal = dataFinal.AddMonths(1);
-                }
+            //    }
+            //    DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhe.DiaInic));
+            //    int meiaIni = rhe.MeiaHoraInic ?? 0;
+            //    dataInicial = dataInicial.AddHours(rhe.HoraInic ?? 0).AddMinutes(meiaIni == 0 ? 0 : 30);
 
-                //fim ajuste de meses
-                TimeSpan ts = dataFinal - dataInicial;
-                var difHoras2 = ts.TotalHours;
-                //foreach (var rh in rhe.Value)
-                //{
-                if (rhe.DiaFinal.Trim() == "F")
-                {
-                    if (dataEstudo.DayOfWeek == DayOfWeek.Friday && rhe.DiaInic.Trim() != "I")
-                    {
-                        rhe.DiaInic = dataEstudo.Day.ToString("D2");
-                        rhe.HoraInic = dataEstudo.Hour;
-                        rhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
-                    }
-                    continue;
-                }
-                //if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
-                if (dataFinal <= dataEstudo)
-                {
-                    DateTime dat = dataEstudo;
-                    if (dataFinal == dataEstudo)
-                    {
-                        dat = dat.AddDays(1);// trata diafinal hora = 0 meiahora = 0 somando 1 dia ja que dataestudo ja vem como zero na hora e meiahora evitando deixar dia ini = dia final na incrementação  
-                    }
-                    int minutosF = rhe.MeiaHoraFinal ?? 0;
-                    dat = dat.AddHours(rhe.HoraFinal ?? 0).AddMinutes(minutosF == 0 ? 0 : 30);
-                    if (dat > fimrev.AddDays(1))
-                    {
-                        dat = fimrev.AddDays(1);// limita pelo fim da semana caso estoure a periodo da semana
-                    }
-                    if (dat == dataEstudo)
-                    {
-                        dat = dat.AddDays(1);//tratamento caso diafinal fique igual inicial no caso do decks do ultimo dia da semana (hora ini = 0 meia ini = 0 hora fim =0 meiafim =0 ), então fica diafinal como o inicio do sabado seguinte
-                    }
-                    rhe.DiaFinal = dat.Day.ToString("D2");
-                    rhe.HoraFinal = dat.Hour;
-                    rhe.MeiaHoraFinal = dat.Minute == 30 ? 1 : 0;
+            //    DateTime dataFinal = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaFinal.Trim() == "F" ? fimrev.Day : Convert.ToInt32(rhe.DiaFinal));
+            //    int meiaFinal = rhe.MeiaHoraFinal ?? 0;
+            //    dataFinal = dataFinal.AddHours(rhe.HoraFinal ?? 0).AddMinutes(meiaFinal == 0 ? 0 : 30);
 
-                    rhe.DiaInic = dat.AddHours(-difHoras2).Day.ToString("D2");
-                    rhe.HoraInic = dat.AddHours(-difHoras2).Hour;
-                    rhe.MeiaHoraInic = dat.AddHours(-difHoras2).Minute == 30 ? 1 : 0;
-                    continue;
-                }
-                if (dataInicial < dataEstudo)
-                {
-                    rhe.DiaInic = dataEstudo.Day.ToString("D2");
-                    rhe.HoraInic = dataEstudo.Hour;
-                    rhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
-                }
-                //}
+            //    //ajustando viradas de meses 
+            //    if (dataBase.Day < 10)
+            //    {
+            //        if (dataInicial.Day > 20)
+            //        {
+            //            dataInicial = dataInicial.AddMonths(-1);
+            //        }
+            //    }
+            //    if (dataBase.Day > 20 && dataInicial.Day < 10)
+            //    {
+            //        dataInicial = dataInicial.AddMonths(1);
+            //    }
+            //    if (dataBase.Day > dataFinal.Day)
+            //    {
+            //        dataFinal = dataFinal.AddMonths(1);
+            //    }
+
+            //    //fim ajuste de meses
+            //    TimeSpan ts = dataFinal - dataInicial;
+            //    var difHoras2 = ts.TotalHours;
+            //    //foreach (var rh in rhe.Value)
+            //    //{
+            //    if (rhe.DiaFinal.Trim() == "F")
+            //    {
+            //        if (dataEstudo.DayOfWeek == DayOfWeek.Friday && rhe.DiaInic.Trim() != "I")
+            //        {
+            //            rhe.DiaInic = dataEstudo.Day.ToString("D2");
+            //            rhe.HoraInic = dataEstudo.Hour;
+            //            rhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
+            //        }
+            //        continue;
+            //    }
+            //    //if (Convert.ToInt32(rhe.DiaFinal) <= dataEstudo.Day)
+            //    if (dataFinal <= dataEstudo)
+            //    {
+            //        DateTime dat = dataEstudo;
+            //        if (dataFinal == dataEstudo)
+            //        {
+            //            dat = dat.AddDays(1);// trata diafinal hora = 0 meiahora = 0 somando 1 dia ja que dataestudo ja vem como zero na hora e meiahora evitando deixar dia ini = dia final na incrementação  
+            //        }
+            //        int minutosF = rhe.MeiaHoraFinal ?? 0;
+            //        dat = dat.AddHours(rhe.HoraFinal ?? 0).AddMinutes(minutosF == 0 ? 0 : 30);
+            //        if (dat > fimrev.AddDays(1))
+            //        {
+            //            dat = fimrev.AddDays(1);// limita pelo fim da semana caso estoure a periodo da semana
+            //        }
+            //        if (dat == dataEstudo)
+            //        {
+            //            dat = dat.AddDays(1);//tratamento caso diafinal fique igual inicial no caso do decks do ultimo dia da semana (hora ini = 0 meia ini = 0 hora fim =0 meiafim =0 ), então fica diafinal como o inicio do sabado seguinte
+            //        }
+            //        rhe.DiaFinal = dat.Day.ToString("D2");
+            //        rhe.HoraFinal = dat.Hour;
+            //        rhe.MeiaHoraFinal = dat.Minute == 30 ? 1 : 0;
+
+            //        rhe.DiaInic = dat.AddHours(-difHoras2).Day.ToString("D2");
+            //        rhe.HoraInic = dat.AddHours(-difHoras2).Hour;
+            //        rhe.MeiaHoraInic = dat.AddHours(-difHoras2).Minute == 30 ? 1 : 0;
+            //        continue;
+            //    }
+            //    if (dataInicial < dataEstudo)
+            //    {
+            //        rhe.DiaInic = dataEstudo.Day.ToString("D2");
+            //        rhe.HoraInic = dataEstudo.Hour;
+            //        rhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
+            //    }
+            //    //}
 
 
-            }
+            //}
+
+            #endregion
 
 
 
             //
-            //foreach (var rheLine in entdados.BlocoRhe.ToList())
-            //{
-            //    string rheDia = rheLine[2];
-            //    if (rheDia.Trim() != "I")
-            //    {
-            //        rheLine[2] = $"{dataEstudo.Day:00}";
-            //    }
-            //}
+            var ids = "RE LU FH FT FI FE FR FC".Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach (var rhes in entdados.BlocoRhe.RheGrouped.ToList())
+            {
+                foreach (var id in ids)
+                {
+                    var rlines = rhes.Value.Where(x => x[0] == id).ToList();
+                    //var re = rhe.Value.First();
+                    if (rlines.Count() == 1)
+                    {
+                        var rhe = rlines.First();
+                        var rangeDias = Tools.GetRangeDiasHorasRHE(dataBase, fimrev, rhe, dataEstudo);
+                        if (rhe.DiaInic.Trim() != "I")
+                        {
+                            DateTime diaIni = (viradaMes == true && rangeDias.Item4.Day > dataEstudo.Day) ? dataEstudo : rangeDias.Item4;
+
+                            rhe.DiaInic = diaIni.Day.ToString("D2");
+                            rhe.HoraInic = diaIni.Hour;
+                            rhe.MeiaHoraInic = diaIni.Minute == 30 ? 1 : 0;
+                        }
+                        if (rhe.DiaFinal.Trim() != "F")
+                        {
+                            DateTime diafim = rangeDias.Item5;
+
+                            rhe.DiaFinal = diafim.Day.ToString("D2");
+                            rhe.HoraFinal = diafim.Hour;
+                            rhe.MeiaHoraFinal = diafim.Minute == 30 ? 1 : 0;
+                        }
+                    }
+                    else if (rlines.Count() > 1)
+                    {
+                        if (rlines.First().Restricao == 660 || rlines.First().Restricao == 914)
+                        {
+
+                        }
+
+                        int index = 0;
+                        string dummyLine = "";
+                        string commentdummy = "";
+
+                        var rheInicioAnt = rlines.Where(x => Tools.GetRangeDiasHorasRHE(dataBase, fimrev, x, dataEstudo).Item1 <= dataEstudo && !(x.DiaInic.Trim() == "I" && x.DiaFinal.Trim() == "F")).ToList();
+
+                        foreach (var remRHE in rheInicioAnt)
+                        {
+                            commentdummy = commentdummy == "" ? remRHE.Comment : commentdummy;
+                            if (remRHE == rheInicioAnt.Last())// a ultima da lista apenas será alterado os dias  
+                            {
+                                remRHE.Comment = commentdummy;
+
+                                remRHE.DiaInic = dataEstudo.Day.ToString("D2");
+                                remRHE.HoraInic = dataEstudo.Hour;
+                                remRHE.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
+                                if (remRHE == rlines.Last())//caso for a ultima linha do bloco, o diafinal será "F" para evitar erros de periodo
+                                {
+                                    remRHE.DiaFinal = " F";
+                                    remRHE.HoraFinal = null;
+                                    remRHE.MeiaHoraFinal = null;
+                                }
+                            }
+                            else
+                            {
+                                entdados.BlocoRhe.Remove(remRHE);
+                            }
+                        }
+
+                        //foreach (var rhe in rlines)
+                        //{
+                        //    if (rhe.Restricao == 660)
+                        //    {
+
+                        //    }
+                        //    if (rhe.Restricao == 914)
+                        //    {
+
+                        //    }
+                        //    var rangeDias = Tools.GetRangeDiasHorasRHE(dataBase, fimrev, rhe, dataEstudo);
+                        //    if (rhe.DiaInic.Trim() != "I")
+                        //    {
+                        //        DateTime diaIni = (viradaMes == true && rangeDias.Item4.Day > dataEstudo.Day) ? dataEstudo : rangeDias.Item4;
+
+                        //        rhe.DiaInic = diaIni.Day.ToString("D2");
+                        //        rhe.HoraInic = diaIni.Hour;
+                        //        rhe.MeiaHoraInic = diaIni.Minute == 30 ? 1 : 0;
+                        //    }
+                        //    if (rangeDias.Item4 >= fimrev.AddDays(1))
+                        //    {
+                        //        index = entdados.BlocoRhe.IndexOf(rhe);
+                        //        commentdummy = rhe.Comment;
+                        //        rhe.Comment = "";
+                        //        dummyLine = rhe.ToText();
+                        //        entdados.BlocoRhe.Remove(rhe);
+                        //        continue;
+                        //    }
+                        //    if (rhe.DiaFinal.Trim() != "F")
+                        //    {
+                        //        if (rangeDias.Item2 <= dataEstudo)
+                        //        {
+                        //            index = entdados.BlocoRhe.IndexOf(rhe);
+                        //            commentdummy = rhe.Comment;
+                        //            rhe.Comment = "";
+                        //            //todo: colocar os dados do dia final no dia inicial ou só remover sem guardar
+                        //            dummyLine = rhe.ToText();
+                        //            entdados.BlocoRhe.Remove(rhe);
+                        //            continue;
+                        //        }
+                        //        else
+                        //        {
+                        //            DateTime diafim = rangeDias.Item5;
+
+                        //            rhe.DiaFinal = diafim.Day.ToString("D2");
+                        //            rhe.HoraFinal = diafim.Hour;
+                        //            rhe.MeiaHoraFinal = diafim.Minute == 30 ? 1 : 0;
+                        //        }
+
+                        //    }
+                        //}
+                        //var newrlines = rhes.Value.Where(x => x[0] == id).ToList();
+                        //if (newrlines.Count() == 0 || newrlines == null)
+                        //{
+                        //    var newrhe = entdados.BlocoRhe.CreateLine(dummyLine);
+                        //    newrhe.Comment = commentdummy;
+                        //    newrhe.DiaInic = dataEstudo.Day.ToString("D2");
+                        //    newrhe.HoraInic = dataEstudo.Hour;
+                        //    newrhe.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
+
+                        //    newrhe.DiaFinal = fimrev.AddDays(1).Day.ToString("D2");
+                        //    newrhe.HoraFinal = fimrev.AddDays(1).Hour;
+                        //    newrhe.MeiaHoraFinal = fimrev.AddDays(1).Minute == 30 ? 1 : 0;
+
+                        //    entdados.BlocoRhe.Insert(index, newrhe);
+                        //}
+                        //else//verificação se a primeira linha começa do inicio do periodo do deck
+                        //{
+                        //    var rheF = newrlines.First();
+                        //    var nDias = Tools.GetRangeDiasHorasRHE(dataBase, fimrev, rheF, dataEstudo);
+
+                        //    //var rheClone = entdados.BlocoRhe.CreateLine(rheF.ToText());
+                        //    index = entdados.BlocoRhe.IndexOf(rheF);
+                        //    if (rheF.DiaInic.Trim() != "I")
+                        //    {
+                        //        if (nDias.Item1 != dataEstudo)
+                        //        {
+                        //            rheF.DiaInic = dataEstudo.Day.ToString("D2");
+                        //            rheF.HoraInic = dataEstudo.Hour;
+                        //            rheF.MeiaHoraInic = dataEstudo.Minute == 30 ? 1 : 0;
+                        //        }
+                        //    }
+                        //}
+
+
+                    }
+
+                }
+
+                //}
+
+
+            }
 
             #endregion
 
