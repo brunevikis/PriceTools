@@ -90,6 +90,54 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<EntdadosDat.EntdadosDat>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
+            else if (fileName.StartsWith("parque_eolico_subm.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.Subm>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("hist-ventos.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.HistVen>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("indices.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.Indices>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("indices_gevazp.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.IndicesGevazp>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("parque_eolico_cadastro.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.Cadastro>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("parque_eolico_config.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.Config>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("parque_eolico_fte.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.Fte>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("parque_eolico_geracao.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.Geracao>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("parque_eolico_pot_instalada.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.PotInst>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("pee-posto.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.PeePosto>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("posto-cadastro.csv"))
+            {
+                doc = BaseDocument.Create<ParqueEolico.PostoCad>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("prevsvel."))
+            {
+                doc = BaseDocument.Create<ParqueEolico.PrevsVel>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
             else if (fileName.StartsWith("enasemanal"))
             {
                 doc = BaseDocument.Create<EnaSemanalLog.EnaSemanalLog>(System.IO.File.ReadAllText(filePath));

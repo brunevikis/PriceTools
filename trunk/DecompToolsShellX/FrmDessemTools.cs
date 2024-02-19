@@ -1466,6 +1466,7 @@ namespace Compass.DecompToolsShellX
             try
             {
                 //saidaRVXBox.Text = $@"K:\teste\dessemTESTE\dstools\RVX+1";
+                //decompBaseRVXbox.Text = $@"K:\teste\dessemTESTE\dstools\RVX+1\DEC_ONS_022024_RV0_VE_ccee (1)";
 
                 bool prosseguir = VerificaDIRSRVX();
                 if (prosseguir)
@@ -1473,6 +1474,22 @@ namespace Compass.DecompToolsShellX
                     var deckSab = DeckFactory.CreateDeck(dessemSabRVXbox.Text) as CommomLibrary.Dessem.Deck;
                     var deckDESSEMref = DeckFactory.CreateDeck(dessemBaseRVXbox.Text) as CommomLibrary.Dessem.Deck;
                     var deckDECOMPref = DeckFactory.CreateDeck(decompBaseRVXbox.Text) as CommomLibrary.Decomp.Deck;
+
+                    //
+                    //var peeSubm = deckDECOMPref[CommomLibrary.Decomp.DeckDocument.parqueeolsubm].Document as Compass.CommomLibrary.ParqueEolico.Subm ;
+                    //var prim = peeSubm.BlocoSubm.First();
+                    //var testeli = peeSubm.BlocoSubm.CreateLineCSV(peeSubm.BlocoSubm.First().LineCSV);
+                    //prim.CodPEE = 90;
+                    //prim.CodSub = 70;
+                    //prim.ID = "&"+ prim.ID;
+
+                    //testeli.CodPEE = 8;
+                    //testeli.CodSub = 5;
+                    
+                    //peeSubm.BlocoSubm.Add(testeli);
+
+                    //peeSubm.SaveToFile(createBackup: true);
+                    //
 
                     DateTime dat = DateTime.Today;
                     DateTime sabFut = dat;

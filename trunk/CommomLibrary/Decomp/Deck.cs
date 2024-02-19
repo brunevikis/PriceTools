@@ -19,7 +19,19 @@ namespace Compass.CommomLibrary.Decomp
         postos,
         prevs,
         vazoes,
-        vazoesc
+        vazoesc,
+        parqueeolsubm,
+        histventos,
+        indices,
+        indicesgevazp,
+        parqueeolcad,
+        parqueeolconfig,
+        parqueeolfte,
+        parqueeolger,
+        parqueeolpot,
+        peeposto,
+        postocad,
+        prevsvel
     }
 
     public class Deck : BaseDeck
@@ -93,6 +105,31 @@ namespace Compass.CommomLibrary.Decomp
                         return Documents["VAZOES."];
                     case DeckDocument.vazoesc:
                         return Documents["VAZOES.DAT"] ?? Documents["VAZOESC.DAT"];
+                    case DeckDocument.parqueeolsubm:
+                        return Documents["parque_eolico_subm.csv"];
+
+                    case DeckDocument.histventos:
+                        return Documents["hist-ventos.csv"];
+                    case DeckDocument.indices:
+                        return Documents["indices.csv"];
+                    case DeckDocument.indicesgevazp:
+                        return Documents["indices_gevazp.csv"];
+                    case DeckDocument.parqueeolcad:
+                        return Documents["parque_eolico_cadastro.csv"];
+                    case DeckDocument.parqueeolconfig:
+                        return Documents["parque_eolico_config.csv"];
+                    case DeckDocument.parqueeolfte:
+                        return Documents["parque_eolico_fte.csv"];
+                    case DeckDocument.parqueeolger:
+                        return Documents["parque_eolico_geracao.csv"];
+                    case DeckDocument.parqueeolpot:
+                        return Documents["parque_eolico_pot_instalada.csv"];
+                    case DeckDocument.peeposto:
+                        return Documents["pee-posto.csv"];
+                    case DeckDocument.postocad:
+                        return Documents["posto-cadastro.csv"];
+                    case DeckDocument.prevsvel:
+                        return Documents["prevsvel."];
                     default:
                         return null;
                 }
@@ -134,6 +171,44 @@ namespace Compass.CommomLibrary.Decomp
                     case DeckDocument.vazoesc:
                         documents["VAZOESC.DAT"] = value;
                         break;
+                    case DeckDocument.parqueeolsubm:
+                        documents["parque_eolico_subm.csv"] = value;
+                        break;
+
+                    case DeckDocument.histventos:
+                        documents["hist-ventos.csv"] = value;
+                        break;
+                    case DeckDocument.indices:
+                        documents["indices.csv"] = value;
+                        break;
+                    case DeckDocument.indicesgevazp:
+                        documents["indices_gevazp.csv"] = value;
+                        break;
+                    case DeckDocument.parqueeolcad:
+                        documents["parque_eolico_cadastro.csv"] = value;
+                        break;
+                    case DeckDocument.parqueeolconfig:
+                        documents["parque_eolico_config.csv"] = value;
+                        break;
+                    case DeckDocument.parqueeolfte:
+                        documents["parque_eolico_fte.csv"] = value;
+                        break;
+                    case DeckDocument.parqueeolger:
+                        documents["parque_eolico_geracao.csv"] = value;
+                        break;
+                    case DeckDocument.parqueeolpot:
+                        documents["parque_eolico_pot_instalada.csv"] = value;
+                        break;
+                    case DeckDocument.peeposto:
+                        documents["pee-posto.csv"] = value;
+                        break;
+                    case DeckDocument.postocad:
+                        documents["posto-cadastro.csv"] = value;
+                        break;
+                    case DeckDocument.prevsvel:
+                        documents["prevsvel."] = value;
+                        break;
+
                     default:
                         break;
                 }

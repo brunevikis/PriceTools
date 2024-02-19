@@ -272,7 +272,7 @@ namespace Compass.CommomLibrary
     {
 
         T CreateLine(string line = null);
-
+        T CreateLineCSV(string line = null);
         void Add(BaseLine newLine);
 
         //        void RVX();
@@ -291,6 +291,11 @@ namespace Compass.CommomLibrary
         public virtual T CreateLine(string line = null)
         {
             var newLine = BaseLine.Create<T>(line);
+            return (T)newLine;
+        }
+        public virtual T CreateLineCSV(string line = null)
+        {
+            var newLine = BaseLine.CreateCSV<T>(line);
             return (T)newLine;
         }
 
@@ -418,9 +423,12 @@ namespace Compass.CommomLibrary
     {
 
         public string Comment { get; set; }
+        public string LineCSV { get; set; }
         public string FictLine { get; set; }
 
         public virtual BaseField[] Campos { get; private set; }
+        public virtual BaseField[] CamposCSV { get;  set; }
+
         protected Dictionary<BaseField, dynamic> valores = new Dictionary<BaseField, dynamic>();
         public dynamic[] Valores
         {
@@ -440,7 +448,17 @@ namespace Compass.CommomLibrary
                     valores.Add(campo, null);
                 }
             }
+            else if (CamposCSV != null)
+            {
+                for (int i = 0; i < CamposCSV.Length; i++)
+                {
+                    var campo = CamposCSV[i];
+                    valores.Add(campo, null);
+                }
+            }
+            
         }
+       
 
         public virtual void Load(string line)
         {
@@ -457,6 +475,33 @@ namespace Compass.CommomLibrary
             }
         }
 
+        public virtual void LoadCSV(string line)
+        {
+            
+            if (line != null)
+            {
+                valores.Clear();
+
+                for (int i = 0; i < CamposCSV.Length; i++)
+                {
+                    var campo = CamposCSV[i];
+                    valores.Add(campo, null);
+                }
+
+                var partes = line.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                for (int i = 0; i < CamposCSV.Length; i++)
+                {
+                    var campo = CamposCSV[i];
+
+                    if (campo.Tamanho < 1 || campo.Inicio < 1) continue;
+
+                    SetValueCSV(i, line.PadRight(campo.Fim).Substring((campo.Inicio - 1), campo.Tamanho));
+
+                }
+            }
+        }
+
         internal static T Create<T>(string line = null) where T : BaseLine
         {
             var lineType = typeof(T);
@@ -464,6 +509,17 @@ namespace Compass.CommomLibrary
             var result = (BaseLine)Activator.CreateInstance(lineType);
 
             result.Load(line);
+
+            return (T)result;
+        }
+        internal static T CreateCSV<T>(string line = null) where T : BaseLine
+        {
+            var lineType = typeof(T);
+
+            var result = (BaseLine)Activator.CreateInstance(lineType,line);
+            
+
+            result.LoadCSV(line);
 
             return (T)result;
         }
@@ -497,6 +553,14 @@ namespace Compass.CommomLibrary
             var val = field.TryParse(value);
             valores[field] = val;
         }
+        public void SetValueCSV(int index, dynamic value)
+        {
+
+            var field = CamposCSV[index];
+            var val = field.TryParse(value);
+            valores[field] = val;
+        }
+
 
         public dynamic this[string fieldName]
         {
@@ -648,7 +712,7 @@ namespace Compass.CommomLibrary
                             {
                                 strValue = fVal.ToString("F" + dec.ToString(), System.Globalization.NumberFormatInfo.InvariantInfo);
                             }
-                           
+
                         }
                         else
                             strValue = value.ToString();
