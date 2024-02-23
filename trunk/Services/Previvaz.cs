@@ -2164,12 +2164,14 @@ namespace Compass.Services
             var rev = Tools.GetCurrRev(Data);
             
 
-            if (rev.rev == 0 && Data.Day > 23 && Data.Day <= 31)
-            {
-                dtTemp = Data.AddMonths(+1);
-            }
-            else
-                dtTemp = Data;
+            //if (rev.rev == 0 && Data.Day > 23 && Data.Day <= 31)
+            //{
+            //    dtTemp = Data.AddMonths(+1);
+            //}
+            //else
+            //    dtTemp = Data;
+
+            dtTemp = rev.revDate.Date;
 
             string pathPrevivaz = Path.Combine("H:\\Middle - Preço\\Acompanhamento de vazões\\", dtTemp.ToString("MM_yyyy"), "Dados_de_Entrada_e_Saida_" + dtTemp.ToString("yyyyMM") + "_RV" + rev.rev, "Previvaz", "Arq_Entrada");
 

@@ -95,6 +95,37 @@ namespace Compass.CommomLibrary.DgerDat {
             }
         }
 
+        public int[] SetaSimulacaoFinal
+        {
+            get
+            {
+                int[] valores = new int[]{ int.Parse(dados[25].Params.Substring(0, 4).Trim()), int.Parse(dados[25].Params.Substring(4, 4).Trim()) };
+                return valores;
+                    
+            }
+            set
+            {
+                string rest = dados[25].Params.Remove(0, 8);
+                dados[25].Params = ((int)value[0]).ToString().PadLeft(4) + ((int)value[1]).ToString().PadLeft(4) + rest;
+
+            }
+        }
+
+        public int AnosPos
+        {
+            get
+            {
+                int valores = int.Parse(dados[7].Params.Substring(0, 4).Trim());
+                return valores;
+
+            }
+            set
+            {
+                string rest = dados[7].Params.Remove(0, 4);
+                dados[7].Params = ((int)value).ToString().PadLeft(4) + rest;
+
+            }
+        }
 
         public int TipoTendenciaHidrologia {
             get {
@@ -121,7 +152,7 @@ namespace Compass.CommomLibrary.DgerDat {
                 return dados[20].Params.Substring(0, 4).Trim() == "1" ? true : false;
             }
             set {
-                dados[20].Params = (value ? "1" : "0").PadLeft(4) + dados[25].Params.Remove(0, 4);
+                dados[20].Params = (value ? "1" : "0").PadLeft(4) + dados[20].Params.Remove(0, 4);
             }
         }
         public double[] Earms {

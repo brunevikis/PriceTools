@@ -645,6 +645,13 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                         i++;
                                     }
 
+                                    if (w.NwHibrido == true)
+                                    {
+                                        int[] sf = new int[] { 1, 1 };
+                                        dger.SetaSimulacaoFinal = sf;
+                                        dger.CalculaEarmInicial = true;
+                                    }
+
                                     dger.Earms = earmsREE;
                                     dger.SaveToFile();
                                 }
@@ -678,6 +685,57 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 #endregion Armazenamento
 
                                 dadgers[dtEstudo] = configH.baseDoc as Dadger;
+
+                                #region Atualiza Confhd
+
+                                try
+                                {
+                                    string NWdestino = deckNWEstudo.BaseFolder;
+
+                                    var confihdFile = Directory.GetFiles(NWdestino).Where(x => Path.GetFileName(x).ToLower().Equals("confhd.dat")).FirstOrDefault();
+
+                                    if (confihdFile != null)
+                                    {
+                                        var confihdNew = (Compass.CommomLibrary.ConfhdDat.ConfhdDat)DocumentFactory.Create(confihdFile);
+                                        var dadgerRef = configH.baseDoc as Dadger;
+                                        foreach (var conf in confihdNew)
+                                        {
+                                           
+                                            int codUH;
+                                            var Usi = configH.usinas[conf.Cod];
+                                            if (Usi.IsFict)
+                                            {
+                                                codUH = Usi.CodReal ?? 0;
+                                            }
+                                            else
+                                            {
+                                                codUH = Usi.Cod;
+                                            }
+                                            double VolInicial = dadgerRef.BlocoUh.Where(x => x.Usina == codUH).Select(x => x.VolIniPerc).FirstOrDefault();
+                                            if (conf.Cod == 291)//fict. serra da mesa
+                                            {
+                                                if (VolInicial < 55)
+                                                {
+                                                    VolInicial = VolInicial / 0.55f;
+                                                }
+                                                else
+                                                {
+                                                    VolInicial = 100;
+                                                }
+                                            }
+                                            conf.VolUtil = VolInicial;
+                                        }
+                                        confihdNew.SaveToFile(createBackup: true);
+                                    }
+                                }
+                                catch (Exception ehd)
+                                {
+                                   throw;
+                                    
+                                }
+
+
+                                #endregion
 
                                 #region faixa limites de restrição
 
@@ -1286,7 +1344,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                             //    }
 
                                             //}
-
+                                            
                                             dger.Earms = earmsREE;
                                             dger.SaveToFile();
                                         }
