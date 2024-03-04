@@ -2057,7 +2057,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                                                                 }
 
-                                                                modif.SaveToFile(filePath: modifFile, createBackup: true);
+                                                                modif.SaveToFile(filePath: modifFile);
                                                             }
 
                                                             /////////

@@ -107,7 +107,7 @@ namespace Compass.CommomLibrary
             if (createBackup && System.IO.File.Exists(filePath))
             {
                 var bkp = filePath + DateTime.Now.ToString("_yyyyMMddHHmmss.bak");
-                System.IO.File.Copy(filePath, bkp);
+                System.IO.File.Copy(filePath, bkp,true);
             }
 
 
