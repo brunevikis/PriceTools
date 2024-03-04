@@ -428,7 +428,7 @@ namespace Compass.ExcelTools.Templates
                     int headerRow = row - 1;
                     int headerMaxCol = col;
                     int percentsCols = 0;
-                    for (int c = col + 8; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
+                    for (int c = col + 9; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
                     {
                         headerMaxCol = c;
                         percentsCols++;
@@ -469,7 +469,7 @@ namespace Compass.ExcelTools.Templates
                     int headerRow = row - 1;
                     int headerMaxCol = col;
                     int percentsCols = 0;
-                    for (int c = col + 7; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
+                    for (int c = col + 8; !string.IsNullOrWhiteSpace(ws.Cells[headerRow, c].Text); c++)
                     {
                         headerMaxCol = c;
                         percentsCols++;
@@ -1175,6 +1175,7 @@ namespace Compass.ExcelTools.Templates
             public List<int> UH { get; set; }
             public string TipoRest { get; set; }
             public string UHstring { get; set; }
+            public string Minemonico { get; set; }
             public int UsiRest { get; set; }
 
             public int CodRest { get; set; }
@@ -1209,9 +1210,11 @@ namespace Compass.ExcelTools.Templates
 
                 InfSup = ((string)rng[1, 7].Text).ToUpper().Equals("SUP") ? "SUP" : "INF";
 
-                Ativa = ((string)rng[1, 8].Text).ToUpper() == "SIM";
+                Minemonico = ((string)rng[1, 8].Text).ToUpper();
 
-                for (int i = 9; i <= maxCol + 8; i++)
+                Ativa = ((string)rng[1, 9].Text).ToUpper() == "SIM";
+
+                for (int i = 10; i <= maxCol + 9; i++)
                 {
                     if (rng[1, i].Value is double) Vals.Add(rng[1, i].Value);
 
@@ -1229,7 +1232,7 @@ namespace Compass.ExcelTools.Templates
             public List<double> Percents = new List<double>();// { get; set; }
             public FAIXAPERCENTS(Range rng, int maxCol)
             {
-                for (int i = 9; i <= maxCol + 8; i++)
+                for (int i = 10; i <= maxCol + 9; i++)
                 {
                     if (rng[1, i].Value is double) Percents.Add(rng[1, i].Value * 100f);
                 }

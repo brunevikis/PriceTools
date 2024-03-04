@@ -229,8 +229,19 @@ namespace Compass.CommomLibrary.HidrDat {
         public string Usina { get { return this["Usina"]; } set { this["Usina"] = value; } }
 
         public int NumUnidadesBase { get { return this["Num.Unid.Base"]; } set { this["Num.Unid.Base"] = value; } }
-        
 
-        
+        public float NMAQ1 { get { return this["#Maq(1)"]; } set { this["#Maq(1)"] = value; } }
+        public float NMAQ2 { get { return this["#Maq(2)"]; } set { this["#Maq(2)"] = value; } }
+        public float NMAQ3 { get { return this["#Maq(3)"]; } set { this["#Maq(3)"] = value; } }
+        public float NMAQ4 { get { return this["#Maq(4)"]; } set { this["#Maq(4)"] = value; } }
+        public float NMAQ5 { get { return this["#Maq(5)"]; } set { this["#Maq(5)"] = value; } }
+
+
+        public float QEF1 { get { return this["QEf(1)"]; } set { this["QEf(1)"] = value; } }
+        public float QEF2 { get { return this["QEf(2)"]; } set { this["QEf(2)"] = value; } }
+        public float QEF3 { get { return this["QEf(3)"]; } set { this["QEf(3)"] = value; } }
+        public float QEF4 { get { return this["QEf(4)"]; } set { this["QEf(4)"] = value; } }
+        public float QEF5 { get { return this["QEf(5)"]; } set { this["QEf(5)"] = value; } }
+
     }
 }

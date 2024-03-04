@@ -266,6 +266,14 @@ namespace Compass.Services
 
             var deflantFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("deflant")).First();
             var deflant = DocumentFactory.Create(deflantFile) as Compass.CommomLibrary.Deflant.Deflant;
+            var deflantBusca = DocumentFactory.Create(deflantFile) as Compass.CommomLibrary.Deflant.Deflant;
+
+            List<Tuple<Compass.CommomLibrary.Deflant.DefLine, DateTime>> deflantDates = new List<Tuple<CommomLibrary.Deflant.DefLine, DateTime>>();
+
+            deflantBusca.BlocoDef.ToList().ForEach(x =>
+            {
+                deflantDates.Add(new Tuple<CommomLibrary.Deflant.DefLine, DateTime>(x, Tools.DateOfline(x.Diainic, dateDeck, true)));
+            });
 
             var entdadosFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("entdados")).First();
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
@@ -282,7 +290,7 @@ namespace Compass.Services
             {
                 if (tv.Montante != 66 && tv.Montante != 83)
                 {
-                    if (tv.Montante == 156)
+                    if (tv.Montante == 174)
                     {
 
                     }
@@ -290,10 +298,26 @@ namespace Compass.Services
                     var dataAnt = dataEstudo.AddHours(-horas);
                     for (int i = 0; i < horas; i += 24)
                     {
-                        arqNP = Tools.GetNPTXT(dataAnt);
-                        if (arqNP != "")
+                        var defMontantes = deflantDates.Where(x => x.Item1.Montante == tv.Montante && x.Item2 <= dataAnt).OrderByDescending(x => x.Item2).FirstOrDefault();
+
+                        if (dataAnt >= dateDeck || defMontantes == null)
                         {
-                            valor = Tools.GetNPValue(arqNP, tv.Montante.ToString());
+                            arqNP = Tools.GetNPTXT(dataAnt,true);
+                        }
+
+                        if (arqNP != "" || defMontantes != null)
+                        {
+                            if (defMontantes != null)
+                            {
+                                valor = defMontantes.Item1.Defluencia;
+                            }
+
+                            if (arqNP != "")
+                            {
+                                valor = Tools.GetNPValue(arqNP, tv.Montante.ToString());
+                                arqNP = "";
+                            }
+
                             var defline = new Compass.CommomLibrary.Deflant.DefLine();
                             if (deflant.BlocoDef.Count() == 0)
                             {

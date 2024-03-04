@@ -106,6 +106,7 @@ namespace Compass.Services
             var deflantFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("deflant")).First();
             var deflant = DocumentFactory.Create(deflantFile) as Compass.CommomLibrary.Deflant.Deflant;
 
+
             var entdadosFile = Directory.GetFiles(path).Where(x => Path.GetFileName(x).ToLower().Contains("entdados")).First();
             var entdados = DocumentFactory.Create(entdadosFile) as Compass.CommomLibrary.EntdadosDat.EntdadosDat;
             var tviag = entdados.BlocoTviag.ToList();
@@ -129,7 +130,7 @@ namespace Compass.Services
                     var dataAnt = dataEstudo.AddHours(-horas);
                     for (int i = 0; i < horas; i += 24)
                     {
-                        arqNP = Tools.GetNPTXT(dataAnt);
+                        arqNP = Tools.GetNPTXT(dataAnt,true);
                         if (arqNP != "")
                         {
                             valor = Tools.GetNPValue(arqNP, tv.Montante.ToString());

@@ -1850,7 +1850,35 @@ new DateTime(2033,12,25),
             return valor;
         }
 
-        
+        public static DateTime DateOfline(int dia, DateTime dataDeck,bool passado = false)
+        {
+            DateTime dta = new DateTime(dataDeck.Year, dataDeck.Month, dia);
+
+            //ajustando viradas de meses 
+
+            if (passado == true)
+            {
+                if (dta.Day > dataDeck.Day)
+                {
+                    dta = dta.AddMonths(-1);
+                }
+            }
+            else
+            {
+                if (dataDeck.Day < 10)
+                {
+                    if (dta.Day > 20)
+                    {
+                        dta = dta.AddMonths(-1);
+                    }
+                }
+                else if (dataDeck.Day > 20 && dta.Day < 10)
+                {
+                    dta = dta.AddMonths(1);
+                }
+            }
+            return dta;
+        }
 
     }
    

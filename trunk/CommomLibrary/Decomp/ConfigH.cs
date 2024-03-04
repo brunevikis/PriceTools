@@ -1339,6 +1339,8 @@ namespace Compass.CommomLibrary.Decomp
                 NumUnidadeBase = hidCad.NumUnidadesBase;
 
                 Mercado = hidCad.Sistema;
+
+                Engolimento = (hidCad.NMAQ1 * hidCad.QEF1) + (hidCad.NMAQ2 * hidCad.QEF2) + (hidCad.NMAQ3 * hidCad.QEF3) + (hidCad.NMAQ4 * hidCad.QEF4) + (hidCad.NMAQ5 * hidCad.QEF5);
             }
 
             double volIni;
@@ -1386,6 +1388,8 @@ namespace Compass.CommomLibrary.Decomp
                 }
             }
             public double VolUtil { get { return VolMax - VolMin; } }
+
+            public double Engolimento;
 
             public bool IsFict;
             public bool travado = false;

@@ -51,7 +51,146 @@ namespace Compass.Services
             return percentAlvo;
         }
 
+        public static Compass.CommomLibrary.ModifDatNW.ModifDatNw AlterarModifComLq(Compass.CommomLibrary.ModifDatNW.ModifDatNw modif, WorkbookMensal.FAIXALIMITES lHq, string mineTurbVaz, DateTime data, double lqValor, double engolimento)
+        {
+            bool usarEngolimento = false;
+            double valorModif = lqValor;
 
+            if (mineTurbVaz == "TURBMAXT")
+            {
+                usarEngolimento = true;
+                valorModif = lqValor > engolimento ? engolimento : lqValor;
+            }
+
+            var modifFile = modif.File;
+            if (!modif.Any(x => x.Usina == lHq.UsiRest))
+            {
+                modif.Add(new Compass.CommomLibrary.ModifDatNW.ModifLine()
+                {
+                    Usina = lHq.UsiRest,
+                    Chave = "USINA",
+                    NovosValores = new string[] { lHq.UsiRest.ToString() }
+                });
+
+            }
+            var modiflineTurbVaz = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == mineTurbVaz && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
+
+            if (modiflineTurbVaz != null)
+            {
+                if (modiflineTurbVaz.DataModif < data)
+                {
+
+                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                    var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                    var valorAntigo = modiflineTurbVaz.ValorModif;
+                    if (usarEngolimento == true)
+                    {
+                        valorAntigo = valorAntigo < engolimento ? valorAntigo : engolimento;
+                    }
+
+                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), valorModif.ToString().Replace(',', '.'));
+                    newModifLine.Chave = mineTurbVaz;
+                    newModifLine.Usina = lHq.UsiRest;
+                    int index = modif.IndexOf(modiflineTurbVaz) + 1;
+                    modif.Insert(index, newModifLine);
+
+                    //mes seguinte verificação
+                    var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == mineTurbVaz && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                    if (modiflineMesSeq == null)
+                    {
+                        //newModifLine2 = modifline;
+                        newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                        //newModifLine2.DataModif = data.AddMonths(1);
+                        newModifLine2.Chave = mineTurbVaz;
+                        newModifLine2.Usina = lHq.UsiRest;
+                        int index2 = modif.IndexOf(newModifLine) + 1;
+                        modif.Insert(index2, newModifLine2);
+                    }
+                    else if (modiflineMesSeq != null && usarEngolimento == true)
+                    {
+                        double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
+                        valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                        modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
+                    }
+
+                }
+                else
+                {
+                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                    var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                    var valorAntigo = modiflineTurbVaz.ValorModif;
+
+                    if (usarEngolimento == true)
+                    {
+                        valorAntigo = valorAntigo < engolimento ? valorAntigo : engolimento;
+                    }
+
+                    modiflineTurbVaz.SetValores(data.Month.ToString(), data.Year.ToString(), valorModif.ToString().Replace(',', '.'));
+
+                    //mes seguinte verificação
+                    var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == mineTurbVaz && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                    if (modiflineMesSeq == null)
+                    {
+
+                        //newModifLine2 = modifline;
+                        newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAntigo.ToString().Replace(',', '.'));
+                        //newModifLine2.DataModif = data.AddMonths(1);
+                        newModifLine2.Chave = mineTurbVaz;
+                        newModifLine2.Usina = lHq.UsiRest;
+                        int index2 = modif.IndexOf(modiflineTurbVaz) + 1;
+                        modif.Insert(index2, newModifLine2);
+                    }
+                    else if (modiflineMesSeq != null && usarEngolimento == true)
+                    {
+                        double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
+                        valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                        modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
+                    }
+
+                }
+            }
+            else
+            {
+                var mod = modif.Where(x => x.Usina == lHq.UsiRest).FirstOrDefault();
+                if (mod != null)
+                {
+                    var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                    newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), valorModif.ToString().Replace(',', '.'));
+                    newModifLine.Chave = mineTurbVaz;
+                    newModifLine.Usina = lHq.UsiRest;
+                    int indexT = modif.IndexOf(mod) + 1;
+                    modif.Insert(indexT, newModifLine);
+
+                    if (usarEngolimento == true)
+                    {
+                        var modiflineMesSeq = modif.Where(x => x.Usina == lHq.UsiRest && x.Chave == mineTurbVaz && x.DataModif == data.AddMonths(1)).FirstOrDefault();
+                        if (modiflineMesSeq == null)
+                        {
+                            var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+
+                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), engolimento.ToString().Replace(',', '.'));
+                            newModifLine2.Chave = mineTurbVaz;
+                            newModifLine2.Usina = lHq.UsiRest;
+                            int indexT2 = modif.IndexOf(newModifLine) + 1;
+                            modif.Insert(indexT2, newModifLine2);
+                        }
+                        else
+                        {
+                            double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
+                            valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                            modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
+                        }
+
+                    }
+                }
+
+            }
+
+            return modif;
+        }
 
         public static double GetLimitesPorFaixa(double voliniPerc, WorkbookMensal.FAIXALIMITES faixaLimite, WorkbookMensal.FAIXAPERCENTS faixaPercent)
         {

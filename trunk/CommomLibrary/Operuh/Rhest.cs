@@ -140,8 +140,9 @@ namespace Compass.CommomLibrary.Operuh
                 new BaseField(15  , 19 ,"A5"    , "Restricao"),//pode ter letra
                 new BaseField(21  , 23 ,"I3"    , "usina"),//
                 new BaseField(26  , 37 ,"A12"    , "nomeusina"),//
+                new BaseField(39  , 39 ,"A1"    , "letra"),//esse campo esta fora do manual mas como em algumas restricoes ele tem algo, esta especificado aqui
                 new BaseField(41  , 42 ,"I2"    , "Cod variavel"),//pode ter letra
-                new BaseField(44  , 48 ,"F5.0"    , "Fator"),//
+                new BaseField(44  , 48 ,"F5.1"    , "Fator"),//
             };
 
 
@@ -203,10 +204,10 @@ namespace Compass.CommomLibrary.Operuh
                 new BaseField(28  , 29 ,"A2"    , "DiaFinal"),//
                 new BaseField(31  , 32 ,"I2"    , "HoraDiaFinal"),//
                 new BaseField( 34 , 34,"I1"    , "meiahorafim"),
-                new BaseField( 38 , 47,"F10.0" , "rampamaxdecr"),
-                new BaseField( 48 , 57,"F10.0" , "rampamaxacr"),
-                new BaseField( 58 , 67,"F10.0" , "rampamaxabsdecr"),
-                new BaseField( 68 , 77,"F10.0" , "rampamaxabsacr"),
+                new BaseField( 38 , 47,"F10.5" , "rampamaxdecr"),
+                new BaseField( 48 , 57,"F10.5" , "rampamaxacr"),
+                new BaseField( 58 , 67,"F10.5" , "rampamaxabsdecr"),
+                new BaseField( 68 , 77,"F10.5" , "rampamaxabsacr"),
             };
 
 
