@@ -1384,7 +1384,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     DateTime mesSeg = dtEstudo.AddMonths(1);
                                     dadger = configH.baseDoc as Dadger;
 
-                                    var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
+                                    var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ") && (x.Minemonico == "QDEF" || x.Minemonico == "QTUR"));
                                     var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
 
                                     bool nwhibrido = w.NwHibrido;
@@ -2876,7 +2876,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         {
                             DateTime mesSeg = dtEstudo.AddMonths(1);
 
-                            var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ"));
+                            var limitesHQ = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HQ") && (x.Minemonico == "QDEF" || x.Minemonico == "QTUR"));
                             var limitesHV = w.Faixalimites.Where(x => x.MesIni <= dtEstudo.Month && x.MesFim >= dtEstudo.Month && x.Ativa == true && x.TipoRest.ToUpper().Equals("HV"));
 
                             Compass.CommomLibrary.ModifDatNW.ModifDatNw modif;

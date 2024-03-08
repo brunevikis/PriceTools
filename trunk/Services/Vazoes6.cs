@@ -175,8 +175,21 @@ namespace Compass.Services {
                         select vq;
                 if (q.Count() == 0) vazoes.AdicionarAnos(1);
                 q.ToList().ForEach(vc => {
+
+                    if (vc.Posto == 202)
+                    { 
+                    
+                    }
                     var vaz = vazpast.Conteudo.FirstOrDefault(x => x.Posto == vc.Posto);
-                    if (vaz != null) vc.Vazao = (int)vaz[dt];
+                    if (vaz != null)
+                    {
+                        vc.Vazao = (int)vaz[dt];
+                        var valor = vaz[dt];
+                        if (valor > 0 && valor < 1)
+                        {
+                            vc.Vazao = 1;
+                        }
+                    }
                 }
                );
 
