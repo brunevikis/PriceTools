@@ -49,18 +49,25 @@ namespace Compass.CommomLibrary.ParqueEolico
     {
         public ConfigLine(string text)
         {
-            var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
-            BaseField[] campos = new BaseField[partes.Count()];
-            for (int i = 0; i < campos.Count(); i++)
-            {
-                int startIndex = text.IndexOf(partes[i]) + 1;
-                int range = partes[i].Length;
-                int endIndex = startIndex + range - 1;
-                campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
-            }
-            CamposCSV = campos;
+            LoadCamposCSV(text);
+
+            //var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
+            //BaseField[] campos = new BaseField[partes.Count()];
+            //for (int i = 0; i < campos.Count(); i++)
+            //{
+            //    int startIndex = text.IndexOf(partes[i]) + 1;
+            //    int range = partes[i].Length;
+            //    int endIndex = startIndex + range - 1;
+            //    campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
+            //}
+            //CamposCSV = campos;
 
         }
+        public string ID { get { return valores[CamposCSV[0]].ToString(); } set { valores[CamposCSV[0]] = value.ToString(); } }
+        public int CodPEE { get { return Convert.ToInt32(valores[CamposCSV[1]]); } set { valores[CamposCSV[1]] = value.ToString(); } }
+        public int PeriodoIni { get { return Convert.ToInt32(valores[CamposCSV[2]]); } set { valores[CamposCSV[2]] = value.ToString(); } }
+        public string PeriodoFim { get { return valores[CamposCSV[3]].ToString(); } set { valores[CamposCSV[3]] = value.ToString(); } }
 
+        public string Operacao { get { return valores[CamposCSV[4]].ToString(); } set { valores[CamposCSV[4]] = value.ToString(); } }
     }
 }

@@ -475,6 +475,38 @@ namespace Compass.CommomLibrary
             }
         }
 
+        public virtual void LoadCamposCSV(string text)
+        {
+            System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
+
+            int idxSubtext = 0;
+            var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
+            BaseField[] campos = new BaseField[partes.Count()];
+            for (int i = 0; i < campos.Count(); i++)
+            {
+                int startIndex = idxSubtext + text.Substring(idxSubtext).IndexOf(partes[i]) + 1;//para evitar de pegar o index repetido caso tenha dados com o mesmo valor em campos diferentes por coincidencia
+                int range = partes[i].Length;
+                string tipo = "A";
+                
+                //if (double.TryParse(partes[i], System.Globalization.NumberStyles.Any,Culture.NumberFormat, out double valor))
+                //{
+                //    if (valor == Math.Floor(valor))//é inteiro
+                //    {
+                //        tipo = "I";
+                //    }
+                //    else
+                //    {
+                //        tipo = "F";
+                //    }
+                //}
+
+                int endIndex = startIndex + range - 1;
+                campos[i] = new BaseField(startIndex, endIndex, tipo + range.ToString(), "");
+                idxSubtext = endIndex;
+            }
+            CamposCSV = campos;
+        }
+
         public virtual void LoadCSV(string line)
         {
             

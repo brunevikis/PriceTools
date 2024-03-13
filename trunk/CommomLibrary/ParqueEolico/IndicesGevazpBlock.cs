@@ -49,18 +49,24 @@ namespace Compass.CommomLibrary.ParqueEolico
     {
         public IndicesGevazpLine(string text)
         {
-            var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
-            BaseField[] campos = new BaseField[partes.Count()];
-            for (int i = 0; i < campos.Count(); i++)
-            {
-                int startIndex = text.IndexOf(partes[i]) + 1;
-                int range = partes[i].Length;
-                int endIndex = startIndex + range - 1;
-                campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
-            }
-            CamposCSV = campos;
+            LoadCamposCSV(text);
+
+            //var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
+            //BaseField[] campos = new BaseField[partes.Count()];
+            //for (int i = 0; i < campos.Count(); i++)
+            //{
+            //    int startIndex = text.IndexOf(partes[i]) + 1;
+            //    int range = partes[i].Length;
+            //    int endIndex = startIndex + range - 1;
+            //    campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
+            //}
+            //CamposCSV = campos;
 
         }
+        public string Funcao { get { return valores[CamposCSV[0]].ToString(); } set { valores[CamposCSV[0]] = value.ToString(); } }
 
+        public string Desc { get { return valores[CamposCSV[1]].ToString(); } set { valores[CamposCSV[1]] = value.ToString(); } }
+
+        public string Arquivo { get { return valores[CamposCSV[2]].ToString(); } set { valores[CamposCSV[2]] = value.ToString(); } }
     }
 }

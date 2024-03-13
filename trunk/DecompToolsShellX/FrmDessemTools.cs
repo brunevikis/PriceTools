@@ -1476,8 +1476,15 @@ namespace Compass.DecompToolsShellX
                     var deckDECOMPref = DeckFactory.CreateDeck(decompBaseRVXbox.Text) as CommomLibrary.Decomp.Deck;
 
                     //
-                    //var peeSubm = deckDECOMPref[CommomLibrary.Decomp.DeckDocument.parqueeolsubm].Document as Compass.CommomLibrary.ParqueEolico.Subm ;
-                    //var prim = peeSubm.BlocoSubm.First();
+                    //var deckNW = DeckFactory.CreateDeck("K:\\teste\\NW_LIBS\\2023_entrada_2020") as CommomLibrary.Newave.Deck;
+                    //var eolcad = deckNW[CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad;
+                    //var linha = eolcad.BlocoPeePot.First();
+                    //var prim = eolcad.BlocoPeePot.First().DataIni;
+                    //var primpot = eolcad.BlocoPeePot.First().Potencia;
+
+                    //linha.Potencia = 39.454323;
+                    //linha.DataIni = DateTime.Today.AddYears(100);
+                    //eolcad.SaveToFile();
                     //var testeli = peeSubm.BlocoSubm.CreateLineCSV(peeSubm.BlocoSubm.First().LineCSV);
                     //prim.CodPEE = 90;
                     //prim.CodSub = 70;
@@ -1485,7 +1492,7 @@ namespace Compass.DecompToolsShellX
 
                     //testeli.CodPEE = 8;
                     //testeli.CodSub = 5;
-                    
+
                     //peeSubm.BlocoSubm.Add(testeli);
 
                     //peeSubm.SaveToFile(createBackup: true);

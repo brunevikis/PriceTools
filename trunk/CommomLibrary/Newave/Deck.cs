@@ -35,6 +35,15 @@ namespace Compass.CommomLibrary.Newave
             ghmin,
             gtminAgente,
             adterm,
+            //
+            eolicacad,
+            eolicaconfig,
+            eolicafte,
+            eolicageracao,
+            eolicaposto,
+            eolicasubmercado,
+            histventos,
+            eolicaindices
         }
 
         Dictionary<string, DeckFile> documents = new Dictionary<string, DeckFile> {
@@ -87,14 +96,14 @@ namespace Compass.CommomLibrary.Newave
             {"GEE.DAT"    , null},
             {"CLASGAS.DAT"    , null},
             //
-            {"eolica-cadastro.csv"    , null},
-            {"eolica-config.csv"    , null},
-            {"eolica-fte.csv"    , null},
+            {"eolica-cadastro.csv"    , null},//
+            {"eolica-config.csv"    , null},//
+            {"eolica-fte.csv"    , null},//
             {"eolica-geracao.csv"    , null},
-            {"eolica-posto.csv"    , null},
-            {"eolica-submercado.csv"    , null},
-            {"hist-ventos.csv"    , null},
-            {"indices.csv"    , null},
+            {"eolica-posto.csv"    , null},//
+            {"eolica-submercado.csv"    , null},//
+            {"hist-ventos.csv"    , null},//
+            {"indices.csv"    , null},//
         };
 
         public override Dictionary<string, DeckFile> Documents { get { return documents; } }
@@ -153,6 +162,22 @@ namespace Compass.CommomLibrary.Newave
                         return Documents["GtminAgenteCDE.xlsx"];
                     case DeckDocument.adterm:
                         return Documents["ADTERM.DAT"];
+                    case DeckDocument.eolicacad:
+                        return Documents["eolica-cadastro.csv"];
+                    case DeckDocument.eolicaconfig:
+                        return Documents["eolica-config.csv"];
+                    case DeckDocument.eolicasubmercado:
+                        return Documents["eolica-submercado.csv"];
+                    case DeckDocument.eolicafte:
+                        return Documents["eolica-fte.csv"];
+                    case DeckDocument.eolicaposto:
+                        return Documents["eolica-posto.csv"];
+                    case DeckDocument.histventos:
+                        return Documents["hist-ventos.csv"];
+                    case DeckDocument.eolicaindices:
+                        return Documents["indices.csv"];
+                    case DeckDocument.eolicageracao:
+                        return Documents["eolica-geracao.csv"];
                     default:
                         return null;
                 }
@@ -167,6 +192,30 @@ namespace Compass.CommomLibrary.Newave
                         break;
                     case DeckDocument.patamar:
                         Documents["PATAMAR.DAT"] = value;
+                        break;
+                    case DeckDocument.eolicacad:
+                        Documents["eolica-cadastro.csv"] = value;
+                        break;
+                    case DeckDocument.eolicaconfig:
+                        Documents["eolica-config.csv"] = value;
+                        break;
+                    case DeckDocument.eolicasubmercado:
+                        Documents["eolica-submercado.csv"] = value;
+                        break;
+                    case DeckDocument.eolicafte:
+                        Documents["eolica-fte.csv"] = value;
+                        break;
+                    case DeckDocument.eolicaposto:
+                        Documents["eolica-posto.csv"] = value;
+                        break;
+                    case DeckDocument.histventos:
+                        Documents["hist-ventos.csv"] = value;
+                        break;
+                    case DeckDocument.eolicaindices:
+                        Documents["indices.csv"] = value;
+                        break;
+                    case DeckDocument.eolicageracao:
+                        Documents["eolica-geracao.csv"] = value;
                         break;
                     default:
                         throw new NotImplementedException();

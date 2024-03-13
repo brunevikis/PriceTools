@@ -96,7 +96,7 @@ namespace Compass.CommomLibrary
             }
             else if (fileName.StartsWith("hist-ventos.csv"))
             {
-                doc = BaseDocument.Create<ParqueEolico.HistVen>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+                doc = BaseDocument.Create<EolicaNW.HistVentos>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
             else if (fileName.StartsWith("indices.csv"))
             {
@@ -109,6 +109,30 @@ namespace Compass.CommomLibrary
             else if (fileName.StartsWith("parque_eolico_cadastro.csv"))
             {
                 doc = BaseDocument.Create<ParqueEolico.Cadastro>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("eolica-cadastro.csv"))
+            {
+                doc = BaseDocument.Create<EolicaNW.EolicaCad>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("eolica-config.csv"))
+            {
+                doc = BaseDocument.Create<EolicaNW.EolicaConfig>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("eolica-submercado.csv"))
+            {
+                doc = BaseDocument.Create<EolicaNW.EolSubmercado>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("eolica-geracao.csv"))
+            {
+                doc = BaseDocument.Create<EolicaNW.EolicaGeracao>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("eolica-fte.csv"))
+            {
+                doc = BaseDocument.Create<EolicaNW.Eolicafte>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
+            else if (fileName.StartsWith("eolica-posto.csv"))
+            {
+                doc = BaseDocument.Create<EolicaNW.EolicaPosto>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
             else if (fileName.StartsWith("parque_eolico_config.csv"))
             {

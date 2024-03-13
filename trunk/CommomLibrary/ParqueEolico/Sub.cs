@@ -49,16 +49,18 @@ namespace Compass.CommomLibrary.ParqueEolico
     {
         public SubmLine(string text)
         {
-            var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
-            BaseField[] campos = new BaseField[partes.Count()];
-            for (int i = 0; i < campos.Count(); i++)
-            {
-                int startIndex = text.IndexOf(partes[i]) + 1;
-                int range = partes[i].Length;
-                int endIndex = startIndex + range - 1;
-                campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
-            }
-            CamposCSV = campos;
+            LoadCamposCSV(text);
+
+            //var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
+            //BaseField[] campos = new BaseField[partes.Count()];
+            //for (int i = 0; i < campos.Count(); i++)
+            //{
+            //    int startIndex = text.IndexOf(partes[i]) + 1;
+            //    int range = partes[i].Length;
+            //    int endIndex = startIndex + range - 1;
+            //    campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
+            //}
+            //CamposCSV = campos;
 
         }
 
