@@ -123,6 +123,7 @@ namespace Encadeado
 
             DeckMedia.EscreverListagemNwlistop();
 
+            //IncrementarCSV_LIBS(DeckMedia);//TODO: liberar somente quando for oficial deck com libs csv
 
             var path = DeckMedia.Folder;
             //TODO: executar consistencia
@@ -1341,7 +1342,7 @@ namespace Encadeado
                                 Chave = "USINA",
                                 NovosValores = new string[] { dad.Usina.ToString() }
                             });
-                            
+
 
                         }
                         var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
@@ -1386,7 +1387,7 @@ namespace Encadeado
                             newModifLine.Usina = dad.Usina;
                             int index = modifs.IndexOf(modifLineUsi) + 1;
 
-                            modifs.Insert(index,newModifLine);
+                            modifs.Insert(index, newModifLine);
                         }
                     }
 
@@ -1602,6 +1603,48 @@ namespace Encadeado
             }
         }
 
+        public void IncrementarCSV_LIBS(DeckNewave deck)
+        {
+            DateTime dataEstudo = deck.Dger.DataEstudo;
+
+            var eolCad = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad : null;
+            
+            var eolConfig = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Document as Compass.CommomLibrary.EolicaNW.EolicaConfig : null;
+            
+            var eolFte = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Document as Compass.CommomLibrary.EolicaNW.Eolicafte : null;
+
+            var eolGer = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Document as Compass.CommomLibrary.EolicaNW.EolicaGeracao : null;
+
+            if (eolCad != null)
+            {
+                var eolcadFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Path;
+                eolCad.BlocoPeePot.Where(x => x.DataFim < dataEstudo).ToList().ForEach(y => eolCad.BlocoPeePot.Remove(y));
+                eolCad.SaveToFile(filePath: eolcadFile);
+            }
+
+            if (eolGer != null)
+            {
+                var eolGerFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Path;
+                eolGer.BlocoGera.Where(x => x.DataFim < dataEstudo).ToList().ForEach(y => eolGer.BlocoGera.Remove(y));
+                eolGer.SaveToFile(filePath: eolGerFile);
+            }
+
+            if (eolConfig!= null)
+            {
+                var eolConfigFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Path;
+                eolConfig.BlocoConfig.ToList().ForEach(x => x.DataIni = dataEstudo);
+                eolConfig.SaveToFile(filePath: eolConfigFile);
+            }
+
+            if (eolFte != null)
+            {
+                var eolFteFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Path;
+                eolFte.Blocofte.ToList().ForEach(x => x.DataIni = dataEstudo);
+                eolFte.SaveToFile(filePath: eolFteFile);
+            }
+
+        }
+
         public void IncrementarREEDAT(DeckNewave deck, bool gravar = false)
         {
             var reedat = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.ree].Document as Compass.CommomLibrary.ReeDat.ReeDat;
@@ -1781,11 +1824,11 @@ namespace Encadeado
             DeckMedia.EstudoPai = this;
 
             DeckMedia.GetFiles(Origem);
-           
+
             SetNomeDeck(DeckMedia);
 
             DeckMedia.BaseFolder = System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00"));
-           
+
             DeckMedia.Dger.Flags = new int[] { 1, 1, 1, 0, 0 };
 
 
@@ -1794,6 +1837,7 @@ namespace Encadeado
 
                 IncrementarVAZAO(DeckMedia);
             }
+
 
             IncrementarREEDAT(DeckMedia, false);
             IncrementarRE(DeckMedia);
@@ -1805,6 +1849,9 @@ namespace Encadeado
             DeckMedia.SaveFilesToFolder(DeckMedia.BaseFolder);
             AlterarModif(DeckMedia);
             DeckMedia.EscreverListagemNwlistop();
+
+
+
 
             string planMemo = Directory.GetFiles(Origem).Where(x => Path.GetFileName(x).StartsWith("Memória de Cálculo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
 
@@ -1843,8 +1890,8 @@ namespace Encadeado
 
             //var ret2 = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newaveCons280003.sh 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
             //var ret2 = Compass.Services.Linux.Run2(destino, this.ExecutavelNewave.Replace("cpas_ctl_common", "enercore_ctl_common") + " 3", "NewaveConsist", true, true, "hide");// para debug usar essa funçao
-            
-            
+
+
             //var ret = Compass.Services.Linux.Run2(destino, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/FT/newave2812.sh 3", "NewaveConsist", true, true, "hide");// para debug  nw hibrido usar essa funçao
 
 

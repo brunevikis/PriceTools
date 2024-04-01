@@ -18,7 +18,7 @@ namespace Compass.CommomLibrary.EolicaNW
                 return blocos;
             }
         }
-        public EolfteBlock BlocoSubm { get { return (EolfteBlock)Blocos["PEE-FPVP-LIN-PU-PER"]; } set { Blocos["PEE-FPVP-LIN-PU-PER"] = value; } }
+        public EolfteBlock Blocofte { get { return (EolfteBlock)Blocos["PEE-FPVP-LIN-PU-PER"]; } set { Blocos["PEE-FPVP-LIN-PU-PER"] = value; } }
 
         public override void Load(string fileContent)
         {

@@ -304,7 +304,7 @@ namespace Compass.DecompToolsShellX
         {
 
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "cortes.*|cortes.*";
+            ofd.Filter = "cortes*.*|cortes*.*";
             ofd.Multiselect = false;
 
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)

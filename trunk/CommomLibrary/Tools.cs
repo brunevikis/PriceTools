@@ -479,7 +479,7 @@ new DateTime(2033,12,25),
             return new Tuple<int, int, int>(p1, p2, p3);
         }
 
-        public static Tuple<DateTime, DateTime, double, DateTime, DateTime> GetRangeDiasHorasRHE(DateTime dataBase,DateTime fimrev,Compass.CommomLibrary.EntdadosDat.RheLine rhe, DateTime dataEstudo)
+        public static Tuple<DateTime, DateTime, double, DateTime, DateTime> GetRangeDiasHorasRHE(DateTime dataBase, DateTime fimrev, Compass.CommomLibrary.EntdadosDat.RheLine rhe, DateTime dataEstudo)
         {
             DateTime dataInicial = new DateTime(dataBase.Year, dataBase.Month, rhe.DiaInic.Trim() == "I" ? dataBase.Day : Convert.ToInt32(rhe.DiaInic));
             int meiaIni = rhe.MeiaHoraInic ?? 0;
@@ -525,11 +525,11 @@ new DateTime(2033,12,25),
             //}
 
             DateTime novoFim = novoInicio.AddHours(horasfim);
-            if (novoFim > fimrev.AddDays(1) || novoFim<= dataEstudo)
+            if (novoFim > fimrev.AddDays(1) || novoFim <= dataEstudo)
             {
                 novoFim = fimrev.AddDays(1);
             }
-            return new Tuple<DateTime, DateTime,double,DateTime,DateTime>(dataInicial, dataFinal, difHoras2,novoInicio, novoFim);
+            return new Tuple<DateTime, DateTime, double, DateTime, DateTime>(dataInicial, dataFinal, difHoras2, novoInicio, novoFim);
         }
 
         public static Tuple<DateTime, DateTime> GetRangeInicialFinal(DateTime dataBase, DateTime iniREVbase, string diaInicLine, string diaFimLine, DateTime dataEstudo, bool eRestricao = false)
@@ -1727,7 +1727,7 @@ new DateTime(2033,12,25),
 
 
         }
-        
+
 
         public static List<Tuple<int, DateTime, double, float>> GetDadosPrevCargaDS(DateTime data)
         {
@@ -1850,38 +1850,57 @@ new DateTime(2033,12,25),
             return valor;
         }
 
-        public static DateTime DateOfline(int dia, DateTime dataDeck,bool passado = false)
+        public static DateTime DateOfline(int dia, DateTime dataDeck, bool passado = false)
         {
-            DateTime dta = new DateTime(dataDeck.Year, dataDeck.Month, dia);
+            //DateTime dta = new DateTime(dataDeck.Year, dataDeck.Month, dia);
+            DateTime dta = new DateTime(dataDeck.Year, dataDeck.Month, dataDeck.Day);
 
             //ajustando viradas de meses 
 
             if (passado == true)
             {
-                if (dta.Day > dataDeck.Day)
+                //if (dta.Day > dataDeck.Day)
+                //{
+                //    dta = dta.AddMonths(-1);
+                //}
+                if (dia > dataDeck.Day)
                 {
-                    dta = dta.AddMonths(-1);
+                    dta = new DateTime(dataDeck.Year, dataDeck.AddMonths(-1).Month, dia);
+                }
+                else
+                {
+                    dta = new DateTime(dataDeck.Year, dataDeck.Month, dia);
                 }
             }
             else
             {
                 if (dataDeck.Day < 10)
                 {
-                    if (dta.Day > 20)
+                    if (dia > 20)//if (dta.Day > 20)
                     {
-                        dta = dta.AddMonths(-1);
+                        //dta = dta.AddMonths(-1);
+                        dta = new DateTime(dataDeck.Year, dataDeck.AddMonths(-1).Month, dia);
+                    }
+                    else
+                    {
+                        dta = new DateTime(dataDeck.Year, dataDeck.Month, dia);
                     }
                 }
-                else if (dataDeck.Day > 20 && dta.Day < 10)
+                else if (dataDeck.Day > 20 && dia < 10/*dta.Day < 10*/)
                 {
-                    dta = dta.AddMonths(1);
+                    //dta = dta.AddMonths(1);
+                    dta = new DateTime(dataDeck.Year, dataDeck.AddMonths(1).Month, dia);
+                }
+                else
+                {
+                    dta = new DateTime(dataDeck.Year, dataDeck.Month, dia);
                 }
             }
             return dta;
         }
 
     }
-   
+
     public class SemanaOperativa
     {
         public int HorasPat1 { get; set; }
