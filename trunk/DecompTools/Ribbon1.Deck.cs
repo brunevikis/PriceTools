@@ -540,6 +540,11 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 dadger = Services.DecompNextRev.CreateRv0(deckEstudo, deckNWEstudo, dtEstudo, w, mesOperativo, pmoBase, eolicasDados);
                                 dadger.SaveToFile(createBackup: true);
 
+                                #region csvlibs
+                                //Services.DecompNextRev.IncrementaLibsCSV(deckEstudo, deckNWEstudo, dtEstudo);
+
+                                #endregion
+
                                 #region Armazenamento
 
                                 var configH = new Compass.CommomLibrary.Decomp.ConfigH(dadger, hidrDat);
@@ -2696,7 +2701,10 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         dadger.VAZOES_ArquivoPrevs = "prevs.rv0";
                         dadger.SaveToFile(createBackup: true);
                         //  }
+                        #region csvlibs
+                        //Services.DecompNextRev.IncrementaLibsCSV(deckEstudo, deckNWEstudo, dtEstudo);
 
+                        #endregion
 
 
 

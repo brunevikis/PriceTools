@@ -206,6 +206,45 @@ namespace Compass.Services
             return valor;
         }
 
+        public static void IncrementaLibsCSV(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo)
+        {
+            var parEolFte = deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolfte] != null ? deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolfte].Document as Compass.CommomLibrary.ParqueEolico.Fte : null;
+           
+            var parEolConfig = deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolconfig] != null ? deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolconfig].Document as Compass.CommomLibrary.ParqueEolico.Config : null;
+            
+            var parEolPotInst = deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolpot] != null ? deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolpot].Document as Compass.CommomLibrary.ParqueEolico.PotInst : null;
+
+            var eolCad = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad] != null ? deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad : null;
+
+
+            if (parEolFte != null)
+            {
+                var parEolFile = parEolFte.File;
+                parEolFte.BlocoFte.ToList().ForEach(y => y.PeriodoFim = "");
+                parEolFte.SaveToFile(filePath: parEolFile);
+            }
+
+            if (parEolConfig != null)
+            {
+                var parEolConfigFile = parEolConfig.File;
+                parEolConfig.BlocoConfig.ToList().ForEach(y => y.PeriodoFim = "");
+                parEolConfig.SaveToFile(filePath: parEolConfigFile);
+            }
+
+            if (parEolPotInst != null && eolCad != null)
+            {
+                DateTime dataMseguinte = new DateTime(dtEstudo.AddMonths(1).Year, dtEstudo.AddMonths(1).Month, 1);
+                var parEolPotFile = parEolPotInst.File;
+                parEolPotInst.BlocoPotInst.ToList().ForEach(y =>
+                {
+                    y.PeriodoIni = 1;
+                    y.PeriodoFim = "";
+                    y.Pot = eolCad.BlocoPeePot.Where(x => x.CodPEE == y.CodPEE && x.DataFim <= dataMseguinte).OrderByDescending(x => x.DataFim).Select(x => x.Potencia).FirstOrDefault();
+                });
+                parEolPotInst.SaveToFile(filePath: parEolPotFile);
+            }
+        }
+
         public static Dadger CreateRv0(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo, WorkbookMensal w, MesOperativo mesOperativo, Compass.CommomLibrary.Pmo.Pmo pmoBase, List<Tuple<int, int, DateTime, double>> eolicasDados = null)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");

@@ -70,6 +70,9 @@ namespace Compass.CommomLibrary.Decomp
             {"pee-posto.csv", null},//
             {"posto-cadastro.csv", null},//
             {"prevsvel.", null},
+            //
+            {"volumes-referencia.csv"    , null},//
+            {"polinjus.csv"    , null}//
 
         };
 

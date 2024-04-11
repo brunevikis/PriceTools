@@ -104,6 +104,10 @@ namespace Compass.CommomLibrary.Newave
             {"eolica-submercado.csv"    , null},//
             {"hist-ventos.csv"    , null},//
             {"indices.csv"    , null},//
+            //
+            {"volumes-referencia.csv"    , null},//
+            {"polinjus.csv"    , null}//
+
         };
 
         public override Dictionary<string, DeckFile> Documents { get { return documents; } }
