@@ -209,9 +209,9 @@ namespace Compass.Services
         public static void IncrementaLibsCSV(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo)
         {
             var parEolFte = deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolfte] != null ? deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolfte].Document as Compass.CommomLibrary.ParqueEolico.Fte : null;
-           
+
             var parEolConfig = deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolconfig] != null ? deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolconfig].Document as Compass.CommomLibrary.ParqueEolico.Config : null;
-            
+
             var parEolPotInst = deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolpot] != null ? deckEstudo[Compass.CommomLibrary.Decomp.DeckDocument.parqueeolpot].Document as Compass.CommomLibrary.ParqueEolico.PotInst : null;
 
             var eolCad = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad] != null ? deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad : null;
@@ -245,7 +245,7 @@ namespace Compass.Services
             }
         }
 
-        public static Dadger CreateRv0(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo, WorkbookMensal w, MesOperativo mesOperativo, Compass.CommomLibrary.Pmo.Pmo pmoBase, List<Tuple<int, int, DateTime, double>> eolicasDados = null)
+        public static Dadger CreateRv0(Compass.CommomLibrary.Decomp.Deck deckEstudo, Compass.CommomLibrary.Newave.Deck deckNWEstudo, DateTime dtEstudo, WorkbookMensal w, MesOperativo mesOperativo, Compass.CommomLibrary.Pmo.Pmo pmoBase, List<Tuple<int, int, DateTime, double>> eolicasDados = null, bool nWh = false)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var dadger = deckEstudo[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
@@ -1264,7 +1264,7 @@ namespace Compass.Services
 
             #region Cortes
 
-            Services.Deck.AlterarCortes(dadger, System.IO.Path.Combine(deckNWEstudo.BaseFolder, "cortes.dat"));
+            Services.Deck.AlterarCortes(dadger, System.IO.Path.Combine(deckNWEstudo.BaseFolder, "cortes.dat"), nWh, dtEstudo);
 
             #endregion
 
@@ -1295,7 +1295,7 @@ namespace Compass.Services
 
             #region Rhc
             var decompBaseCam = w.DecompBase;
-            var versaoNewave = w.versao_Newave.Trim().Substring(0,2);
+            var versaoNewave = w.versao_Newave.Trim().Substring(0, 2);
             int newaveNumVersion;//Convert.ToInt32(versaoNewave);
             int newaveNumber = int.TryParse(versaoNewave, out newaveNumVersion) ? newaveNumVersion : 28;
 

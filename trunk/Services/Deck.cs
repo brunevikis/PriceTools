@@ -670,9 +670,9 @@ namespace Compass.Services
             }
         }
 
-        public static void AlterarCortes(Compass.CommomLibrary.Dadger.Dadger dadger, string cortesPath)
+        public static void AlterarCortes(Compass.CommomLibrary.Dadger.Dadger dadger, string cortesPath, bool nWh, DateTime dtEstudo)
         {
-
+            var dt = dtEstudo;
             var refPath = dadger.File.Split('\\').ToList();
             var cortes = cortesPath.Split('\\').ToList();
 
@@ -696,7 +696,16 @@ namespace Compass.Services
                 cortesRelPath += cortes[i] + "/";
             }
 
-            var x1 = cortesRelPath + cortes.Last();
+            var x1 = cortesRelPath + cortes.Last();//todo:mudar nome do cortes adicionando o numero (ex:cortes-002.dat ou cortes-013.dat) para NW hibrido
+
+            if (nWh == true)
+            {
+                int num = dt.Month + 1;
+                string sufixo = num.ToString("000");
+                string nwHcortes = $"cortes-{sufixo}.dat";
+                x1 = x1.Replace(cortes.Last(), nwHcortes);
+            }
+            
             var x2 = cortesRelPath + "cortesh" + System.IO.Path.GetExtension(x1);
 
             var fc = (Compass.CommomLibrary.Dadger.FcBlock)dadger.Blocos["FC"];
