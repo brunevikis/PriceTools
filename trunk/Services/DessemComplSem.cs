@@ -514,7 +514,7 @@ namespace Compass.Services
                 string texto = "";
                 bool existeInicial = true;
 
-                if (restricao == "05074")
+                if (restricao == "00251")
                 {
 
                 }
@@ -634,6 +634,7 @@ namespace Compass.Services
                         {
                             //rh = rhe.Clone() as Compass.CommomLibrary.Operuh.RhestLine;
                             texto = rhe.ToText();
+                            texto = texto.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Last();// remove todo os comentarios caso existir
                             if (rheInicial != null)
                             {
                                 existeInicial = true;

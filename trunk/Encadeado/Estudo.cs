@@ -1285,11 +1285,15 @@ namespace Encadeado
 
             foreach (var dad in this.Modifs.Where(x => x.MesEstudo == deck.Dger.MesEstudo && ((x.Mes >= deck.Dger.MesEstudo && x.Ano >= deck.Dger.AnoEstudo) || (x.Mes < deck.Dger.MesEstudo && x.Ano > deck.Dger.AnoEstudo))).ToList())
             {
+                if (dad.Usina == 257)
+                {
+
+                }
                 if (dad.Minemonico != "TURBMAXT")
                 {
                     DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
                     var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
-                    if (modifline != null)
+                    if (modifline != null)//só alterar se ja existente, NÃO incluir caso não exista
                     {
                         if (modifline.DataModif < data)
                         {

@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <PublishUrlHistory>
-    </PublishUrlHistory>
+    <PublishUrlHistory>C:\Development\Publish\</PublishUrlHistory>
     <InstallUrlHistory />
     <SupportUrlHistory />
     <ProjectView>ProjectFiles</ProjectView>
@@ -10,6 +9,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE</StartProgram>
-    <StartArguments>"K:\teste\NW_VAZOES\2025_Mensal_oficial_2002-2003_2602.xlsm"</StartArguments>
+    <StartArguments>"K:\teste\modifaltando\2024_Mensal_oficial_stress_2705.xlsm"</StartArguments>
   </PropertyGroup>
 </Project>
