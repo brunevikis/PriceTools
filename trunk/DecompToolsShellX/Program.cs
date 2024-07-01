@@ -98,6 +98,7 @@ namespace Compass.DecompToolsShellX
             //resultados "C:\Development\Implementacoes\verResultados\202210_oficial_umido_3009\RV0_70_30_50_80"
 
             //ons2ccee "K:\4_curto_prazo\2023_07\deck_newave_2023_07_Preliminar"
+            //ons2ccee "K:\4_curto_prazo\2024_07\deck_newave_2024_07"
 
             if (args.Length > 1)
             {

@@ -31,10 +31,10 @@ namespace Compass.Services
                 {
                     int ute = Convert.ToInt32(ws.Range["A" + l.ToString()].Value);
                     double gtmin = Convert.ToDouble(ws.Range["D" + l.ToString()].Value2);
-                   // if (gtmin > 0)
+                    // if (gtmin > 0)
                     //{
-                        dados.Add(new Tuple<int, DateTime, double>(ute, ws.Range["C" + l.ToString()].Value, Convert.ToDouble(ws.Range["D" + l.ToString()].Value2)));
-                   // }
+                    dados.Add(new Tuple<int, DateTime, double>(ute, ws.Range["C" + l.ToString()].Value, Convert.ToDouble(ws.Range["D" + l.ToString()].Value2)));
+                    // }
                 }
                 //}
 
@@ -313,9 +313,45 @@ namespace Compass.Services
                     //}
                 }
             }
-            
 
             var dgerData = cceeDeck.Dger.DataEstudo;
+            var exptsdup = expt.Where(x => x.Tipo == "GTMIN").ToList();
+            //separar dados de gtmin com range de meses contendo os dois primeiros meses 
+            foreach (var exptGtmin in exptsdup)
+            {
+                DateTime segundoMes = dgerData.AddMonths(1);
+
+                if (exptGtmin.DataInicio <= segundoMes)
+                {
+                    if (exptGtmin.DataFim <= segundoMes)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var idx = expt.IndexOf(exptGtmin) + 1;
+
+                        DateTime dataIni = segundoMes.AddMonths(1);
+                        DateTime dataFim = exptGtmin.DataFim;
+
+                        expt.Insert(idx,
+
+                                    new CommomLibrary.ExptDat.ExptLine()
+                                    {
+                                        Cod = exptGtmin.Cod,
+                                        Tipo = "GTMIN",
+                                        Valor = exptGtmin.Valor,
+                                        DataInicio = dataIni,
+                                        DataFim = dataFim,
+                                    }
+                                    );
+                        exptGtmin.DataFim = segundoMes;
+                    }
+                }
+
+            }
+            expt.SaveToFile();
+            expt = cceeDeck[CommomLibrary.Newave.Deck.DeckDocument.expt].Document as Compass.CommomLibrary.ExptDat.ExptDat;
 
             if (GTMIN_CCEEFile != null && File.Exists(GTMIN_CCEEFile) && temCadterm == false)
             {
@@ -338,7 +374,8 @@ namespace Compass.Services
                     if (GtminCCEE.Any(x => x.Item1 == ute.Num) && term.Any(y => y.Cod == ute.Num))
                     {
 
-                        DateTime menorData = GtminCCEE.Select(x => x.Item2).Min();
+                        //DateTime menorData = GtminCCEE.Select(x => x.Item2).Min();
+                        DateTime menorData = GtminCCEE.Where(x => x.Item1 == ute.Num).Select(x => x.Item2).Min();
 
                         if (GtminCCEE.First(x => x.Item1 == ute.Num).Item2 == menorData)
                         {
@@ -352,14 +389,16 @@ namespace Compass.Services
                             //} else { // se não existente, alterar expt "GTMIN"
                             foreach (var exptGtmin in expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN"))
                             {
-                                if (exptGtmin.DataInicio <= menorData && exptGtmin.DataFim >= menorData)
+                                if (menorData > dgerData.AddMonths(1))//alterção para prevenir de mudar os dois primeiros meses
                                 {
-                                    if (gtmin < exptGtmin.Valor)
+                                    if (exptGtmin.DataInicio <= menorData && exptGtmin.DataFim >= menorData)
                                     {
-                                        exptGtmin.Valor = gtmin;
+                                        if (gtmin < exptGtmin.Valor)
+                                        {
+                                            exptGtmin.Valor = gtmin;
+                                        }
                                     }
                                 }
-                                
                             }
                             //}
                         }
@@ -370,27 +409,51 @@ namespace Compass.Services
 
                 foreach (var ute in utes)
                 {
-                    //if (ute == 326 || ute == 327 || ute == 328 || ute == 1 || ute == 238)
-                    //{
+                    if (ute == 36 /*|| ute == 327 || ute == 328 || ute == 1 || ute == 238*/)
+                    {
 
-                    //}
+                    }
                     //if (!cadTerm.Any(x => x.Num == ute)) continue;
                     if (expt.Any(x => x.Cod == ute && x.Tipo == "GTMIN"))
                     {
-                        var toremove = expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN").ToList();
-                        var idx = expt.IndexOf(toremove.First());
-                        toremove.ForEach(x => expt.Remove(x));
+                        var allGtmins = expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN").ToList();
+                        //var toremove = expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN" && x.DataFim > dgerData.AddMonths(1)).ToList();
+                        int idx = expt.IndexOf(allGtmins.Last())+1;
+
+                        allGtmins.ForEach(x =>
+                        {
+
+                            if (x.DataFim > dgerData.AddMonths(1))
+                            {
+                                idx = expt.IndexOf(x);
+                                expt.Remove(x);
+                            }
+
+                        });
+
+                        
+                        //idx = expt.IndexOf(expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN").FirstOrDefault());
+                        //if (idx == 0 )
+                        //{
+                        //    idx = expt.IndexOf(expt.Where(x => x.Cod == ute).First())+1;
+                        //}
+                        //else
+                        //{
+                        //    idx = idx + 1;
+                        //}
+
                         var uteDados = GtminCCEE.Where(x => x.Item1 == ute).ToList();
                         foreach (var uD in uteDados)
                         {
 
                             var data = new DateTime(uD.Item2.Year, uD.Item2.Month, 1);
 
-                            if (data >= dgerData)
+                            //if (data >= dgerData)
+                            if (data > dgerData.AddMonths(1))
                             {
 
                                 var valornovo = uD.Item3;
-                                var valorantigo = toremove.Where(x => x.DataInicio <= data && x.DataFim >= data)
+                                var valorantigo = allGtmins.Where(x => x.DataInicio <= data && x.DataFim >= data)
                                     .FirstOrDefault()?.Valor ?? 0;
 
                                 if (valornovo > valorantigo) valornovo = valorantigo;
@@ -409,7 +472,7 @@ namespace Compass.Services
                             }
                         }
                     }
-                    
+
                 }
             }
             else if (File.Exists(System.IO.Path.Combine(deckCCEEAnterior.BaseFolder, "GtminAgenteCDE.xlsx")))
@@ -422,9 +485,30 @@ namespace Compass.Services
                 {
                     if (!cadTerm.Any(x => x.Num == ute.Num)) continue;
 
-                    var toremove = expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN").ToList();
-                    var idx = expt.IndexOf(toremove.First());
-                    toremove.ForEach(x => expt.Remove(x));
+                    var allGtmins = expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN").ToList();
+                    //var toremove = expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN" && x.DataFim > dgerData.AddMonths(1)).ToList();
+                    int idx = expt.IndexOf(allGtmins.Last()) + 1;
+
+                    allGtmins.ForEach(x =>
+                    {
+
+                        if (x.DataFim > dgerData.AddMonths(1))
+                        {
+                            idx = expt.IndexOf(x);
+                            expt.Remove(x);
+                        }
+
+                    });
+
+                    //idx = expt.IndexOf(expt.Where(x => x.Cod == ute.Num && x.Tipo == "GTMIN").FirstOrDefault());
+                    //if (idx == 0)
+                    //{
+                    //    idx = expt.IndexOf(expt.Where(x => x.Cod == ute.Num).First()) + 1;
+                    //}
+                    //else
+                    //{
+                    //    idx = idx + 1;
+                    //}
 
                     foreach (var ano in ute.Anos)
                     {
@@ -433,11 +517,12 @@ namespace Compass.Services
 
                             var data = new DateTime(int.Parse(ano.ano), ano.Meses.IndexOf(mes) + 1, 1);
 
-                            if (data >= dgerData)
+                            //if (data >= dgerData)
+                            if (data > dgerData.AddMonths(1))
                             {
 
                                 var valornovo = double.Parse(mes.resultado);
-                                var valorantigo = toremove.Where(x => x.DataInicio <= data && x.DataFim >= data)
+                                var valorantigo = allGtmins.Where(x => x.DataInicio <= data && x.DataFim >= data)
                                     .FirstOrDefault()?.Valor ?? 0;
 
                                 if (valornovo > valorantigo) valornovo = valorantigo;
@@ -705,7 +790,7 @@ namespace Compass.Services
                 string nwHcortes = $"cortes-{sufixo}.dat";
                 x1 = x1.Replace(cortes.Last(), nwHcortes);
             }
-            
+
             var x2 = cortesRelPath + "cortesh" + System.IO.Path.GetExtension(x1);
 
             var fc = (Compass.CommomLibrary.Dadger.FcBlock)dadger.Blocos["FC"];
