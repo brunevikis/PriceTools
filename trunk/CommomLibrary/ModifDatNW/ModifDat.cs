@@ -182,6 +182,8 @@ namespace Compass.CommomLibrary.ModifDatNW
             NovosValores = arr;
         }
 
+       
+
         public DateTime DataModif
         {
             get

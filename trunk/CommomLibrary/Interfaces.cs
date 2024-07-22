@@ -54,6 +54,8 @@ namespace Compass.CommomLibrary
         int Ano { get; set; }
         double Valor { get; set; }
         string Minemonico { get; set; }
+
+        List<double> ModifCampos { get; set; }
     }
 
     public interface IREMODIF
@@ -106,7 +108,7 @@ namespace Compass.CommomLibrary
 
     public interface IREEDAT
     {
-       // int numREE { get; set; }
+        // int numREE { get; set; }
         int mesesAvan { get; set; }
         //int mesEst { get; set; }
     }

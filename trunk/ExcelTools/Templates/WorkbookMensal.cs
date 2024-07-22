@@ -602,18 +602,18 @@ namespace Compass.ExcelTools.Templates
         {
             get
             {
-               // if (acs == null)
+                // if (acs == null)
                 //{
-                    acs = new List<AC>();
+                acs = new List<AC>();
 
-                    var ws = Names["_alteracao"].Worksheet;
-                    var row = Names["_alteracao"].Row;
-                    var col = Names["_alteracao"].Column;
+                var ws = Names["_alteracao"].Worksheet;
+                var row = Names["_alteracao"].Row;
+                var col = Names["_alteracao"].Column;
 
-                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
-                    {
-                        acs.Add(new AC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
-                    }
+                for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                {
+                    acs.Add(new AC(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 5]]));
+                }
                 //}
 
                 return acs;
@@ -868,7 +868,7 @@ namespace Compass.ExcelTools.Templates
                 }
                 else return null;
             }
-            
+
         }
 
         List<Compass.CommomLibrary.IADTERM> adterm = null;
@@ -1017,7 +1017,7 @@ namespace Compass.ExcelTools.Templates
             public int Ano { get; set; }
             public double Valor { get; set; }
             public string Minemonico { get; set; }
-
+            public List<double> ModifCampos { get; set; }
             public ModifWb(Range rng)
             {
 
@@ -1047,14 +1047,38 @@ namespace Compass.ExcelTools.Templates
 
                 if (rng[1, 1].Value is double) Usina = (int)rng[1, 1].Value;
                 if (rng[1, 2].Value is double) MesEstudo = (int)rng[1, 2].Value;
-                if (rng[1, 3].Value is double) Mes = (int)rng[1, 3].Value;
-
                 if (rng[1, 4].Value is double) Ano = (int)rng[1, 4].Value;
-                if (rng[1, 5].Value is double) Valor = rng[1, 5].Value;
                 Minemonico = ((string)rng[1, 6].Text).ToUpper();
-                //if (rng[1, 7].Value is double) LimSup2 = rng[1, 7].Value;
-                //if (rng[1, 8].Value is double) LimInf3 = rng[1, 8].Value;
-                //if (rng[1, 9].Value is double) LimSup3 = rng[1, 9].Value;
+
+                List<string> minemonicosSemData = new List<string> { "NUMCNJ", "NUMMAQ", "POTEFE" };
+
+                if (minemonicosSemData.Any(x => x == Minemonico))
+                {
+                    List<double> tempList = new List<double>();
+                    ((string)rng[1, 5].Text).Split(new string[] { ";", "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(x =>
+                    {
+                        double val = Convert.ToDouble(x);
+                        tempList.Add(val);
+                    });
+
+                    Mes = MesEstudo;
+
+                    Valor = 0;
+                    ModifCampos = tempList;
+                }
+                else
+                {
+
+                    if (rng[1, 3].Value is double) Mes = (int)rng[1, 3].Value;
+
+                    if (rng[1, 5].Value is double) Valor = rng[1, 5].Value;
+                    ModifCampos = new List<double>();
+                    //if (rng[1, 7].Value is double) LimSup2 = rng[1, 7].Value;
+                    //if (rng[1, 8].Value is double) LimInf3 = rng[1, 8].Value;
+                    //if (rng[1, 9].Value is double) LimSup3 = rng[1, 9].Value;
+                }
+
+
             }
         }
 
@@ -1198,7 +1222,7 @@ namespace Compass.ExcelTools.Templates
                 });
 
                 // if (rng[1, 1].Value is double) UH = (int)rng[1, 1].Value;
-                UHstring = ((string)rng[1, 1].Text).Replace(';', '-').Replace(" ","");
+                UHstring = ((string)rng[1, 1].Text).Replace(';', '-').Replace(" ", "");
                 TipoRest = ((string)rng[1, 2].Text).ToUpper();
                 if (rng[1, 3].Value is double) UsiRest = (int)rng[1, 3].Value;
 
@@ -1515,7 +1539,7 @@ namespace Compass.ExcelTools.Templates
 
         public class REEDAT : Compass.CommomLibrary.IREEDAT
         {
-           // public int numREE { get; set; }
+            // public int numREE { get; set; }
             public int mesesAvan { get; set; }
             //public int mesEst { get; set; }
 
@@ -1523,7 +1547,7 @@ namespace Compass.ExcelTools.Templates
             {
                 //if (rng[1, 1].Value is int) numREE = (int)rng[1, 1].Value;
                 //if (rng[1, 2].Value is int) mesEst = (int)rng[1, 2].Value;
-               if (rng[1, 1].Value is double) mesesAvan = (int)rng[1, 1].Value;
+                if (rng[1, 1].Value is double) mesesAvan = (int)rng[1, 1].Value;
             }
         }
 

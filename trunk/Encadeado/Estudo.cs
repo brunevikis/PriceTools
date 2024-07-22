@@ -1278,18 +1278,92 @@ namespace Encadeado
         }
 
         private void AlterarModif(DeckNewave deck)
-        {
+        {//TODO colocar logica para inserir linhas ou mudar com os minemonicos sem a data de duração ex NUMMAQ
             bool nwHibrido = this.NwHibrido;
             var modifs = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
             var modifFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Path;
+            List<string> minemonicosSemData = new List<string> { "NUMCNJ", "NUMMAQ", "POTEFE" };
 
             foreach (var dad in this.Modifs.Where(x => x.MesEstudo == deck.Dger.MesEstudo && ((x.Mes >= deck.Dger.MesEstudo && x.Ano >= deck.Dger.AnoEstudo) || (x.Mes < deck.Dger.MesEstudo && x.Ano > deck.Dger.AnoEstudo))).ToList())
             {
-                if (dad.Usina == 257)
+                if (dad.Usina == 275)
                 {
 
                 }
-                if (dad.Minemonico != "TURBMAXT")
+                if (minemonicosSemData.Any(x => x == dad.Minemonico))
+                {
+                    if (!modifs.Any(x => x.Usina == dad.Usina))
+                    {
+                        modifs.Add(new Compass.CommomLibrary.ModifDatNW.ModifLine()
+                        {
+                            Usina = dad.Usina,
+                            Chave = "USINA",
+                            NovosValores = new string[] { dad.Usina.ToString() }
+                        });
+                    }
+
+                    if (dad.Minemonico == "NUMCNJ")
+                    {
+                        var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico).FirstOrDefault();
+                        if (modifline != null)
+                        {
+                            modifline.SetValores(dad.ModifCampos[0].ToString().Replace(',', '.'));
+                        }
+                        else
+                        {
+                            var modifLineUsi = modifs.Where(x => x.Usina == dad.Usina && x.Chave == "USINA").FirstOrDefault();
+                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                            newModifLine.SetValores(dad.ModifCampos[0].ToString().Replace(',', '.'));
+                            newModifLine.Chave = dad.Minemonico;
+                            newModifLine.Usina = dad.Usina;
+                            int index = modifs.IndexOf(modifLineUsi) + 1;
+
+                            modifs.Insert(index, newModifLine);
+                        }
+                    }
+                    else
+                    {
+                        var modifsLista = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico).ToList();
+                        if (modifsLista != null && modifsLista.Count() > 0)
+                        {
+                            var teste = modifsLista.First();
+                            var te = teste.NovosValores;
+                        }
+                      
+                        //var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && Convert.ToInt32(x.NovosValores[1]) <= dad.ModifCampos[1]).OrderByDescending(x => Convert.ToInt32( x.NovosValores[1])).FirstOrDefault();
+                        var modifline = modifsLista.Where(x => Convert.ToInt32(x.NovosValores[1]) <= dad.ModifCampos[1]).OrderByDescending(x => Convert.ToInt32(x.NovosValores[1])).FirstOrDefault();
+                        if (modifline != null)
+                        {
+                            if (Convert.ToInt32(modifline.NovosValores[1]) < dad.ModifCampos[1])
+                            {
+                                var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+
+                                newModifLine.SetValores(dad.ModifCampos[0].ToString().Replace(',', '.'), dad.ModifCampos[1].ToString().Replace(',', '.'));
+                                newModifLine.Chave = dad.Minemonico;
+                                newModifLine.Usina = dad.Usina;
+                                int index = modifs.IndexOf(modifline) + 1;
+                                modifs.Insert(index, newModifLine);
+                            }
+                            else
+                            {
+                                modifline.SetValores(dad.ModifCampos[0].ToString().Replace(',', '.'), dad.ModifCampos[1].ToString().Replace(',', '.'));
+                            }
+                        }
+                        else
+                        {
+                            var modifLineUsi = modifs.Where(x => x.Usina == dad.Usina && x.Chave == "USINA").FirstOrDefault();
+                            var newModifLine = new Compass.CommomLibrary.ModifDatNW.ModifLine();
+                            newModifLine.SetValores(dad.ModifCampos[0].ToString().Replace(',', '.'), dad.ModifCampos[1].ToString().Replace(',', '.'));
+                            newModifLine.Chave = dad.Minemonico;
+                            newModifLine.Usina = dad.Usina;
+                            int index = modifs.IndexOf(modifLineUsi) + 1;
+
+                            modifs.Insert(index, newModifLine);
+                        }
+                    }
+
+                }
+                else if (dad.Minemonico != "TURBMAXT")
                 {
                     DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
                     var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && x.DataModif <= data).OrderByDescending(x => x.DataModif).FirstOrDefault();
@@ -1612,9 +1686,9 @@ namespace Encadeado
             DateTime dataEstudo = deck.Dger.DataEstudo;
 
             var eolCad = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad : null;
-            
+
             var eolConfig = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Document as Compass.CommomLibrary.EolicaNW.EolicaConfig : null;
-            
+
             var eolFte = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Document as Compass.CommomLibrary.EolicaNW.Eolicafte : null;
 
             var eolGer = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Document as Compass.CommomLibrary.EolicaNW.EolicaGeracao : null;
@@ -1633,7 +1707,7 @@ namespace Encadeado
                 eolGer.SaveToFile(filePath: eolGerFile);
             }
 
-            if (eolConfig!= null)
+            if (eolConfig != null)
             {
                 var eolConfigFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Path;
                 eolConfig.BlocoConfig.ToList().ForEach(x => x.DataIni = dataEstudo);
