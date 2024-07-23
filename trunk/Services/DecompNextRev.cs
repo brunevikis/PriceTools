@@ -1150,112 +1150,116 @@ namespace Compass.Services
 
             foreach (var uhe in usinasComExpansao)
             {
-                int[] numMaqsIni = { 0, 0, 0, 0, 0 };
-
-
-                foreach (var m in modifMaq.Where(x => x.Usina == uhe))
-                    numMaqsIni[m.Conjunto - 1] = m.NumMaq;
-
-                int[] numMaqs1 = { 0, 0, 0, 0, 0 };
-                int[] numMaqs2 = { 0, 0, 0, 0, 0 };
-                for (int i = 0; i < 5; i++) numMaqs1[i] = numMaqs2[i] = numMaqsIni[i];
-
-                foreach (var ex in expAtual.Where(x => x.Key.Cod == uhe))
-                    numMaqs1[ex.Key.NumConj - 1] = numMaqsIni[ex.Key.NumConj - 1] + ex.Count();
-
-                foreach (var ex in expSeguinte.Where(x => x.Key.Cod == uhe))
-                    numMaqs2[ex.Key.NumConj - 1] = numMaqsIni[ex.Key.NumConj - 1] + ex.Count();
-
-                if (!numMaqs1.Any(x => x != 0))
+                if (uhe != 176)
                 {
 
-                    var aclCon = new AcI5Line();
-                    aclCon.Usina = uhe;
-                    aclCon.Mnemonico = "NUMCON";
-                    aclCon.P1 = 0;
-                    aclCon.Mes = isMensal ? null : dtEstudo.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
-                    aclCon.Semana = isMensal ? (int?)null : 1;
-                    dadger.BlocoAc.Add(aclCon);
+
+                    int[] numMaqsIni = { 0, 0, 0, 0, 0 };
 
 
-                }
-                else
-                {
+                    foreach (var m in modifMaq.Where(x => x.Usina == uhe))
+                        numMaqsIni[m.Conjunto - 1] = m.NumMaq;
 
-                    var aclCon = new AcI5Line();
-                    aclCon.Usina = uhe;
-                    aclCon.Mnemonico = "NUMCON";
-                    aclCon.P1 = numMaqs1.Count(x => x != 0);
-                    aclCon.Mes = isMensal ? null : dtEstudo.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
-                    aclCon.Semana = isMensal ? (int?)null : 1;
-                    dadger.BlocoAc.Add(aclCon);
+                    int[] numMaqs1 = { 0, 0, 0, 0, 0 };
+                    int[] numMaqs2 = { 0, 0, 0, 0, 0 };
+                    for (int i = 0; i < 5; i++) numMaqs1[i] = numMaqs2[i] = numMaqsIni[i];
 
+                    foreach (var ex in expAtual.Where(x => x.Key.Cod == uhe))
+                        numMaqs1[ex.Key.NumConj - 1] = numMaqsIni[ex.Key.NumConj - 1] + ex.Count();
 
-                    for (int c = 0; c < numMaqs1.Count(x => x != 0); c++)
+                    foreach (var ex in expSeguinte.Where(x => x.Key.Cod == uhe))
+                        numMaqs2[ex.Key.NumConj - 1] = numMaqsIni[ex.Key.NumConj - 1] + ex.Count();
+
+                    if (!numMaqs1.Any(x => x != 0))
                     {
-                        var aclMaq = new Ac2I5Line();
-                        aclMaq.Usina = uhe;
-                        aclMaq.Mnemonico = "NUMMAQ";
-                        aclMaq.P1 = c + 1;
-                        aclMaq.P2 = numMaqs1[c];
-                        aclMaq.Mes = isMensal ? null : dtEstudo.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
-                        aclMaq.Semana = isMensal ? (int?)null : 1;
 
-                        dadger.BlocoAc.Add(aclMaq);
+                        var aclCon = new AcI5Line();
+                        aclCon.Usina = uhe;
+                        aclCon.Mnemonico = "NUMCON";
+                        aclCon.P1 = 0;
+                        aclCon.Mes = isMensal ? null : dtEstudo.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                        aclCon.Semana = isMensal ? (int?)null : 1;
+                        dadger.BlocoAc.Add(aclCon);
+
+
                     }
-                }
-
-                if (numMaqs2.Any(x => x != 0))
-                {
-
-                    var aclCon = new AcI5Line();
-                    aclCon.Usina = uhe;
-                    aclCon.Mnemonico = "NUMCON";
-                    aclCon.P1 = numMaqs2.Count(x => x != 0);
-                    aclCon.Mes = dtEstudo.AddMonths(1).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
-                    aclCon.Ano = dtEstudo.AddMonths(1).Year;
-
-                    dadger.BlocoAc.Add(aclCon);
-
-                    for (int c = 0; c < numMaqs2.Count(x => x != 0); c++)
+                    else
                     {
-                        var aclMaq = new Ac2I5Line();
-                        aclMaq.Usina = uhe;
-                        aclMaq.Mnemonico = "NUMMAQ";
-                        aclMaq.P1 = c + 1;
-                        aclMaq.P2 = numMaqs2[c];
-                        aclMaq.Mes = dtEstudo.AddMonths(1).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
-                        aclMaq.Ano = dtEstudo.AddMonths(1).Year;
 
-                        dadger.BlocoAc.Add(aclMaq);
-                    }
-                }
+                        var aclCon = new AcI5Line();
+                        aclCon.Usina = uhe;
+                        aclCon.Mnemonico = "NUMCON";
+                        aclCon.P1 = numMaqs1.Count(x => x != 0);
+                        aclCon.Mes = isMensal ? null : dtEstudo.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                        aclCon.Semana = isMensal ? (int?)null : 1;
+                        dadger.BlocoAc.Add(aclCon);
 
-                var confhd = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.confhd].Document as Compass.CommomLibrary.ConfhdDat.ConfhdDat;
 
-                foreach (var novasUhe in
-                    dadger.BlocoAc.Select(x => x.Usina).Distinct().Except(
-                        dadger.BlocoUh.Select(x => x.Usina)))
-                {
+                        for (int c = 0; c < numMaqs1.Count(x => x != 0); c++)
+                        {
+                            var aclMaq = new Ac2I5Line();
+                            aclMaq.Usina = uhe;
+                            aclMaq.Mnemonico = "NUMMAQ";
+                            aclMaq.P1 = c + 1;
+                            aclMaq.P2 = numMaqs1[c];
+                            aclMaq.Mes = isMensal ? null : dtEstudo.ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                            aclMaq.Semana = isMensal ? (int?)null : 1;
 
-                    var nUh = new UhLine();
-                    nUh.Usina = novasUhe;
-                    nUh.VolIniPerc = 0;
-                    dadger.BlocoUh.Add(nUh);
-                    nUh.Sistema = confhd.First(x => x.Cod == nUh.Usina).REE;
-
-                    var nMp = new MpLine();
-                    nMp[1] = novasUhe;
-
-                    for (int e = 0; e <= mesOperativo.Estagios; e++)
-                    {
-                        nMp[3 + e] = 1;
+                            dadger.BlocoAc.Add(aclMaq);
+                        }
                     }
 
-                    dadger.BlocoMp.Add(nMp);
+                    if (numMaqs2.Any(x => x != 0))
+                    {
+
+                        var aclCon = new AcI5Line();
+                        aclCon.Usina = uhe;
+                        aclCon.Mnemonico = "NUMCON";
+                        aclCon.P1 = numMaqs2.Count(x => x != 0);
+                        aclCon.Mes = dtEstudo.AddMonths(1).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                        aclCon.Ano = dtEstudo.AddMonths(1).Year;
+
+                        dadger.BlocoAc.Add(aclCon);
+
+                        for (int c = 0; c < numMaqs2.Count(x => x != 0); c++)
+                        {
+                            var aclMaq = new Ac2I5Line();
+                            aclMaq.Usina = uhe;
+                            aclMaq.Mnemonico = "NUMMAQ";
+                            aclMaq.P1 = c + 1;
+                            aclMaq.P2 = numMaqs2[c];
+                            aclMaq.Mes = dtEstudo.AddMonths(1).ToString("MMM", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")).ToUpper();
+                            aclMaq.Ano = dtEstudo.AddMonths(1).Year;
+
+                            dadger.BlocoAc.Add(aclMaq);
+                        }
+                    }
+
+                    var confhd = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.confhd].Document as Compass.CommomLibrary.ConfhdDat.ConfhdDat;
+
+                    foreach (var novasUhe in
+                        dadger.BlocoAc.Select(x => x.Usina).Distinct().Except(
+                            dadger.BlocoUh.Select(x => x.Usina)))
+                    {
+
+                        var nUh = new UhLine();
+                        nUh.Usina = novasUhe;
+                        nUh.VolIniPerc = 0;
+                        dadger.BlocoUh.Add(nUh);
+                        nUh.Sistema = confhd.First(x => x.Cod == nUh.Usina).REE;
+
+                        var nMp = new MpLine();
+                        nMp[1] = novasUhe;
+
+                        for (int e = 0; e <= mesOperativo.Estagios; e++)
+                        {
+                            nMp[3 + e] = 1;
+                        }
+
+                        dadger.BlocoMp.Add(nMp);
+                    }
+
                 }
-
-
 
 
             }

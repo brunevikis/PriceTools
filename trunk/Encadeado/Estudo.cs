@@ -1324,11 +1324,7 @@ namespace Encadeado
                     else
                     {
                         var modifsLista = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico).ToList();
-                        if (modifsLista != null && modifsLista.Count() > 0)
-                        {
-                            var teste = modifsLista.First();
-                            var te = teste.NovosValores;
-                        }
+                       
                       
                         //var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && Convert.ToInt32(x.NovosValores[1]) <= dad.ModifCampos[1]).OrderByDescending(x => Convert.ToInt32( x.NovosValores[1])).FirstOrDefault();
                         var modifline = modifsLista.Where(x => Convert.ToInt32(x.NovosValores[1]) <= dad.ModifCampos[1]).OrderByDescending(x => Convert.ToInt32(x.NovosValores[1])).FirstOrDefault();
