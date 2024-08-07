@@ -10,6 +10,28 @@ namespace Compass.CommomLibrary
 {
     public static class Tools
     {
+        public static string GetMonthName(int month)
+        {
+
+            switch (month)
+            {
+                case 1: return "Janeiro";
+                case 2: return "Fevereiro";
+                case 3: return "Março";
+                case 4: return "Abril";
+                case 5: return "Maio";
+                case 6: return "Junho";
+                case 7: return "Julho";
+                case 8: return "Agosto";
+                case 9: return "Setembro";
+                case 10: return "Outubro";
+                case 11: return "Novembro";
+                case 12: return "Dezembro";
+
+                default:
+                    return null;
+            }
+        }
         public static void SendMail(string body, string emails = "bruno.araujo@enercore.com.br", string subject = "Execução automática")
         {
 
@@ -2141,6 +2163,7 @@ new DateTime(2033,12,25),
         public int MesSeguinte { get; set; }
         public int AnoSeguinte { get; set; }
     }
+
 
 
     public class Acomph

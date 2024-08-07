@@ -1,5 +1,6 @@
 ﻿using Compass.CommomLibrary;
 using Compass.ExcelTools;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -418,7 +419,7 @@ namespace Compass.Services
                     {
                         var allGtmins = expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN").ToList();
                         //var toremove = expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN" && x.DataFim > dgerData.AddMonths(1)).ToList();
-                        int idx = expt.IndexOf(allGtmins.Last())+1;
+                        int idx = expt.IndexOf(allGtmins.Last()) + 1;
 
                         allGtmins.ForEach(x =>
                         {
@@ -431,7 +432,7 @@ namespace Compass.Services
 
                         });
 
-                        
+
                         //idx = expt.IndexOf(expt.Where(x => x.Cod == ute && x.Tipo == "GTMIN").FirstOrDefault());
                         //if (idx == 0 )
                         //{
@@ -645,6 +646,213 @@ namespace Compass.Services
 
         }
 
+        public static void AtualizaCargaMensal(Compass.CommomLibrary.Newave.Deck Deck, string filePath)
+        {
+            var patamarDat = Deck[CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as Compass.CommomLibrary.PatamarDat.PatamarDat;
+            var sistema = Deck[CommomLibrary.Newave.Deck.DeckDocument.sistema].Document as CommomLibrary.SistemaDat.SistemaDat;
+            var c_adicA = (Deck[CommomLibrary.Newave.Deck.DeckDocument.cadic].Document as Compass.CommomLibrary.C_AdicDat.C_AdicDat).Adicao
+            .Where(x => x is Compass.CommomLibrary.C_AdicDat.MerEneLine)
+            .Cast<Compass.CommomLibrary.C_AdicDat.MerEneLine>();
+
+            Microsoft.Office.Interop.Excel.Application xlsApp = null;
+            xlsApp = new Microsoft.Office.Interop.Excel.Application();
+
+            Workbook wb = xlsApp.Workbooks.Open(filePath);
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            //Convert.ToDateTime(coms[1], Culture.DateTimeFormat)
+            //Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+
+            //path = @"D:\Compass\Acomph\ACOMPH_31.03.2020.xls";
+            try
+            {
+                
+                // excel.DisplayAlerts = false;
+                //excel.Visible = false;
+                // excel.ScreenUpdating = true;
+                //Workbook workbook = excel.Workbooks.Open(path);
+
+                // wb = workb;
+
+                Sheets sheets = wb.Worksheets;
+
+                var N_Sheets = sheets.Count;
+
+                var Dados = new List<CargasData>();
+                //var Dados2 = new List<CargasData>();
+                //var Postos = new List<(int Posto, object data)>();
+
+
+                Worksheet worksheet = (Worksheet)sheets.get_Item(1);
+                string sheetName = worksheet.Name;//Get the name of worksheet.
+
+                int l = 2;
+                int row = 0;
+                for (var lin = l; !string.IsNullOrWhiteSpace(worksheet.Cells[lin, 1].Text); lin++)
+                {
+                    row = lin;
+                }
+
+                object[,] result = wb.Worksheets[sheetName].Range[wb.Worksheets[sheetName].Cells[l, 1], wb.Worksheets[sheetName].Cells[row, 18]].Value;
+
+
+                for (int i = 1; i < row; i++)
+                {
+                    CargasData cargas = new CargasData();
+
+                    cargas.Data = Convert.ToDateTime(result[i, 1], Culture.DateTimeFormat);
+                    cargas.Revisao = Convert.ToDateTime(result[i, 18], Culture.DateTimeFormat);
+
+                    cargas.Submercado = ((string)result[i, 3]).ToUpper();
+                    cargas.Tipo = ((string)result[i, 4]).ToUpper();
+                    cargas.LOAD_sMMGD = (double)result[i, 6];
+                    cargas.Base_CGH = (double)result[i, 7];
+                    cargas.Base_EOL = (double)result[i, 8];
+                    cargas.Base_UFV = (double)result[i, 9];
+                    cargas.Base_UTE = (double)result[i, 10];
+                    cargas.Base_MMGD = (double)result[i, 11];
+                    cargas.LOAD_cMMGD = (double)result[i, 12];
+                    cargas.Exp_CGH = (double)result[i, 13];
+                    cargas.Exp_EOL = (double)result[i, 14];
+                    cargas.Exp_UFV = (double)result[i, 15];
+                    cargas.Exp_UTE = (double)result[i, 16];
+                    cargas.Exp_MMGD = (double)result[i, 17];
+
+                    Dados.Add(cargas);
+                }
+
+
+                #region sistema.dat
+                //sistema.dat
+                for (int i = 1; i <= 4; i++)//mercado de energia === carga sem mmgd
+                {
+                    var linhasMercado = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine && x.Mercado == i).ToList();
+
+                    foreach (var linha in linhasMercado)
+                    {
+                        if (linha.Ano < Deck.Dger.AnoEstudo)
+                        {
+                            sistema.Mercado.Remove(linha);
+                            int index = sistema.Mercado.IndexOf(linhasMercado.Last()) + 1;
+                            var novoAno = linhasMercado.Last().Clone() as Compass.CommomLibrary.SistemaDat.MerEneLine;
+                            novoAno.Ano = novoAno.Ano + 1;
+                            sistema.Mercado.Insert(index, novoAno);
+                        }
+                        else if (linha.Ano == Deck.Dger.AnoEstudo)
+                        {
+                            for (int m = 1; m <= 12; m++)
+                            {
+                                if (m < Deck.Dger.MesEstudo)
+                                {
+                                    linha[m] = null;
+                                }
+
+                            }
+                        }
+                    }
+                    foreach (var carga in Dados.Where(x => x.SubNum == i && x.Data >= Deck.Dger.DataEstudo && x.Tipo == "MEDIUM").ToList())
+                    {
+                        //var item = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine).ToList();
+                        var item = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine && x.Mercado == i && x.Ano == carga.Data.Year).FirstOrDefault();
+                        if (item != null)
+                        {
+
+                            item[carga.Data.Month] = carga.LOAD_sMMGD;
+
+                        }
+                    }
+                }
+                for (int s = 1; s <= 4; s++)// pequens mmgd === exp_tipousina
+                {
+                    for (int t = 5; t <= 8; t++)
+                    {
+                        var linhasPequenas = sistema.Pequenas.Where(x => x is Compass.CommomLibrary.SistemaDat.PeqEneLine && x.Mercado == s && x.Tipo_Usina == t).ToList();
+
+                        foreach (var linha in linhasPequenas)
+                        {
+                            if (linha.Ano < Deck.Dger.AnoEstudo)
+                            {
+                                sistema.Pequenas.Remove(linha);
+                                int index = sistema.Pequenas.IndexOf(linhasPequenas.Last()) + 1;
+                                var novoAno = linhasPequenas.Last().Clone() as Compass.CommomLibrary.SistemaDat.PeqEneLine;
+                                novoAno.Ano = novoAno.Ano + 1;
+                                sistema.Pequenas.Insert(index, novoAno);
+                            }
+                            else if (linha.Ano == Deck.Dger.AnoEstudo)
+                            {
+                                for (int m = 1; m <= 12; m++)
+                                {
+                                    if (m < Deck.Dger.MesEstudo)
+                                    {
+                                        linha[m] = null;
+                                    }
+
+                                }
+                            }
+                        }
+                        foreach (var carga in Dados.Where(x => x.SubNum == s && x.Data >= Deck.Dger.DataEstudo && x.Tipo == "MEDIUM").ToList())
+                        {
+                            //var item = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine).ToList();
+                            var item = sistema.Pequenas.Where(x => x is Compass.CommomLibrary.SistemaDat.PeqEneLine && x.Mercado == s && x.Tipo_Usina == t && x.Ano == carga.Data.Year).FirstOrDefault();
+                            if (item != null)
+                            {
+                                // 5 pch== exp_cgh
+                                // 6 pct == exp_UTE
+                                // 7 eol == exp_eol
+                                // 8 ufv == exp_ufv
+                                double cargaMMGD = 0;
+                                switch (t)
+                                {
+                                    case 5:
+                                        cargaMMGD = carga.Exp_CGH;
+                                        break;
+
+                                    case 6:
+                                        cargaMMGD = carga.Exp_UTE;
+                                        break;
+
+                                    case 7:
+                                        cargaMMGD = carga.Exp_EOL;
+                                        break;
+
+                                    case 8:
+                                        cargaMMGD = carga.Exp_UFV;
+                                        break;
+
+                                    default:
+                                        cargaMMGD = 0;
+                                        break;
+                                }
+                                item[carga.Data.Month] = cargaMMGD;
+
+                            }
+                        }
+                    }
+                }
+                #endregion
+
+
+
+
+
+                sistema.SaveToFile(createBackup: true);
+                //
+
+                wb.Close();
+                //workbook.Close();
+                xlsApp.Quit();
+                System.Windows.Forms.MessageBox.Show("Processo concuído com sucesso!!!");
+
+
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.ToString());
+                wb.Close();
+                xlsApp.Quit();
+            }
+
+
+        }
         public static void DesfazerInviabilidades(Compass.CommomLibrary.Decomp.Deck deck, CommomLibrary.Inviab.Inviab inviabilidades)
         {
             var dadger = deck[CommomLibrary.Decomp.DeckDocument.dadger].Document as CommomLibrary.Dadger.Dadger;

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>ons2ccee "K:\4_curto_prazo\2024_07\deck_newave_2024_07"</StartArguments>
+    <StartArguments>atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"</StartArguments>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup>

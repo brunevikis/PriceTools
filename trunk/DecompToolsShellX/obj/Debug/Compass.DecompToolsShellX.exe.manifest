@@ -42,26 +42,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.CommomLibrary.dll" size="828416">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.CommomLibrary.dll" size="831488">
       <assemblyIdentity name="Compass.CommomLibrary" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>4XfzMKW531XAwihculY1t401Qz8=</dsig:DigestValue>
+        <dsig:DigestValue>fql5YR7/JLL4GF4AhjmjAG6rfv8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.DecompToolsShellX.exe" size="345088">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.DecompToolsShellX.exe" size="348160">
       <assemblyIdentity name="Compass.DecompToolsShellX" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>iSrm5I/zJSMc/FogXTjFbu1usWk=</dsig:DigestValue>
+        <dsig:DigestValue>QNDoODHT+wGI5o2bRmsB5mLWu7c=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -73,19 +73,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>aSWlIgQ687AUY8bS1PlUL12vGuM=</dsig:DigestValue>
+        <dsig:DigestValue>maC0nf19AwD/Gg3zuclWNiiw5TM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.Services.dll" size="481280">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.Services.dll" size="486912">
       <assemblyIdentity name="Compass.Services" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>RXkjgxqFZA8To+5MilI3tskCNig=</dsig:DigestValue>
+        <dsig:DigestValue>JeVDD2cCbaATqwC9nBf/CY/KYPo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -257,13 +257,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Compass.DecompToolsShellX.exe.config" size="6001">
+  <file name="Compass.DecompToolsShellX.exe.config" size="6089">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>Eoo8v6FVwup4OFLBUJlcevOzSLk=</dsig:DigestValue>
+      <dsig:DigestValue>GE3jrPuqpoMieL2+TXfODbgMMcg=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

@@ -61,6 +61,7 @@ namespace Compass.DecompToolsShellX
             //actions.Add("getpatamares", getPatamares);
             //actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
+            actions.Add("atualizacarga", AtualizaCarga);
 
             //dessemtools "K:\teste\dessemTESTE\resultados\DS_ONS_122023_RV1D08_ccee (1)"
             //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
@@ -640,6 +641,106 @@ namespace Compass.DecompToolsShellX
             {
             }
         }
+
+        static void AtualizaCarga(string commands)
+        {
+            //L:\6_decomp\03_Casos\2019_04\deck_newave_2019_04
+            //"L:\\6_decomp\\03_Casos\\2019_05\\DEC_ONS_052019_RV1_VE"
+
+            var command = commands.Split('|');
+
+            //var data = command[0].Substring(command[0].Length - 7, 7).Split('_');
+            var path = command[0];
+
+            try
+            {
+                string dir;
+                if (Directory.Exists(path))
+                {
+                    dir = path;
+                }
+                else if (File.Exists(path))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+                else
+                    return;
+
+                var dirInfo = new DirectoryInfo(dir);
+                var parentDir = dirInfo.Parent.FullName;
+                var dirName = dirInfo.Name + "_Atualizado";
+
+                var i = 0;
+                var cloneDir = "";
+                do
+                {
+                    cloneDir = Path.Combine(parentDir, dirName + " (" + ++i + ")");
+                } while (Directory.Exists(cloneDir));
+
+
+
+                var deck = DeckFactory.CreateDeck(dir);
+
+                if (!(deck is Compass.CommomLibrary.Newave.Deck))
+                {
+                    throw new NotImplementedException("Deck não reconhecido para a execução");
+                }
+
+                deck.CopyFilesToFolder(cloneDir);
+               
+
+                dynamic newDeck = DeckFactory.CreateDeck(cloneDir);
+
+
+                if (newDeck is Compass.CommomLibrary.Newave.Deck && (command.Length > 1 && command[1] == "true"))
+                {
+                    //var frm = new FrmOnsReCcee(cceeDeck);
+                    //frm.Salvar();
+                    ////PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/newave25.sh");
+                    //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newave28.sh");
+                }
+                else if (newDeck is Compass.CommomLibrary.Decomp.Deck && (command.Length > 1 && command[1] == "true"))
+                {
+                    //var frm = new FrmDcOns2Ccee(cceeDeck);
+                    //frm.Salvar();
+
+                    //var frmCortes = new FrmCortes(new string[] { cceeDeck.BaseFolder });
+                    //frmCortes.OK(true);
+
+                    //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decomp31Viab.sh preliminar");
+                }
+                else if (newDeck is Compass.CommomLibrary.Newave.Deck)
+                {
+                    Thread thread = new Thread(AtualizaDeckCarga);
+                    thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA                                                                  //thread.Start(redat);
+                    thread.Start(newDeck);
+                    thread.Join();
+                }
+                else if (newDeck is Compass.CommomLibrary.Decomp.Deck)
+                {
+                    //Thread thread = new Thread(dcOns2CceeSTA);
+                    //thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+                    //thread.Start(cceeDeck);
+                    //thread.Join(); //Wait for the thread to end   
+                }
+            }
+            catch (Exception ex)
+            {
+                var texto = ex.ToString();
+                if (ex.ToString().Contains("reconhecido"))
+                {
+                    texto = "Deck não reconhecido para a execução!";
+                }
+                MessageBox.Show(texto, "Atenção");
+                //Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
+
+
+            }
+
+        }
+
+
+        
         static void open(string filePath)
         {
 
@@ -1806,7 +1907,7 @@ namespace Compass.DecompToolsShellX
                                             }
                                             bool pat2023 = d.Year == 2023;
                                             bool pat2024 = d.Year >= 2024;
-                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023,pat2024);
+                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024);
 
                                             foreach (var inter in intervalosAgruped)
                                             {
@@ -2338,7 +2439,7 @@ namespace Compass.DecompToolsShellX
             //{
             //    modifRenovaveis = true;
             //}
-            
+
             for (DateTime d = dateIni; d <= dateFim; d = d.AddDays(1))
             {
                 string folder = Path.Combine(deck.BaseFolder.Replace(partsDir, ""), $"Dessem_Rev{tipo}-" + d.ToString("dd-MM-yyyy"));
@@ -2352,7 +2453,7 @@ namespace Compass.DecompToolsShellX
                 CriarEntdados(folder, incremento, dateDeck, d, expandEst, dateFim);
                 //if (modifRenovaveis)
                 //{
-                   //CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
+                //CriarRenovaveis(folder, incremento, dateDeck, d, expandEst);
                 //}
                 CriarRespot(folder, incremento, dateDeck, d, expandEst);
                 incremento++;
@@ -3578,7 +3679,7 @@ namespace Compass.DecompToolsShellX
                 var restricoesPorNum = operuh.BlocoRhest.Where(x => x.Restricao == restricao).ToList();
                 var restricoesCount = restricoesPorNum.Where(x => x is Compass.CommomLibrary.Operuh.LimLine || x is Compass.CommomLibrary.Operuh.VarLine).ToList();
 
-                if (restricoesCount.Count() == 1 && restricoesCount.First().DiaInic.Trim() == "I") 
+                if (restricoesCount.Count() == 1 && restricoesCount.First().DiaInic.Trim() == "I")
                 {
                     var rhF = restricoesCount.First();
                     if (rhF.DiaFinal.Trim() == "F")
@@ -3948,10 +4049,10 @@ namespace Compass.DecompToolsShellX
                 DateTime hoje = DateTime.Today;
                 if (d >= hoje || recursivo == true)
                 {
-                    string NP_recente = GetNPTXT(d.AddDays(-1),true);// chamada recursiva até encontrar o mais recente
+                    string NP_recente = GetNPTXT(d.AddDays(-1), true);// chamada recursiva até encontrar o mais recente
                     return NP_recente;
                 }
-                
+
                 throw new NotImplementedException($"Arquivo Níveis de partida não encontrados para criação do Deflant.dat, arquivo {arqName} necessário");
 
             }
@@ -3959,7 +4060,7 @@ namespace Compass.DecompToolsShellX
             //return "";
         }
 
-        public static float GetNPValue(string NPtxt,string montante)
+        public static float GetNPValue(string NPtxt, string montante)
         {
             float valor = 0f;
             var linhas = File.ReadAllLines(NPtxt).ToList();
@@ -3970,7 +4071,7 @@ namespace Compass.DecompToolsShellX
                 var campos = l.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 if (campos[0].Trim() == montante)
                 {
-                    valor = float.TryParse(campos[2].Replace(',','.'), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                    valor = float.TryParse(campos[2].Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
                     return valor;
                 }
             }
@@ -4050,7 +4151,7 @@ namespace Compass.DecompToolsShellX
             }
             int tv83 = tviag.Where(x => x.Montante == 83).Select(x => x.TempoViag).FirstOrDefault();
 
-            arqNP = GetNPTXT(dataEstudo.AddHours(-tv83),true);
+            arqNP = GetNPTXT(dataEstudo.AddHours(-tv83), true);
             float valor83 = GetNPValue(arqNP, "83");
 
             foreach (var line in deflant.BlocoDef.Where(x => x.Montante == 66 || x.Montante == 83).ToList())// as usinas 66 itaipu e 83 baixo iguaçu são preenchidas de forma diferente pq abri em 48 estagios 
@@ -4078,7 +4179,7 @@ namespace Compass.DecompToolsShellX
                 }
             }
 
-         
+
 
 
 
@@ -6611,7 +6712,7 @@ namespace Compass.DecompToolsShellX
         {
             Thread.Sleep(10000);
         }
-        
+
 
         public static void DStools_complSem(object comando)
         {
@@ -6685,7 +6786,7 @@ namespace Compass.DecompToolsShellX
                     texto = ex.ToString() + ", processo interrompido.";
                     texto = ex.Message + ", processo interrompido.";
                     MessageBox.Show(texto, "Dessem Tools");
-                   
+
                 }
                 else
                 {
@@ -6694,9 +6795,9 @@ namespace Compass.DecompToolsShellX
                     texto = ex.Message + ", processo interrompido.";
                     MessageBox.Show(texto, "Dessem Tools");
                 }
-                
+
             }
-            
+
         }
 
         public static void DStools_resultado(object path)
@@ -6892,6 +6993,15 @@ namespace Compass.DecompToolsShellX
                     frm.VazpastDat = pa;
                 }
             }
+
+            frm.ShowDialog();
+        }
+
+        static void AtualizaDeckCarga(object DeckPath)
+        {
+            var deck = DeckPath;
+            var frm = new FrmAtualizaCarga();
+            frm.deckNW = deck as CommomLibrary.Newave.Deck;
 
             frm.ShowDialog();
         }
