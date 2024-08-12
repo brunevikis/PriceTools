@@ -654,6 +654,8 @@ namespace Compass.Services
             .Where(x => x is Compass.CommomLibrary.C_AdicDat.MerEneLine)
             .Cast<Compass.CommomLibrary.C_AdicDat.MerEneLine>();
 
+            var c_adic = (Deck[CommomLibrary.Newave.Deck.DeckDocument.cadic].Document as Compass.CommomLibrary.C_AdicDat.C_AdicDat);
+
             Microsoft.Office.Interop.Excel.Application xlsApp = null;
             xlsApp = new Microsoft.Office.Interop.Excel.Application();
 
@@ -665,7 +667,7 @@ namespace Compass.Services
             //path = @"D:\Compass\Acomph\ACOMPH_31.03.2020.xls";
             try
             {
-                
+
                 // excel.DisplayAlerts = false;
                 //excel.Visible = false;
                 // excel.ScreenUpdating = true;
@@ -690,6 +692,28 @@ namespace Compass.Services
                 for (var lin = l; !string.IsNullOrWhiteSpace(worksheet.Cells[lin, 1].Text); lin++)
                 {
                     row = lin;
+                }
+                bool validado = true;// verifica se a planilha esta no padrão correto para coleta dos dados
+                validado = (string)worksheet.Cells[1, 1].Text == "DATE" && validado == true;
+                validado = (string)worksheet.Cells[1, 3].Text == "SOURCE" && validado == true;
+                validado = (string)worksheet.Cells[1, 4].Text == "TYPE" && validado == true;
+                validado = (string)worksheet.Cells[1, 6].Text == "LOAD_sMMGD" && validado == true;
+                validado = (string)worksheet.Cells[1, 7].Text == "Base_CGH" && validado == true;
+                validado = (string)worksheet.Cells[1, 8].Text == "Base_EOL" && validado == true;
+                validado = (string)worksheet.Cells[1, 9].Text == "Base_UFV" && validado == true;
+                validado = (string)worksheet.Cells[1, 10].Text == "Base_UTE" && validado == true;
+                validado = (string)worksheet.Cells[1, 11].Text == "Base_MMGD" && validado == true;
+                validado = (string)worksheet.Cells[1, 12].Text == "LOAD_cMMGD" && validado == true;
+                validado = (string)worksheet.Cells[1, 13].Text == "Exp_CGH" && validado == true;
+                validado = (string)worksheet.Cells[1, 14].Text == "Exp_EOL" && validado == true;
+                validado = (string)worksheet.Cells[1, 15].Text == "Exp_UFV" && validado == true;
+                validado = (string)worksheet.Cells[1, 16].Text == "Exp_UTE" && validado == true;
+                validado = (string)worksheet.Cells[1, 17].Text == "Exp_MMGD" && validado == true;
+                validado = (string)worksheet.Cells[1, 18].Text == "REVISION" && validado == true;
+
+                if (validado == false)
+                {
+                    throw new Exception("Planilha fora de Padrão entre em contato com desenvolverdor!");
                 }
 
                 object[,] result = wb.Worksheets[sheetName].Range[wb.Worksheets[sheetName].Cells[l, 1], wb.Worksheets[sheetName].Cells[row, 18]].Value;
@@ -761,7 +785,7 @@ namespace Compass.Services
                         }
                     }
                 }
-                for (int s = 1; s <= 4; s++)// pequens mmgd === exp_tipousina
+                for (int s = 1; s <= 4; s++)// pequenas mmgd === exp_tipousina
                 {
                     for (int t = 5; t <= 8; t++)
                     {
@@ -830,14 +854,126 @@ namespace Compass.Services
                 }
                 #endregion
 
+                #region c_adic
+
+                for (int i = 1; i <= 4; i++)
+                {
+                    var linhasCadic = c_adicA.Where(x => x is Compass.CommomLibrary.C_AdicDat.MerEneLine && x.Mercado == i && x.Descricao.ToUpper().Contains("MMGD")).ToList();
+                    foreach (var linha in linhasCadic)
+                    {
+                        if (!linha.Ano.ToUpper().Contains("POS"))
+                        {
+                            if (Convert.ToInt32(linha.Ano) < Deck.Dger.AnoEstudo)
+                            {
+                                c_adic.Adicao.Remove(linha);
+                                int index = c_adic.Adicao.IndexOf(linhasCadic.Last());
+                                var novoAno = linhasCadic[linhasCadic.IndexOf(linhasCadic.Last()) - 1].Clone() as Compass.CommomLibrary.C_AdicDat.MerEneLine;
+                                novoAno.Ano = (Convert.ToInt32(novoAno.Ano) + 1).ToString();
+                                c_adic.Adicao.Insert(index, novoAno);
+                            }
+                            else if (Convert.ToInt32(linha.Ano) == Deck.Dger.AnoEstudo)
+                            {
+                                for (int m = 1; m <= 12; m++)
+                                {
+                                    if (m < Deck.Dger.MesEstudo)
+                                    {
+                                        linha[m] = null;
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }
+                    foreach (var carga in Dados.Where(x => x.SubNum == i && x.Data >= Deck.Dger.DataEstudo && x.Tipo == "MEDIUM").ToList())
+                    {
+                        var item = linhasCadic.Where(x => !x.Ano.ToUpper().Contains("POS") && Convert.ToInt32(x.Ano) == carga.Data.Year).FirstOrDefault();
+                        if (item != null)
+                        {
+                            item[carga.Data.Month] = Math.Round(carga.Base_MMGD);
+                        }
+
+                    }
+                }
 
 
+                #endregion
+
+                #region Patamar.dat
+                var dts = Dados.Select(x => x.Data).Distinct();
+                foreach (var dt in Dados.Select(x => x.Data).Distinct())
+                {
+                    if (dt >= Deck.Dger.DataEstudo)
+                    {
+                        for (int s = 1; s <= 4; s++)
+                        {
+                            var cargaHigh = Dados.Where(x => x.Data == dt && x.Tipo == "HIGH" && x.SubNum == s).First();
+                            var cargaMiddle = Dados.Where(x => x.Data == dt && x.Tipo == "MIDDLE" && x.SubNum == s).First();
+                            var cargaLow = Dados.Where(x => x.Data == dt && x.Tipo == "LOW" && x.SubNum == s).First();
+                            var cargaMedium = Dados.Where(x => x.Data == dt && x.Tipo == "MEDIUM" && x.SubNum == s).First();
+                            for (int p = 1; p <= 3; p++)
+                            {
+                                var linhaCarga = patamarDat.Carga.Where(x => x is Compass.CommomLibrary.PatamarDat.CargaEneLine && x.Mercado == s && x.Ano == dt.Year && x.Patamar == p).FirstOrDefault();
+                                var linhaUFVmmgd = patamarDat.Nao_Simuladas.Where(x => x is Compass.CommomLibrary.PatamarDat.UNSABLine && x.Submercado == s && x.Ano == dt.Year && x.Patamar == p && x.Tipo_Usina == 8).FirstOrDefault();
+                                if (linhaCarga != null)
+                                {
+                                    double valor = 0;
+                                    switch (p)
+                                    {
+                                        case 1:
+                                            valor = cargaHigh.LOAD_cMMGD / cargaMedium.LOAD_cMMGD;
+                                            break;
+                                        case 2:
+                                            valor = cargaMiddle.LOAD_cMMGD / cargaMedium.LOAD_cMMGD;
+                                            break;
+                                        case 3:
+                                            valor = cargaLow.LOAD_cMMGD / cargaMedium.LOAD_cMMGD;
+                                            break;
+                                        default:
+                                            valor = 0;
+                                            break;
+                                    }
+                                    linhaCarga[dt.Month] = valor;
+                                }
+                                if (linhaUFVmmgd != null)
+                                {
+                                    double valorUFV = 0;
+                                    switch (p)
+                                    {
+                                        case 1:
+                                            valorUFV = cargaHigh.Exp_UFV / cargaMedium.Exp_UFV;
+                                            break;
+                                        case 2:
+                                            valorUFV = cargaMiddle.Exp_UFV / cargaMedium.Exp_UFV;
+                                            break;
+                                        case 3:
+                                            valorUFV = cargaLow.Exp_UFV / cargaMedium.Exp_UFV;
+                                            break;
+                                        default:
+                                            valorUFV = 0;
+                                            break;
+                                    }
+                                    linhaUFVmmgd[dt.Month] = valorUFV;
+                                }
+
+                            }
+                        }
 
 
-                sistema.SaveToFile(createBackup: true);
+                    }
+
+                }
+
+                #endregion
+
+                patamarDat.SaveToFile();
+
+                c_adic.SaveToFile();
+
+                sistema.SaveToFile();
                 //
 
-                wb.Close();
+                wb.Close(SaveChanges: false);
                 //workbook.Close();
                 xlsApp.Quit();
                 System.Windows.Forms.MessageBox.Show("Processo concuído com sucesso!!!");
@@ -847,7 +983,7 @@ namespace Compass.Services
             catch (Exception e)
             {
                 System.Windows.Forms.MessageBox.Show(e.ToString());
-                wb.Close();
+                wb.Close(SaveChanges: false);
                 xlsApp.Quit();
             }
 

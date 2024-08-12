@@ -102,7 +102,7 @@ namespace Compass.DecompTools.Forms.Componentes
 			set { this._objOwner = value; }
 		}
 
-		private bool m_blnEnabled = false;
+		private bool m_blnEnabled = true;
 
 		/// <summary>
 		/// Habilitar

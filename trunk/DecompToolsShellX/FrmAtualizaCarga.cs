@@ -76,7 +76,13 @@ namespace Compass.DecompToolsShellX
             if (File.Exists(plan))
             {
                 TextBoxPlan.Text = plan;
+                
             }
+
+        }
+
+        private void TextBoxPlan_Load(object sender, EventArgs e)
+        {
 
         }
     }

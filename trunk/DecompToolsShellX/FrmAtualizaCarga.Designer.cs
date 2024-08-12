@@ -52,13 +52,15 @@ namespace Compass.DecompToolsShellX
             this.TextBoxPlan.AcceptedExtensions = null;
             this.TextBoxPlan.AllowDrop = true;
             this.TextBoxPlan.DialogTitle = "";
-            this.TextBoxPlan.Location = new System.Drawing.Point(34, 46);
+            this.TextBoxPlan.Location = new System.Drawing.Point(23, 46);
             this.TextBoxPlan.Name = "TextBoxPlan";
             this.TextBoxPlan.OwnerIWin32Window = null;
             this.TextBoxPlan.RootFolder = "";
-            this.TextBoxPlan.Size = new System.Drawing.Size(497, 28);
+            this.TextBoxPlan.Size = new System.Drawing.Size(508, 28);
             this.TextBoxPlan.TabIndex = 1;
             this.TextBoxPlan.Title = "Planilha";
+            this.TextBoxPlan.Enabled = true;
+            this.TextBoxPlan.Load += new System.EventHandler(this.TextBoxPlan_Load);
             // 
             // btnAtualizar
             // 
