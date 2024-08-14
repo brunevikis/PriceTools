@@ -45,7 +45,14 @@ namespace Compass.DecompToolsShellX
         }
         public void Atualizar()
         {
-            Atualizar(DeckFactory.CreateDeck(TextBoxDeckAtualiza.Text) as CommomLibrary.Newave.Deck, TextBoxPlan.Text);
+            if (textBoxPlanText.Text!= "" && File.Exists( textBoxPlanText.Text))
+            {
+                Atualizar(DeckFactory.CreateDeck(TextBoxDeckAtualiza.Text) as CommomLibrary.Newave.Deck, textBoxPlanText.Text);
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Indicar caminho da Planilha");
+            }
         }
 
         private void btnAtualizar_Click(object sender, EventArgs e)
@@ -64,18 +71,19 @@ namespace Compass.DecompToolsShellX
             TextBoxDeckAtualiza.Text = deckNW.BaseFolder;
             string plan = "";
             int tentativas = 0;
-            while (!System.IO.File.Exists(plan) && tentativas < 5)
+            do
             {
                 var nomeMes = Compass.CommomLibrary.Tools.GetMonthName(data.Month);
 
                 //TextBoxDeckAtualiza.Text = System.IO.Path.Combine(ConfigurationManager.AppSettings["nvPath"], "CCEE_NW", data.ToString("yyyy"), data.ToString("MM") + "_" + nomeMes, "NW" + data.ToString("yyyyMM"));
-                plan = System.IO.Path.Combine(ConfigurationManager.AppSettings["cargaMenPlan"], data.ToString("MM_yyyy") + "_carga_mensal", "CargaMensal_PMO-" + nomeMes + data.ToString("yyyy") + ".xlsx");
+                plan = System.IO.Path.Combine("H:\\Middle - Preço\\05_Processos\\17_Carga_Mensal", data.ToString("MM_yyyy") + "_carga_mensal", "CargaMensal_PMO-" + nomeMes + data.ToString("yyyy") + ".xlsx");
                 tentativas++;
                 data = data.AddMonths(-1);
-            }
+            } while (!System.IO.File.Exists(plan) && tentativas < 5);
             if (File.Exists(plan))
             {
-                TextBoxPlan.Text = plan;
+                
+                textBoxPlanText.Text = plan;
                 
             }
 
@@ -84,6 +92,18 @@ namespace Compass.DecompToolsShellX
         private void TextBoxPlan_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btn_search_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            ofd.Multiselect = false;
+
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                textBoxPlanText.Text = ofd.FileName;
+            }
         }
     }
 }

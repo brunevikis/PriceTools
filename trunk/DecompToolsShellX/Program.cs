@@ -63,6 +63,8 @@ namespace Compass.DecompToolsShellX
             actions.Add("vertermicas", vertermicas);
             actions.Add("atualizacarga", AtualizaCarga);
 
+            //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
+
             //dessemtools "K:\teste\dessemTESTE\resultados\DS_ONS_122023_RV1D08_ccee (1)"
             //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
             //C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_d-1_ECENS45
@@ -1187,7 +1189,7 @@ namespace Compass.DecompToolsShellX
                     var frm = new FrmOnsReCcee(cceeDeck);
                     frm.Salvar();
                     //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/cpas_ctl_common/scripts/newave25.sh");
-                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newave28.sh");
+                    PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/newave_AUTORUN.sh");
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Decomp.Deck && (command.Length > 1 && command[1] == "true"))
                 {

@@ -42,7 +42,7 @@
     <PublishUrl>C:\Development\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.5.0.377</ApplicationVersion>
+    <ApplicationVersion>1.5.0.382</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -327,6 +327,7 @@
     </EmbeddedResource>
     <None Include="DecompTools_10_TemporaryKey.pfx" />
     <None Include="DecompTools_11_TemporaryKey.pfx" />
+    <None Include="DecompTools_12_TemporaryKey.pfx" />
     <None Include="DecompTools_1_TemporaryKey.pfx" />
     <None Include="DecompTools_2_TemporaryKey.pfx" />
     <None Include="DecompTools_3_TemporaryKey.pfx" />
@@ -411,10 +412,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>DecompTools_11_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>DecompTools_12_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>41C724AD52B7D5C90D8684EBDFC7337DE1F34680</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>1281980089BD7BB19F3F05F1B239240CC2831890</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>

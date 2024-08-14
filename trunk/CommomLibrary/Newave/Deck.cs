@@ -106,7 +106,9 @@ namespace Compass.CommomLibrary.Newave
             {"indices.csv"    , null},//
             //
             {"volumes-referencia.csv"    , null},//
-            {"polinjus.csv"    , null}//
+            {"polinjus.csv"    , null},//
+            {"restricao-eletrica.csv"    , null},//
+            {"volref_saz.dat"    , null}//
 
         };
 

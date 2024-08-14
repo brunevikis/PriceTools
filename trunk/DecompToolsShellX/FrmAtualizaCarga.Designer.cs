@@ -30,8 +30,10 @@ namespace Compass.DecompToolsShellX
         private void InitializeComponent()
         {
             this.TextBoxDeckAtualiza = new Compass.DecompTools.Forms.Componentes.SelectFolderTextBox();
-            this.TextBoxPlan = new Compass.DecompTools.Forms.Componentes.SelectFileTextBox();
             this.btnAtualizar = new System.Windows.Forms.Button();
+            this.textBoxPlanText = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btn_search = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TextBoxDeckAtualiza
@@ -47,51 +49,66 @@ namespace Compass.DecompToolsShellX
             this.TextBoxDeckAtualiza.TabIndex = 0;
             this.TextBoxDeckAtualiza.Title = "Deck";
             // 
-            // TextBoxPlan
-            // 
-            this.TextBoxPlan.AcceptedExtensions = null;
-            this.TextBoxPlan.AllowDrop = true;
-            this.TextBoxPlan.DialogTitle = "";
-            this.TextBoxPlan.Location = new System.Drawing.Point(23, 46);
-            this.TextBoxPlan.Name = "TextBoxPlan";
-            this.TextBoxPlan.OwnerIWin32Window = null;
-            this.TextBoxPlan.RootFolder = "";
-            this.TextBoxPlan.Size = new System.Drawing.Size(508, 28);
-            this.TextBoxPlan.TabIndex = 1;
-            this.TextBoxPlan.Title = "Planilha";
-            this.TextBoxPlan.Enabled = true;
-            this.TextBoxPlan.Load += new System.EventHandler(this.TextBoxPlan_Load);
-            // 
             // btnAtualizar
             // 
-            this.btnAtualizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAtualizar.Location = new System.Drawing.Point(297, 93);
+            this.btnAtualizar.Location = new System.Drawing.Point(379, 85);
             this.btnAtualizar.Name = "btnAtualizar";
-            this.btnAtualizar.Size = new System.Drawing.Size(234, 23);
+            this.btnAtualizar.Size = new System.Drawing.Size(152, 23);
             this.btnAtualizar.TabIndex = 18;
             this.btnAtualizar.Text = "Atualizar";
             this.btnAtualizar.UseVisualStyleBackColor = true;
             this.btnAtualizar.Click += new System.EventHandler(this.btnAtualizar_Click);
             // 
+            // textBoxPlanText
+            // 
+            this.textBoxPlanText.Location = new System.Drawing.Point(74, 46);
+            this.textBoxPlanText.Name = "textBoxPlanText";
+            this.textBoxPlanText.Size = new System.Drawing.Size(457, 20);
+            this.textBoxPlanText.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 53);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 13);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Planilha";
+            // 
+            // btn_search
+            // 
+            this.btn_search.Location = new System.Drawing.Point(74, 85);
+            this.btn_search.Name = "btn_search";
+            this.btn_search.Size = new System.Drawing.Size(128, 23);
+            this.btn_search.TabIndex = 21;
+            this.btn_search.Text = "Procurar Planilha";
+            this.btn_search.UseVisualStyleBackColor = true;
+            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
+            // 
             // FrmAtualizaCarga
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(573, 144);
+            this.ClientSize = new System.Drawing.Size(600, 133);
+            this.Controls.Add(this.btn_search);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBoxPlanText);
             this.Controls.Add(this.btnAtualizar);
-            this.Controls.Add(this.TextBoxPlan);
             this.Controls.Add(this.TextBoxDeckAtualiza);
             this.Name = "FrmAtualizaCarga";
             this.Text = "Atualizar Carga";
             this.Load += new System.EventHandler(this.FrmAtualizaCarga_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private DecompTools.Forms.Componentes.SelectFolderTextBox TextBoxDeckAtualiza;
-        private DecompTools.Forms.Componentes.SelectFileTextBox TextBoxPlan;
         private System.Windows.Forms.Button btnAtualizar;
+        private System.Windows.Forms.TextBox textBoxPlanText;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btn_search;
     }
 }

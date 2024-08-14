@@ -14,8 +14,8 @@
     </vstav3:postActions>  
 
 
-mage -sign DecompTools.dll.manifest -certfile ../../DecompTools_11_TemporaryKey.pfx -pub Compass -Password enercore
-mage -update ../../DecompTools.vsto -appmanifest DecompTools.dll.manifest -certfile ../../DecompTools_11_TemporaryKey.pfx -pub Compass -Password enercore
+mage -sign DecompTools.dll.manifest -certfile ../../DecompTools_12_TemporaryKey.pfx -pub Compass -Password enercore
+mage -update ../../DecompTools.vsto -appmanifest DecompTools.dll.manifest -certfile ../../DecompTools_12_TemporaryKey.pfx -pub Compass -Password enercore
 copy /Y ..\..\DecompTools.vsto .\
 
 Copiar a pasta C:\Development\Publish\Application Files\DecompTools_1_5_0_35 para H:\TI - Sistemas\UAT\PricingExcelTools\pub\Application Files

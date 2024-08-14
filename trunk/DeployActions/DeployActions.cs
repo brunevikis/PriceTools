@@ -74,17 +74,17 @@ namespace Compass.DeployActions
             var comms = new Dictionary<string, string>() {
                 {"Abrir em Excel", exe + " abrir " + "\"%1\""},
                 //{"Rodar Vazoes", exe + " vazoes " + "\"%1\""},
-                {"Rodar Vazoes 6", exe + " vazoes6 " + "\"%1\""},
-                {"Rodar Previvaz", exe + " previvaz " + "\"%1\""},
+                {"Rodar Vazoes 6", exe + " vazoes6 " + "\"%1\""},//tirou=2
+                {"Rodar Previvaz", exe + " previvaz " + "\"%1\""},//tirou=3
                 {"Ver EARM", exe + " earm " + "\"%1\""},
                 {"Ver Resultado", exe + " resultado " + "\"%1\""},
                 {"Alterar Cortes e TH...", exe + " corte " + "\"%1\""},
-                {"Criar Dger.NWD", exe + " dgernwd " + "\"%1\""},
+                {"Criar Dger.NWD", exe + " dgernwd " + "\"%1\""},//tirou=7
                 {"Converter para CCEE", exe + " ons2ccee " + "\"%1\""},
                 {"Tratar Inviabilidades", exe + " inviab " + "\"%1\""},
-                {"Tendencia Hidrologica ...", exe + " tendhidr " + "\"%1\""},
+                {"Tendencia Hidrologica ...", exe + " tendhidr " + "\"%1\""},//tioru=10
                 {"Converter deck Dessem ONS para CCEE", exe + " dessem2ccee " + "\"%1\""},
-                {"Rodar Dessem", exe + " rodardessem " + "\"%1\""},
+                {"Rodar Dessem", exe + " rodardessem " + "\"%1\""},//tirou=12
                 {"Conversão Decodess", exe + " convdecodess " + "\"%1\""},
                 {"PLD Dessem", exe + " plddessem " + "\"%1\""},
                 {"Previvaz Local", exe + " previvazlocal " + "\"%1\""},
@@ -115,18 +115,20 @@ namespace Compass.DeployActions
                 {"Ver EARM", exe + " earm " + "\"%1\""},
                 {"Duplicar Deck", exe + " duplicar " + "\"%1\""},
                 //{"Rodar Vazoes", exe + " vazoes " + "\"%1\""},
-                {"Rodar Vazoes 6", exe + " vazoes6 " + "\"%1\""},
-                {"Rodar Previvaz", exe + " previvaz " + "\"%1\""},
-                {"Criar Dger.NWD", exe + " dgernwd " + "\"%1\""},
+                //{"Rodar Vazoes 6", exe + " vazoes6 " + "\"%1\""},//tirou=5
+                //{"Rodar Previvaz", exe + " previvaz " + "\"%1\""},//tirou=6
+                //{"Criar Dger.NWD", exe + " dgernwd " + "\"%1\""},//tirou=7
                 {"Converter para CCEE", exe + " ons2ccee " + "\"%1\""},
                 {"Tratar Inviabilidades", exe + " inviab " + "\"%1\""},
-                {"Tendencia Hidrologica ...", exe + " tendhidr " + "\"%1\""},
+                //{"Tendencia Hidrologica ...", exe + " tendhidr " + "\"%1\""},//tirou=10
                 {"Converter deck Dessem ONS para CCEE", exe + " dessem2ccee " + "\"%1\""},
-                {"Rodar Dessem", exe + " rodardessem " + "\"%1\""},
+                //{"Rodar Dessem", exe + " rodardessem " + "\"%1\""},//tirou=12
                 {"Conversão Decodess", exe + " convdecodess " + "\"%1\""},
                 {"PLD Dessem", exe + " plddessem " + "\"%1\""},
                 {"Dessem Tools", exe + " dessemtools " + "\"%1\""},
                 {"Ver Térmicas Despachadas" , exe + " vertermicas " + "\"%1\""},
+
+                {"Atualizar Carga" , exe + " atualizacarga " + "\"%1\""},
 
 
             };
@@ -155,7 +157,7 @@ namespace Compass.DeployActions
             var commsDb = new Dictionary<string, string>() {
                 {"Alterar Todos Cortes e THs...", exe + " cortes " + "\"%V\""},
                 {"Ver Todos Resultados", exe + " resultados " + "\"%V\""},
-                {"Tendencia Hidrologica ...", exe + " tendhidr " + "null"},
+                //{"Tendencia Hidrologica ...", exe + " tendhidr " + "null"},//tirou=3
                 {"Atualizar UH Dessem", exe + " uhdessem " + "\"%V\""},
                 {"Atualizar DP Dessem", exe + " dpdessem " + "\"%V\""},
                 {"Extrair DE Dessem", exe + " exdedessem " + "\"%V\""},
