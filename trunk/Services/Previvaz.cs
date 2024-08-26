@@ -2416,8 +2416,16 @@ namespace Compass.Services
                             {
                                 break;
                             }
-
-                            var proxSem = SemanasPrevs[i + 1].Item2;
+                            int proxSem = 0;
+                            if (SemanasPrevs[i] == SemanasPrevs.Last())
+                            {
+                                var semanaNext = Tools.GetWeekNumberAndYear(SemanasPrevs[i].Item1.AddDays(7));
+                                proxSem = semanaNext.Item1;
+                            }
+                            else
+                            {
+                               proxSem = SemanasPrevs[i + 1].Item2;
+                            }
 
                             if (proxSem < inp.SemanaPrevisao)
                             {

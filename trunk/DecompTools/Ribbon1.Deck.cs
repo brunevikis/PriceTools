@@ -624,9 +624,15 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 File.WriteAllText(Path.Combine(estudoPath, "configh.dat"), earmconfig);
 
                                 #region armazenamento REE
-                                var dadosREE = configH.GetREEList();
 
-                                configH.ReloadUH();
+                                var hidrDatNew = deckEstudo[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
+
+                                var configHNew = new Compass.CommomLibrary.Decomp.ConfigH(configH.baseDoc as Dadger, hidrDatNew);
+                                //var dadosREE = configH.GetREEList();
+                                var dadosREE = configHNew.GetREEList();
+
+                                // configH.ReloadUH();
+                                configHNew.ReloadUH();
 
                                 List<string> linhasREE = new List<string>();
 
@@ -738,7 +744,29 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     throw;
 
                                 }
+                                #region testesnew earmree
+                                //var hidrDatNew = deckEstudo[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
 
+                                //var configHNew = new Compass.CommomLibrary.Decomp.ConfigH(configH.baseDoc as Dadger, hidrDatNew);
+
+                                //var dadosREENew = configHNew.GetREEList();
+
+                                //configHNew.ReloadUH();
+
+                                //List<string> linhasREENew = new List<string>();
+
+                                //linhasREENew.Add("REE\tEARM%");
+                                //foreach (var dadR in dadosREENew)
+                                //{
+                                //    linhasREENew.Add($"{ dadR.Item1}\t{dadR.Item2}%");
+                                //}
+
+                                //File.WriteAllLines(Path.Combine(estudoPath, "REE_EARMNew.txt"), linhasREENew);
+
+
+
+
+                                #endregion
 
                                 #endregion
 
@@ -2918,9 +2946,15 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
 
                         #region armazenamento REE
-                        var dadosREE = configH.GetREEList();
+                        var hidrDatNew = deckEstudo[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat;
 
-                        configH.ReloadUH();
+                        var configHNew = new Compass.CommomLibrary.Decomp.ConfigH(configH.baseDoc as Dadger, hidrDatNew);
+
+                        //var dadosREE = configH.GetREEList();
+                        var dadosREE = configHNew.GetREEList();
+
+                        //configH.ReloadUH();
+                        configHNew.ReloadUH();
 
                         List<string> linhasREE = new List<string>();
 
