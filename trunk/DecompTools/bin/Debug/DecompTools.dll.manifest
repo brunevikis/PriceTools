@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="DecompTools.dll" version="1.5.0.383" publicKeyToken="3f787f259583bc55" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="DecompTools.dll" version="1.5.0.384" publicKeyToken="3f787f259583bc55" language="neutral" processorArchitecture="msil" type="win32" />
   <description xmlns="urn:schemas-microsoft-com:asm.v1">DecompTools</description>
   <application />
   <entryPoint>
@@ -164,7 +164,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>UVYTyd2Z3nHySVqY0WtTwcuzxzE=</dsig:DigestValue>
+        <dsig:DigestValue>hc49KwFO8SIL6et0g0LYpflC3wc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -188,7 +188,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>+nL8OFu0pLiR36VPxNfogstxNM4=</dsig:DigestValue>
+        <dsig:DigestValue>o8R4FNkeWMll4j5eyouWgLS3Krs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -200,7 +200,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>4GRHdDmgMt/oWr3HcH72Oh24StE=</dsig:DigestValue>
+        <dsig:DigestValue>smK0vGTWYVXVh0BlM4HexebRvZo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -212,7 +212,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>IW8eYATgwmJm5raVyPWYu8QNInQ=</dsig:DigestValue>
+        <dsig:DigestValue>/DtX8WZPrXtTyRoHbbZthCTsFgA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -224,7 +224,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>TET9A1uS15EohzZRtv8vJhzpQDY=</dsig:DigestValue>
+        <dsig:DigestValue>dPx8lLkrQaU7yb989FUZfET/nXE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -450,7 +450,7 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>GRwTQ8CPxrXHRce1NsJzDGsDlyg=</dsig:DigestValue>
+      <dsig:DigestValue>PJuIOFsXlMpBvWr5NSSYnawmJhk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Compass.VazoesApp.exe" size="6656">
@@ -494,4 +494,4 @@
       </vstov4:customizations>
     </vstav3:application>
   </vstav3:addIn>
-<publisherIdentity name="CN=ENERCORENB05\Bruno" issuerKeyHash="3eeacc6adfc5c2904f7bc0b143e7fce19ac16afd" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>7ezQsbdsY+HmkC1YWcPYEH0lWIw=</DigestValue></Reference></SignedInfo><SignatureValue>EJtwF7BUI8+PCYJvyb+EYr67M1szNIqXX+i5jQfD6NSW2gPxMwwur0Wk+kVr75Bah6RYqYN/KNrxBTk/vVIee3VWjqR7eqITBL7Q4cDYGvybeVfaJmOwb++EAaECLMPvqKbQs+MQfVSpl0omTIzBn45h8UUylXmMCBO/Z3jTZ5o=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>8qrVBnwymGJbHwiW2G9THo2Or9EeIQTKnAWdhHW5R0P4NWxl9q2ONRWSl9P03JoTo5CpHwjoM0Oc6Hkq1tC/ku5PETUNlgcPGb5yKIThKw/PNpZrw1tdprOqC4pK2Jvzz8JjozZFpM43Cw4QnHl9UQ6WOu2h54vLyoiAnPzXu+0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="8c58257d10d8c359582d90e6e1636cb7b1d0eced" Description="" Url=""><as:assemblyIdentity name="DecompTools.dll" version="1.5.0.383" publicKeyToken="3f787f259583bc55" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=ENERCORENB05\Bruno</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>Y7wrGwsGulWUoYgGTTK2O6J1i2g=</DigestValue></Reference></SignedInfo><SignatureValue>ZWRsFmOi/SrowD7I2ntTfwgSDQ4PdqmMR/ZCzqAEp25Jick+sAkLMkftVyiRipJp1Ik/74TGml6T+DveiOekT4iohnmiaEYv8pqxfgXPoY0f6A74l5+0io5yJ1a284uDmbhhbN3bBKhpzqN2E5zj95blSr98+FrztZRh1QHRmDc=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>8qrVBnwymGJbHwiW2G9THo2Or9EeIQTKnAWdhHW5R0P4NWxl9q2ONRWSl9P03JoTo5CpHwjoM0Oc6Hkq1tC/ku5PETUNlgcPGb5yKIThKw/PNpZrw1tdprOqC4pK2Jvzz8JjozZFpM43Cw4QnHl9UQ6WOu2h54vLyoiAnPzXu+0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB4TCCAUqgAwIBAgIQbYtR1fGBB6RFeDsJpstHhDANBgkqhkiG9w0BAQUFADAvMS0wKwYDVQQDHiQARQBOAEUAUgBDAE8AUgBFAE4AQgAwADUAXABCAHIAdQBuAG8wHhcNMjQwODE0MTEyMDIxWhcNMjUwODE0MTcyMDIxWjAvMS0wKwYDVQQDHiQARQBOAEUAUgBDAE8AUgBFAE4AQgAwADUAXABCAHIAdQBuAG8wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAPKq1QZ8MphiWx8IlthvUx6Njq/RHiEEypwFnYR1uUdD+DVsZfatjjUVkpfT9NyaE6OQqR8I6DNDnOh5KtbQv5LuTxE1DZYHDxm+ciiE4SsPzzaWa8NbXaazqguKStib88/CY6M2RaTONwsOEJx5fVEOljrtoeeLy8qIgJz817vtAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAJ+klIYD1/WIb6gF0i3x/n35vnzSWrQWtobxqgbWOOjhytuTviQ+Hay5ik7VYNZ1sI2q42hRPx7tLVANCWaasLN+XZxeuYRYC+/j+JVYo2zVXvfMe243DbXiMV0w94UWfH4YiqDKBYJ1k0D1IqGTgZ/K6F78Ipc+Lyhae86eD0/U=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
+<publisherIdentity name="CN=ENERCORENB05\Bruno" issuerKeyHash="3eeacc6adfc5c2904f7bc0b143e7fce19ac16afd" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>kv5EZ72M9yrgHSQUm0QfHGWQuTM=</DigestValue></Reference></SignedInfo><SignatureValue>bxFYt3tZAok7Wy45cubaUDoRl+JKaLHNWH1YA/UmpWWQx3LYJM8sfAVSkHawu/6VDERpTh03XPuH+pcvCkJ7E1tHvFbbt98Y0KXzavA1caAXVJIvbMjkUPlTT3d3kuNunks/5RuFGLNND/YyBZRFo+5lS7i9/qzdul31aJdDhuo=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>8qrVBnwymGJbHwiW2G9THo2Or9EeIQTKnAWdhHW5R0P4NWxl9q2ONRWSl9P03JoTo5CpHwjoM0Oc6Hkq1tC/ku5PETUNlgcPGb5yKIThKw/PNpZrw1tdprOqC4pK2Jvzz8JjozZFpM43Cw4QnHl9UQ6WOu2h54vLyoiAnPzXu+0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="33b990651c1f449b14241de02af78cbd6744fe92" Description="" Url=""><as:assemblyIdentity name="DecompTools.dll" version="1.5.0.384" publicKeyToken="3f787f259583bc55" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=ENERCORENB05\Bruno</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>BT1puBf1OtU8iv5v3ss2aheQ8pI=</DigestValue></Reference></SignedInfo><SignatureValue>SU1iG0QqQKEXhpCUrhM1iQVpfhTLmDWCKrKsHm+RATqfwoib6JaelXgVlbqfZtFZbhNLnpupNqq3bFTmgZ7wzuDu2hp4TJyMm3GO0XCBbCCJXpLq5Kp8TNeJU6P2l9jGq+OKcaB5X6nbLylDRubIWkQkZ+TWqUegwZqvUqOY4xs=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>8qrVBnwymGJbHwiW2G9THo2Or9EeIQTKnAWdhHW5R0P4NWxl9q2ONRWSl9P03JoTo5CpHwjoM0Oc6Hkq1tC/ku5PETUNlgcPGb5yKIThKw/PNpZrw1tdprOqC4pK2Jvzz8JjozZFpM43Cw4QnHl9UQ6WOu2h54vLyoiAnPzXu+0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB4TCCAUqgAwIBAgIQbYtR1fGBB6RFeDsJpstHhDANBgkqhkiG9w0BAQUFADAvMS0wKwYDVQQDHiQARQBOAEUAUgBDAE8AUgBFAE4AQgAwADUAXABCAHIAdQBuAG8wHhcNMjQwODE0MTEyMDIxWhcNMjUwODE0MTcyMDIxWjAvMS0wKwYDVQQDHiQARQBOAEUAUgBDAE8AUgBFAE4AQgAwADUAXABCAHIAdQBuAG8wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAPKq1QZ8MphiWx8IlthvUx6Njq/RHiEEypwFnYR1uUdD+DVsZfatjjUVkpfT9NyaE6OQqR8I6DNDnOh5KtbQv5LuTxE1DZYHDxm+ciiE4SsPzzaWa8NbXaazqguKStib88/CY6M2RaTONwsOEJx5fVEOljrtoeeLy8qIgJz817vtAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAJ+klIYD1/WIb6gF0i3x/n35vnzSWrQWtobxqgbWOOjhytuTviQ+Hay5ik7VYNZ1sI2q42hRPx7tLVANCWaasLN+XZxeuYRYC+/j+JVYo2zVXvfMe243DbXiMV0w94UWfH4YiqDKBYJ1k0D1IqGTgZ/K6F78Ipc+Lyhae86eD0/U=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

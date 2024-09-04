@@ -709,6 +709,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                     {
                                         var confihdNew = (Compass.CommomLibrary.ConfhdDat.ConfhdDat)DocumentFactory.Create(confihdFile);
                                         var dadgerRef = configH.baseDoc as Dadger;
+                                        var dadgertest = configHNew.baseDoc as Dadger;
                                         foreach (var conf in confihdNew)
                                         {
 

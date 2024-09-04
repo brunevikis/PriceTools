@@ -1611,6 +1611,7 @@ new DateTime(2033,12,25),
             var data = dt;
             var dataDC = dt;
             DateTime dataRef = data;
+            string xPublicacao = "";
 
             string folder = "";
             int contDc = 0;
@@ -1627,17 +1628,36 @@ new DateTime(2033,12,25),
                 //H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\2023\09_set\Relatorio_Sumario-202309-sem5
                 int semana = rev.rev + 1;
                 var mes = GetMonthNumAbrev(rev.revDate.Month);//dataRef
-                var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString();
-                if (Directory.Exists(cam))
+
+                for (int p = 5; p >= 1; p--)//verfirifica se existe republicaçoes e prioriza na escolha do deck
                 {
-                    folder = cam;
-                    OkDc = true;
+                    var camX = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString() + $"_{p}aPublicacao";
+                    if (Directory.Exists(camX))
+                    {
+                        xPublicacao = camX;
+                        OkDc = true;
+                        break;
+                    }
+                }
+                if (xPublicacao != "")
+                {
+                    folder = xPublicacao;
                 }
                 else
                 {
-                    contDc++;
-                    dataDC = dataDC.AddDays(-1);
+                    var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString();
+                    if (Directory.Exists(cam))
+                    {
+                        folder = cam;
+                        OkDc = true;
+                    }
+                    else
+                    {
+                        contDc++;
+                        dataDC = dataDC.AddDays(-1);
+                    }
                 }
+                
             }
             return folder;
         }

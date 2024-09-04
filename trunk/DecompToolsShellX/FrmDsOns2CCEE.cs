@@ -35,10 +35,12 @@ namespace Compass.DecompToolsShellX
             var data = DateTime.Today;
             var dataDC = DateTime.Today;
             DateTime dataRef = data;
-
-
+            string xPublicacao = "";
             int contDc = 0;
             bool OkDc = false;
+
+            
+
             while (OkDc == false && contDc < 30)
             {
                 DateTime dat = dataDC;
@@ -51,17 +53,35 @@ namespace Compass.DecompToolsShellX
                 //H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\2023\09_set\Relatorio_Sumario-202309-sem5
                 int semana = rev.rev + 1;
                 var mes = GetMonthNumAbrev(rev.revDate.Month);//dataRef
-                var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString();
-                if (Directory.Exists(cam))
+                for (int p = 5; p >=1; p--)//verfirifica se existe republicaçoes e prioriza na escolha do deck
                 {
-                    TextBoxDcRef.Text = cam;
-                    OkDc = true;
+                    var camX = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString() + $"_{p}aPublicacao";
+                    if (Directory.Exists(camX))
+                    {
+                        xPublicacao = camX;
+                        OkDc = true;
+                        break;
+                    }
+                }
+                if (xPublicacao != "")
+                {
+                    TextBoxDcRef.Text = xPublicacao;
                 }
                 else
                 {
-                    contDc++;
-                    dataDC = dataDC.AddDays(-1);
+                    var cam = $@"H:\Middle - Preço\Resultados_Modelos\DECOMP\CCEE_DC\{rev.revDate:yyyy}\{mes}\Relatorio_Sumario-{rev.revDate:yyyyMM}-sem" + semana.ToString();
+                    if (Directory.Exists(cam))
+                    {
+                        TextBoxDcRef.Text = cam;
+                        OkDc = true;
+                    }
+                    else
+                    {
+                        contDc++;
+                        dataDC = dataDC.AddDays(-1);
+                    }
                 }
+                
             }
 
 
