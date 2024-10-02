@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Compass.CommomLibrary.EolicaNW
+namespace Compass.CommomLibrary.RestElCSV
 {
-    public class EolConfigBlock : BaseBlock<EolconfgLine>
+    public class ReHorizBlock : BaseBlock<ReHorizLine>
     {
-
         public override string ToText()
         {
 
@@ -41,32 +40,33 @@ namespace Compass.CommomLibrary.EolicaNW
             return result.ToString();
 
         }
-
     }
 
-
-
-    public class EolconfgLine : BaseLine
+    public class ReHorizLine : BaseLine
     {
-        public EolconfgLine(string text)
+        System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
+        public ReHorizLine(string text)
         {
             LoadCamposCSV(text);
 
+            //int idxSubtext = 0;
             //var partes = text.Split(new string[] { ";" }, StringSplitOptions.None).ToList();
             //BaseField[] campos = new BaseField[partes.Count()];
             //for (int i = 0; i < campos.Count(); i++)
             //{
-            //    int startIndex = text.IndexOf(partes[i]) + 1;
+            //    int startIndex = idxSubtext + text.Substring(idxSubtext).IndexOf(partes[i]) + 1;//para evitar de pegar o index repetido caso tenha dados com o mesmo valor em campos diferentes por coincidencia
             //    int range = partes[i].Length;
             //    int endIndex = startIndex + range - 1;
             //    campos[i] = new BaseField(startIndex, endIndex, "A" + range.ToString(), "");
+            //    idxSubtext = endIndex;
             //}
             //CamposCSV = campos;
 
         }
 
         public string ID { get { return valores[CamposCSV[0]].ToString(); } set { valores[CamposCSV[0]] = value.ToString(); } }
-        public int CodPEE { get { return Convert.ToInt32(valores[CamposCSV[1]]); } set { valores[CamposCSV[1]] = value.ToString(); } }
+        public int CodRE { get { return Convert.ToInt32(valores[CamposCSV[1]]); } set { valores[CamposCSV[1]] = value.ToString(); } }
+        //public string NomePee { get { return valores[CamposCSV[2]].ToString(); } set { valores[CamposCSV[2]] = value.ToString(); } }
         public DateTime DataIni
         {
             get
@@ -95,7 +95,8 @@ namespace Compass.CommomLibrary.EolicaNW
             }
         }
 
-        public string Operacao { get { return valores[CamposCSV[4]].ToString(); } set { valores[CamposCSV[4]] = value.ToString(); } }
+        //public double Potencia { get { return Convert.ToDouble((string)valores[CamposCSV[4]], Culture.NumberFormat); } set { valores[CamposCSV[4]] = value.ToString(Culture.NumberFormat); } }
 
     }
+
 }

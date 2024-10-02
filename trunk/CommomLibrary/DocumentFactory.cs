@@ -158,6 +158,10 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<ParqueEolico.PostoCad>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
+            else if (fileName.StartsWith("restricao-eletrica.csv"))
+            {
+                doc = BaseDocument.Create<RestElCSV.RestElCSV>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
             else if (fileName.StartsWith("prevsvel."))
             {
                 doc = BaseDocument.Create<ParqueEolico.PrevsVel>(System.IO.File.ReadAllText(filePath, Encoding.Default));

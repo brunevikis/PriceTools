@@ -43,7 +43,8 @@ namespace Compass.CommomLibrary.Newave
             eolicaposto,
             eolicasubmercado,
             histventos,
-            eolicaindices
+            eolicaindices,
+            restelcsv
         }
 
         Dictionary<string, DeckFile> documents = new Dictionary<string, DeckFile> {
@@ -184,6 +185,8 @@ namespace Compass.CommomLibrary.Newave
                         return Documents["indices.csv"];
                     case DeckDocument.eolicageracao:
                         return Documents["eolica-geracao.csv"];
+                    case DeckDocument.restelcsv:
+                        return Documents["restricao-eletrica.csv"];
                     default:
                         return null;
                 }
@@ -222,6 +225,9 @@ namespace Compass.CommomLibrary.Newave
                         break;
                     case DeckDocument.eolicageracao:
                         Documents["eolica-geracao.csv"] = value;
+                        break;
+                    case DeckDocument.restelcsv:
+                        Documents["restricao-eletrica.csv"] = value;
                         break;
                     default:
                         throw new NotImplementedException();

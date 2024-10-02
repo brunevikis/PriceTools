@@ -1475,6 +1475,8 @@ namespace Compass.Services
             {
                 DateTime dat = dataRef;
                 DateTime datVE = dataRef;
+                string patfile = null;
+
                 if (dat.DayOfWeek == DayOfWeek.Friday)
                 {
                     datVE = dat.AddDays(-1);
@@ -1483,7 +1485,13 @@ namespace Compass.Services
                 //H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\2021\01_jan\RV3\DS_CCEE_012021_SEMREDE_RV3D19
                 var mes = Tools.GetMonthNumAbrev(rev.revDate.Month);//dataRef
                 var cam = $@"H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\DS_CCEE_{rev.revDate:MMyyyy}_SEMREDE_RV{rev.rev}D{dat.Day:00}";
+
                 if (Directory.Exists(cam))
+                {
+                    patfile = Directory.GetFiles(cam).Where(x => Path.GetFileName(x).ToLower().Contains("pat0")).FirstOrDefault();//caso exista qualquer arquivo patxx nao usar esse deck (é um deck ons usado como contingencia pela ccee)
+                }
+
+                if (Directory.Exists(cam) && patfile == null)
                 {
                     pasta = cam;
                     Ok = true;

@@ -279,6 +279,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
                     estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
                     estudo.Reedads = w.Reedads ?? new List<IREEDAT>();
+                    estudo.Restelecsv = w.RestEleCSV ?? new List<IRESTELECSV>();
 
                     //string versaoNewave = w.versao_Newave.Trim();
                     //int nwVer = Convert.ToInt32( w.versao_Newave.Trim()) * 100;

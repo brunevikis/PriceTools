@@ -821,6 +821,33 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<Compass.CommomLibrary.IRESTELECSV> Restelecsv = null;
+        public List<Compass.CommomLibrary.IRESTELECSV> RestEleCSV
+        {
+            get
+            {
+                if (Names.ContainsKey("_restelecsv"))
+                {
+                    if (Restelecsv == null)
+                    {
+                        Restelecsv = new List<Compass.CommomLibrary.IRESTELECSV>();
+
+                        var ws = Names["_restelecsv"].Worksheet;
+                        var row = Names["_restelecsv"].Row;
+                        var col = Names["_restelecsv"].Column;
+
+                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                        {
+                            Restelecsv.Add(new RESTELECSV(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 10]]));
+                        }
+                    }
+
+                    return Restelecsv;
+                }
+                else return null;
+            }
+        }
+
         List<Compass.CommomLibrary.IADTERMDAD> Adatermdad = null;
         public List<Compass.CommomLibrary.IADTERMDAD> AdtremDadd
         {
@@ -1533,6 +1560,67 @@ namespace Compass.ExcelTools.Templates
 
                 if (rng[1, 4].Value is double) Mes = rng[1, 4].Value;
                 if (rng[1, 5].Value is double) Porc = rng[1, 5].Value;
+            }
+
+        }
+
+        public class RESTELECSV : Compass.CommomLibrary.IRESTELECSV
+        {
+            System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
+
+            public string Formula { get; set; }
+            public int MesEstudo { get; set; }
+            //public int Patamar { get; set; }
+            public DateTime DataIni { get; set; }
+            public DateTime DataFim { get; set; }
+            public double LimInfPt1 { get; set; }
+            public double LimSupPt1 { get; set; }
+            public double LimInfPt2 { get; set; }
+            public double LimSupPt2 { get; set; }
+            public double LimInfPt3 { get; set; }
+            public double LimSupPt3 { get; set; }
+
+            public RESTELECSV(Range rng)
+            {
+                if (((string)rng[1, 1].Text) != "")
+                {
+                    Formula = (string)rng[1, 1].Text.ToString().Replace(" ", string.Empty);
+                }
+                if (rng[1, 2].Value is double) MesEstudo = (int)rng[1, 2].Value;
+
+                if (rng[1, 3].Value is DateTime) DataIni = rng[1, 3].Value;
+
+                //if (rng[1, 4].Value is DateTime) DataFim = DateTime.FromOADate(rng[1, 4].Value);
+                if (rng[1, 4].Value is DateTime) DataFim = (DateTime)rng[1, 4].Value;
+
+                //if (rng[1, 5].Value is double) Patamar = (int)rng[1, 5].Value;
+
+                if (((string)rng[1, 5].Text) != "")
+                {
+                    LimInfPt1 = Convert.ToDouble((string)rng[1, 5].Text.ToString().Replace(",", "."), Culture.NumberFormat);
+                }
+                if (((string)rng[1, 6].Text) != "")
+                {
+                    LimSupPt1 = Convert.ToDouble((string)rng[1, 6].Text.ToString().Replace(",", "."), Culture.NumberFormat);
+                }
+                if (((string)rng[1, 7].Text) != "")
+                {
+                    LimInfPt2 = Convert.ToDouble((string)rng[1, 7].Text.ToString().Replace(",", "."), Culture.NumberFormat);
+                }
+                if (((string)rng[1, 8].Text) != "")
+                {
+                    LimSupPt2 = Convert.ToDouble((string)rng[1, 8].Text.ToString().Replace(",", "."), Culture.NumberFormat);
+                }
+                if (((string)rng[1, 9].Text) != "")
+                {
+                    LimInfPt3 = Convert.ToDouble((string)rng[1, 9].Text.ToString().Replace(",", "."), Culture.NumberFormat);
+                }
+                if (((string)rng[1, 10].Text) != "")
+                {
+                    LimSupPt3 = Convert.ToDouble((string)rng[1, 10].Text.ToString().Replace(",", "."), Culture.NumberFormat);
+                }
+
+                //Convert.ToDouble((string)valores[CamposCSV[5]], Culture.NumberFormat);
             }
 
         }

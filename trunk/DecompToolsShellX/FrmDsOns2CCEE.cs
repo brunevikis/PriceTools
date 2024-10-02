@@ -115,6 +115,7 @@ namespace Compass.DecompToolsShellX
             {
                 DateTime dat = dataRef;
                 DateTime datVE = dataRef;
+                string patfile = null;
                 if (dat.DayOfWeek == DayOfWeek.Friday)
                 {
                     datVE = dat.AddDays(-1);
@@ -125,6 +126,11 @@ namespace Compass.DecompToolsShellX
                 var cam = $@"H:\Middle - Preço\Resultados_Modelos\DESSEM\CCEE_DS\{rev.revDate:yyyy}\{mes}\RV{rev.rev}\DS_CCEE_{rev.revDate:MMyyyy}_SEMREDE_RV{rev.rev}D{dat.Day:00}";
                 if (Directory.Exists(cam))
                 {
+                    patfile = Directory.GetFiles(cam).Where(x => Path.GetFileName(x).ToLower().Contains("pat0")).FirstOrDefault();//caso exista qualquer arquivo patxx nao usar esse deck (é um deck ons usado como contingencia pela ccee)
+                }
+                if (Directory.Exists(cam) && patfile == null)
+                {
+
                     TextBoxDsRef.Text = cam;
                     Ok = true;
                 }

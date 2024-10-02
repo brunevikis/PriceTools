@@ -123,4 +123,19 @@ namespace Compass.CommomLibrary
         double PT2 { get; set; }
         double PT3 { get; set; }
     }
+
+    public interface IRESTELECSV
+    {
+        string Formula { get; set; }
+        int MesEstudo { get; set; }
+        //int Patamar { get; set; }
+        DateTime DataIni { get; set; }
+        DateTime DataFim { get; set; }
+        double LimInfPt1 { get; set; }
+        double LimSupPt1 { get; set; }
+        double LimInfPt2 { get; set; }
+        double LimSupPt2 { get; set; }
+        double LimInfPt3 { get; set; }
+        double LimSupPt3 { get; set; }
+    }
 }

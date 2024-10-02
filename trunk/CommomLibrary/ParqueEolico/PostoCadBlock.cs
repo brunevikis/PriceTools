@@ -23,7 +23,8 @@ namespace Compass.CommomLibrary.ParqueEolico
 
                     var campo = item.Valores[i];
 
-                    if (item.Valores[i] == item.Valores.Last())
+                    //if (item.Valores[i] == item.Valores.Last())
+                    if (i == (item.Valores.Length - 1))
                     {
                         linha = linha + campo;
                     }

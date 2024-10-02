@@ -69,6 +69,7 @@ namespace Encadeado
         public List<IMODIF> Modifs { get; set; }
         public List<IREMODIF> ReModifs { get; set; }
         public List<IREEDAT> Reedads { get; set; }
+        public List<IRESTELECSV> Restelecsv { get; set; }
 
         public Estudo()
         {
@@ -123,7 +124,7 @@ namespace Encadeado
 
             DeckMedia.EscreverListagemNwlistop();
 
-            //IncrementarCSV_LIBS(DeckMedia);//TODO: liberar somente quando for oficial deck com libs csv
+            IncrementarCSV_LIBS(DeckMedia);//TODO: liberar somente quando for oficial deck com libs csv
 
             var path = DeckMedia.Folder;
             //TODO: executar consistencia
@@ -1324,8 +1325,8 @@ namespace Encadeado
                     else
                     {
                         var modifsLista = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico).ToList();
-                       
-                      
+
+
                         //var modifline = modifs.Where(x => x.Usina == dad.Usina && x.Chave == dad.Minemonico && Convert.ToInt32(x.NovosValores[1]) <= dad.ModifCampos[1]).OrderByDescending(x => Convert.ToInt32( x.NovosValores[1])).FirstOrDefault();
                         var modifline = modifsLista.Where(x => Convert.ToInt32(x.NovosValores[1]) <= dad.ModifCampos[1]).OrderByDescending(x => Convert.ToInt32(x.NovosValores[1])).FirstOrDefault();
                         if (modifline != null)
@@ -1681,41 +1682,169 @@ namespace Encadeado
         {
             DateTime dataEstudo = deck.Dger.DataEstudo;
 
-            var eolCad = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad : null;
+            var restsEletricasCSV = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv].Document as Compass.CommomLibrary.RestElCSV.RestElCSV : null;
 
-            var eolConfig = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Document as Compass.CommomLibrary.EolicaNW.EolicaConfig : null;
-
-            var eolFte = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Document as Compass.CommomLibrary.EolicaNW.Eolicafte : null;
-
-            var eolGer = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Document as Compass.CommomLibrary.EolicaNW.EolicaGeracao : null;
-
-            if (eolCad != null)
+            if (restsEletricasCSV != null)
             {
-                var eolcadFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Path;
-                eolCad.BlocoPeePot.Where(x => x.DataFim < dataEstudo).ToList().ForEach(y => eolCad.BlocoPeePot.Remove(y));
-                eolCad.SaveToFile(filePath: eolcadFile);
+                var restsEletricasCSVFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv].Path;
+
+                var restsPlan = this.Restelecsv.Where(x => x.MesEstudo == dataEstudo.Month).ToList();
+
+                if (restsPlan.Count() > 0)
+                {
+                    var formulas = restsPlan.Select(x => x.Formula).Distinct();
+                    foreach (var form in formulas)
+                    {
+                        int codigoRest = restsEletricasCSV.BlocoRe.Where(x => x.Formula == form).Select(x => x.CodRE).FirstOrDefault();
+                        var blocoPatamres = restsEletricasCSV.BlocoReLimFormPat.Where(x => x.CodRE == codigoRest).ToList();
+
+                        if (blocoPatamres.Count() > 0)
+                        {
+                            DateTime dataIni = restsPlan.Where(x => x.Formula == form).Select(x => x.DataIni).Min();
+                            DateTime dataFim = restsPlan.Where(x => x.Formula == form).Select(x => x.DataFim).Max();
+
+                            var resthoriz = restsEletricasCSV.BlocoReHoriz.Where(x => x.CodRE == codigoRest).FirstOrDefault();
+                            if (resthoriz != null)//acerta o horizonte de atuação da restrição no bloco horizonte
+                            {
+                                resthoriz.DataIni = dataIni;
+                                resthoriz.DataFim = dataFim;
+                            }
+                            var restPlanAlvo = restsPlan.Where(x => x.Formula == form).OrderBy(x => x.DataIni).ToList();
+
+                            foreach (var rpa in restPlanAlvo)
+                            {
+                                var patLine = blocoPatamres.Where(x => x.DataIni <= rpa.DataIni).OrderByDescending(x => x.DataIni).OrderByDescending(x => x.Patamar).FirstOrDefault();
+                                if (patLine != null)//encontrou a linha com data menor ou igual a restalvo 
+                                {
+                                    int index = restsEletricasCSV.BlocoReLimFormPat.IndexOf(patLine);
+                                    if (patLine.DataIni < rpa.DataIni)
+                                    {
+                                        if (patLine.DataFim >= rpa.DataIni)//trava a datafinal das rest ja existentes com uma data menor que a dta inicial da rest que ser incluida
+                                        {
+                                            foreach (var item in blocoPatamres.Where(x => x.DataIni == patLine.DataIni))
+                                            {
+                                                item.DataFim = rpa.DataIni.AddMonths(-1);
+                                            }
+                                        }
+                                        for (int i = 1; i <= 3; i++)
+                                        {
+                                            //var newline = new Compass.CommomLibrary.RestElCSV.ReLimFormLine(patLine.LineCSV);
+                                            var newline = restsEletricasCSV.BlocoReLimFormPat.CreateLineCSV(patLine.LineCSV);
+                                            
+                                            newline.DataIni = rpa.DataIni;
+                                            newline.DataFim = rpa.DataFim;
+                                            newline.Patamar = i;
+                                            newline.LimInf = i == 1 ? rpa.LimInfPt1 : i == 2 ? rpa.LimInfPt2 : rpa.LimInfPt3;
+                                            newline.LimSup = i == 1 ? rpa.LimSupPt1 : i == 2 ? rpa.LimSupPt2 : rpa.LimSupPt3;
+
+                                            restsEletricasCSV.BlocoReLimFormPat.Insert(index + i, newline);
+                                        }
+                                    }
+                                    else if (patLine.DataIni == rpa.DataIni)
+                                    {
+                                        for (int i = 1; i <= 3; i++)
+                                        {
+                                            var line = blocoPatamres.Where(x => x.DataIni == patLine.DataIni && x.Patamar == i).FirstOrDefault();
+                                            if (line != null)
+                                            {
+                                                line.DataFim = rpa.DataFim;
+                                                line.LimInf = i == 1 ? rpa.LimInfPt1 : i == 2 ? rpa.LimInfPt2 : rpa.LimInfPt3;
+                                                line.LimSup = i == 1 ? rpa.LimSupPt1 : i == 2 ? rpa.LimSupPt2 : rpa.LimSupPt3;
+                                            }
+                                        }
+
+                                    }
+                                }
+                                else// nao encontrou uma linha com data menor ou igual a restalvo, vai criar uma linha e inserir acima das existentes
+                                {
+                                    var firstLine = blocoPatamres.First();
+                                    int index = restsEletricasCSV.BlocoReLimFormPat.IndexOf(firstLine);
+
+                                    for (int i = 3; i >= 1; i--)
+                                    {
+                                        //var newline = new Compass.CommomLibrary.RestElCSV.ReLimFormLine(firstLine.LineCSV);
+                                        var newline = restsEletricasCSV.BlocoReLimFormPat.CreateLineCSV(firstLine.LineCSV);
+
+                                        newline.DataIni = rpa.DataIni;
+                                        newline.DataFim = rpa.DataFim;
+                                        newline.Patamar = i;
+                                        newline.LimInf = i == 1 ? rpa.LimInfPt1 : i == 2 ? rpa.LimInfPt2 : rpa.LimInfPt3;
+                                        newline.LimSup = i == 1 ? rpa.LimSupPt1 : i == 2 ? rpa.LimSupPt2 : rpa.LimSupPt3;
+
+                                        restsEletricasCSV.BlocoReLimFormPat.Insert(index + i, newline);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                var cods = restsEletricasCSV.BlocoRe.Select(x => x.CodRE).Distinct().ToList();
+                restsEletricasCSV.BlocoReHoriz.Where(x => x.DataIni < dataEstudo).ToList().ForEach(x => x.DataIni = dataEstudo);
+                restsEletricasCSV.BlocoReLimFormPat.Where(x => x.DataIni < dataEstudo).ToList().ForEach(x => x.DataIni = dataEstudo);
+                restsEletricasCSV.BlocoReLimFormPat.Where(x => x.DataFim < dataEstudo).ToList().ForEach(x => restsEletricasCSV.BlocoReLimFormPat.Remove(x));
+
+                foreach (var cod in cods)
+                {
+                    var lineHorz = restsEletricasCSV.BlocoReHoriz.Where(x => x.CodRE == cod).FirstOrDefault();
+                    if (lineHorz != null)
+                    {
+                        restsEletricasCSV.BlocoReLimFormPat.Where(x => x.CodRE == lineHorz.CodRE && x.DataFim > lineHorz.DataFim).ToList().ForEach(x => restsEletricasCSV.BlocoReLimFormPat.Remove(x));
+                        restsEletricasCSV.BlocoReLimFormPat.Where(x => x.CodRE == lineHorz.CodRE && x.DataIni < lineHorz.DataIni).ToList().ForEach(x => restsEletricasCSV.BlocoReLimFormPat.Remove(x));
+                    }
+
+                    var blocos = restsEletricasCSV.BlocoReLimFormPat.Where(x => x.CodRE == cod).ToList();
+                    if (blocos.Count() == 0)
+                    {
+                        restsEletricasCSV.BlocoReHoriz.Where(x => x.CodRE == cod).ToList().ForEach(x => restsEletricasCSV.BlocoReHoriz.Remove(x));
+                        restsEletricasCSV.BlocoRe.Where(x => x.CodRE == cod).ToList().ForEach(x => restsEletricasCSV.BlocoRe.Remove(x));
+
+                    }
+                }
+
+                restsEletricasCSV.BlocoReLimFormPat.Where(x => x.DataFim < dataEstudo).ToList().ForEach(x => restsEletricasCSV.BlocoReLimFormPat.Remove(x));
+
+                
+
+                restsEletricasCSV.SaveToFile(filePath: restsEletricasCSVFile);
             }
 
-            if (eolGer != null)
-            {
-                var eolGerFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Path;
-                eolGer.BlocoGera.Where(x => x.DataFim < dataEstudo).ToList().ForEach(y => eolGer.BlocoGera.Remove(y));
-                eolGer.SaveToFile(filePath: eolGerFile);
-            }
+            //var eolCad = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Document as Compass.CommomLibrary.EolicaNW.EolicaCad : null;
 
-            if (eolConfig != null)
-            {
-                var eolConfigFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Path;
-                eolConfig.BlocoConfig.ToList().ForEach(x => x.DataIni = dataEstudo);
-                eolConfig.SaveToFile(filePath: eolConfigFile);
-            }
+            //var eolConfig = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Document as Compass.CommomLibrary.EolicaNW.EolicaConfig : null;
 
-            if (eolFte != null)
-            {
-                var eolFteFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Path;
-                eolFte.Blocofte.ToList().ForEach(x => x.DataIni = dataEstudo);
-                eolFte.SaveToFile(filePath: eolFteFile);
-            }
+            //var eolFte = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Document as Compass.CommomLibrary.EolicaNW.Eolicafte : null;
+
+            //var eolGer = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao] != null ? deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Document as Compass.CommomLibrary.EolicaNW.EolicaGeracao : null;
+
+            //if (eolCad != null)
+            //{
+            //    var eolcadFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicacad].Path;
+            //    eolCad.BlocoPeePot.Where(x => x.DataFim < dataEstudo).ToList().ForEach(y => eolCad.BlocoPeePot.Remove(y));
+            //    eolCad.SaveToFile(filePath: eolcadFile);
+            //}
+
+            //if (eolGer != null)
+            //{
+            //    var eolGerFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicageracao].Path;
+            //    eolGer.BlocoGera.Where(x => x.DataFim < dataEstudo).ToList().ForEach(y => eolGer.BlocoGera.Remove(y));
+            //    eolGer.SaveToFile(filePath: eolGerFile);
+            //}
+
+            //if (eolConfig != null)
+            //{
+            //    var eolConfigFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicaconfig].Path;
+            //    eolConfig.BlocoConfig.ToList().ForEach(x => x.DataIni = dataEstudo);
+            //    eolConfig.SaveToFile(filePath: eolConfigFile);
+            //}
+
+            //if (eolFte != null)
+            //{
+            //    var eolFteFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.eolicafte].Path;
+            //    eolFte.Blocofte.ToList().ForEach(x => x.DataIni = dataEstudo);
+            //    eolFte.SaveToFile(filePath: eolFteFile);
+            //}
 
         }
 

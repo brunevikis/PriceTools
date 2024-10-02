@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>dessem2ccee "K:\teste\converter dessem To ccee\DS_ONS_092024_RV0D03"</StartArguments>
+    <StartArguments>dessem2ccee "K:\teste\dessemTESTE\converterccee\DS_ONS_102024_RV0D02|true"</StartArguments>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup>

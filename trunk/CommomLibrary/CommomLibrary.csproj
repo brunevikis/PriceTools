@@ -367,6 +367,10 @@
     <Compile Include="Respot\Lm.cs" />
     <Compile Include="Respot\Respot.cs" />
     <Compile Include="Respot\Rp.cs" />
+    <Compile Include="RestElCSV\Re.cs" />
+    <Compile Include="RestElCSV\ReHoriz.cs" />
+    <Compile Include="RestElCSV\ReLimFormPat.cs" />
+    <Compile Include="RestElCSV\RestElCSV.cs" />
     <Compile Include="TermDat\TermDat.cs" />
     <Compile Include="ManuttDat\ManuttDat.cs" />
     <Compile Include="Dadger\Mt.cs" />
