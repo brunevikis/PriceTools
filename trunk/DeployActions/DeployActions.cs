@@ -70,7 +70,7 @@ namespace Compass.DeployActions
             var title = "Compass - Price Tools";
 
             var exe = Path.Combine(sourcePath, "Compass.DecompToolsShellX.exe");
-
+            //arquivo
             var comms = new Dictionary<string, string>() {
                 {"Abrir em Excel", exe + " abrir " + "\"%1\""},
                 //{"Rodar Vazoes", exe + " vazoes " + "\"%1\""},
@@ -108,7 +108,7 @@ namespace Compass.DeployActions
                 }
             }
 
-
+            //diretorio
             var commsD = new Dictionary<string, string>() {
                 {"Ver Resultado", exe + " resultado " + "\"%1\""},
                 {"Alterar Cortes e TH...", exe + " corte " + "\"%1\""},
@@ -129,6 +129,7 @@ namespace Compass.DeployActions
                 {"Ver Térmicas Despachadas" , exe + " vertermicas " + "\"%1\""},
 
                 {"Atualizar Carga" , exe + " atualizacarga " + "\"%1\""},
+                {"Atualizar Confhd" , exe + " atualizaconfhd " + "\"%1\""},
 
 
             };
@@ -153,7 +154,7 @@ namespace Compass.DeployActions
                     i++;
                 }
             }
-
+            //raiz
             var commsDb = new Dictionary<string, string>() {
                 {"Alterar Todos Cortes e THs...", exe + " cortes " + "\"%V\""},
                 {"Ver Todos Resultados", exe + " resultados " + "\"%V\""},

@@ -62,6 +62,7 @@ namespace Compass.DecompToolsShellX
             //actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
             actions.Add("atualizacarga", AtualizaCarga);
+            actions.Add("atualizaconfhd", UpdateConfHd);
 
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
 
@@ -309,10 +310,11 @@ namespace Compass.DecompToolsShellX
         }
         static void getPatamaresExt(string teste)
         {
-            int ano = 2024;
-            int anoFIm = 2024;
+            int ano = 2025;
+            int anoFIm = 2025;
             bool patamares2023 = false;
             bool patamares2024 = false;
+            bool patamares2025 = false;
 
 
             DateTime data = new DateTime(ano, 1, 1);
@@ -324,7 +326,8 @@ namespace Compass.DecompToolsShellX
             for (DateTime i = data; i <= fim; i = i.AddDays(1))
             {
                 patamares2023 = i.Year == 2023;
-                patamares2024 = i.Year >= 2024;
+                patamares2024 = i.Year == 2024;
+                patamares2025 = i.Year >= 2025;
                 string dia = "";
                 string tipo = "";
 
@@ -410,7 +413,7 @@ namespace Compass.DecompToolsShellX
                     default:
                         break;
                 }
-                var dados = Tools.GetIntervalosHoararios(i, patamares2023, patamares2024);
+                var dados = Tools.GetIntervalosHoararios(i, patamares2023, patamares2024, patamares2025);
 
                 int pesado = dados.Where(x => x.Value.ToUpper() == "PESADA").Count();
                 int medio = dados.Where(x => x.Value.ToUpper() == "MEDIA").Count();
@@ -419,7 +422,7 @@ namespace Compass.DecompToolsShellX
                 patamareDeCarga.Add($"{i:dd/MM/yyyy};{pesado};{medio};{leve};{dia};{tipo}");
 
             }
-            File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA_EXT.csv", patamareDeCarga);
+            File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA_EXT_2025.csv", patamareDeCarga);
 
         }
 
@@ -427,9 +430,11 @@ namespace Compass.DecompToolsShellX
         {
             bool patamares2023 = false;
             bool patamares2024 = false;
+            bool patamares2025 = false;
             int ano = Convert.ToInt32(anoArg);
             patamares2023 = ano == 2023;
-            patamares2024 = ano >= 2024;
+            patamares2024 = ano == 2024;
+            patamares2025 = ano >= 2025;
 
             DateTime inicio = new DateTime(ano, 1, 1);
             DateTime fim = new DateTime(ano, 12, 31);
@@ -447,7 +452,7 @@ namespace Compass.DecompToolsShellX
                     {
                         semanaFim = semanaFim.AddDays(1);
                     }
-                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023, patamares2024);
+                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023, patamares2024,patamares2025);
                     patamareDeCarga.Add("(" + semanaInicio.ToString("yyyyMM") + numeroSemana.ToString() + "," + pat.Item1.ToString() + "," + pat.Item2.ToString() + "," + pat.Item3 + "),");
                     d = semanaFim;
                     numeroSemana = d.AddDays(1).Month == semanaInicio.Month ? numeroSemana + 1 : 1;
@@ -689,7 +694,7 @@ namespace Compass.DecompToolsShellX
                 }
 
                 deck.CopyFilesToFolder(cloneDir);
-               
+
 
                 dynamic newDeck = DeckFactory.CreateDeck(cloneDir);
 
@@ -742,7 +747,7 @@ namespace Compass.DecompToolsShellX
         }
 
 
-        
+
         static void open(string filePath)
         {
 
@@ -1225,6 +1230,59 @@ namespace Compass.DecompToolsShellX
                 }
                 Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
 
+
+            }
+
+        }
+
+        static void UpdateConfHd(string commands)
+        {
+            //L:\6_decomp\03_Casos\2019_04\deck_newave_2019_04
+            //"L:\\6_decomp\\03_Casos\\2019_05\\DEC_ONS_052019_RV1_VE"
+
+            var command = commands.Split('|');
+
+            //var data = command[0].Substring(command[0].Length - 7, 7).Split('_');
+            var path = command[0];
+
+            try
+            {
+                string dir;
+                if (Directory.Exists(path))
+                {
+                    dir = path;
+                }
+                else if (File.Exists(path))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+                else
+                    return;
+
+                var deck = DeckFactory.CreateDeck(dir);
+
+                if (!(deck is Compass.CommomLibrary.Newave.Deck))
+                {
+                    throw new NotImplementedException("Deck não reconhecido para a execução");
+                }
+                else if (deck is Compass.CommomLibrary.Newave.Deck)
+                {
+                    Thread thread = new Thread(updateConfhProcess);
+                    thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA                                                                  //thread.Start(redat);
+                    thread.Start(deck);
+                    thread.Join();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                var texto = ex.ToString();
+                if (ex.ToString().Contains("reconhecido"))
+                {
+                    texto = "Deck não reconhecido para a execução!";
+                }
+                MessageBox.Show(texto, "Atenção");
 
             }
 
@@ -7013,6 +7071,14 @@ namespace Compass.DecompToolsShellX
             var deck = ONSDeck;
             var frm = new FrmOnsReCcee();
             frm.deckONS = deck as CommomLibrary.Newave.Deck;
+
+            frm.ShowDialog();
+        }
+        static void updateConfhProcess(object Deck)
+        {
+            var deck = Deck;
+            var frm = new FrmUpdateConfhd();
+            frm.deckNW = deck as CommomLibrary.Newave.Deck;
 
             frm.ShowDialog();
         }

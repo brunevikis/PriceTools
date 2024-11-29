@@ -779,8 +779,23 @@ namespace Compass.Services
                         var item = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine && x.Mercado == i && x.Ano == carga.Data.Year).FirstOrDefault();
                         if (item != null)
                         {
+                            if (i == 4)
+                            {
+                                double boaVistaLoad = 0;
+                                var linhasCadicBoavista = c_adicA.Where(x => x is Compass.CommomLibrary.C_AdicDat.MerEneLine && x.Mercado == i && !x.Descricao.ToUpper().Contains("MMGD")).ToList();
 
-                            item[carga.Data.Month] = carga.LOAD_sMMGD;
+                                var c_adicBoavista = linhasCadicBoavista.Where(x => !x.Ano.ToUpper().Contains("POS") && Convert.ToInt32(x.Ano) == carga.Data.Year).FirstOrDefault();
+                                if (c_adicBoavista != null)
+                                {
+                                    boaVistaLoad = c_adicBoavista[carga.Data.Month];
+                                }
+                                item[carga.Data.Month] = carga.LOAD_sMMGD - boaVistaLoad;//ubtriar c_adic de boavista no caso do sub norte
+
+                            }
+                            else
+                            {
+                                item[carga.Data.Month] = carga.LOAD_sMMGD;
+                            }
 
                         }
                     }

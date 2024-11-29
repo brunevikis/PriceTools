@@ -1730,7 +1730,7 @@ namespace Encadeado
                                         {
                                             //var newline = new Compass.CommomLibrary.RestElCSV.ReLimFormLine(patLine.LineCSV);
                                             var newline = restsEletricasCSV.BlocoReLimFormPat.CreateLineCSV(patLine.LineCSV);
-                                            
+                                            newline.LineCSV = patLine.LineCSV;
                                             newline.DataIni = rpa.DataIni;
                                             newline.DataFim = rpa.DataFim;
                                             newline.Patamar = i;
@@ -1764,7 +1764,7 @@ namespace Encadeado
                                     {
                                         //var newline = new Compass.CommomLibrary.RestElCSV.ReLimFormLine(firstLine.LineCSV);
                                         var newline = restsEletricasCSV.BlocoReLimFormPat.CreateLineCSV(firstLine.LineCSV);
-
+                                        newline.LineCSV = firstLine.LineCSV;
                                         newline.DataIni = rpa.DataIni;
                                         newline.DataFim = rpa.DataFim;
                                         newline.Patamar = i;
