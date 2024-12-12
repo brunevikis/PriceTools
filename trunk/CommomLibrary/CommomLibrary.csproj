@@ -440,6 +440,7 @@
     <Compile Include="VazoesC\VazoesC.cs" />
     <Compile Include="weolDados.cs" />
     <Compile Include="weolGeracao.cs" />
+    <Compile Include="WeolSM.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Model1.edmx">

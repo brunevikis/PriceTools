@@ -709,8 +709,9 @@ namespace Compass.DecompToolsShellX
                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                             }
                             bool pat2023 = dt.Year == 2023;
-                            bool pat2024 = dt.Year >= 2024;
-                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt, pat2023, pat2024);
+                            bool pat2024 = dt.Year == 2024;
+                            bool pat2025 = dt.Year >= 2025;
+                            var intervalosAgruped = Tools.GetIntervalosPatamares(dt, pat2023, pat2024,pat2025);
 
                             foreach (var inter in intervalosAgruped)
                             {

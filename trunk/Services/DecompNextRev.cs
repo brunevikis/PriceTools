@@ -3644,7 +3644,7 @@ namespace Compass.Services
 
                             int numUsinas = patamares.Nao_Simuladas.Where(x => x.Submercado == numMercado + 1).Select(x => x.Tipo_Usina).Max();///
 
-                            for (int i = 1; i <= numUsinas; i++) //for (int i = 1; i <= 4; i++)
+                            for (int i = 1; i <= numUsinas; i++) //for (int i = 1; i <= 4; i++)//TODO: logica de calcular e colocar separadamente cada tipo de usina 
                             {
                                 var Mes = dtAtual.Mes;
                                 var Ano = dtAtual.Ano;

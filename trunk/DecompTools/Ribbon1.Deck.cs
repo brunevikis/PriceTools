@@ -484,14 +484,16 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                             bool patamares2023 = w.patamares2023;
                             bool patamares2024 = false;
-                            patamares2024 = dtEstudo.Year >= 2024;
+                            bool patamares2025 = false;
+                            patamares2024 = dtEstudo.Year == 2024;
+                            patamares2025 = dtEstudo.Year >= 2025;
 
                             if (patamares2024)
                             {
                                 patamares2023 = false;
                             }
 
-                            MesOperativo mesOperativo = MesOperativo.CreateMensal(dtEstudo.Year, dtEstudo.Month, patamares2019, patamares2023, patamares2024);
+                            MesOperativo mesOperativo = MesOperativo.CreateMensal(dtEstudo.Year, dtEstudo.Month, patamares2019, patamares2023, patamares2024, patamares2025);
 
                             var horasMesEstudoP1 = mesOperativo.SemanasOperativas[0].HorasPat1;
                             var horasMesEstudoP2 = mesOperativo.SemanasOperativas[0].HorasPat2;
@@ -2816,13 +2818,15 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                         var pmoBase = DocumentFactory.Create(System.IO.Path.Combine(deckNWEstudo.BaseFolder, "pmo.dat")) as Compass.CommomLibrary.Pmo.Pmo;
                         bool patamares2023 = w.patamares2023;
                         bool patamares2024 = false;
-                        patamares2024 = dtEstudo.Year >= 2024;
+                        bool patamares2025 = false;
+                        patamares2024 = dtEstudo.Year == 2024;
+                        patamares2025 = dtEstudo.Year >= 2025;
 
-                        if (patamares2024)//filtro para usar patamares de carga 2023 ou 2024...
+                        if (patamares2024 || patamares2025)//filtro para usar patamares de carga 2023 ou 2024...
                         {
                             patamares2023 = false;
                         }
-                        var mesOperativo = MesOperativo.CreateSemanal(dtEstudo.Year, dtEstudo.Month, patamares2019, patamares2023, patamares2024);
+                        var mesOperativo = MesOperativo.CreateSemanal(dtEstudo.Year, dtEstudo.Month, patamares2019, patamares2023, patamares2024, patamares2025);
 
 
 
@@ -3968,7 +3972,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                                 if (_e > mesOperativo.EstagiosReaisDoMesAtual && endSemanaTemp.Day < 7) endSemanaTemp = endSemanaTemp.AddDays(-endSemanaTemp.Day);
 
 
-                                var semanaOperativaTemp = new SemanaOperativa(dtTemp, endSemanaTemp, patamares2019, patamares2023, patamares2024);
+                                var semanaOperativaTemp = new SemanaOperativa(dtTemp, endSemanaTemp, patamares2019, patamares2023, patamares2024, patamares2025);
 
 
                                 var despachoDeckAnterior = glOriginal.Where(x => x.NumeroUsina == ut.Usina)

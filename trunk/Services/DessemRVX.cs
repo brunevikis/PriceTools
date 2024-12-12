@@ -747,9 +747,10 @@ namespace Compass.Services
 
 
                         bool pat2023 = d.Year == 2023;
-                        bool pat2024 = d.Year >= 2024;
+                        bool pat2024 = d.Year == 2024;
+                        bool pat2025 = d.Year >= 2025;
 
-                        var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024);
+                        var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024, pat2025);
 
                         foreach (var inter in intervalosAgruped)
                         {
@@ -844,10 +845,11 @@ namespace Compass.Services
             for (DateTime dtm = dataEstudo; dtm <= fimrev; dtm = dtm.AddDays(1))
             {
                 bool patamres2023 = dtm.Year == 2023;
-                bool patamares2024 = dtm.Year >= 2024;
+                bool patamares2024 = dtm.Year == 2024;
+                bool patamares2025 = dtm.Year >= 2025;
 
-                var intervalosHor = Tools.GetIntervalosHoararios(dtm, patamres2023, patamares2024);
-                var intervalosAgrpHor = Tools.GetIntervalosPatamares(dtm, patamres2023, patamares2024);
+                var intervalosHor = Tools.GetIntervalosHoararios(dtm, patamres2023, patamares2024, patamares2025);
+                var intervalosAgrpHor = Tools.GetIntervalosPatamares(dtm, patamres2023, patamares2024, patamares2025);
 
                 if (dtm == dataEstudo)//primeiro dia 
                 {

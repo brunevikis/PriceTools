@@ -1,4 +1,5 @@
 ﻿using Compass.CommomLibrary;
+using Compass.CommomLibrary.Dadger;
 using Compass.ExcelTools;
 using Microsoft.Office.Interop.Excel;
 using System;
@@ -646,6 +647,203 @@ namespace Compass.Services
 
         }
 
+        public static void AtualizaWeolNWDCProcess(Compass.CommomLibrary.Newave.Deck deckNW, Compass.CommomLibrary.Decomp.Deck deckDC, string csvFile)
+        {
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            List<WeolSM> weolDados = new List<WeolSM>();
+            var linhas = File.ReadAllLines(csvFile).ToList();
+            var semanasTosplit = linhas[0].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            for (int l = 2; l < linhas.Count(); l++)
+            {
+                var partes = linhas[l].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                for (int i = 1; i < semanasTosplit.Count(); i = i + 3)
+                {
+                    WeolSM weol = new WeolSM();
+
+                    weol.SemanaIni = Convert.ToDateTime(semanasTosplit[i], Culture.DateTimeFormat);
+                    weol.SemanaFim = Convert.ToDateTime(semanasTosplit[i + 2], Culture.DateTimeFormat);
+                    weol.Submercado = partes[0].ToUpper();
+                    weol.CargaPat1 = Convert.ToDouble(partes[i].Replace(".", ","));
+                    weol.CargaPat2 = Convert.ToDouble(partes[i + 1].Replace(".", ","));
+                    weol.CargaPat3 = Convert.ToDouble(partes[i + 2].Replace(".", ","));
+
+                    weolDados.Add(weol);
+                }
+            }
+
+            if (deckNW != null)
+            {
+                DateTime datadeck = deckNW.Dger.DataEstudo;
+                bool pat2024 = datadeck.Year == 2024;
+                bool pat2025 = datadeck.Year >= 2025;
+                var patamarDat = deckNW[CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as Compass.CommomLibrary.PatamarDat.PatamarDat;//lembrar de como pegar os dados de patamar e duração( indice do bloco duração é mes+1, indice do bloco peqnas é mes )
+                var sistema = deckNW[CommomLibrary.Newave.Deck.DeckDocument.sistema].Document as CommomLibrary.SistemaDat.SistemaDat;
+
+                var patDura = patamarDat.Duracao.Where(d => d.Ano == datadeck.Year);
+
+                //var intMedio =
+                //intercambio.RestricaoP1 * patTemp.First(p => p.Patamar == 1)[dataModif.Month + 1]
+                // + intercambio.RestricaoP2 * patTemp.First(p => p.Patamar == 2)[dataModif.Month + 1]
+                //+ intercambio.RestricaoP3 * patTemp.First(p => p.Patamar == 3)[dataModif.Month + 1];
+                bool alterou = false;
+
+                foreach (var sub in weolDados.Select(x => x.SubNum).Distinct())
+                {
+                    List<Tuple<int, int, int>> duracaoSemPats = new List<Tuple<int, int, int>>();
+                    var semanasMes = weolDados.Where(x => x.SubNum == sub && ((x.SemanaIni <= datadeck && x.SemanaFim >= datadeck) || (x.SemanaIni >= datadeck && x.SemanaFim <= datadeck.AddMonths(1).AddDays(5)))).ToList();
+                    var linhasPatEol = patamarDat.Nao_Simuladas.Where(x => x is Compass.CommomLibrary.PatamarDat.UNSABLine && x.Submercado == sub && x.Ano == datadeck.Year /*&& x.Patamar == p*/ && x.Tipo_Usina == 3);
+
+                    double CargaPatMensal1 = 0;//cargas mensais por patamar
+                    double CargaPatMensal2 = 0;
+                    double CargaPatMensal3 = 0;
+
+                    double PatMensal1 = 0;//novos patamares do mes 
+                    double PatMensal2 = 0;
+                    double PatMensal3 = 0;
+
+                    double CargaMensal = 0;//medio da carga por patamar
+
+                    if (semanasMes.Count() > 0)//se tem semanas correspondentes ao mes do deck
+                    {
+                        alterou = true;
+
+                        foreach (var item in semanasMes)
+                        {
+                            DateTime diaIni = item.SemanaIni < datadeck ? datadeck : item.SemanaIni;
+                            DateTime diafim = item.SemanaFim > datadeck.AddMonths(1).AddDays(-1) ? datadeck.AddMonths(1).AddDays(-1) : item.SemanaFim;
+
+                            var duracaoPats = Tools.GetHorasPatamares(diaIni, diafim, true, false, pat2024, pat2025);
+
+                            duracaoSemPats.Add(duracaoPats);
+                        }
+
+                        for (int i = 0; i < semanasMes.Count(); i++)
+                        {
+                            CargaPatMensal1 = CargaPatMensal1 + (semanasMes[i].CargaPat1 * duracaoSemPats[i].Item1);
+                            CargaPatMensal2 = CargaPatMensal2 + (semanasMes[i].CargaPat2 * duracaoSemPats[i].Item2);
+                            CargaPatMensal3 = CargaPatMensal3 + (semanasMes[i].CargaPat3 * duracaoSemPats[i].Item3);
+                        }
+
+                        CargaPatMensal1 = CargaPatMensal1 / duracaoSemPats.Select(x => x.Item1).Sum();
+                        CargaPatMensal2 = CargaPatMensal2 / duracaoSemPats.Select(x => x.Item2).Sum();
+                        CargaPatMensal3 = CargaPatMensal3 / duracaoSemPats.Select(x => x.Item3).Sum();
+
+                        CargaMensal = CargaPatMensal1 * patDura.First(p => p.Patamar == 1)[datadeck.Month + 1]
+                                     + CargaPatMensal2 * patDura.First(p => p.Patamar == 2)[datadeck.Month + 1]
+                                     + CargaPatMensal3 * patDura.First(p => p.Patamar == 3)[datadeck.Month + 1];
+
+                        PatMensal1 = CargaPatMensal1 / CargaMensal;
+                        PatMensal2 = CargaPatMensal2 / CargaMensal;
+                        PatMensal3 = CargaPatMensal3 / CargaMensal;
+
+                        var patEol = linhasPatEol.Where(x => x.Patamar == 1).First();
+                        patEol[datadeck.Month] = PatMensal1;
+
+                        patEol = linhasPatEol.Where(x => x.Patamar == 2).First();
+                        patEol[datadeck.Month] = PatMensal2;
+
+                        patEol = linhasPatEol.Where(x => x.Patamar == 3).First();
+                        patEol[datadeck.Month] = PatMensal3;
+
+                        var unsiEol = sistema.Pequenas.Where(x => x is Compass.CommomLibrary.SistemaDat.PeqEneLine && x.Mercado == sub && x.Tipo_Usina == 3 && x.Ano == datadeck.Year).FirstOrDefault();
+                        if (unsiEol != null)
+                        {
+                            unsiEol[datadeck.Month] = CargaMensal;
+                        }
+
+                    }
+                }
+                if (alterou == true)
+                {
+                    patamarDat.SaveToFile(createBackup: true);
+                    sistema.SaveToFile(createBackup: true);
+
+                    MessageBox.Show("Processo realizado com sucesso!", "Atualizar Weol decks NW DC ");
+                }
+                else
+                {
+                    MessageBox.Show("Não foram encontrados dados correspondentes ao mes de estudo", "Atualizar Weol decks NW DC ");
+                }
+            }
+            else if (deckDC != null)
+            {
+
+
+                var dadger = deckDC[CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
+                DateTime datadeck = dadger.DataEstudo;
+                var rvinicio = Tools.GetCurrRev(dadger.DataEstudo);
+                bool pat2024 = datadeck.Year == 2024;
+                bool pat2025 = datadeck.Year >= 2025;
+                var mesOperativo = MesOperativo.CreateSemanal(rvinicio.revDate.Year, rvinicio.revDate.Month, true, false, pat2024, pat2025);
+              
+                bool alterou = false;
+
+                foreach (var sub in weolDados.Select(x => x.SubNum).Distinct())
+                {
+                    int estagio = 1;
+
+                    var semanasMes = weolDados.Where(x => x.SubNum == sub && x.SemanaIni >= datadeck && x.SemanaFim <= mesOperativo.SemanasOperativas[mesOperativo.Estagios - 1].Fim).ToList();
+
+                    if (semanasMes.Count() > 0)//se tem semanas correspondentes ao mes do deck
+                    {
+                        alterou = true;
+
+                        foreach (var item in semanasMes)
+                        {
+                            int weekIndex = mesOperativo.SemanasOperativas.IndexOf(mesOperativo.SemanasOperativas.Where(x => x.Inicio == item.SemanaIni).First());
+                            int est = 1;
+                            for (DateTime d = datadeck; d <= semanasMes.Last().SemanaIni; d = d.AddDays(7))// procura ajustar o numero do estagios com os dados das semanas em casos  de decks e weols de rvs diferentes 
+                            {
+                                if (d == mesOperativo.SemanasOperativas[weekIndex].Inicio)
+                                {
+                                    estagio = est;
+                                    break;
+                                }
+                                else
+                                {
+                                    est++;
+                                }
+                            }
+                          
+                            var pqline = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                            if (pqline != null)
+                            {
+                                if (pqline.Estagio == estagio)
+                                {
+                                    pqline.Pat1 = item.CargaPat1;
+                                    pqline.Pat2 = item.CargaPat2;
+                                    pqline.Pat3 = item.CargaPat3;
+                                }
+                                else if (pqline.Estagio < estagio)
+                                {
+                                    var pqlineNew = new PqLine();
+                                    pqlineNew.Usina = pqline.Usina;
+                                    pqlineNew.SubMercado = pqline.SubMercado;
+                                    pqlineNew.Estagio =estagio;
+                                    pqlineNew.Pat1 = item.CargaPat1;
+                                    pqlineNew.Pat2 = item.CargaPat2;
+                                    pqlineNew.Pat3 = item.CargaPat3;
+                                    dadger.BlocoPq.InsertAfter(pqline, pqlineNew);
+                                }
+                            }
+                        }
+
+                    }
+                }
+                if (alterou == true)
+                {
+                    dadger.SaveToFile(createBackup: true);
+
+                    MessageBox.Show("Processo realizado com sucesso!", "Atualizar Weol decks NW DC ");
+                }
+                else
+                {
+                    MessageBox.Show("Não foram encontrados dados correspondentes ao mes de estudo", "Atualizar Weol decks NW DC ");
+                }
+            }
+
+
+        }
         public static void AtualizaCargaMensal(Compass.CommomLibrary.Newave.Deck Deck, string filePath)
         {
             var patamarDat = Deck[CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as Compass.CommomLibrary.PatamarDat.PatamarDat;

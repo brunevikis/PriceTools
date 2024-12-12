@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>325</ApplicationRevision>
+    <ApplicationRevision>326</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -256,6 +256,12 @@
     <Compile Include="FrmUpdateConfhd.Designer.cs">
       <DependentUpon>FrmUpdateConfhd.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmUpdateWeolNwDc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmUpdateWeolNwDc.Designer.cs">
+      <DependentUpon>FrmUpdateWeolNwDc.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -385,6 +391,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmUpdateConfhd.resx">
       <DependentUpon>FrmUpdateConfhd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmUpdateWeolNwDc.resx">
+      <DependentUpon>FrmUpdateWeolNwDc.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmViewer.resx">
       <DependentUpon>FrmViewer.cs</DependentUpon>

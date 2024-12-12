@@ -59,10 +59,11 @@ namespace Compass.DecompToolsShellX
             actions.Add("resdatabase", ResDataBaseTools);//resdatabase//
             actions.Add("coletalimites", ColetaLimites);
             //actions.Add("getpatamares", getPatamares);
-            //actions.Add("getpatamaresext", getPatamaresExt);
+            actions.Add("getpatamaresext", getPatamaresExt);
             actions.Add("vertermicas", vertermicas);
             actions.Add("atualizacarga", AtualizaCarga);
             actions.Add("atualizaconfhd", UpdateConfHd);
+            actions.Add("atualizaweol", UpdateWeolNWDC);
 
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
 
@@ -311,7 +312,7 @@ namespace Compass.DecompToolsShellX
         static void getPatamaresExt(string teste)
         {
             int ano = 2025;
-            int anoFIm = 2025;
+            int anoFIm = 2029;
             bool patamares2023 = false;
             bool patamares2024 = false;
             bool patamares2025 = false;
@@ -422,7 +423,7 @@ namespace Compass.DecompToolsShellX
                 patamareDeCarga.Add($"{i:dd/MM/yyyy};{pesado};{medio};{leve};{dia};{tipo}");
 
             }
-            File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA_EXT_2025.csv", patamareDeCarga);
+            File.WriteAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\PATAMARESDECARGA_EXT_2025_2029.csv", patamareDeCarga);
 
         }
 
@@ -452,7 +453,7 @@ namespace Compass.DecompToolsShellX
                     {
                         semanaFim = semanaFim.AddDays(1);
                     }
-                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023, patamares2024,patamares2025);
+                    var pat = Tools.GetHorasPatamares(semanaInicio, semanaFim, true, patamares2023, patamares2024, patamares2025);
                     patamareDeCarga.Add("(" + semanaInicio.ToString("yyyyMM") + numeroSemana.ToString() + "," + pat.Item1.ToString() + "," + pat.Item2.ToString() + "," + pat.Item3 + "),");
                     d = semanaFim;
                     numeroSemana = d.AddDays(1).Month == semanaInicio.Month ? numeroSemana + 1 : 1;
@@ -1228,7 +1229,7 @@ namespace Compass.DecompToolsShellX
                 {
                     texto = "Deck não reconhecido para a execução por falta de arquivos!";
                 }
-                Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
+                Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha ao converter deck");
 
 
             }
@@ -1268,6 +1269,66 @@ namespace Compass.DecompToolsShellX
                 else if (deck is Compass.CommomLibrary.Newave.Deck)
                 {
                     Thread thread = new Thread(updateConfhProcess);
+                    thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA                                                                  //thread.Start(redat);
+                    thread.Start(deck);
+                    thread.Join();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                var texto = ex.ToString();
+                if (ex.ToString().Contains("reconhecido"))
+                {
+                    texto = "Deck não reconhecido para a execução!";
+                }
+                MessageBox.Show(texto, "Atenção");
+
+            }
+
+        }
+
+        static void UpdateWeolNWDC(string commands)
+        {
+            //L:\6_decomp\03_Casos\2019_04\deck_newave_2019_04
+            //"L:\\6_decomp\\03_Casos\\2019_05\\DEC_ONS_052019_RV1_VE"
+
+            var command = commands.Split('|');
+
+            //var data = command[0].Substring(command[0].Length - 7, 7).Split('_');
+            var path = command[0];
+
+            try
+            {
+                string dir;
+                if (Directory.Exists(path))
+                {
+                    dir = path;
+                }
+                else if (File.Exists(path))
+                {
+                    dir = Path.GetDirectoryName(path);
+                }
+                else
+                    return;
+
+                var deck = DeckFactory.CreateDeck(dir);
+
+                if (!(deck is Compass.CommomLibrary.Newave.Deck || deck is Compass.CommomLibrary.Decomp.Deck))
+                {
+                    throw new NotImplementedException("Deck não reconhecido para a execução");
+                }
+                else if (deck is Compass.CommomLibrary.Newave.Deck)
+                {
+                    Thread thread = new Thread(updateWeolNWProcess);
+                    thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA                                                                  //thread.Start(redat);
+                    thread.Start(deck);
+                    thread.Join();
+                }
+                else if (deck is Compass.CommomLibrary.Decomp.Deck)
+                {
+                    Thread thread = new Thread(updateWeolDCProcess);
                     thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA                                                                  //thread.Start(redat);
                     thread.Start(deck);
                     thread.Join();
@@ -1966,8 +2027,9 @@ namespace Compass.DecompToolsShellX
                                                 NewdadosCarga.Add(Ndad);//submercad,hora,valor
                                             }
                                             bool pat2023 = d.Year == 2023;
-                                            bool pat2024 = d.Year >= 2024;
-                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024);
+                                            bool pat2024 = d.Year == 2024;
+                                            bool pat2025 = d.Year >= 2025;
+                                            var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024, pat2025);
 
                                             foreach (var inter in intervalosAgruped)
                                             {
@@ -2701,7 +2763,7 @@ namespace Compass.DecompToolsShellX
                         if (command.Count() > 1 && command[1] == "true")
                         {
 
-                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Conversão Decodess");
+                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Conversão Decodess");
 
                         }
                     }
@@ -2720,7 +2782,7 @@ namespace Compass.DecompToolsShellX
                         {
                             texto = "Deck não reconhecido para a execução por falta de arquivos!";
                         }
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha na conversão Decodess");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha na conversão Decodess");
                         if (Directory.Exists(cloneDir))
                         {
                             Directory.Delete(cloneDir, true);
@@ -3228,9 +3290,10 @@ namespace Compass.DecompToolsShellX
 
             #region BLOCO TM
             bool patamres2023 = dataEstudo.Year == 2023;
-            bool patamares2024 = dataEstudo.Year >= 2024;
+            bool patamares2024 = dataEstudo.Year == 2024;
+            bool patamares2025 = dataEstudo.Year >= 2025;
 
-            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamres2023, patamares2024);
+            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamres2023, patamares2024, patamares2025);
             string comentario = entdados.BlocoTm.First().Comment;
             for (DateTime d = dataEstudo.AddDays(-7); d <= dataEstudo; d = d.AddDays(1))
             {
@@ -4918,7 +4981,7 @@ namespace Compass.DecompToolsShellX
                         var texto = "Deck DESSEM CCEE agendado para execução!";
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br", "AUTORUN DESSEM CCEE");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "AUTORUN DESSEM CCEE");
 
                     }
                     else
@@ -4938,7 +5001,7 @@ namespace Compass.DecompToolsShellX
                 {
                     var texto = "Erro: " + ex.ToString();
 
-                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br", "Falha AUTORUN DESSEM CCEE");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha AUTORUN DESSEM CCEE");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);
@@ -5021,12 +5084,12 @@ namespace Compass.DecompToolsShellX
                         if (sucesso)
                         {
                             string frase = "Deck convertido ONS->CCEE encaminhado para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br", "AUTORUN DESSEM ONS->CCEE");
+                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "AUTORUN DESSEM ONS->CCEE");
                         }
                         else
                         {
                             string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
+                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Sucesso ao converter deckDessem");
                         }
 
                     }
@@ -5046,7 +5109,7 @@ namespace Compass.DecompToolsShellX
                     if (command.Count() > 1 && command[1] == "true")
                     {
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha ao converter deckDessem");
                     }
                 }
 
@@ -5061,7 +5124,7 @@ namespace Compass.DecompToolsShellX
                     {
                         texto = "Deck não reconhecido para a execução por falta de arquivos!";
                     }
-                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deckDessem");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha ao converter deckDessem");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);
@@ -7079,6 +7142,24 @@ namespace Compass.DecompToolsShellX
             var deck = Deck;
             var frm = new FrmUpdateConfhd();
             frm.deckNW = deck as CommomLibrary.Newave.Deck;
+
+            frm.ShowDialog();
+        }
+
+        static void updateWeolNWProcess(object Deck)
+        {
+            var deck = Deck;
+            var frm = new FrmUpdateWeolNwDc();
+            frm.deckNW = deck as CommomLibrary.Newave.Deck;
+
+            frm.ShowDialog();
+        }
+
+        static void updateWeolDCProcess(object Deck)
+        {
+            var deck = Deck;
+            var frm = new FrmUpdateWeolNwDc();
+            frm.deckDC = deck as CommomLibrary.Decomp.Deck;
 
             frm.ShowDialog();
         }

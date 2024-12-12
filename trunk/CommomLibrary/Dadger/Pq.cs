@@ -31,8 +31,13 @@ namespace Compass.CommomLibrary.Dadger {
         public override BaseField[] Campos {
             get { return campos; }
         }
+        public string Usina { get { return (string)this[1]; } set { this[1] = value; } }
+        public int SubMercado { get { return (int)this[2]; } set { this[2] = value; } }
+        public int Estagio { get { return (int)this[3]; } set { this[3] = value; } }
 
-       
+        public double Pat1 { get { return (double)this[4]; } set { this[4] = value; } }
+        public double Pat2 { get { return (double)this[5]; } set { this[5] = value; } }
+        public double Pat3 { get { return (double)this[6]; } set { this[6] = value; } }
     }
 
     

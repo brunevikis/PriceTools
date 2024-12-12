@@ -130,6 +130,7 @@ namespace Compass.DeployActions
 
                 {"Atualizar Carga" , exe + " atualizacarga " + "\"%1\""},
                 {"Atualizar Confhd" , exe + " atualizaconfhd " + "\"%1\""},
+                {"Atualizar weol NW DC" , exe + " atualizaweol " + "\"%1\""},
 
 
             };

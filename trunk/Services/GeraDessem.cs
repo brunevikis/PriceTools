@@ -259,9 +259,10 @@ namespace Compass.Services
 
             #region BLOCO TM
             bool patamares2023 = dataEstudo.Year == 2023;
-            bool patamares2024 = dataEstudo.Year >= 2024;
+            bool patamares2024 = dataEstudo.Year == 2024;
+            bool patamares2025 = dataEstudo.Year >= 2025;
 
-            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamares2023, patamares2024);
+            var intervalos = Tools.GetIntervalosHoararios(dataEstudo, patamares2023, patamares2024, patamares2025);
             string comentario = entdados.BlocoTm.First().Comment;
             for (DateTime d = dataEstudo.AddDays(-7); d <= dataEstudo; d = d.AddDays(1))
             {
@@ -493,9 +494,10 @@ namespace Compass.Services
                             NewdadosCarga.Add(Ndad);//submercad,hora,valor
                         }
                         bool pat2023 = d.Year == 2023;
-                        bool pat2024 = d.Year >= 2024;
+                        bool pat2024 = d.Year == 2024;
+                        bool pat2025 = d.Year >= 2025;
 
-                        var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024);
+                        var intervalosAgruped = Tools.GetIntervalosPatamares(d, pat2023, pat2024, pat2025);
 
                         foreach (var inter in intervalosAgruped)
                         {
