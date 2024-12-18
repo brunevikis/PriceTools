@@ -389,25 +389,25 @@ new DateTime(2033,12,25),
             // var horasPatamares = new Tuple<int, int, int>[] {
             //                new Tuple<int,int,int>(3,14,7),
             //                new Tuple<int,int,int>(0,5,19),
-            if (patamares2019)
-                horasPatamares = new Tuple<int, int, int>[,] {
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) }
-            };
-            else
-                horasPatamares = new Tuple<int, int, int>[,] {
-                           { new Tuple<int,int,int>(3,14,7), new Tuple<int,int,int>(0,5,19) }
-                };
+            //if (patamares2019)
+            //    horasPatamares = new Tuple<int, int, int>[,] {
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) }
+            //};
+            //else
+            //    horasPatamares = new Tuple<int, int, int>[,] {
+            //               { new Tuple<int,int,int>(3,14,7), new Tuple<int,int,int>(0,5,19) }
+            //    };
 
             //{ new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,03,21) }, patamares2021
             //{ new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
@@ -421,59 +421,59 @@ new DateTime(2033,12,25),
             //    { new Tuple<int, int, int>(10, 06, 08), new Tuple<int, int, int>(00, 04, 20) },
             //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) },
             //    { new Tuple<int, int, int>(08, 08, 08), new Tuple<int, int, int>(00, 03, 21) }
-            if (patamares2023)
-            {
-                horasPatamares = new Tuple<int, int, int>[,] {
-                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
-                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
-                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
-                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
-                { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) }//
-            };
-            }
+            //if (patamares2023)
+            //{
+            //    horasPatamares = new Tuple<int, int, int>[,] {
+            //    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+            //    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+            //    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+            //    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+            //    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) }//
+            //};
+            //}
 
-            if (patamares2024)
-            {
-                horasPatamares = new Tuple<int, int, int>[,] {
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//jan
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//fev
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//mar
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//abr
-                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//mai
-                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//jun
-                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//jul
-                { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//ago
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//set
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//out
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//nov
-                { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) }// dez
-            };
-            }
+            //if (patamares2024)
+            //{
+            //    horasPatamares = new Tuple<int, int, int>[,] {
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//jan
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//fev
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//mar
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//abr
+            //    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//mai
+            //    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//jun
+            //    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//jul
+            //    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//ago
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//set
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//out
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//nov
+            //    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) }// dez
+            //};
+            //}
 
-            if (patamares2025)
-            {
-                horasPatamares = new Tuple<int, int, int>[,] {
-                { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },//jan
-                { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////fev
-                { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////mar
-                { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////abr
-                { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////mai
-                { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jun
-                { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jul
-                { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////ago
-                { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////set
-                { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////out
-                { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////nov
-                { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) }/////dez
-            };
-            }
+            //if (patamares2025)
+            //{
+            //    horasPatamares = new Tuple<int, int, int>[,] {
+            //    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },//jan
+            //    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////fev
+            //    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////mar
+            //    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////abr
+            //    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////mai
+            //    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jun
+            //    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jul
+            //    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////ago
+            //    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////set
+            //    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////out
+            //    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////nov
+            //    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) }/////dez
+            //};
+            //}
 
 
 
@@ -484,17 +484,109 @@ new DateTime(2033,12,25),
             for (DateTime dt = ini; dt <= fim; dt = dt.AddDays(1))
             {
                 Tuple<int, int, int> pat;
-
+                int year = dt.Year;
+                patamares2019 = year <= 2022 ? true : false;
+                patamares2023 = year == 2023 ? true : false;
+                patamares2024 = year == 2024 ? true : false;
+                patamares2025 = year >= 2025 ? true : false;
 
                 if (patamares2019)
-                    pat = (dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday || feriados.Contains(dt)) ?
+                {
+                    horasPatamares = new Tuple<int, int, int>[,] {
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(12,05,07), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(10,06,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) }
+                        };
+                }
+                else if (patamares2023)
+                {
+                    horasPatamares = new Tuple<int, int, int>[,] {
+                    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(07,09,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//
+                    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) },//
+                    { new Tuple<int,int,int>(09,07,08), new Tuple<int,int,int>(00,05,19) }//
+                        };
+                }
+                else if (patamares2024)
+                {
+                    horasPatamares = new Tuple<int, int, int>[,] {
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//jan
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//fev
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//mar
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//abr
+                    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//mai
+                    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//jun
+                    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//jul
+                    { new Tuple<int,int,int>(06,10,08), new Tuple<int,int,int>(00,04,20) },//ago
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//set
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,04,20) },//out
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) },//nov
+                    { new Tuple<int,int,int>(08,08,08), new Tuple<int,int,int>(00,05,19) }// dez
+                        };
+                }
+                else if (patamares2025)
+                {
+                    horasPatamares = new Tuple<int, int, int>[,] {
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },//jan
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////fev
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////mar
+                    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////abr
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////mai
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jun
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jul
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////ago
+                    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////set
+                    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////out
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////nov
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) }/////dez
+                        };
+                }
+                else
+                {
+
+                    horasPatamares = new Tuple<int, int, int>[,] {
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },//jan
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////fev
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////mar
+                    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////abr
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////mai
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jun
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////jul
+                    { new Tuple<int,int,int>(05,11,08), new Tuple<int,int,int>(00,05,19) },////ago
+                    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////set
+                    { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////out
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////nov
+                    { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) }/////dez
+                        };
+                }
+
+
+                //if (patamares2019)
+                pat = (dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday || feriados.Contains(dt)) ?
                        horasPatamares[dt.Month - 1, 1] :
                        horasPatamares[dt.Month - 1, 0];
 
-                else
-                    pat = (dt.DayOfWeek == DayOfWeek.Sunday || feriados.Contains(dt)) ?
-                           horasPatamares[0, 1] :
-                           horasPatamares[0, 0];
+                //else
+                //    pat = (dt.DayOfWeek == DayOfWeek.Sunday || feriados.Contains(dt)) ?
+                //           horasPatamares[0, 1] :
+                //           horasPatamares[0, 0];
 
 
                 p1 += pat.Item1;
@@ -2410,7 +2502,7 @@ new DateTime(2033,12,25),
             mOper.Fim = datetime.AddMonths(1).AddDays(-1);
 
             mOper.SemanasOperativas.Add(
-                new SemanaOperativa(mOper.Inicio, mOper.Fim, patamares2019, patamares2023, patamares2024,patamares2025)
+                new SemanaOperativa(mOper.Inicio, mOper.Fim, patamares2019, patamares2023, patamares2024, patamares2025)
                 );
             mOper.SemanasOperativas.Add(
                 new SemanaOperativa(mOper.Inicio.AddMonths(1), datetime.AddMonths(2).AddDays(-1), patamares2019, patamares2023, patamares2024, patamares2025)

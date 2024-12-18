@@ -480,7 +480,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
                             var durPat1 = patamares.Blocos["Duracao"].Where(x => x[1] == dtEstudo.Year).OrderBy(x => x[0]).Select(x => x[dtEstudo.Month.ToString()]).ToArray();
                             var durPat2 = patamares.Blocos["Duracao"].Where(x => x[1] == dtEstudoSeguinte.Year).OrderBy(x => x[0]).Select(x => x[dtEstudoSeguinte.Month.ToString()]).ToArray();
 
-                            var patamares2019 = durPat1[0] > 0.15;
+                            //var patamares2019 = durPat1[0] > 0.15;
+                            var patamares2019 = true;
 
                             bool patamares2023 = w.patamares2023;
                             bool patamares2024 = false;
@@ -2813,7 +2814,8 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                         var patamares = deckNWEstudo[CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as Compass.CommomLibrary.PatamarDat.PatamarDat;
                         var durPat1 = patamares.Blocos["Duracao"].Where(x => x[1] == dtEstudo.Year).OrderBy(x => x[0]).Select(x => x[dtEstudo.Month.ToString()]).ToArray();
-                        bool patamares2019 = durPat1[0] > 0.15;
+                        //bool patamares2019 = durPat1[0] > 0.15;
+                        bool patamares2019 = true;
 
                         var pmoBase = DocumentFactory.Create(System.IO.Path.Combine(deckNWEstudo.BaseFolder, "pmo.dat")) as Compass.CommomLibrary.Pmo.Pmo;
                         bool patamares2023 = w.patamares2023;

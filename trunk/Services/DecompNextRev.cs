@@ -3641,6 +3641,8 @@ namespace Compass.Services
                             double p1 = 0;
                             double p2 = 0;
                             double p3 = 0;
+                            List<string> tipoUsinas = new List<string> { "", "_PCH", "_PCT", "_EOL", "_UFV", "_PCHgd", "_PCTgd", "_EOLgd", "_UFVgd" };//não alterar essa ordem 
+                            List<string> submercadoAbrev = new List<string> { "","SECO","SUL","NE","N" };//não alterar essa ordem 
 
                             int numUsinas = patamares.Nao_Simuladas.Where(x => x.Submercado == numMercado + 1).Select(x => x.Tipo_Usina).Max();///
 
@@ -3694,22 +3696,35 @@ namespace Compass.Services
                                     p2 = p2 + eolP2;
                                     p3 = p3 + eolP3;
 
-                                    adicionado = true;
+                                    //adicionado = true;
                                 }
+                                var pLine = new PqLine();
+                                pLine[1] = submercadoAbrev[numMercado + 1] + tipoUsinas[i];
+                                pLine[2] = numMercado + 1;
+                                pLine[3] = e + 1;
 
+
+                                pLine[4] = Math.Round(p1, 0);
+                                pLine[5] = Math.Round(p2, 0);
+                                pLine[6] = Math.Round(p3, 0);
+
+                                dadger.BlocoPq.Add(pLine.Clone());
+                                p1 = 0;
+                                p2 = 0;
+                                p3 = 0;
                             }
 
-                            var pLine = new PqLine();
-                            pLine[1] = m;
-                            pLine[2] = numMercado + 1;
-                            pLine[3] = e + 1;
+                            //var pLine = new PqLine();
+                            //pLine[1] = m;
+                            //pLine[2] = numMercado + 1;
+                            //pLine[3] = e + 1;
 
 
-                            pLine[4] = Math.Round(p1, 0);
-                            pLine[5] = Math.Round(p2, 0);
-                            pLine[6] = Math.Round(p3, 0);
+                            //pLine[4] = Math.Round(p1, 0);
+                            //pLine[5] = Math.Round(p2, 0);
+                            //pLine[6] = Math.Round(p3, 0);
 
-                            dadger.BlocoPq.Add(pLine.Clone());
+                            //dadger.BlocoPq.Add(pLine.Clone());
                         }
                         else
                         {
