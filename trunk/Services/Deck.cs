@@ -806,6 +806,7 @@ namespace Compass.Services
                             }
                           
                             var pqline = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                            var pqlineList = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio);
                             if (pqline != null)
                             {
                                 if (pqline.Estagio == estagio)

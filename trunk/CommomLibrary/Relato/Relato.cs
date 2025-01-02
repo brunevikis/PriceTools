@@ -120,60 +120,60 @@ namespace Compass.CommomLibrary.Relato {
 
 
                     if (carregarBalancoEne && Regex.IsMatch(line, @"RELATORIO\s+DO\s+BALANCO\s+ENERGETICO", RegexOptions.IgnoreCase)) {
-                        carregarBalancoEne = false;
+                        carregarBalancoEne = false;//
                         CarregarBalancoEne(tr);
                         carregaOps = true;
                         carregaVolUtil = true;
                     }
                     if (carregarRestricoesEletricas && Regex.IsMatch(line, @"Relatorio\s+das\s+Restricoes\s+Eletricas[^\d]+(\d+)", RegexOptions.IgnoreCase)) {
                         int patamar = int.Parse(Regex.Match(line, @"Relatorio\s+das\s+Restricoes\s+Eletricas[^\d]+(\d+)", RegexOptions.IgnoreCase).Groups[1].Value);
-                        CarregarRestricoesEletricas(tr, estagio, patamar);
+                        CarregarRestricoesEletricas(tr, estagio, patamar);//
 
                         if (patamar == 3) { carregarRestricoesEletricas = false; carregarOperTerm = true; }
                     }
 
                     if (carregarDadosTerm && Regex.IsMatch(line, @"Relatorio\s+dos\s+Dados\s+de\s+Usinas\s+Termicas", RegexOptions.IgnoreCase)) {
-                        carregarDadosTerm = false;
+                        carregarDadosTerm = false;//
                         CarregarDadosTerm(tr);
                         carregarDadosMercado = true;
                     }
                     if (carregarOperTerm && Regex.IsMatch(line, @"RELATORIO\s+DA\s+OPERACAO\s+TERMICA\s+E\s+CONTRATOS", RegexOptions.IgnoreCase)) {
-                        carregarOperTerm = false;
+                        carregarOperTerm = false;//
                         CarregarOperTerm(tr);
                         carregarBalancoEne = true;
                     }
                     if (carregarDadosMercado && Regex.IsMatch(line, @"Relatorio\s+dos\s+Dados\s+de\s+Mercado", RegexOptions.IgnoreCase)) {
-                        carregarDadosMercado = false;
+                        carregarDadosMercado = false;//
                         CarregarDadosMercado(tr);
                         carregarENAAcopl = true;
                     }
                     if (carregarENAAcopl && line.Contains("Relatorio") && line.Contains("Energia Natural Afluente") &&
                         line.Contains("Subsistema")) {
-                        carregarENAAcopl = false;
+                        carregarENAAcopl = false;//
                         CarregarENAAcopl(tr);
                         carregarENATh = true;
                     }
                     if (carregaVolUtil && line.Contains("VOLUME UTIL DOS RESERVATORIOS")) {
                         carregaVolUtil = false;
-                        CarregaVolUtil(tr);
+                        CarregaVolUtil(tr);//
 
                     }
                     if (carregaOps && line.Trim().Equals("RELATORIO  DA  OPERACAO")) {
-                        carregaOps = false;
+                        carregaOps = false;//
                         carregaVolUtil = false;
                         estagio = CarregaOps(tr);
                         carregarRestricoesEletricas = true;
                     }
 
                     if (carregarENATh && line.Contains("RELATORIO DOS DADOS DE ENERGIA NATURAL AFLUENTE POR SUBSISTEMA (MESES PRE-ESTUDO)")) {
-                        carregarENATh = false;
+                        carregarENATh = false;//
                         CarregarENATh(tr);
                         carregaOps = true;
 
                     }
 
                     if (periodoInicio && line.Contains("Inicio do periodo")) {
-                        periodoInicio = false;
+                        periodoInicio = false;//
 
                         var t = line.Split(new string[] { "--->" }, StringSplitOptions.None)[1];
 

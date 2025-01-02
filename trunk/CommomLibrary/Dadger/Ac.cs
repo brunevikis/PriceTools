@@ -269,7 +269,7 @@ namespace Compass.CommomLibrary.Dadger {
                 new BaseField( 5  , 7 ,"I3"    , "Usina"),
                 new BaseField( 10 , 15,"A6"    , "Mnemonico"),
                 new BaseField( 20 , 24,"I5"    , "p1"), // replace
-                new BaseField( 25 , 34,"F10.0" , "p2"), // replace
+                new BaseField( 25 , 34,"F10.3" , "p2"), // replace
                 new BaseField( 61 , 61,"A1"    , "p3"), // replace
                 new BaseField( 70 , 73,"A3"    , "Mes"),
                 new BaseField( 75 , 75,"I1"    , "Semana"),

@@ -52,6 +52,11 @@ namespace Compass.DecompToolsShellX
 
                     var dadger = DocumentFactory.Create(dadgerFile) as Compass.CommomLibrary.Dadger.Dadger;
                     DateTime dataDC = new DateTime(dadger.DataEstudo.Year, dadger.DataEstudo.Month, 1);
+                    var revisao = Tools.GetCurrRev(dadger.DataEstudo);
+                    if (revisao.rev == 0)
+                    {
+                        dataDC = new DateTime(revisao.revDate.Year, revisao.revDate.Month, 1);
+                    }
                     if (dataDC != dataNw)
                     {
                         if (System.Windows.Forms.MessageBox.Show($"Divergência de datas \r\nAs datas bases dos decks Newave e Decomp não são correspondentes\r\nDeseja continuar?"

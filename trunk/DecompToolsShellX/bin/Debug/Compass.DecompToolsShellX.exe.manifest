@@ -49,7 +49,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>3qurqew0RJuOZZ6cuSf3VaArhyM=</dsig:DigestValue>
+        <dsig:DigestValue>ae6xD4HKDUOF76K4jboB9GA/o2A=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -61,7 +61,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>RVij85po1XktCKAf8MPwa4yVo8Y=</dsig:DigestValue>
+        <dsig:DigestValue>/xXzOac+/dL3Z40YUIfIXf1nA/Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -73,19 +73,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>cYow3jivfJQDELNh8jhZS/5hSl4=</dsig:DigestValue>
+        <dsig:DigestValue>4dhL9uDknH7+rBP2cOD8P93goEU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.Services.dll" size="502784">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.Services.dll" size="503296">
       <assemblyIdentity name="Compass.Services" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>osf1Ds+GAdKZKkhrU5rtyWk/ZwE=</dsig:DigestValue>
+        <dsig:DigestValue>vryENi6ko9/ONqiE3YwcfcQ45WY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
