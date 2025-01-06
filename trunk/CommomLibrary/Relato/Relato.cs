@@ -113,6 +113,8 @@ namespace Compass.CommomLibrary.Relato {
                 bool carregarENATh = false;
                 bool periodoInicio = true;
 
+                bool modeloNovo = false;
+
                 do {
                     string line = tr.ReadLine();
 
@@ -120,60 +122,60 @@ namespace Compass.CommomLibrary.Relato {
 
 
                     if (carregarBalancoEne && Regex.IsMatch(line, @"RELATORIO\s+DO\s+BALANCO\s+ENERGETICO", RegexOptions.IgnoreCase)) {
-                        carregarBalancoEne = false;//
-                        CarregarBalancoEne(tr);
+                        carregarBalancoEne = false;//9,13,17
+                        CarregarBalancoEne(tr, modeloNovo);
                         carregaOps = true;
                         carregaVolUtil = true;
                     }
                     if (carregarRestricoesEletricas && Regex.IsMatch(line, @"Relatorio\s+das\s+Restricoes\s+Eletricas[^\d]+(\d+)", RegexOptions.IgnoreCase)) {
                         int patamar = int.Parse(Regex.Match(line, @"Relatorio\s+das\s+Restricoes\s+Eletricas[^\d]+(\d+)", RegexOptions.IgnoreCase).Groups[1].Value);
-                        CarregarRestricoesEletricas(tr, estagio, patamar);//
+                        CarregarRestricoesEletricas(tr, estagio, patamar);//7,11,15
 
                         if (patamar == 3) { carregarRestricoesEletricas = false; carregarOperTerm = true; }
                     }
 
                     if (carregarDadosTerm && Regex.IsMatch(line, @"Relatorio\s+dos\s+Dados\s+de\s+Usinas\s+Termicas", RegexOptions.IgnoreCase)) {
-                        carregarDadosTerm = false;//
+                        carregarDadosTerm = false;//2----2
                         CarregarDadosTerm(tr);
                         carregarDadosMercado = true;
                     }
                     if (carregarOperTerm && Regex.IsMatch(line, @"RELATORIO\s+DA\s+OPERACAO\s+TERMICA\s+E\s+CONTRATOS", RegexOptions.IgnoreCase)) {
-                        carregarOperTerm = false;//
+                        carregarOperTerm = false;//8,12,16
                         CarregarOperTerm(tr);
                         carregarBalancoEne = true;
                     }
                     if (carregarDadosMercado && Regex.IsMatch(line, @"Relatorio\s+dos\s+Dados\s+de\s+Mercado", RegexOptions.IgnoreCase)) {
-                        carregarDadosMercado = false;//
+                        carregarDadosMercado = false;//3---3
                         CarregarDadosMercado(tr);
                         carregarENAAcopl = true;
                     }
                     if (carregarENAAcopl && line.Contains("Relatorio") && line.Contains("Energia Natural Afluente") &&
                         line.Contains("Subsistema")) {
-                        carregarENAAcopl = false;//
+                        carregarENAAcopl = false;//4----4
                         CarregarENAAcopl(tr);
                         carregarENATh = true;
                     }
                     if (carregaVolUtil && line.Contains("VOLUME UTIL DOS RESERVATORIOS")) {
                         carregaVolUtil = false;
-                        CarregaVolUtil(tr);//
+                        CarregaVolUtil(tr);//ultimo
 
                     }
                     if (carregaOps && line.Trim().Equals("RELATORIO  DA  OPERACAO")) {
-                        carregaOps = false;//
+                        carregaOps = false;//6,10,14------6
                         carregaVolUtil = false;
                         estagio = CarregaOps(tr);
                         carregarRestricoesEletricas = true;
                     }
 
                     if (carregarENATh && line.Contains("RELATORIO DOS DADOS DE ENERGIA NATURAL AFLUENTE POR SUBSISTEMA (MESES PRE-ESTUDO)")) {
-                        carregarENATh = false;//
+                        carregarENATh = false;//5----5
                         CarregarENATh(tr);
                         carregaOps = true;
 
                     }
 
                     if (periodoInicio && line.Contains("Inicio do periodo")) {
-                        periodoInicio = false;//
+                        periodoInicio = false;//1--1
 
                         var t = line.Split(new string[] { "--->" }, StringSplitOptions.None)[1];
 
@@ -183,6 +185,10 @@ namespace Compass.CommomLibrary.Relato {
                             System.Globalization.DateTimeStyles.AllowInnerWhite,
                             out dt)) {
                             PeriodoInicio = dt;
+                            if (PeriodoInicio.Year >= 2025)
+                            {
+                                modeloNovo = true;
+                            }
                         }
 
                         carregarDadosTerm = true;
@@ -327,7 +333,7 @@ namespace Compass.CommomLibrary.Relato {
             }
         }
 
-        private void CarregarBalancoEne(System.IO.StreamReader sr) {
+        private void CarregarBalancoEne(System.IO.StreamReader sr, bool modelonovo = false) {
 
 
             var m1 = @"ESTAGIO\s+(\d+)\s+/\s+CENARIO\s+(\d+)";
@@ -372,8 +378,17 @@ namespace Compass.CommomLibrary.Relato {
                         EnergiaSistema.Add(l);
                         continue;
                     }
-
-                    var nLine = BalancoEnergetico.CreateLine(line);
+                    dynamic nLine;
+                    if (modelonovo == true)
+                    {
+                        nLine = new RelatoNewBalEneLine();
+                        nLine.Load(line);
+                        //Operacao.Add(newLine);
+                    }
+                    else 
+                    {
+                        nLine = BalancoEnergetico.CreateLine(line);//DIFERENCIAR TIPO DE LINHA
+                    }
 
                     if (nLine[3] is double && nLine[6] is double && nLine[7] is double && nLine[12] is double) {
                         if (!string.IsNullOrWhiteSpace(nLine[2])) {
@@ -384,13 +399,26 @@ namespace Compass.CommomLibrary.Relato {
 
                         BalancoEnergetico.Add(nLine);
                     } else if (!string.IsNullOrWhiteSpace(subsistema) && !string.IsNullOrWhiteSpace(patamar) && estagio != 0) {
-
-                        var lInt = Intercambios.CreateLine(line);
-                        lInt[0] = subsistema;
-                        lInt[1] = estagio;
-                        lInt[2] = patamar;
-                        lInt[3] = lInt[3].Trim();
-                        Intercambios.Add(lInt);
+                        if (modelonovo == true)
+                        {
+                            var nlInt = new RelatoNewIntercLine();
+                            nlInt.Load(line);
+                            nlInt[0] = subsistema;
+                            nlInt[1] = estagio;
+                            nlInt[2] = patamar;
+                            nlInt[3] = nlInt[3].Trim();
+                            Intercambios.Add(nlInt);
+                        }
+                        else
+                        {
+                            var lInt = Intercambios.CreateLine(line);
+                            lInt[0] = subsistema;
+                            lInt[1] = estagio;
+                            lInt[2] = patamar;
+                            lInt[3] = lInt[3].Trim();
+                            Intercambios.Add(lInt);
+                        }
+                        
                     }
 
 
@@ -501,11 +529,15 @@ namespace Compass.CommomLibrary.Relato {
 
             for (line = sr.ReadLine(); !sr.EndOfStream; line = sr.ReadLine()) {
 
-                if (line.Contains("   X-----------------X-----X-----X-----X----------------X--------X--------X-------X-------X-------X-------X-------X-------X-------X-------X")) {
+                if (line.Contains("   X-----------------X-----X-----X-----X----------------X--------X--------X-------X-------X-------X-------X-------X-------X-------X-------X"))
+                {
                     if (read) break;
                     read = true;
                     continue;
-                } if (line.Contains("   X----X-----------------X-----X-----X-----X----------------X--------X--------X-------X-------X-------X-------X-------X-------X-------X-------X")) {
+                } 
+                if (line.Contains("   X----X-----------------X-----X-----X-----X----------------X--------X--------X-------X-------X-------X-------X-------X-------X-------X-------X")
+                    || line.Contains("   X----X-----------------X-----X-----X-----X----------------X--------X--------X-------X-------X-------X-------X-------X-------X---------------X"))
+                {
                     if (readNewDecomp) break;
                     readNewDecomp = true;
                     continue;

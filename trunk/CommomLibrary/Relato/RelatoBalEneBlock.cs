@@ -35,6 +35,32 @@ namespace Compass.CommomLibrary.Relato {
         }
     }
 
+    public class RelatoNewBalEneLine : RelatoBalEneLine
+    {
+        public static readonly new BaseField[] campos = new BaseField[] {//deslocado um campo geol prar o final para não se alterar nas outras funcoes que se orientam pelo indice no array 
+              new BaseField(0  , 0  ,"A2"    , "Subsistema"),
+                new BaseField(0  , 0  ,"I3"    , "ESTAGIO"),
+                new BaseField(5  , 9  ,"A5"    , "Patamar"),
+                new BaseField(11 , 17 ,"F7.2"  , "Carga"),
+                new BaseField(19 , 25 ,"F7.2"  , "Bacia"),
+                new BaseField(27 , 33 ,"F7.2"  , "Cbomba"),
+                new BaseField(35 , 41 ,"F7.2"  , "Ghid"),
+                new BaseField(43 , 49 ,"F7.2"  , "Gter"),
+                new BaseField(51 , 57 ,"F7.2"  , "GterAT"),//
+                new BaseField(67 , 73 ,"F7.2"  , "Deficit"),//
+                new BaseField(75 , 81 ,"F7.2"  , "Compra"),//
+                new BaseField(83 , 89 ,"F7.2"  , "Venda"),//
+                new BaseField(95 ,102 ,"F7.2"  , "Intercambio Liq"),//
+                new BaseField(106 , 112,"F7.2"  , "Itaipu50"),//
+                new BaseField(114, 120,"F7.2"  , "Itaipu60"),//
+                new BaseField(59 , 65,"F7.2"  , "Geol"),//
+        };
+
+        public override BaseField[] Campos
+        {
+            get { return campos; }
+        }
+    }
     public class RelatoIntercBlock : BaseBlock<RelatoIntercLine> {
 
     }
@@ -53,6 +79,24 @@ namespace Compass.CommomLibrary.Relato {
         
         public override BaseField[] Campos {
             get { return campos; }
+        }
+    }
+
+    public class RelatoNewIntercLine : RelatoIntercLine
+    {
+        public static readonly BaseField[] Icampos = new BaseField[] {
+                new BaseField(0  , 0  ,"A2"    , "Subsistema"),
+                new BaseField(0  , 0  ,"I3"    , "ESTAGIO"),
+                new BaseField(0  , 0  ,"A5"    , "Patamar"),
+                new BaseField(92 , 93 ,"A2"    , "Destino"),
+                new BaseField(95 , 102 ,"F7.2"  , "Intercambio"),
+
+        };
+
+
+        public override BaseField[] Campos
+        {
+            get { return Icampos; }
         }
     }
 
