@@ -432,7 +432,7 @@ Sobrescreverá os decks Decomp existentes na pasta de resultados. Caso selecione
 
                         var outPath = Path.Combine(w.NewaveBase, cenario.NomeDoEstudo);
 
-                        if (cenario.NomeCenario == "Hidrologia - 1")
+                        if (cenario.NomeCenario == "Hidrologia - 1" || cenario.CenarioNum == 1)
                         {
                             var dcNome = cenario.NomeDoEstudo;
                             var dcGNLnome = dcNome.Replace("DC", "DCGNL");

@@ -245,6 +245,7 @@ namespace Compass.ExcelTools.Templates
         }
 
         public List<WorkSheetCen> Cenarios { get; private set; }
+        public List<WorkSheetCen> CenariosTeste { get; private set; }
 
         public int[] ArvoreSegundoMes
         {
@@ -931,17 +932,22 @@ namespace Compass.ExcelTools.Templates
         {
 
             Cenarios = new List<WorkSheetCen>();
+            //CenariosTeste = new List<WorkSheetCen>();
 
             foreach (Worksheet ws in Wb.Worksheets)
             {
                 if (ws.Name.StartsWith("Hidrol"))
                 {
                     Cenarios.Add(new WorkSheetCen(ws, this));
+                    //CenariosTeste.Add(new WorkSheetCen(ws, this));
                 }
             }
 
 
-            Cenarios = Cenarios.OrderBy(x => x.NomeCenario).ToList();
+            //Cenarios = Cenarios.OrderBy(x => x.NomeCenario).ToList();
+            Cenarios = Cenarios.OrderBy(x => x.CenarioNum).ToList();
+            //CenariosTeste = CenariosTeste.OrderBy(x =>Convert.ToInt32( x.NomeCenario.Split(new string[] { " " },StringSplitOptions.RemoveEmptyEntries).Last())).ToList();
+            //CenariosTeste = CenariosTeste.OrderBy(x => x.CenarioNum).ToList();
         }
 
 
@@ -1843,6 +1849,22 @@ namespace Compass.ExcelTools.Templates
                     return this.Names["_nome"].Text;
                 else
                     return wb.Names["_NomeDoEstudo"].Text;
+            }
+        }
+
+        public int CenarioNum
+        {
+            get
+            {
+                string nome = base.SheetName;
+                if (nome.Contains("Hidrol"))
+                {
+                    return Convert.ToInt32(nome.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).Last());
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
