@@ -927,14 +927,14 @@ namespace Compass.DecompToolsShellX
             {
                 bool alternativo = false;
 
-                if (System.Windows.Forms.MessageBox.Show(@"Deseja usar PLD Alternativo?"
-                  , "Limites PLD", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    var frm = new FrmPldAlter();
-                    frm.ShowDialog();
-                    alternativo = frm.usar;
+                //if (System.Windows.Forms.MessageBox.Show(@"Deseja usar PLD Alternativo?"
+                //  , "Limites PLD", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                //{
+                //    var frm = new FrmPldAlter();
+                //    frm.ShowDialog();
+                //    alternativo = frm.usar;
 
-                }
+                //}
 
                 string dir;
                 if (Directory.Exists(path))
@@ -972,14 +972,14 @@ namespace Compass.DecompToolsShellX
             {
                 bool alternativo = false;
 
-                if (System.Windows.Forms.MessageBox.Show(@"Deseja usar PLD Alternativo?"
-                  , "Limites PLD", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    var frm = new FrmPldAlter();
-                    frm.ShowDialog();
-                    alternativo = frm.usar;
+                //if (System.Windows.Forms.MessageBox.Show(@"Deseja usar PLD Alternativo?"
+                //  , "Limites PLD", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                //{
+                //    var frm = new FrmPldAlter();
+                //    frm.ShowDialog();
+                //    alternativo = frm.usar;
 
-                }
+                //}
 
                 string dir;
                 if (Directory.Exists(path))

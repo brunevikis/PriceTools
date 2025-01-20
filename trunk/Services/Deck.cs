@@ -775,11 +775,23 @@ namespace Compass.Services
                 bool pat2024 = datadeck.Year == 2024;
                 bool pat2025 = datadeck.Year >= 2025;
                 var mesOperativo = MesOperativo.CreateSemanal(rvinicio.revDate.Year, rvinicio.revDate.Month, true, false, pat2024, pat2025);
-              
+
                 bool alterou = false;
 
                 foreach (var sub in weolDados.Select(x => x.SubNum).Distinct())
                 {
+                    var pqlinesEntrada = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub).OrderByDescending(x => x.Estagio).Skip(1).FirstOrDefault();//ultimo estagio do primeiro mes do deck de entrada para usar para os estagios faltantes, caso não tenha dados correspondentes no weol
+                    double Patsubst1 = 0;
+                    double Patsubst2 = 0;
+                    double Patsubst3 = 0;
+
+                    if (pqlinesEntrada != null)
+                    {
+                        Patsubst1 = pqlinesEntrada.Pat1;
+                        Patsubst2 = pqlinesEntrada.Pat2;
+                        Patsubst3 = pqlinesEntrada.Pat3;
+                    }
+
                     int estagio = 1;
 
                     var semanasMes = weolDados.Where(x => x.SubNum == sub && x.SemanaIni >= datadeck && x.SemanaFim <= mesOperativo.SemanasOperativas[mesOperativo.Estagios - 1].Fim).ToList();
@@ -804,7 +816,7 @@ namespace Compass.Services
                                     est++;
                                 }
                             }
-                          
+
                             var pqline = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
                             var pqlineList = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio);
                             if (pqline != null)
@@ -820,13 +832,27 @@ namespace Compass.Services
                                     var pqlineNew = new PqLine();
                                     pqlineNew.Usina = pqline.Usina;
                                     pqlineNew.SubMercado = pqline.SubMercado;
-                                    pqlineNew.Estagio =estagio;
+                                    pqlineNew.Estagio = estagio;
                                     pqlineNew.Pat1 = item.CargaPat1;
                                     pqlineNew.Pat2 = item.CargaPat2;
                                     pqlineNew.Pat3 = item.CargaPat3;
                                     dadger.BlocoPq.InsertAfter(pqline, pqlineNew);
                                 }
                             }
+                        }
+                        //replica os dados do ultimo estagio do deck de entrada para os estagios faltantes do primeiro mes, caso não exista os dados referentes no weol 
+                        var pqFinalist = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub).OrderByDescending(x => x.Estagio).ToList();
+                        if (pqlinesEntrada != null && pqFinalist.Count >= 2 && (pqFinalist[0].Estagio - pqFinalist[1].Estagio) > 1)//necessita replicar o estagio de entrada
+                        {
+                            int novoEstagio = pqFinalist[1].Estagio + 1;
+                            var pqlineNew = new PqLine();
+                            pqlineNew.Usina = pqFinalist[1].Usina;
+                            pqlineNew.SubMercado = pqFinalist[1].SubMercado;
+                            pqlineNew.Estagio = novoEstagio;
+                            pqlineNew.Pat1 = Patsubst1;
+                            pqlineNew.Pat2 = Patsubst2;
+                            pqlineNew.Pat3 = Patsubst3;
+                            dadger.BlocoPq.InsertAfter(pqFinalist[1], pqlineNew);
                         }
 
                     }
