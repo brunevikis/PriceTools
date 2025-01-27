@@ -102,7 +102,7 @@
             this.tab1.Groups.Add(this.group3);
             this.tab1.Groups.Add(this.group2);
             this.tab1.Groups.Add(this.group5);
-            this.tab1.Label = "Compass - Price";
+            this.tab1.Label = "Enercore - Price";
             this.tab1.Name = "tab1";
             // 
             // group4

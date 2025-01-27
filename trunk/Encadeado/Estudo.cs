@@ -1544,7 +1544,12 @@ namespace Encadeado
                 var patamares = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.patamar].Document as Compass.CommomLibrary.PatamarDat.PatamarDat;
                 var sistema = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.sistema].Document as Compass.CommomLibrary.SistemaDat.SistemaDat;
 
+                if (deck.Dger.MesEstudo ==12)
+                {
+                    var test = this.Intercambios.Where(x => x.MesEstudo == deck.Dger.MesEstudo && x.AnoIni == deck.Dger.AnoEstudo).ToList();
+                    var test12 = this.Intercambios.Where(x => x.MesEstudo == deck.Dger.MesEstudo && x.AnoIni > deck.Dger.AnoEstudo).ToList();
 
+                }
 
                 foreach (var intercambio in this.Intercambios.Where(x => x.MesEstudo == deck.Dger.MesEstudo && x.AnoIni == deck.Dger.AnoEstudo))
                 {
@@ -1580,6 +1585,47 @@ namespace Encadeado
 
                     }
                 }
+
+                //
+                if (deck.Dger.MesEstudo == 12)
+                {
+                    foreach (var intercambio in this.Intercambios.Where(x => x.MesEstudo == deck.Dger.MesEstudo && x.AnoIni > deck.Dger.AnoEstudo))
+                    {
+
+                        var blocoIntercambio = sistema.Intercambio.Where(i => i.SubmercadoA == intercambio.Intercambios.Item1 && i.SubmercadoB == intercambio.Intercambios.Item2);
+
+                        var dataInicio = new DateTime(intercambio.AnoIni, intercambio.MesIni, 1);
+                        var dataFim = new DateTime(intercambio.AnoFim, intercambio.MesFim, 1);
+
+                        for (DateTime dataModif = dataInicio; dataModif <= dataFim; dataModif = dataModif.AddMonths(1))
+                        {
+
+
+                            var patTemp = patamares.Duracao.Where(d => d.Ano == dataModif.Year);
+
+                            var intMedio =
+                            intercambio.RestricaoP1 * patTemp.First(p => p.Patamar == 1)[dataModif.Month + 1]
+                            + intercambio.RestricaoP2 * patTemp.First(p => p.Patamar == 2)[dataModif.Month + 1]
+                            + intercambio.RestricaoP3 * patTemp.First(p => p.Patamar == 3)[dataModif.Month + 1];
+
+
+                            blocoIntercambio.First(i => i.Ano == dataModif.Year)[dataModif.Month] = intMedio;
+
+
+                            var intTemp = patamares.Intercambio
+                                .Where(i => i.Ano == dataModif.Year)
+                                .Where(i => i.SubmercadoA == intercambio.Intercambios.Item1 && i.SubmercadoB == intercambio.Intercambios.Item2);
+
+
+                            intTemp.First(x => x.Patamar == 1)[dataModif.Month] = intercambio.RestricaoP1 / intMedio;
+                            intTemp.First(x => x.Patamar == 2)[dataModif.Month] = intercambio.RestricaoP2 / intMedio;
+                            intTemp.First(x => x.Patamar == 3)[dataModif.Month] = intercambio.RestricaoP3 / intMedio;
+
+                        }
+                    }
+                }
+                
+                //
             }
             catch (Exception e)
             {

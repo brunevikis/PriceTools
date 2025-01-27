@@ -67,7 +67,7 @@ namespace Compass.DeployActions
         private void SetRegistry(string sourcePath)
         {
 
-            var title = "Compass - Price Tools";
+            var title = "Enercore - Price Tools";
 
             var exe = Path.Combine(sourcePath, "Compass.DecompToolsShellX.exe");
             //arquivo
