@@ -20,7 +20,6 @@ using System.Globalization;
 
 
 
-
 using System.Threading;
 using System.Net.Http;
 
@@ -114,7 +113,11 @@ namespace Encadeado
             string planMemo = Directory.GetFiles(Origem).Where(x => Path.GetFileName(x).StartsWith("Memória de Cálculo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
 
             DeckMedia.SaveFilesToFolder(System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00")));
+
             string cam = System.IO.Path.Combine(Destino, DeckMedia.Dger.AnoEstudo.ToString("0000") + DeckMedia.Dger.MesEstudo.ToString("00"));
+            Compass.Services.Deck.CorrigeArquivosdat(cam);
+
+
             if (planMemo != null && File.Exists(planMemo))
             {
                 File.Copy(planMemo, Path.Combine(cam, Path.GetFileName(planMemo)), true);
@@ -2100,7 +2103,7 @@ namespace Encadeado
             DeckMedia.SaveFilesToFolder(DeckMedia.BaseFolder);
             AlterarModif(DeckMedia);
             DeckMedia.EscreverListagemNwlistop();
-
+            Compass.Services.Deck.CorrigeArquivosdat(DeckMedia.BaseFolder);
 
 
 

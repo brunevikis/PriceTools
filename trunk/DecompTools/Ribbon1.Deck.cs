@@ -288,6 +288,10 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     //    estudo.StartREEAgrupado = true;
                     //}
 
+                    //if (Directory.Exists(estudo.Destino))
+                    //{
+                    //    Services.Deck.CorrigeArquivosdat(estudo.Destino);
+                    //}
 
 
                     if (System.IO.Directory.Exists(dc))
