@@ -268,3 +268,5 @@ C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompTools
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmAtualizaCarga.resources
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmUpdateConfhd.resources
 C:\Development\price_tools\trunk\DecompToolsShellX\obj\Debug\Compass.DecompToolsShellX.FrmUpdateWeolNwDc.resources
+C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\Encadeado.dll
+C:\Development\price_tools\trunk\DecompToolsShellX\bin\Debug\Encadeado.pdb

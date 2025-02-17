@@ -1109,7 +1109,7 @@ namespace Compass.Services
                 var cfugaSeguinte = cfugasUsina.FirstOrDefault(x => x.data == dtEstudo.AddMonths(1));
 
 
-                if (cfugaAtual != null)
+                if (cfugaAtual != null && cfugaAtual.usina != 285 && cfugaAtual.usina != 287)
                 {
                     var acL = new AcF10Line();
                     acL.Usina = cfugaAtual.usina;
@@ -1120,7 +1120,7 @@ namespace Compass.Services
                     dadger.BlocoAc.Add(acL);
                 }
 
-                if (cfugaSeguinte != null)
+                if (cfugaSeguinte != null && cfugaSeguinte.usina != 285 && cfugaSeguinte.usina != 287)
                 {
                     var acL = new AcF10Line();
                     acL.Usina = cfugaSeguinte.usina;

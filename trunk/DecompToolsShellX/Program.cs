@@ -19,6 +19,8 @@ using Ionic.Zip;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Compass.ExcelTools.Templates;
+using Compass.CommomLibrary.Dadger;
 
 namespace Compass.DecompToolsShellX
 {
@@ -64,6 +66,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("atualizacarga", AtualizaCarga);
             actions.Add("atualizaconfhd", UpdateConfHd);
             actions.Add("atualizaweol", UpdateWeolNWDC);
+            actions.Add("cenariosauto", CenariosAuto);
 
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
 
@@ -1290,6 +1293,116 @@ namespace Compass.DecompToolsShellX
             }
 
         }
+        static void CenariosAuto(string commands)
+        {
+            Microsoft.Office.Interop.Excel.Application xlApp = null;
+
+            try
+            {
+                if (File.Exists(commands))
+                {
+                    xlApp = ExcelTools.Helper.StartExcelInvisible();
+
+                    var wbxls = xlApp.Workbooks.Open(commands);
+                    Workbook wb = xlApp.ActiveWorkbook;
+                    WorkbookMensal w;
+                    if (wb.Application.ActiveWorkbook == null ||
+                        !WorkbookMensal.TryCreate(wb.Application.ActiveWorkbook, out w))
+                    {
+                        return;
+                    }
+                    var dc = w.DecompBase;
+                    var nw = w.NewaveBase;
+
+
+                    Encadeado.Estudo estudo = new Encadeado.Estudo()
+                    {
+                        Origem = w.NewaveOrigem,
+                        Destino = w.NewaveBase,
+                        MesesAvancar = w.MesesAvancar,
+                        DefinirVolumesPO = true,
+                    };
+
+                    estudo.Bloco_VE = w.Bloco_VE;
+                    estudo.VolumesPO = w.Earm;
+                    estudo.PrevisaoVazao = w.Cenarios.First().Vazoes;
+                    estudo.ExecutavelNewave = w.ExecutavelNewave;
+                    estudo.ExecutarConsist = w.ExecutarConsist;
+                    estudo.NwHibrido = w.NwHibrido;
+
+                    if (w.ReDats == null)
+                    {
+
+                        //if (System.Windows.Forms.MessageBox.Show("Caminho de restricoes elétricas do newave (_redat) não encontrado, continuar mesmo assim?"
+                        //    , "Encadeado", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning)
+                        //    != System.Windows.Forms.DialogResult.Yes)
+                        return;
+
+                    }
+                    estudo.Restricoes = w.ReDats ?? new List<IRE>();
+
+                    estudo.Agrints = w.AgrintDats ?? new List<IAGRIGNT>();
+
+                    estudo.Adterm = w.adtermdat ?? new List<IADTERM>();
+
+                    estudo.Intercambios = w.Intercambios ?? new List<IINTERCAMBIO>();
+
+                    estudo.MERCADO = w.MercadosSisdat ?? new List<IMERCADO>();
+
+                    estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
+                    estudo.ReModifs = w.ReModifwb ?? new List<IREMODIF>();
+                    estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
+                    estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
+                    estudo.Reedads = w.Reedads ?? new List<IREEDAT>();
+                    estudo.Restelecsv = w.RestEleCSV ?? new List<IRESTELECSV>();
+
+                    if (System.IO.Directory.Exists(dc))
+                    {
+
+                        var deckDCBase = DeckFactory.CreateDeck(dc) as Compass.CommomLibrary.Decomp.Deck;
+                        var configH = new Compass.CommomLibrary.Decomp.ConfigH(
+                            deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger,
+                            deckDCBase[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat);
+
+                        estudo.ConfighBase = configH;
+
+
+
+                    }
+                    estudo.ExecucaoPrincipal();
+
+                    wb.Save();
+                    wb.Close(SaveChanges: false);
+                }
+            }
+            catch (Exception e)
+            {
+                string log = Path.Combine(Path.GetDirectoryName(commands), "ERROR_LOG.TXT");
+
+                File.WriteAllText(log, e.Message.ToString());
+                if (xlApp != null)
+                {
+                    xlApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
+                    xlApp.ScreenUpdating = true;
+                    xlApp.Quit();
+                    ExcelTools.Helper.Release(xlApp);
+
+                }
+                
+            }
+            finally
+            {
+                if (xlApp != null)
+                {
+                    xlApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
+                    xlApp.ScreenUpdating = true;
+                    xlApp.Quit();
+                    ExcelTools.Helper.Release(xlApp);
+
+                }
+            }
+
+        }
 
         static void UpdateWeolNWDC(string commands)
         {
@@ -1316,6 +1429,7 @@ namespace Compass.DecompToolsShellX
                     return;
 
                 var deck = DeckFactory.CreateDeck(dir);
+
 
                 if (!(deck is Compass.CommomLibrary.Newave.Deck || deck is Compass.CommomLibrary.Decomp.Deck))
                 {
@@ -5111,7 +5225,7 @@ namespace Compass.DecompToolsShellX
                     if (command.Count() > 1 && command[1] == "true")
                     {
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha ao converter deckDessem");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br;", "Falha ao converter deckDessem");
                     }
                 }
 
@@ -5126,7 +5240,7 @@ namespace Compass.DecompToolsShellX
                     {
                         texto = "Deck não reconhecido para a execução por falta de arquivos!";
                     }
-                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha ao converter deckDessem");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br;", "Falha ao converter deckDessem");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);

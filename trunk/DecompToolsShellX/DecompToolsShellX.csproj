@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>335</ApplicationRevision>
+    <ApplicationRevision>336</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -283,6 +283,10 @@
     <ProjectReference Include="..\CommomLibrary\CommomLibrary.csproj">
       <Project>{688f6c4c-2a2f-4d3b-9e47-0dcb4d4fb597}</Project>
       <Name>CommomLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Encadeado\Encadeado.csproj">
+      <Project>{829f289f-7ef6-45fe-8cd8-2b0c63a1030c}</Project>
+      <Name>Encadeado</Name>
     </ProjectReference>
     <ProjectReference Include="..\ExcelTools\ExcelTools.csproj">
       <Project>{064676f5-68fc-43ee-875f-512e6b61d64c}</Project>
