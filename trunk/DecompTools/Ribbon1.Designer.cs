@@ -51,6 +51,7 @@
             this.btnCheckDecomp = this.Factory.CreateRibbonButton();
             this.btnInviab = this.Factory.CreateRibbonButton();
             this.btnCreateRV0 = this.Factory.CreateRibbonButton();
+            this.btnCenariosAUTO = this.Factory.CreateRibbonButton();
             this.group3 = this.Factory.CreateRibbonGroup();
             this.menuEncad = this.Factory.CreateRibbonMenu();
             this.btnEncadeadoXml = this.Factory.CreateRibbonButton();
@@ -180,6 +181,7 @@
             this.group1.Items.Add(this.btnCheckDecomp);
             this.group1.Items.Add(this.btnInviab);
             this.group1.Items.Add(this.btnCreateRV0);
+            this.group1.Items.Add(this.btnCenariosAUTO);
             this.group1.Label = "Decomp";
             this.group1.Name = "group1";
             // 
@@ -256,6 +258,12 @@
             this.btnCreateRV0.Label = "RV0";
             this.btnCreateRV0.Name = "btnCreateRV0";
             this.btnCreateRV0.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnCreateRV0_Click);
+            // 
+            // btnCenariosAUTO
+            // 
+            this.btnCenariosAUTO.Label = "Auto Cenarios ";
+            this.btnCenariosAUTO.Name = "btnCenariosAUTO";
+            this.btnCenariosAUTO.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnCenariosAUTO_Click);
             // 
             // group3
             // 
@@ -606,6 +614,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonMenu menu2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_CarregaEVT;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_baixarEVT;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnCenariosAUTO;
     }
 
     partial class ThisRibbonCollection {

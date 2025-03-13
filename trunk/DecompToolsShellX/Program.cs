@@ -66,7 +66,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("atualizacarga", AtualizaCarga);
             actions.Add("atualizaconfhd", UpdateConfHd);
             actions.Add("atualizaweol", UpdateWeolNWDC);
-            actions.Add("cenariosauto", CenariosAuto);
+            actions.Add("cenariosauto", CenariosAuto);//cenarios
 
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
 
@@ -1295,112 +1295,204 @@ namespace Compass.DecompToolsShellX
         }
         static void CenariosAuto(string commands)
         {
-            Microsoft.Office.Interop.Excel.Application xlApp = null;
-
-            try
+            //TODO: logica de pular execução caso processo em andamento, 
+            Directory.CreateDirectory(commands);
+            string cenariosLog = Path.Combine(commands, "Exec.log");
+            string xlFile = Directory.GetFiles(commands).FirstOrDefault();
+            if (File.Exists(xlFile))
             {
-                if (File.Exists(commands))
+                if (!File.Exists(cenariosLog))
                 {
-                    xlApp = ExcelTools.Helper.StartExcelInvisible();
 
-                    var wbxls = xlApp.Workbooks.Open(commands);
-                    Workbook wb = xlApp.ActiveWorkbook;
-                    WorkbookMensal w;
-                    if (wb.Application.ActiveWorkbook == null ||
-                        !WorkbookMensal.TryCreate(wb.Application.ActiveWorkbook, out w))
+                    File.WriteAllText(cenariosLog, "Processo em execução\nCaminho: " + xlFile);
+                    Microsoft.Office.Interop.Excel.Workbook wb = null;
+                    Microsoft.Office.Interop.Excel.Workbooks workbooks = null;
+                    Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+                    var pointer = new IntPtr(xlApp.Hwnd);
+
+                    //Microsoft.Office.Interop.Excel.Application xlApp = null;
+                    List<string> consistFolders = new List<string>();
+                    string dirCenGerado = "";
+                    try
                     {
-                        return;
+                        if (File.Exists(xlFile))
+                        {
+                            xlApp.DisplayAlerts = false;
+                            xlApp.Visible = false;
+                            xlApp.ScreenUpdating = true;
+                            // xlApp = ExcelTools.Helper.StartExcelInvisible();
+                            workbooks = xlApp.Workbooks;
+
+                            //var wbxls = xlApp.Workbooks.Open(xlFile);
+                            //var wbxls = workbooks.Open(xlFile);
+                            //Workbook wb = xlApp.ActiveWorkbook;
+                             wb = workbooks.Open(xlFile);
+                            WorkbookMensal w;
+                            if (wb.Application.ActiveWorkbook == null ||
+                                !WorkbookMensal.TryCreate(wb.Application.ActiveWorkbook, out w))
+                            {
+                                return;
+                            }
+                            var dc = w.DecompBase;
+                            var nw = w.NewaveBase;
+                            dirCenGerado = nw;
+                            string newXlFile = Path.Combine(dirCenGerado, Path.GetFileName(xlFile));
+                            string completoLog = Path.Combine(dirCenGerado, "Exec.log");
+                            Encadeado.Estudo estudo = new Encadeado.Estudo()
+                            {
+                                Origem = w.NewaveOrigem,
+                                Destino = w.NewaveBase,
+                                MesesAvancar = w.MesesAvancar,
+                                DefinirVolumesPO = true,
+                            };
+
+                            estudo.Bloco_VE = w.Bloco_VE;
+                            estudo.VolumesPO = w.Earm;
+                            estudo.PrevisaoVazao = w.Cenarios.First().Vazoes;
+                            estudo.ExecutavelNewave = w.ExecutavelNewave;
+                            estudo.ExecutarConsist = w.ExecutarConsist;
+                            estudo.NwHibrido = w.NwHibrido;
+
+                            if (w.ReDats == null)
+                            {
+
+                                //if (System.Windows.Forms.MessageBox.Show("Caminho de restricoes elétricas do newave (_redat) não encontrado, continuar mesmo assim?"
+                                //    , "Encadeado", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning)
+                                //    != System.Windows.Forms.DialogResult.Yes)
+                                return;
+
+                            }
+                            estudo.Restricoes = w.ReDats ?? new List<IRE>();
+
+                            estudo.Agrints = w.AgrintDats ?? new List<IAGRIGNT>();
+
+                            estudo.Adterm = w.adtermdat ?? new List<IADTERM>();
+
+                            estudo.Intercambios = w.Intercambios ?? new List<IINTERCAMBIO>();
+
+                            estudo.MERCADO = w.MercadosSisdat ?? new List<IMERCADO>();
+
+                            estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
+                            estudo.ReModifs = w.ReModifwb ?? new List<IREMODIF>();
+                            estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
+                            estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
+                            estudo.Reedads = w.Reedads ?? new List<IREEDAT>();
+                            estudo.Restelecsv = w.RestEleCSV ?? new List<IRESTELECSV>();
+
+                            if (System.IO.Directory.Exists(dc))
+                            {
+
+                                var deckDCBase = DeckFactory.CreateDeck(dc) as Compass.CommomLibrary.Decomp.Deck;
+                                var configH = new Compass.CommomLibrary.Decomp.ConfigH(
+                                    deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger,
+                                    deckDCBase[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat);
+
+                                estudo.ConfighBase = configH;
+
+
+
+                            }
+                            estudo.ExecucaoPrincipal();
+                            consistFolders = Services.GeraCenarios.GeraMensal(w, dc, nw, true);
+
+                            if (consistFolders.Count() > 0)
+                            {
+
+                                Encadeado.Estudo Newestudo = new Encadeado.Estudo();
+                                Newestudo.ExecutavelNewave = w.ExecutavelNewave;
+                                Newestudo.ExecutarConsist = w.ExecutarConsist;
+
+                                bool tesets = Newestudo.execucaoConsistDC(consistFolders);
+                            }
+
+
+                            Services.GeraCenarios.GeraRV0(w, dc, nw, true);
+
+
+                            wb.Save();
+                            wb.SaveCopyAs(newXlFile);
+                            wb.Close(SaveChanges: false);
+                            xlApp.Quit();
+                            ExcelTools.Helper.Release(xlApp);
+                            foreach (System.Diagnostics.Process proc in System.Diagnostics.Process.GetProcessesByName("Excel"))
+                            {
+                                if (proc.MainWindowHandle == pointer)
+                                {
+                                    proc.Kill();
+                                }
+                            }
+                            if (File.Exists(xlFile))
+                            {
+                                string log = Path.Combine(dirCenGerado, "ERROR_LOG.TXT");
+
+                                File.Delete(xlFile);
+                                if (File.Exists(cenariosLog))
+                                {
+                                    File.Delete(cenariosLog);
+                                }
+                                File.WriteAllText(completoLog, "Processo finalizado com sucesso!");
+                                if (File.Exists(log))
+                                {
+                                    File.Delete(log);
+                                }
+                            }
+                        }
                     }
-                    var dc = w.DecompBase;
-                    var nw = w.NewaveBase;
-
-
-                    Encadeado.Estudo estudo = new Encadeado.Estudo()
+                    catch (Exception e)
                     {
-                        Origem = w.NewaveOrigem,
-                        Destino = w.NewaveBase,
-                        MesesAvancar = w.MesesAvancar,
-                        DefinirVolumesPO = true,
-                    };
+                        string log = Path.Combine(dirCenGerado, "ERROR_LOG.TXT");
 
-                    estudo.Bloco_VE = w.Bloco_VE;
-                    estudo.VolumesPO = w.Earm;
-                    estudo.PrevisaoVazao = w.Cenarios.First().Vazoes;
-                    estudo.ExecutavelNewave = w.ExecutavelNewave;
-                    estudo.ExecutarConsist = w.ExecutarConsist;
-                    estudo.NwHibrido = w.NwHibrido;
+                        if (Directory.Exists(dirCenGerado))
+                        {
+                            File.WriteAllText(log, e.Message.ToString());
+                        }
+                        if (wb != null)
+                        {
+                            wb.Close(SaveChanges: false);
+                        }
 
-                    if (w.ReDats == null)
+                        if (xlApp != null)
+                        {
+
+                            xlApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
+                            xlApp.ScreenUpdating = true;
+                            xlApp.Quit();
+                            ExcelTools.Helper.Release(xlApp);
+                            foreach (System.Diagnostics.Process proc in System.Diagnostics.Process.GetProcessesByName("Excel"))
+                            {
+                                if (proc.MainWindowHandle == pointer)
+                                {
+                                    proc.Kill();
+                                }
+                            }
+                        }
+                        if (File.Exists(cenariosLog))
+                        {
+                            File.Delete(cenariosLog);
+                        }
+                    }
+                    finally
                     {
-
-                        //if (System.Windows.Forms.MessageBox.Show("Caminho de restricoes elétricas do newave (_redat) não encontrado, continuar mesmo assim?"
-                        //    , "Encadeado", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning)
-                        //    != System.Windows.Forms.DialogResult.Yes)
-                        return;
+                        if (xlApp != null)
+                        {
+                            xlApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
+                            xlApp.ScreenUpdating = true;
+                            xlApp.Quit();
+                            ExcelTools.Helper.Release(xlApp);
+                            foreach (System.Diagnostics.Process proc in System.Diagnostics.Process.GetProcessesByName("Excel"))
+                            {
+                                if (proc.MainWindowHandle == pointer)
+                                {
+                                    proc.Kill();
+                                }
+                            }
+                        }
 
                     }
-                    estudo.Restricoes = w.ReDats ?? new List<IRE>();
-
-                    estudo.Agrints = w.AgrintDats ?? new List<IAGRIGNT>();
-
-                    estudo.Adterm = w.adtermdat ?? new List<IADTERM>();
-
-                    estudo.Intercambios = w.Intercambios ?? new List<IINTERCAMBIO>();
-
-                    estudo.MERCADO = w.MercadosSisdat ?? new List<IMERCADO>();
-
-                    estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
-                    estudo.ReModifs = w.ReModifwb ?? new List<IREMODIF>();
-                    estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
-                    estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();
-                    estudo.Reedads = w.Reedads ?? new List<IREEDAT>();
-                    estudo.Restelecsv = w.RestEleCSV ?? new List<IRESTELECSV>();
-
-                    if (System.IO.Directory.Exists(dc))
-                    {
-
-                        var deckDCBase = DeckFactory.CreateDeck(dc) as Compass.CommomLibrary.Decomp.Deck;
-                        var configH = new Compass.CommomLibrary.Decomp.ConfigH(
-                            deckDCBase[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger,
-                            deckDCBase[CommomLibrary.Decomp.DeckDocument.hidr].Document as Compass.CommomLibrary.HidrDat.HidrDat);
-
-                        estudo.ConfighBase = configH;
-
-
-
-                    }
-                    estudo.ExecucaoPrincipal();
-
-                    wb.Save();
-                    wb.Close(SaveChanges: false);
                 }
-            }
-            catch (Exception e)
-            {
-                string log = Path.Combine(Path.GetDirectoryName(commands), "ERROR_LOG.TXT");
 
-                File.WriteAllText(log, e.Message.ToString());
-                if (xlApp != null)
-                {
-                    xlApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
-                    xlApp.ScreenUpdating = true;
-                    xlApp.Quit();
-                    ExcelTools.Helper.Release(xlApp);
-
-                }
-                
             }
-            finally
-            {
-                if (xlApp != null)
-                {
-                    xlApp.Cursor = Microsoft.Office.Interop.Excel.XlMousePointer.xlDefault;
-                    xlApp.ScreenUpdating = true;
-                    xlApp.Quit();
-                    ExcelTools.Helper.Release(xlApp);
 
-                }
-            }
 
         }
 

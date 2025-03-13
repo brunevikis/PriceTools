@@ -11,8 +11,10 @@ using Compass.ExcelTools;
 using Compass.ExcelTools.Templates;
 using System.Windows.Forms;
 
-namespace Compass.Services {
-    public class Reservatorio {
+namespace Compass.Services
+{
+    public class Reservatorio
+    {
 
         /// <summary>
         /// 
@@ -21,41 +23,7 @@ namespace Compass.Services {
         /// <param name="earmTargetLevel"></param>
         /// <param name="earmMax">Desconsiderado caso a meta seja em valor absoluto</param>
         /// <returns></returns>
-        public static void SetUHBlock(ConfigH configH, double[] earmTargetLevel, double[] earmMax, List<Infosheet.Dados_Fixa> Fixa_UH) {
-            var earmTarget = new double[earmTargetLevel.Length];
-
-            if (earmTargetLevel.All(x => x <= 1)) {
-                for (int x = 0; x < configH.index_sistemas.Count; x++) {
-                    earmTarget[x] = earmTargetLevel[x] * earmMax[x];
-                }
-            } else if (earmTargetLevel.All(x => x <= 100)) {
-                for (int x = 0; x < configH.index_sistemas.Count; x++) {
-                    earmTarget[x] = (earmTargetLevel[x] / 100f) * earmMax[x];
-                }
-
-            } else {
-                earmTarget = earmTargetLevel;
-            }
-
-            if (configH.baseDoc is Dadger) {
-                //UhBlock uhResult = 
-                buildReserv(configH, earmTarget,earmMax,Fixa_UH);
-                //((Dadger)configH.baseDoc).BlocoUh = uhResult;
-            }
-            else if (configH.baseDoc is EntdadosDat)
-            {
-                //UhBlock uhResult = 
-                buildReserv(configH, earmTarget, earmMax, Fixa_UH);
-                //((Dadger)configH.baseDoc).BlocoUh = uhResult;
-            }
-            else if (configH.baseDoc is Compass.CommomLibrary.ConfhdDat.ConfhdDat) {
-                buildReservNW(configH, earmTarget);
-            }
-
-            //return uhResult;
-        }
-
-        public static void SetUHBlockFixado(ConfigH configH, double[] earmTargetLevel, double[] earmMax, List<WorkbookMensal.Dados_Fixa> Fixa_UH)
+        public static void SetUHBlock(ConfigH configH, double[] earmTargetLevel, double[] earmMax, List<Infosheet.Dados_Fixa> Fixa_UH)
         {
             var earmTarget = new double[earmTargetLevel.Length];
 
@@ -82,7 +50,51 @@ namespace Compass.Services {
             if (configH.baseDoc is Dadger)
             {
                 //UhBlock uhResult = 
-                buildReservFixado(configH, earmTarget, earmMax, Fixa_UH);
+                buildReserv(configH, earmTarget, earmMax, Fixa_UH);
+                //((Dadger)configH.baseDoc).BlocoUh = uhResult;
+            }
+            else if (configH.baseDoc is EntdadosDat)
+            {
+                //UhBlock uhResult = 
+                buildReserv(configH, earmTarget, earmMax, Fixa_UH);
+                //((Dadger)configH.baseDoc).BlocoUh = uhResult;
+            }
+            else if (configH.baseDoc is Compass.CommomLibrary.ConfhdDat.ConfhdDat)
+            {
+                buildReservNW(configH, earmTarget);
+            }
+
+            //return uhResult;
+        }
+
+        public static void SetUHBlockFixado(ConfigH configH, double[] earmTargetLevel, double[] earmMax, List<WorkbookMensal.Dados_Fixa> Fixa_UH, bool auto = false)
+        {
+            var earmTarget = new double[earmTargetLevel.Length];
+
+            if (earmTargetLevel.All(x => x <= 1))
+            {
+                for (int x = 0; x < configH.index_sistemas.Count; x++)
+                {
+                    earmTarget[x] = earmTargetLevel[x] * earmMax[x];
+                }
+            }
+            else if (earmTargetLevel.All(x => x <= 100))
+            {
+                for (int x = 0; x < configH.index_sistemas.Count; x++)
+                {
+                    earmTarget[x] = (earmTargetLevel[x] / 100f) * earmMax[x];
+                }
+
+            }
+            else
+            {
+                earmTarget = earmTargetLevel;
+            }
+
+            if (configH.baseDoc is Dadger)
+            {
+                //UhBlock uhResult = 
+                buildReservFixado(configH, earmTarget, earmMax, Fixa_UH, auto);
                 //((Dadger)configH.baseDoc).BlocoUh = uhResult;
             }
             else if (configH.baseDoc is EntdadosDat)
@@ -142,7 +154,7 @@ namespace Compass.Services {
 
             //return uhResult;
         }
-        public static void SetUHBlock(ConfigH configH, double[] earmTargetLevel, double[] earmMax)
+        public static void SetUHBlock(ConfigH configH, double[] earmTargetLevel, double[] earmMax,bool auto = false)
         {
             var earmTarget = new double[earmTargetLevel.Length];
 
@@ -169,7 +181,7 @@ namespace Compass.Services {
             if (configH.baseDoc is Dadger)
             {
                 //UhBlock uhResult = 
-                buildReserv(configH, earmTarget, earmMax);
+                buildReserv(configH, earmTarget, earmMax, auto: auto);
                 //((Dadger)configH.baseDoc).BlocoUh = uhResult;
             }
             else if (configH.baseDoc is EntdadosDat)
@@ -230,13 +242,13 @@ namespace Compass.Services {
             //return uhResult;
         }
 
-        static void buildReservFixado(ConfigH configH, double[] earmTarget, double[] earmMax, List<WorkbookMensal.Dados_Fixa> Fixa_UH = null)
+        static void buildReservFixado(ConfigH configH, double[] earmTarget, double[] earmMax, List<WorkbookMensal.Dados_Fixa> Fixa_UH = null, bool auto = false)
         {
 
             //UhBlock uhResult = new UhBlock();
 
 
-            goalSeekFixado(configH, earmTarget, earmMax, Fixa_UH);
+            goalSeekFixado(configH, earmTarget, earmMax, Fixa_UH, auto);
 
             if (configH.baseDoc is Dadger)
             {
@@ -272,12 +284,13 @@ namespace Compass.Services {
 
             //return uhResult;
         }
-        static void buildReserv(ConfigH configH, double[] earmTarget , double[] earmMax, List<Infosheet.Dados_Fixa> Fixa_UH = null) {
+        static void buildReserv(ConfigH configH, double[] earmTarget, double[] earmMax, List<Infosheet.Dados_Fixa> Fixa_UH = null, bool auto = false)
+        {
 
             //UhBlock uhResult = new UhBlock();
 
-         
-            goalSeek(configH, earmTarget,earmMax, Fixa_UH);
+
+            goalSeek(configH, earmTarget, earmMax, Fixa_UH, auto);
 
             if (configH.baseDoc is Dadger)
             {
@@ -423,7 +436,7 @@ namespace Compass.Services {
                             usina.travado = true;
                             usina.VolIni = (double)item.Volini * usina.VolUtil / 100f;
                         }
-                      
+
                     }
 
                 }
@@ -447,7 +460,7 @@ namespace Compass.Services {
         }
         public static Boolean Meta_Fixa_Uh(ConfigH configH, double[] earmTarget, double[] earm_Max, List<Infosheet.Dados_Fixa> Fixa_UH = null)
         {
-            if(configH.baseDoc is Dadger)
+            if (configH.baseDoc is Dadger)
             {
                 foreach (var uhBase in ((Dadger)configH.baseDoc).BlocoUh)
                 {
@@ -486,14 +499,14 @@ namespace Compass.Services {
 
                     }
 
-                }              
+                }
             }
 
             var earm_UH = configH.GetEarms();
-         //   var earm_Max = earmMax;
-            
-            var desvio_max = Math.Max(Math.Abs((earmTarget[0]/earm_Max[0]) - (earm_UH[0] / earm_Max[0])), Math.Max(Math.Abs((earmTarget[1] / earm_Max[1]) - (earm_UH[1] / earm_Max[1])), Math.Max(Math.Abs((earmTarget[2] / earm_Max[2]) - (earm_UH[2] / earm_Max[2])), Math.Abs((earmTarget[3] / earm_Max[3]) - (earm_UH[3] / earm_Max[3])))));
-            
+            //   var earm_Max = earmMax;
+
+            var desvio_max = Math.Max(Math.Abs((earmTarget[0] / earm_Max[0]) - (earm_UH[0] / earm_Max[0])), Math.Max(Math.Abs((earmTarget[1] / earm_Max[1]) - (earm_UH[1] / earm_Max[1])), Math.Max(Math.Abs((earmTarget[2] / earm_Max[2]) - (earm_UH[2] / earm_Max[2])), Math.Abs((earmTarget[3] / earm_Max[3]) - (earm_UH[3] / earm_Max[3])))));
+
             if (desvio_max > 0.0001)
             {
                 return false;
@@ -503,7 +516,7 @@ namespace Compass.Services {
             {
                 return true;
             }
-           
+
         }
 
         public static Boolean Meta_Fixa_UhREE(ConfigH configH, double[] earmTarget, double[] earm_Max, List<Infosheet.Dados_Fixa> Fixa_UH = null)
@@ -575,7 +588,7 @@ namespace Compass.Services {
 
         }
 
-        static void goalSeekFixado(ConfigH configH, double[] earmTarget, double[] earmMax = null, List<WorkbookMensal.Dados_Fixa> Fixa_UH = null)
+        static void goalSeekFixado(ConfigH configH, double[] earmTarget, double[] earmMax = null, List<WorkbookMensal.Dados_Fixa> Fixa_UH = null, bool auto = false)
         {
 
 
@@ -647,16 +660,17 @@ namespace Compass.Services {
                     }
                 }
 
-               var travando = Meta_Fixa_UhFixado(configH, earmTarget, earmMax, Fixa_UH);//trava novamente as usinas apos a iteração
+                var travando = Meta_Fixa_UhFixado(configH, earmTarget, earmMax, Fixa_UH);//trava novamente as usinas apos a iteração
 
             } while (++itNumber < itMax);
 
-            if (itNumber >= itMax)
+            if (itNumber >= itMax && auto == false)
             {
                 MessageBox.Show("Número Máximo de Iterações atingido");
             }
         }
-        static void goalSeek(ConfigH configH, double[] earmTarget, double[] earmMax = null, List<Infosheet.Dados_Fixa> Fixa_UH = null) {
+        static void goalSeek(ConfigH configH, double[] earmTarget, double[] earmMax = null, List<Infosheet.Dados_Fixa> Fixa_UH = null, bool auto = false)
+        {
 
 
             var fatores = new double[configH.index_sistemas.Max(t => t.Item2) + 1];
@@ -668,10 +682,11 @@ namespace Compass.Services {
             int itMax = 100;
             Boolean desvio = true;
 
-            do {
+            do
+            {
 
                 //Travar Usinas Norte
-                if(Fixa_UH != null)
+                if (Fixa_UH != null)
                 {
                     if (Fixa_UH.Count > 0)
                     {
@@ -680,7 +695,7 @@ namespace Compass.Services {
                         itMax = 1000;
                     }
                 }
-                
+
 
                 //Fim da trava
 
@@ -689,7 +704,8 @@ namespace Compass.Services {
                 erroAnterior = erro;
                 erro = 0;
 
-                for (int x = 0; x < configH.index_sistemas.Count; x++) {
+                for (int x = 0; x < configH.index_sistemas.Count; x++)
+                {
 
                     var sis = configH.index_sistemas[x].Item2;
 
@@ -699,16 +715,20 @@ namespace Compass.Services {
                 }
 
                 //se erro pequeno ou não houver grande variação parar iteração
-                if ((erro < 2 || Math.Abs(erroAnterior - erro) < 1)&& desvio ==true)
+                if ((erro < 2 || Math.Abs(erroAnterior - erro) < 1) && desvio == true)
                     break;
 
 
                 //atualiza volumes e queda
-                foreach (var uhe in configH.Usinas.Where(u => !u.IsFict && u.VolIni > 0)) {
+                foreach (var uhe in configH.Usinas.Where(u => !u.IsFict && u.VolIni > 0))
+                {
 
-                    if (!uhe.CodFicticia.HasValue) {
+                    if (!uhe.CodFicticia.HasValue)
+                    {
                         uhe.VolIni *= fatores[uhe.Mercado];
-                    } else {
+                    }
+                    else
+                    {
                         // se influenciar em outro sistema, levar em conta o fator do sistema afetado
                         // f = ( fs^3 * ff ) ^ (1/4)
                         var f = (float)Math.Pow(fatores[uhe.Mercado] *
@@ -723,7 +743,7 @@ namespace Compass.Services {
 
             } while (++itNumber < itMax);
 
-            if(itNumber >= itMax)
+            if (itNumber >= itMax && auto == false)
             {
                 MessageBox.Show("Número Máximo de Iterações atingido");
             }

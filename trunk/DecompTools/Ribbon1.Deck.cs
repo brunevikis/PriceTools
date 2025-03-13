@@ -2642,6 +2642,47 @@ Caso os newaves já tenham sido executados, os cortes existentes serão mantidos
             }
         }
 
+        private void btnCenariosAUTO_Click(object sender, RibbonControlEventArgs e)
+        {
+            //K:\enercore_ctl_common\Cenarios_Auto
+            var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var statusBarState = Globals.ThisAddIn.Application.DisplayStatusBar;
+            try
+            {
+                var tfile = "";
+
+                WorkbookMensal w;
+                if (Globals.ThisAddIn.Application.ActiveWorkbook == null ||
+                    !WorkbookMensal.TryCreate(Globals.ThisAddIn.Application.ActiveWorkbook, out w))
+                {
+
+                    tfile = Path.Combine(Globals.ThisAddIn.ResourcesPath, "Mensal6.xltm");
+                    Globals.ThisAddIn.Application.Workbooks.Add(tfile);
+
+                    return;
+                }
+                if (System.Windows.Forms.MessageBox.Show("Deseja agendar a geração automática?\nAtenção!\nOs Decks DECOMP e NEWAVE e o Diretório de destino do estudo\ndevem estar localizados na unidade de rede mapeada \"K:\""
+                   , "Enercore - Price", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    var nw = w.NewaveBase;
+                    string dirCenGerado = $@"K:\enercore_ctl_common\Cenarios_Auto";
+                    string xlFile = Globals.ThisAddIn.Application.ActiveWorkbook.Name;
+                    if (!Directory.Exists(dirCenGerado))
+                    {
+                        Directory.CreateDirectory(dirCenGerado);
+                    }
+                    string newXlFile = Path.Combine(dirCenGerado, Path.GetFileName(xlFile));
+                    Globals.ThisAddIn.Application.ActiveWorkbook.SaveCopyAs(newXlFile);
+                    System.Windows.Forms.MessageBox.Show("Processo realizado com sucesso!", "Enercore - Price");
+                }
+            }
+            catch (Exception eAuto)
+            {
+                eAuto.Message.ToString();
+            }
+
+        }
+
         private void btnCreateRV0_Click(object sender, RibbonControlEventArgs e)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
