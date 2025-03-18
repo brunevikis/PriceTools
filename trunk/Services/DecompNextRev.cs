@@ -53,13 +53,16 @@ namespace Compass.Services
 
         public static Compass.CommomLibrary.ModifDatNW.ModifDatNw AlterarModifComLq(Compass.CommomLibrary.ModifDatNW.ModifDatNw modif, WorkbookMensal.FAIXALIMITES lHq, string mineTurbVaz, DateTime data, double lqValor, double engolimento)
         {
+            //TODO no uso de engolimento trocar para 99999
             bool usarEngolimento = false;
             double valorModif = lqValor;
+            double valor99999 = 99999;
 
             if (mineTurbVaz == "TURBMAXT")
             {
                 usarEngolimento = true;
-                valorModif = lqValor > engolimento ? engolimento : lqValor;
+                //valorModif = lqValor > engolimento ? engolimento : lqValor;
+                valorModif = lqValor >= engolimento ? valor99999 : lqValor;
             }
 
             var modifFile = modif.File;
@@ -85,7 +88,8 @@ namespace Compass.Services
                     var valorAntigo = modiflineTurbVaz.ValorModif;
                     if (usarEngolimento == true)
                     {
-                        valorAntigo = valorAntigo < engolimento ? valorAntigo : engolimento;
+                        //valorAntigo = valorAntigo < engolimento ? valorAntigo : engolimento;
+                        valorAntigo = valorAntigo < engolimento ? valorAntigo : valor99999;
                     }
 
                     newModifLine.SetValores(data.Month.ToString(), data.Year.ToString(), valorModif.ToString().Replace(',', '.'));
@@ -109,7 +113,8 @@ namespace Compass.Services
                     else if (modiflineMesSeq != null && usarEngolimento == true)
                     {
                         double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
-                        valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                        //valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                        valorAusar = valorAusar < engolimento ? valorAusar : valor99999;
                         modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
                     }
 
@@ -122,7 +127,8 @@ namespace Compass.Services
 
                     if (usarEngolimento == true)
                     {
-                        valorAntigo = valorAntigo < engolimento ? valorAntigo : engolimento;
+                        //valorAntigo = valorAntigo < engolimento ? valorAntigo : engolimento;
+                        valorAntigo = valorAntigo < engolimento ? valorAntigo : valor99999;
                     }
 
                     modiflineTurbVaz.SetValores(data.Month.ToString(), data.Year.ToString(), valorModif.ToString().Replace(',', '.'));
@@ -143,7 +149,8 @@ namespace Compass.Services
                     else if (modiflineMesSeq != null && usarEngolimento == true)
                     {
                         double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
-                        valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                       // valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                        valorAusar = valorAusar < engolimento ? valorAusar : valor99999;
                         modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
                     }
 
@@ -171,7 +178,8 @@ namespace Compass.Services
                             var newModifLine2 = new Compass.CommomLibrary.ModifDatNW.ModifLine();
 
 
-                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), engolimento.ToString().Replace(',', '.'));
+                            //newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), engolimento.ToString().Replace(',', '.'));
+                            newModifLine2.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valor99999.ToString().Replace(',', '.'));
                             newModifLine2.Chave = mineTurbVaz;
                             newModifLine2.Usina = lHq.UsiRest;
                             int indexT2 = modif.IndexOf(newModifLine) + 1;
@@ -180,7 +188,8 @@ namespace Compass.Services
                         else
                         {
                             double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
-                            valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                            //valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                            valorAusar = valorAusar < engolimento ? valorAusar : valor99999;
                             modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
                         }
 

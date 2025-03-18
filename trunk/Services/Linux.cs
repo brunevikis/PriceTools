@@ -35,7 +35,7 @@ namespace Compass.Services
             controller.Enqueue(comm);
             if (wait)
             {
-                ret = controller.WaitCompletition(comm, timeout: 360000) == true &&
+                ret = controller.WaitCompletition(comm, timeout: 420000) == true &&
                     comm.ExitCode == 0;
             }
 
@@ -72,7 +72,7 @@ namespace Compass.Services
             controller.Enqueue(comm);
             if (wait)
             {
-                ret = controller.WaitCompletition(comm, timeout: 360000) == true &&
+                ret = controller.WaitCompletition(comm, timeout: 420000) == true &&
                     comm.ExitCode == 0;
             }
 

@@ -1298,7 +1298,9 @@ namespace Compass.DecompToolsShellX
             //TODO: logica de pular execução caso processo em andamento, 
             Directory.CreateDirectory(commands);
             string cenariosLog = Path.Combine(commands, "Exec.log");
-            string xlFile = Directory.GetFiles(commands).FirstOrDefault();
+            var fileList= Directory.GetFiles(commands).OrderBy(x => x).ToList();
+
+            string xlFile = Directory.GetFiles(commands).OrderBy(x => x).FirstOrDefault();
             if (File.Exists(xlFile))
             {
                 if (!File.Exists(cenariosLog))
