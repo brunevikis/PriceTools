@@ -1290,7 +1290,7 @@ namespace Encadeado
 
             foreach (var dad in this.Modifs.Where(x => x.MesEstudo == deck.Dger.MesEstudo && ((x.Mes >= deck.Dger.MesEstudo && x.Ano >= deck.Dger.AnoEstudo) || (x.Mes < deck.Dger.MesEstudo && x.Ano > deck.Dger.AnoEstudo))).ToList())
             {
-                if (dad.Usina == 275)
+                if (dad.Usina == 251)
                 {
 
                 }
@@ -1406,10 +1406,25 @@ namespace Encadeado
 
             if (NwHibrido)
             {
+                var usinasTurbmaxt = modifs.Where(x => x.Chave == "TURBMAXT").Select(x => x.Usina).Distinct();
+                List<Compass.CommomLibrary.ModifDatNW.ModifLine> remover = new List<Compass.CommomLibrary.ModifDatNW.ModifLine>();
+
+                foreach (var usiT in usinasTurbmaxt)
+                {
+                    var modifsremove = modifs.Where(x => x.Usina == usiT && x.Chave == "TURBMAXT").ToList();
+                    if (modifsremove.Count() == 1 && modifsremove[0].ValorModif == 99999)
+                    {
+                        remover.Add(modifsremove[0]);
+                    }
+                }
+
+                remover.ForEach(x => modifs.Remove(x));
+
                 foreach (var dad in this.Modifs.Where(x => x.MesEstudo == deck.Dger.MesEstudo && ((x.Mes >= deck.Dger.MesEstudo && x.Ano >= deck.Dger.AnoEstudo) || (x.Mes < deck.Dger.MesEstudo && x.Ano > deck.Dger.AnoEstudo))).ToList())
                 {
                     if (dad.Minemonico == "TURBMAXT")
                     {
+                        
                         DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
 
                         if (!modifs.Any(x => x.Usina == dad.Usina))

@@ -2670,11 +2670,15 @@ namespace Compass.DecompToolsShellX
                         {
                             float d = 0;
                             var campos = pdoOper[i].Split(';').ToList();
-                            var hora = Convert.ToInt32(campos[0]);
-                            var usina = Convert.ToInt32(campos[2]);
-                            var volIni = float.TryParse(campos[6], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
-                            var volFim = float.TryParse(campos[8], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
-                            UHS.Add(new Tuple<int, int, float, float>(hora, usina, volIni, volFim));
+                            if (int.TryParse(campos[0],out int r))
+                            {
+                                var hora = Convert.ToInt32(campos[0]);
+                                var usina = Convert.ToInt32(campos[2]);
+                                var volIni = float.TryParse(campos[6], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                                var volFim = float.TryParse(campos[8], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                                UHS.Add(new Tuple<int, int, float, float>(hora, usina, volIni, volFim));
+                            }
+                            
                         }
 
                     }
@@ -2683,8 +2687,8 @@ namespace Compass.DecompToolsShellX
                     foreach (var dir in (string[])dirs)
                     {
 
-                        var dadvazFile = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("dadvaz.dat")).First();
-                        var entdadosFile = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("entdados.dat")).First();
+                        var dadvazFile = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("dadvaz.dat")).FirstOrDefault();
+                        var entdadosFile = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("entdados.dat")).FirstOrDefault();
                         if (dadvazFile != null && entdadosFile != null)
                         {
                             var dadvaz = DocumentFactory.Create(dadvazFile) as Compass.CommomLibrary.Dadvaz.Dadvaz;

@@ -1512,7 +1512,7 @@ namespace ConsoleApp1
 
         public static float GetDefluencia(string pastabase, int usn, int est)
         {
-            var arqName = Directory.GetFiles(pastabase).Where(x => Path.GetFileName(x).ToLower().Contains("pdo_oper_usih.dat")).First();
+            var arqName = Directory.GetFiles(pastabase).Where(x => Path.GetFileName(x).ToLower().Contains("pdo_oper_usih.dat")).FirstOrDefault();
             if (File.Exists(arqName))
             {
                 var pdoOper = File.ReadAllLines(arqName);
@@ -1527,11 +1527,15 @@ namespace ConsoleApp1
                     {
                         float d = 0;
                         var campos = pdoOper[i].Split(';').ToList();
-                        var hora = Convert.ToInt32(campos[0]);
-                        var usina = Convert.ToInt32(campos[2]);
-                        var qtur = float.TryParse(campos[20], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
-                        var qver = float.TryParse(campos[24], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
-                        UHS.Add(new Tuple<int, int, float, float>(hora, usina, qtur, qver));
+                        if (int.TryParse(campos[0],out int r))
+                        {
+                            var hora = Convert.ToInt32(campos[0]);
+                            var usina = Convert.ToInt32(campos[2]);
+                            var qtur = float.TryParse(campos[20], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                            var qver = float.TryParse(campos[24], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
+                            UHS.Add(new Tuple<int, int, float, float>(hora, usina, qtur, qver));
+                        }
+                      
                     }
 
                 }

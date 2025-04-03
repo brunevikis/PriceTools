@@ -2672,7 +2672,8 @@ Caso os newaves já tenham sido executados, os cortes existentes serão mantidos
                         Directory.CreateDirectory(dirCenGerado);
                     }
                     string newXlFile = Path.Combine(dirCenGerado, Path.GetFileName(xlFile));
-                    Globals.ThisAddIn.Application.ActiveWorkbook.SaveCopyAs(newXlFile);
+                    //Globals.ThisAddIn.Application.ActiveWorkbook.SaveCopyAs(newXlFile);
+                    Globals.ThisAddIn.Application.ActiveWorkbook.SaveAs(newXlFile);
                     System.Windows.Forms.MessageBox.Show("Processo realizado com sucesso!", "Enercore - Price");
                 }
             }
