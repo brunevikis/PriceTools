@@ -1424,7 +1424,7 @@ namespace Encadeado
                 {
                     if (dad.Minemonico == "TURBMAXT")
                     {
-                        
+
                         DateTime data = new DateTime(dad.Ano, dad.Mes, 1);
 
                         if (!modifs.Any(x => x.Usina == dad.Usina))
@@ -1486,7 +1486,37 @@ namespace Encadeado
 
                 }
             }
+            //todo excluir os turbmax caso só exista dados com 99999
 
+            var usinasTurbmaxtFinal = modifs.Where(x => x.Chave == "TURBMAXT").Select(x => x.Usina).Distinct();
+            List<Compass.CommomLibrary.ModifDatNW.ModifLine> removerFinal = new List<Compass.CommomLibrary.ModifDatNW.ModifLine>();
+
+            foreach (var usiT in usinasTurbmaxtFinal)
+            {
+                var modifsremove = modifs.Where(x => x.Usina == usiT && x.Chave == "TURBMAXT").ToList();
+                if (modifsremove.All(x => x.ValorModif == 99999))
+                {
+                    modifsremove.ForEach(x => removerFinal.Add(x));
+                }
+            }
+
+            removerFinal.ForEach(x => modifs.Remove(x));
+
+            removerFinal.Clear();
+
+            var usinaSemMine = modifs.Select(x => x.Usina).Distinct();
+
+            foreach (var usiT in usinaSemMine)
+            {
+                var modifsremove = modifs.Where(x => x.Usina == usiT).ToList();
+                if (modifsremove.Count() == 1 && modifsremove[0].Chave.ToUpper().Trim() == "USINA")
+                {
+                    removerFinal.Add(modifsremove[0]);
+                }
+            }
+            removerFinal.ForEach(x => modifs.Remove(x));
+
+            //
             modifs.SaveToFile(filePath: modifFile);
 
         }
@@ -1644,7 +1674,7 @@ namespace Encadeado
                 //        }
                 //    }
                 //}
-                
+
                 //
             }
             catch (Exception e)
@@ -1871,7 +1901,7 @@ namespace Encadeado
 
                 restsEletricasCSV.BlocoReLimFormPat.Where(x => x.DataFim < dataEstudo).ToList().ForEach(x => restsEletricasCSV.BlocoReLimFormPat.Remove(x));
 
-                
+
 
                 restsEletricasCSV.SaveToFile(filePath: restsEletricasCSVFile);
             }

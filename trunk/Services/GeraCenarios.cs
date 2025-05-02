@@ -1922,6 +1922,43 @@ namespace Compass.Services
                                         }
                                     }
                                 }
+
+                                //todo excluir os turbmax caso só exista dados com 99999
+
+                                var modifsFinal = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
+                                var modifFileFinal = modifsFinal.File;
+
+                                var usinasTurbmaxtFinal = modifsFinal.Where(x => x.Chave == "TURBMAXT").Select(x => x.Usina).Distinct();
+                                List<Compass.CommomLibrary.ModifDatNW.ModifLine> removerFinal = new List<Compass.CommomLibrary.ModifDatNW.ModifLine>();
+
+                                foreach (var usiT in usinasTurbmaxtFinal)
+                                {
+                                    var modifsremove = modifsFinal.Where(x => x.Usina == usiT && x.Chave == "TURBMAXT").ToList();
+                                    if (modifsremove.All(x => x.ValorModif == 99999))
+                                    {
+                                        modifsremove.ForEach(x => removerFinal.Add(x));
+                                    }
+                                }
+
+                                removerFinal.ForEach(x => modifsFinal.Remove(x));
+
+                                removerFinal.Clear();
+
+                                var usinaSemMine = modifsFinal.Select(x => x.Usina).Distinct();
+
+                                foreach (var usiT in usinaSemMine)
+                                {
+                                    var modifsremove = modifsFinal.Where(x => x.Usina == usiT).ToList();
+                                    if (modifsremove.Count() == 1 && modifsremove[0].Chave.ToUpper().Trim() == "USINA")
+                                    {
+                                        removerFinal.Add(modifsremove[0]);
+                                    }
+                                }
+                                removerFinal.ForEach(x => modifsFinal.Remove(x));
+                                modifsFinal.SaveToFile(filePath: modifFileFinal);
+
+                                //
+
                                 dadger.SaveToFile();
 
                                 if (w.Faixapercents.Count() > 0 && w.Faixalimites.Count() > 0)
@@ -3456,6 +3493,41 @@ namespace Compass.Services
                                 }
                             }
                         }
+
+                        //todo excluir os turbmax caso só exista dados com 99999
+
+                        var modifsFinal = deckNWEstudo[Compass.CommomLibrary.Newave.Deck.DeckDocument.modif].Document as Compass.CommomLibrary.ModifDatNW.ModifDatNw;
+                        var modifFileFinal = modifsFinal.File;
+
+                        var usinasTurbmaxtFinal = modifsFinal.Where(x => x.Chave == "TURBMAXT").Select(x => x.Usina).Distinct();
+                        List<Compass.CommomLibrary.ModifDatNW.ModifLine> removerFinal = new List<Compass.CommomLibrary.ModifDatNW.ModifLine>();
+
+                        foreach (var usiT in usinasTurbmaxtFinal)
+                        {
+                            var modifsremove = modifsFinal.Where(x => x.Usina == usiT && x.Chave == "TURBMAXT").ToList();
+                            if (modifsremove.All(x => x.ValorModif == 99999))
+                            {
+                                modifsremove.ForEach(x => removerFinal.Add(x));
+                            }
+                        }
+
+                        removerFinal.ForEach(x => modifsFinal.Remove(x));
+
+                        removerFinal.Clear();
+
+                        var usinaSemMine = modifsFinal.Select(x => x.Usina).Distinct();
+
+                        foreach (var usiT in usinaSemMine)
+                        {
+                            var modifsremove = modifsFinal.Where(x => x.Usina == usiT).ToList();
+                            if (modifsremove.Count() == 1 && modifsremove[0].Chave.ToUpper().Trim() == "USINA")
+                            {
+                                removerFinal.Add(modifsremove[0]);
+                            }
+                        }
+                        removerFinal.ForEach(x => modifsFinal.Remove(x));
+                        modifsFinal.SaveToFile(filePath: modifFileFinal);
+
                         dadger.SaveToFile();
 
                         if (w.Faixapercents.Count() > 0 && w.Faixalimites.Count() > 0)
