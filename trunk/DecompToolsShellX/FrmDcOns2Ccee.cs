@@ -93,7 +93,10 @@ namespace Compass.DecompToolsShellX
 
             foreach (var reONS in resONS)
             {
+                //if (reONS.Key.Restricao == 449)
+                //{
 
+                //}
                 // if (reONS.Key.Comment.ToUpperInvariant().Contains("RESTRIÇÕES DE INTERCÂMBIO CONJUNTURAIS")) conjuntural = true;
 
                 // if (!conjuntural) {
