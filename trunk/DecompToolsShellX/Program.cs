@@ -5316,10 +5316,21 @@ namespace Compass.DecompToolsShellX
                 {
                     string texto = "Falha ao converter deck dessem, diretório ou arquivos decomp inexistentes";
                     Program.AutoClosingMessageBox.Show(texto, "Caption", 5000);
-                    if (Directory.Exists(cloneDir))
+                    if (Directory.Exists(cloneDir))//deck convertido
                     {
                         Directory.Delete(cloneDir, true);
                     }
+
+                    if (Directory.Exists(path))//deck original
+                    {
+                        Directory.Delete(path, true);
+                    }
+
+                    if (File.Exists(Path.Combine(path,".zip")))//zip original
+                    {
+                        File.Delete(Path.Combine(path, ".zip"));
+                    }
+
                     if (command.Count() > 1 && command[1] == "true")
                     {
 
@@ -5339,9 +5350,19 @@ namespace Compass.DecompToolsShellX
                         texto = "Deck não reconhecido para a execução por falta de arquivos!";
                     }
                     Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br;", "Falha ao converter deckDessem");
-                    if (Directory.Exists(cloneDir))
+                    if (Directory.Exists(cloneDir))//deck convertido
                     {
                         Directory.Delete(cloneDir, true);
+                    }
+
+                    if (Directory.Exists(path))//deck original
+                    {
+                        Directory.Delete(path, true);
+                    }
+
+                    if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                    {
+                        File.Delete(Path.Combine(path, ".zip"));
                     }
                 }
                 else
@@ -5351,26 +5372,56 @@ namespace Compass.DecompToolsShellX
                     {
                         texto = "Processo Interrompido!!!";
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
-                        if (Directory.Exists(cloneDir))
+                        if (Directory.Exists(cloneDir))//deck convertido
                         {
                             Directory.Delete(cloneDir, true);
+                        }
+
+                        if (Directory.Exists(path))//deck original
+                        {
+                            Directory.Delete(path, true);
+                        }
+
+                        if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                        {
+                            File.Delete(Path.Combine(path, ".zip"));
                         }
                     }
                     else if (ex.ToString().Contains("Processo Interrompido!!!Mapcut e Cortdeco do Decomp referência não encontrados"))
                     {
                         texto = "Processo Interrompido!!!Mapcut e Cortdeco do Decomp referência não encontrados";
                         MessageBox.Show(texto, "Caption");
-                        if (Directory.Exists(cloneDir))
+                        if (Directory.Exists(cloneDir))// deck convertido
                         {
                             Directory.Delete(cloneDir, true);
+                        }
+
+                        if (Directory.Exists(path))//deck original
+                        {
+                            Directory.Delete(path, true);
+                        }
+
+                        if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                        {
+                            File.Delete(Path.Combine(path, ".zip"));
                         }
                     }
                     else
                     {
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
-                        if (Directory.Exists(cloneDir))
+                        if (Directory.Exists(cloneDir))//deck convertido
                         {
                             Directory.Delete(cloneDir, true);
+                        }
+
+                        if (Directory.Exists(path))//deck original
+                        {
+                            Directory.Delete(path, true);
+                        }
+
+                        if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                        {
+                            File.Delete(Path.Combine(path, ".zip"));
                         }
                     }
 
