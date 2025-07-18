@@ -110,7 +110,23 @@ namespace Compass.DecompToolsShellX
                     throw new Exception("Pasta com cortes não encontrada");
                 }
 
-                AlteraCortes(Path.Combine(path, "cortes.dat"));
+                string nwHcortes = "";
+
+                if (Directory.Exists(path))
+                {
+                    int num = datadeck.Month + 1;
+                    string sufixo = num.ToString("000");
+                    nwHcortes = $"cortes-{sufixo}.dat";
+                }
+
+                if (nwHcortes != "" && File.Exists(Path.Combine(path, nwHcortes)))
+                {
+                    AlteraCortes(Path.Combine(path, nwHcortes));
+                }
+                else 
+                {
+                    AlteraCortes(Path.Combine(path, "cortes.dat"));
+                }
             }
             FcBlock fc = (FcBlock)dadger.Blocos["FC"];
 
@@ -293,11 +309,11 @@ namespace Compass.DecompToolsShellX
             //}
             ////else
             //{
-                txtCortes.Text = x1;
-                txtInfo.Text = x2;
+            txtCortes.Text = x1;
+            txtInfo.Text = x2;
 
-                selectedPath = System.IO.Path.GetDirectoryName(cortesname);
-           // }
+            selectedPath = System.IO.Path.GetDirectoryName(cortesname);
+            // }
         }
 
         private void button1_Click(object sender, EventArgs e)

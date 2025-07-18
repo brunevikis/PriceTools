@@ -5326,9 +5326,9 @@ namespace Compass.DecompToolsShellX
                         Directory.Delete(path, true);
                     }
 
-                    if (File.Exists(Path.Combine(path,".zip")))//zip original
+                    if (File.Exists(path + ".zip"))//zip original
                     {
-                        File.Delete(Path.Combine(path, ".zip"));
+                        File.Delete(path + ".zip");
                     }
 
                     if (command.Count() > 1 && command[1] == "true")
@@ -5360,9 +5360,9 @@ namespace Compass.DecompToolsShellX
                         Directory.Delete(path, true);
                     }
 
-                    if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                    if (File.Exists(path + ".zip"))//zip original
                     {
-                        File.Delete(Path.Combine(path, ".zip"));
+                        File.Delete(path + ".zip");
                     }
                 }
                 else
@@ -5382,9 +5382,9 @@ namespace Compass.DecompToolsShellX
                             Directory.Delete(path, true);
                         }
 
-                        if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                        if (File.Exists(path + ".zip"))//zip original
                         {
-                            File.Delete(Path.Combine(path, ".zip"));
+                            File.Delete(path + ".zip");
                         }
                     }
                     else if (ex.ToString().Contains("Processo Interrompido!!!Mapcut e Cortdeco do Decomp referência não encontrados"))
@@ -5401,9 +5401,9 @@ namespace Compass.DecompToolsShellX
                             Directory.Delete(path, true);
                         }
 
-                        if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                        if (File.Exists(path + ".zip"))//zip original
                         {
-                            File.Delete(Path.Combine(path, ".zip"));
+                            File.Delete(path + ".zip");
                         }
                     }
                     else
@@ -5419,9 +5419,9 @@ namespace Compass.DecompToolsShellX
                             Directory.Delete(path, true);
                         }
 
-                        if (File.Exists(Path.Combine(path, ".zip")))//zip original
+                        if (File.Exists(path + ".zip"))//zip original
                         {
-                            File.Delete(Path.Combine(path, ".zip"));
+                            File.Delete(path + ".zip");
                         }
                     }
 
