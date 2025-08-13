@@ -745,7 +745,7 @@ namespace Compass.Services
 
             if (itNumber >= itMax && auto == false)
             {
-                MessageBox.Show("Número Máximo de Iterações atingido");
+                //MessageBox.Show("Número Máximo de Iterações atingido");
             }
         }
 
