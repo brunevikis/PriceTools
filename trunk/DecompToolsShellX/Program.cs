@@ -5527,16 +5527,36 @@ namespace Compass.DecompToolsShellX
                 #region dessem.arq
                 var dessemArq = deckestudo[CommomLibrary.Dessem.DeckDocument.dessem].Document.File;
                 var lines = File.ReadAllLines(dessemArq).ToList();
-                int indice = 0;
-                if (lines.Any(x => x.StartsWith("INDELET")))
-                {
+                List<string> newTexto = new List<string>();
 
-                    indice = lines.IndexOf(lines.Where(x => x.StartsWith("INDELET")).First());
-                    string frase = lines[indice];
-                    frase = "&" + frase;
-                    lines[indice] = frase;
-                    File.WriteAllLines(dessemArq, lines);
+                //int indice = 0;
+                foreach (var lin in lines)
+                {
+                    if (lin.StartsWith("INDELET") || lin.StartsWith("RMPFLX"))
+                    {
+
+
+                        string frase = lin;
+                        frase = "&" + frase;
+                        newTexto.Add(frase);
+                    }
+                    else
+                    {
+                        newTexto.Add(lin);
+                    }
                 }
+                File.WriteAllLines(dessemArq, newTexto);
+
+                //if (lines.Any(x => x.StartsWith("INDELET")))
+                //{
+
+                //    indice = lines.IndexOf(lines.Where(x => x.StartsWith("INDELET")).First());
+                //    string frase = lines[indice];
+                //    frase = "&" + frase;
+                //    lines[indice] = frase;
+                //    File.WriteAllLines(dessemArq, lines);
+                //}
+               
 
                 #endregion
 
