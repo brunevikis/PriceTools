@@ -1076,7 +1076,7 @@ namespace Compass.Services
                 {
                     var linhasMercado = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine && x.Mercado == i).ToList();
 
-                    foreach (var linha in linhasMercado)
+                    foreach (var linha in linhasMercado)//atualizo virada de ano nas linhas e ajusto para os meses baterem de acordo com a data do deck 
                     {
                         if (linha.Ano < Deck.Dger.AnoEstudo)
                         {
@@ -1124,6 +1124,18 @@ namespace Compass.Services
 
                         }
                     }
+                    //copiar os dados do ultimo ano para a linha do POS
+                    var linhaPOS = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEnePosLine && x.Mercado == i).FirstOrDefault();
+                    var linhaUltimoAno = sistema.Mercado.Where(x => x is Compass.CommomLibrary.SistemaDat.MerEneLine && x.Mercado == i).LastOrDefault();
+
+                    if (linhaPOS != null && linhaUltimoAno != null)
+                    {
+                        for (int m = 1; m <= 12; m++)
+                        {
+                            linhaPOS[m] = linhaUltimoAno[m];
+                        }
+                    }
+
                 }
                 for (int s = 1; s <= 4; s++)// pequenas mmgd === exp_tipousina
                 {
@@ -1199,7 +1211,7 @@ namespace Compass.Services
                 for (int i = 1; i <= 4; i++)
                 {
                     var linhasCadic = c_adicA.Where(x => x is Compass.CommomLibrary.C_AdicDat.MerEneLine && x.Mercado == i && x.Descricao.ToUpper().Contains("MMGD")).ToList();
-                    foreach (var linha in linhasCadic)
+                    foreach (var linha in linhasCadic)//atualizo virada de ano nas linhas e ajusto para os meses baterem de acordo com a data do deck 
                     {
                         if (!linha.Ano.ToUpper().Contains("POS"))
                         {
@@ -1233,6 +1245,17 @@ namespace Compass.Services
                             item[carga.Data.Month] = Math.Round(carga.Base_MMGD);
                         }
 
+                    }
+                    //copiar os dados do ultimo ano para a linha do POS
+                    var c_adicPOS = linhasCadic.Where(x => x.Ano.ToUpper().Contains("POS")).FirstOrDefault();
+                    var c_adicUltimoAno = linhasCadic.Where(x => !x.Ano.ToUpper().Contains("POS")).LastOrDefault();
+
+                    if (c_adicPOS != null && c_adicUltimoAno != null)
+                    {
+                        for (int m = 1; m <= 12; m++)
+                        {
+                            c_adicPOS[m] = c_adicUltimoAno[m];
+                        }
                     }
                 }
 

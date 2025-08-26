@@ -70,6 +70,8 @@ namespace Compass.DecompToolsShellX
 
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
 
+            //dessem2ccee "K:\teste\dessemTESTE\dessemToCCEE\DS_ONS_082025_RV3D19|true"
+
             //dessemtools "K:\teste\dessemTESTE\resultados\DS_ONS_122023_RV1D08_ccee (1)"
             //previvaz "C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt|ext"
             //C:\Files\16_Chuva_Vazao\2023_10\RV1\23-09-29\CV_ACOMPH_FUNC_d-1_ECENS45
