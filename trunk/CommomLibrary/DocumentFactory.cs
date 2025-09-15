@@ -162,6 +162,10 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<RestElCSV.RestElCSV>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
+            else if (fileName.StartsWith("renovaveis.csv"))
+            {
+                doc = BaseDocument.Create<RenovaveisDcCSV.RenovaveisCSV>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
             else if (fileName.StartsWith("prevsvel."))
             {
                 doc = BaseDocument.Create<ParqueEolico.PrevsVel>(System.IO.File.ReadAllText(filePath, Encoding.Default));
@@ -190,7 +194,7 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<Dadvaz.Dadvaz>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
-            else if (fileName.StartsWith("renovaveis"))
+            else if (fileName.StartsWith("renovaveis.dat"))
             {
                 doc = BaseDocument.Create<Renovaveis.Renovaveis>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }

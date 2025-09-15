@@ -149,7 +149,7 @@ namespace Compass.Services
                     else if (modiflineMesSeq != null && usarEngolimento == true)
                     {
                         double valorAusar = modiflineMesSeq.ValorModif ?? engolimento;
-                       // valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
+                        // valorAusar = valorAusar < engolimento ? valorAusar : engolimento;
                         valorAusar = valorAusar < engolimento ? valorAusar : valor99999;
                         modiflineMesSeq.SetValores(data.AddMonths(1).Month.ToString(), data.AddMonths(1).Year.ToString(), valorAusar.ToString().Replace(',', '.'));
                     }
@@ -258,6 +258,7 @@ namespace Compass.Services
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             var dadger = deckEstudo[CommomLibrary.Decomp.DeckDocument.dadger].Document as Dadger;
+
 
             var isMensal = mesOperativo.Inicio.Day == 1 && mesOperativo.Estagios == 1;
 
@@ -501,9 +502,17 @@ namespace Compass.Services
 
             #endregion
 
-            #region DP / IT ou RI / PQ
+            #region DP / IT ou RI / PQ / Renovaveis DC
 
             trataCarga(mesOperativo, dadger, deckNWEstudo, pmoBase, pees, eolicasDados);
+
+            string renovaviesFile = Directory.GetFiles(deckEstudo.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Contains("renovaveis.csv")).FirstOrDefault();
+
+            if (File.Exists(renovaviesFile))
+            {
+                var renovaveisDC = deckEstudo[CommomLibrary.Decomp.DeckDocument.renovaveis].Document as Compass.CommomLibrary.RenovaveisDcCSV.RenovaveisCSV;
+                trataRenovaveisDc(mesOperativo, dadger, renovaveisDC);
+            }
 
             #endregion
 
@@ -3341,6 +3350,153 @@ namespace Compass.Services
             return lstCTM;
         }
 
+        private static void trataRenovaveisDc(MesOperativo mesOperativo, Dadger dadger, Compass.CommomLibrary.RenovaveisDcCSV.RenovaveisCSV renovaveisDc)
+        {
+            //lista de cadastro para manter sempre o mesmo padrão no arquivo e evitar entradas diferentes devido a alteraçoes no renovaveis de entrada (o arquivo conter dados com numeração diferente para os PEEs)
+            List<Tuple<int, string, int, string>> cadastro = new List<Tuple<int, string, int, string>>//codPEE,NomePEE,numeroSubmercado,Tipo da usina
+            {
+                new Tuple<int, string, int,string>(1,"Eolica SECO",1,"SECO_EOL"),
+                new Tuple<int, string, int,string>(2,"Eolica S",2,"SUL_EOL"),
+                new Tuple<int, string, int,string>(3,"Eolica NE",3,"NE_EOL"),
+                new Tuple<int, string, int,string>(4,"Eolica N",4,"N_EOL"),
+                new Tuple<int, string, int,string>(11,"Fotovoltaica SECO",1,"SECO_UFV"),
+                new Tuple<int, string, int,string>(12,"Fotovoltaica S",2,"SUL_UFV"),
+                new Tuple<int, string, int,string>(13,"Fotovoltaica NE",3,"NE_UFV"),
+                new Tuple<int, string, int,string>(14,"Fotovoltaica N",4,"N_UFV")
+
+            };
+
+            int qtdCenarios = dadger.VAZOES_EstruturaDaArvore;// qtd de cenarios para serem replicados no bloco PEE-GER-PER-PAT-CEN
+
+            //apaga todas as linahs de cada bloco mantendo apenas uma para re-inserir as infos na forma padrão
+            //Pee-Cad
+            string linha1 = renovaveisDc.BlocoPeeCad.First().LineCSV;
+            string comment = renovaveisDc.BlocoPeeCad.First().Comment;
+            renovaveisDc.BlocoPeeCad.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeeCad.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.NomePEE = cad.Item2;
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeeCad.Add(newline);
+            }
+
+            //Pee-CONFIG
+            linha1 = renovaveisDc.BlocoPeeConfig.First().LineCSV;
+            comment = renovaveisDc.BlocoPeeConfig.First().Comment;
+
+            renovaveisDc.BlocoPeeConfig.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeeConfig.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.EstIni = 1;
+                newline.EstFin = mesOperativo.Estagios + 1;
+                newline.EstadoOper = "centralizado";
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeeConfig.Add(newline);
+            }
+
+            //Pee-SUBM
+
+            linha1 = renovaveisDc.BlocoPeeSubm.First().LineCSV;
+            comment = renovaveisDc.BlocoPeeSubm.First().Comment;
+
+            renovaveisDc.BlocoPeeSubm.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeeSubm.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.CodSubm = cad.Item3;
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeeSubm.Add(newline);
+            }
+
+            //Pee-POT
+
+            linha1 = renovaveisDc.BlocoPeePotInst.First().LineCSV;
+            comment = renovaveisDc.BlocoPeePotInst.First().Comment;
+
+            renovaveisDc.BlocoPeePotInst.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeePotInst.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.EstIni = 1;
+                newline.EstFin = mesOperativo.Estagios + 1;
+                newline.PotInst = 99999;
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeePotInst.Add(newline);
+            }
+
+            //PEE-GER-PER-PAT-CEN
+
+            linha1 = renovaveisDc.BlocoPeeGerPat.First().LineCSV;
+            comment = renovaveisDc.BlocoPeeGerPat.First().Comment;
+            renovaveisDc.BlocoPeeGerPat.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                for (int estagio = 1; estagio <= mesOperativo.Estagios + 1; estagio++)
+                {
+                    var pqline = dadger.BlocoPq.Where(x => x.SubMercado == cad.Item3 && x.Usina.ToUpper() == cad.Item4 && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).First();
+
+                    if (estagio == mesOperativo.Estagios + 1)//ultimo estagio se replica os patmares pela qtd de cenarios da arvore de cenarios
+                    {
+                        for (int arvore = 1; arvore <= qtdCenarios; arvore++)
+                        {
+                            for (int pat = 1; pat <= 3; pat++)
+                            {
+                                var newline = renovaveisDc.BlocoPeeGerPat.CreateLineCSV(linha1);
+                                newline.CodPEE = cad.Item1;
+                                newline.EstIni = estagio;
+                                newline.EstFin = estagio;//sim é isso mesmo, nesse bloco se usa estagio inicial e final iguais 
+                                newline.Pat = pat;
+                                newline.Cenario = arvore;
+                                newline.Geracao = pat == 1 ? pqline.Pat1 : pat == 2 ? pqline.Pat2 : pqline.Pat3;
+
+                                renovaveisDc.BlocoPeeGerPat.Add(newline);
+                            }
+                        }
+                        
+                    }
+                    else
+                    {
+                        for (int pat = 1; pat <= 3; pat++)
+                        {
+                            var newline = renovaveisDc.BlocoPeeGerPat.CreateLineCSV(linha1);
+                            newline.CodPEE = cad.Item1;
+                            newline.EstIni = estagio;
+                            newline.EstFin = estagio;//sim é isso mesmo, nesse bloco se usa estagio inicial e final iguais 
+                            newline.Pat = pat;
+                            newline.Cenario = 1;
+                            newline.Geracao = pat == 1 ? pqline.Pat1 : pat == 2 ? pqline.Pat2 : pqline.Pat3;
+
+                            renovaveisDc.BlocoPeeGerPat.Add(newline);
+                        }
+                    }
+                }
+                //apaga linhas das PQs eol e ufv do dadger
+                dadger.BlocoPq.Where(x => x.Usina.ToUpper() == cad.Item4).ToList().ForEach(x => dadger.BlocoPq.Remove(x));
+            }
+
+            renovaveisDc.BlocoPeeGerPat.First().Comment = comment;
+
+            renovaveisDc.SaveToFile();
+            dadger.SaveToFile();
+
+            
+        }
+
         private static void trataCarga(MesOperativo dtAtual, Dadger dadger, CommomLibrary.Newave.Deck deckNWEstudo, CommomLibrary.Pmo.Pmo pmoBase, bool pees = false, List<Tuple<int, int, DateTime, double>> eolicasDados = null)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
@@ -3651,7 +3807,7 @@ namespace Compass.Services
                             double p2 = 0;
                             double p3 = 0;
                             List<string> tipoUsinas = new List<string> { "", "_PCH", "_PCT", "_EOL", "_UFV", "_PCHgd", "_PCTgd", "_EOLgd", "_UFVgd" };//não alterar essa ordem 
-                            List<string> submercadoAbrev = new List<string> { "","SECO","SUL","NE","N" };//não alterar essa ordem 
+                            List<string> submercadoAbrev = new List<string> { "", "SECO", "SUL", "NE", "N" };//não alterar essa ordem 
 
                             int numUsinas = patamares.Nao_Simuladas.Where(x => x.Submercado == numMercado + 1).Select(x => x.Tipo_Usina).Max();///
 

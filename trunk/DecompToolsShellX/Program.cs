@@ -69,6 +69,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("cenariosauto", CenariosAuto);//cenarios
 
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
+            //atualizacarga "K:\teste\AtualizaCargaNW\NW202508_DEBUG"
 
             //dessem2ccee "K:\teste\dessemTESTE\dessemToCCEE\DS_ONS_082025_RV3D19|true"
 
@@ -1236,7 +1237,7 @@ namespace Compass.DecompToolsShellX
                 {
                     texto = "Deck não reconhecido para a execução por falta de arquivos!";
                 }
-                Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha ao converter deck");
+                Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha ao converter deck");
 
 
             }
@@ -2979,7 +2980,7 @@ namespace Compass.DecompToolsShellX
                         if (command.Count() > 1 && command[1] == "true")
                         {
 
-                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Conversão Decodess");
+                            Compass.CommomLibrary.Tools.SendMail(textoFinal, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Conversão Decodess");
 
                         }
                     }
@@ -2998,7 +2999,7 @@ namespace Compass.DecompToolsShellX
                         {
                             texto = "Deck não reconhecido para a execução por falta de arquivos!";
                         }
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha na conversão Decodess");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha na conversão Decodess");
                         if (Directory.Exists(cloneDir))
                         {
                             Directory.Delete(cloneDir, true);
@@ -5197,7 +5198,7 @@ namespace Compass.DecompToolsShellX
                         var texto = "Deck DESSEM CCEE agendado para execução!";
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 10000);
 
-                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "AUTORUN DESSEM CCEE");
+                        Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "AUTORUN DESSEM CCEE");
 
                     }
                     else
@@ -5217,7 +5218,7 @@ namespace Compass.DecompToolsShellX
                 {
                     var texto = "Erro: " + ex.ToString();
 
-                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Falha AUTORUN DESSEM CCEE");
+                    Compass.CommomLibrary.Tools.SendMail(texto, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Falha AUTORUN DESSEM CCEE");
                     if (Directory.Exists(cloneDir))
                     {
                         Directory.Delete(cloneDir, true);
@@ -5300,12 +5301,12 @@ namespace Compass.DecompToolsShellX
                         if (sucesso)
                         {
                             string frase = "Deck convertido ONS->CCEE encaminhado para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "AUTORUN DESSEM ONS->CCEE");
+                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "AUTORUN DESSEM ONS->CCEE");
                         }
                         else
                         {
                             string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br; gabriella.radke@enercore.com.br;", "Sucesso ao converter deckDessem");
+                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
                         }
 
                     }

@@ -31,6 +31,7 @@ namespace Compass.CommomLibrary.Decomp
         parqueeolpot,
         peeposto,
         postocad,
+        renovaveis,
         prevsvel
     }
 
@@ -70,6 +71,8 @@ namespace Compass.CommomLibrary.Decomp
             {"pee-posto.csv", null},//
             {"posto-cadastro.csv", null},//
             {"prevsvel.", null},
+            //
+            {"renovaveis.csv"    , null},
             //
             {"volumes-referencia.csv"    , null},//
             {"polinjus.csv"    , null}//
@@ -131,6 +134,8 @@ namespace Compass.CommomLibrary.Decomp
                         return Documents["pee-posto.csv"];
                     case DeckDocument.postocad:
                         return Documents["posto-cadastro.csv"];
+                    case DeckDocument.renovaveis:
+                        return Documents["renovaveis.csv"];
                     case DeckDocument.prevsvel:
                         return Documents["prevsvel."];
                     default:
@@ -210,6 +215,9 @@ namespace Compass.CommomLibrary.Decomp
                         break;
                     case DeckDocument.prevsvel:
                         documents["prevsvel."] = value;
+                        break;
+                    case DeckDocument.renovaveis:
+                        documents["renovaveis.csv"] = value;
                         break;
 
                     default:

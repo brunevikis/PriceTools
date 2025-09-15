@@ -359,6 +359,12 @@
     <Compile Include="Relato\RelatoDadosMercadoBlock.cs" />
     <Compile Include="Relato\RelatoRestricaoBlock.cs" />
     <Compile Include="Relato\RelatoBalEneBlock.cs" />
+    <Compile Include="RenovaveisDcCSV\PeeCad.cs" />
+    <Compile Include="RenovaveisDcCSV\PeeConfig.cs" />
+    <Compile Include="RenovaveisDcCSV\PeeGerPat.cs" />
+    <Compile Include="RenovaveisDcCSV\PeePotInst.cs" />
+    <Compile Include="RenovaveisDcCSV\PeeSubm.cs" />
+    <Compile Include="RenovaveisDcCSV\RenovaveisCSV.cs" />
     <Compile Include="Renovaveis\Eolica.cs" />
     <Compile Include="Renovaveis\EolicaBarra.cs" />
     <Compile Include="Renovaveis\EolicaGeracao.cs" />
