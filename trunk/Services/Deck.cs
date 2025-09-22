@@ -867,9 +867,12 @@ namespace Compass.Services
             }
             else if (deckDC != null)
             {
-
-
                 var dadger = deckDC[CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
+
+                string renovaviesFile = Directory.GetFiles(deckDC.BaseFolder).Where(x => Path.GetFileName(x).ToLower().Contains("renovaveis.csv")).FirstOrDefault();
+
+
+
                 DateTime datadeck = dadger.DataEstudo;
                 var rvinicio = Tools.GetCurrRev(dadger.DataEstudo);
                 bool pat2024 = datadeck.Year == 2024;
@@ -878,83 +881,164 @@ namespace Compass.Services
 
                 bool alterou = false;
 
-                foreach (var sub in weolDados.Select(x => x.SubNum).Distinct())
+                if (File.Exists(renovaviesFile))//faz a atualização no renovaveis e ignora as atualizaçoes no dadger 
                 {
-                    var pqlinesEntrada = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub).OrderByDescending(x => x.Estagio).Skip(1).FirstOrDefault();//ultimo estagio do primeiro mes do deck de entrada para usar para os estagios faltantes, caso não tenha dados correspondentes no weol
-                    double Patsubst1 = 0;
-                    double Patsubst2 = 0;
-                    double Patsubst3 = 0;
 
-                    if (pqlinesEntrada != null)
+                    var renovaveisDc = deckDC[CommomLibrary.Decomp.DeckDocument.renovaveis].Document as Compass.CommomLibrary.RenovaveisDcCSV.RenovaveisCSV;
+                    //trataRenovaveisDc(mesOperativo, dadger, renovaveisDC);
+
+                    int qtdCenarios = dadger.VAZOES_EstruturaDaArvore;// qtd de cenarios para serem replicados no bloco PEE-GER-PER-PAT-CEN
+                    int estagioMesSeguinte = renovaveisDc.BlocoPeeConfig.First().EstFin; //numero do estagio referente ao segundo mes
+                    string linhaClone = renovaveisDc.BlocoPeeGerPat.First().LineCSV;//linha para usar de padrão para a criação de novas linhas do bloco se necessario
+                    string comment = renovaveisDc.BlocoPeeGerPat.First().Comment;//linha para usar de comentario padrão para a criação de novas linhas do bloco se necessario
+
+                    #region padronizar renovaveis
+                    Padronizar_Renovaveis(renovaveisDc, estagioMesSeguinte);//padroniza as configurações dos blocos para ficarem sempre iguais, evitando possiveis divergencias nos CODPEEs 
+                    #endregion
+
+                    foreach (var sub in weolDados.Select(x => x.SubNum).Distinct())//TODO: ajustar o numero de estagios para quando o deck atualizado for de rvs diferentes de rv0
                     {
-                        Patsubst1 = pqlinesEntrada.Pat1;
-                        Patsubst2 = pqlinesEntrada.Pat2;
-                        Patsubst3 = pqlinesEntrada.Pat3;
+
+                        //double Patsubst1 = 0;
+                        //double Patsubst2 = 0;
+                        //double Patsubst3 = 0;
+                        //dados do ultimo estagio do primeiro mes do deck de entrada para usar para os estagios faltantes, caso não tenha dados correspondentes no weol
+                        double Patsubst1 = renovaveisDc.BlocoPeeGerPat.Where(x => x.CodPEE == sub && x.Pat == 1 && x.EstFin < estagioMesSeguinte).OrderByDescending(x => x.EstFin).Select(x => x.Geracao).FirstOrDefault();
+                        double Patsubst2 = renovaveisDc.BlocoPeeGerPat.Where(x => x.CodPEE == sub && x.Pat == 2 && x.EstFin < estagioMesSeguinte).OrderByDescending(x => x.EstFin).Select(x => x.Geracao).FirstOrDefault();
+                        double Patsubst3 = renovaveisDc.BlocoPeeGerPat.Where(x => x.CodPEE == sub && x.Pat == 3 && x.EstFin < estagioMesSeguinte).OrderByDescending(x => x.EstFin).Select(x => x.Geracao).FirstOrDefault();
+
+                        
+
+                        int estagio = 1;
+
+                        var semanasMes = weolDados.Where(x => x.SubNum == sub && x.SemanaIni >= datadeck && x.SemanaFim <= mesOperativo.SemanasOperativas[mesOperativo.Estagios - 1].Fim).ToList();
+
+                        if (semanasMes.Count() > 0)//se tem semanas correspondentes ao mes do deck
+                        {
+                            alterou = true;
+
+                            foreach (var item in semanasMes)
+                            {
+                                int weekIndex = mesOperativo.SemanasOperativas.IndexOf(mesOperativo.SemanasOperativas.Where(x => x.Inicio == item.SemanaIni).First());
+                                int est = 1;
+                                for (DateTime d = datadeck; d <= semanasMes.Last().SemanaIni; d = d.AddDays(7))// procura ajustar o numero do estagios com os dados das semanas em casos  de decks e weols de rvs diferentes 
+                                {
+                                    if (d == mesOperativo.SemanasOperativas[weekIndex].Inicio)//todo: fazer teste com deck rv1 e usar weol com dados que a primeria semana é rv0(pra dar certo ele tem que considerar que a segunda semana do weol é o estagio 1 do deck rv1)
+                                    {
+                                        estagio = est;// tambem fazer teste onde a primeiro semana do renovaveis esta no meio do weol 
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        est++;
+                                    }
+                                }
+
+                                for (int pat = 1; pat <= 3; pat++)
+                                {
+                                    var renoLineGer = renovaveisDc.BlocoPeeGerPat.Where(x => x.CodPEE == sub && x.Pat == pat && x.EstFin == estagio).FirstOrDefault();
+
+
+                                    //var pqline = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                                    //var pqlineList = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio);
+                                    if (renoLineGer != null)
+                                    {
+                                        renoLineGer.Geracao = pat == 1 ? item.CargaPat1 : pat == 2 ? item.CargaPat2 : item.CargaPat3;
+                                    }
+                                }
+                                
+                            }
+                            //replica os dados do ultimo estagio do deck de entrada para os estagios faltantes do primeiro mes, caso não exista os dados referentes no weol 
+                            //aqui ficaria a logica, porem da maneira atual do arquivo sempre tera todos os estagios descritos, logo não há necessidade pois sempre havera os dados do deck de entrada 
+                            //caso a montagem do arquivo mude, a logica deve ser emplementada aqui e usar os dados que ja estão senod capturados no passo anterior nas variaveis "Patsubstx"
+
+                        }
                     }
-
-                    int estagio = 1;
-
-                    var semanasMes = weolDados.Where(x => x.SubNum == sub && x.SemanaIni >= datadeck && x.SemanaFim <= mesOperativo.SemanasOperativas[mesOperativo.Estagios - 1].Fim).ToList();
-
-                    if (semanasMes.Count() > 0)//se tem semanas correspondentes ao mes do deck
+                    if (alterou == true)
                     {
-                        alterou = true;
+                        renovaveisDc.SaveToFile(createBackup: true);
+                    }
+                }
+                else//se não existir renovaveis, atualiza somente no dadger 
+                {
+                    foreach (var sub in weolDados.Select(x => x.SubNum).Distinct())
+                    {
+                        var pqlinesEntrada = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub).OrderByDescending(x => x.Estagio).Skip(1).FirstOrDefault();//ultimo estagio do primeiro mes do deck de entrada para usar para os estagios faltantes, caso não tenha dados correspondentes no weol
+                        double Patsubst1 = 0;
+                        double Patsubst2 = 0;
+                        double Patsubst3 = 0;
 
-                        foreach (var item in semanasMes)
+                        if (pqlinesEntrada != null)
                         {
-                            int weekIndex = mesOperativo.SemanasOperativas.IndexOf(mesOperativo.SemanasOperativas.Where(x => x.Inicio == item.SemanaIni).First());
-                            int est = 1;
-                            for (DateTime d = datadeck; d <= semanasMes.Last().SemanaIni; d = d.AddDays(7))// procura ajustar o numero do estagios com os dados das semanas em casos  de decks e weols de rvs diferentes 
-                            {
-                                if (d == mesOperativo.SemanasOperativas[weekIndex].Inicio)
-                                {
-                                    estagio = est;
-                                    break;
-                                }
-                                else
-                                {
-                                    est++;
-                                }
-                            }
-
-                            var pqline = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
-                            var pqlineList = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio);
-                            if (pqline != null)
-                            {
-                                if (pqline.Estagio == estagio)
-                                {
-                                    pqline.Pat1 = item.CargaPat1;
-                                    pqline.Pat2 = item.CargaPat2;
-                                    pqline.Pat3 = item.CargaPat3;
-                                }
-                                else if (pqline.Estagio < estagio)
-                                {
-                                    var pqlineNew = new PqLine();
-                                    pqlineNew.Usina = pqline.Usina;
-                                    pqlineNew.SubMercado = pqline.SubMercado;
-                                    pqlineNew.Estagio = estagio;
-                                    pqlineNew.Pat1 = item.CargaPat1;
-                                    pqlineNew.Pat2 = item.CargaPat2;
-                                    pqlineNew.Pat3 = item.CargaPat3;
-                                    dadger.BlocoPq.InsertAfter(pqline, pqlineNew);
-                                }
-                            }
-                        }
-                        //replica os dados do ultimo estagio do deck de entrada para os estagios faltantes do primeiro mes, caso não exista os dados referentes no weol 
-                        var pqFinalist = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub).OrderByDescending(x => x.Estagio).ToList();
-                        if (pqlinesEntrada != null && pqFinalist.Count >= 2 && (pqFinalist[0].Estagio - pqFinalist[1].Estagio) > 1)//necessita replicar o estagio de entrada
-                        {
-                            int novoEstagio = pqFinalist[1].Estagio + 1;
-                            var pqlineNew = new PqLine();
-                            pqlineNew.Usina = pqFinalist[1].Usina;
-                            pqlineNew.SubMercado = pqFinalist[1].SubMercado;
-                            pqlineNew.Estagio = novoEstagio;
-                            pqlineNew.Pat1 = Patsubst1;
-                            pqlineNew.Pat2 = Patsubst2;
-                            pqlineNew.Pat3 = Patsubst3;
-                            dadger.BlocoPq.InsertAfter(pqFinalist[1], pqlineNew);
+                            Patsubst1 = pqlinesEntrada.Pat1;
+                            Patsubst2 = pqlinesEntrada.Pat2;
+                            Patsubst3 = pqlinesEntrada.Pat3;
                         }
 
+                        int estagio = 1;
+
+                        var semanasMes = weolDados.Where(x => x.SubNum == sub && x.SemanaIni >= datadeck && x.SemanaFim <= mesOperativo.SemanasOperativas[mesOperativo.Estagios - 1].Fim).ToList();
+
+                        if (semanasMes.Count() > 0)//se tem semanas correspondentes ao mes do deck
+                        {
+                            alterou = true;
+
+                            foreach (var item in semanasMes)
+                            {
+                                int weekIndex = mesOperativo.SemanasOperativas.IndexOf(mesOperativo.SemanasOperativas.Where(x => x.Inicio == item.SemanaIni).First());
+                                int est = 1;
+                                for (DateTime d = datadeck; d <= semanasMes.Last().SemanaIni; d = d.AddDays(7))// procura ajustar o numero do estagios com os dados das semanas em casos  de decks e weols de rvs diferentes 
+                                {
+                                    if (d == mesOperativo.SemanasOperativas[weekIndex].Inicio)
+                                    {
+                                        estagio = est;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        est++;
+                                    }
+                                }
+
+                                var pqline = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio).FirstOrDefault();
+                                var pqlineList = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub && x.Estagio <= estagio).OrderByDescending(x => x.Estagio);
+                                if (pqline != null)
+                                {
+                                    if (pqline.Estagio == estagio)
+                                    {
+                                        pqline.Pat1 = item.CargaPat1;
+                                        pqline.Pat2 = item.CargaPat2;
+                                        pqline.Pat3 = item.CargaPat3;
+                                    }
+                                    else if (pqline.Estagio < estagio)
+                                    {
+                                        var pqlineNew = new PqLine();
+                                        pqlineNew.Usina = pqline.Usina;
+                                        pqlineNew.SubMercado = pqline.SubMercado;
+                                        pqlineNew.Estagio = estagio;
+                                        pqlineNew.Pat1 = item.CargaPat1;
+                                        pqlineNew.Pat2 = item.CargaPat2;
+                                        pqlineNew.Pat3 = item.CargaPat3;
+                                        dadger.BlocoPq.InsertAfter(pqline, pqlineNew);
+                                    }
+                                }
+                            }
+                            //replica os dados do ultimo estagio do deck de entrada para os estagios faltantes do primeiro mes, caso não exista os dados referentes no weol 
+                            var pqFinalist = dadger.BlocoPq.Where(x => x.Usina.Trim().ToUpper().EndsWith("EOL") && x.SubMercado == sub).OrderByDescending(x => x.Estagio).ToList();
+                            if (pqlinesEntrada != null && pqFinalist.Count >= 2 && (pqFinalist[0].Estagio - pqFinalist[1].Estagio) > 1)//necessita replicar o estagio de entrada
+                            {
+                                int novoEstagio = pqFinalist[1].Estagio + 1;
+                                var pqlineNew = new PqLine();
+                                pqlineNew.Usina = pqFinalist[1].Usina;
+                                pqlineNew.SubMercado = pqFinalist[1].SubMercado;
+                                pqlineNew.Estagio = novoEstagio;
+                                pqlineNew.Pat1 = Patsubst1;
+                                pqlineNew.Pat2 = Patsubst2;
+                                pqlineNew.Pat3 = Patsubst3;
+                                dadger.BlocoPq.InsertAfter(pqFinalist[1], pqlineNew);
+                            }
+
+                        }
                     }
                 }
                 if (alterou == true)
@@ -970,6 +1054,94 @@ namespace Compass.Services
             }
 
 
+        }
+
+        public static void Padronizar_Renovaveis(Compass.CommomLibrary.RenovaveisDcCSV.RenovaveisCSV renovaveisDc, int estagioMesSeguinte)
+        {
+            //lista de cadastro para manter sempre o mesmo padrão no arquivo e evitar entradas diferentes devido a alteraçoes no renovaveis de entrada (o arquivo conter dados com numeração diferente para os PEEs)
+            List<Tuple<int, string, int, string>> cadastro = new List<Tuple<int, string, int, string>>//codPEE,NomePEE,numeroSubmercado,Tipo da usina
+                    {
+                        new Tuple<int, string, int,string>(1,"Eolica SECO",1,"SECO_EOL"),
+                        new Tuple<int, string, int,string>(2,"Eolica S",2,"SUL_EOL"),
+                        new Tuple<int, string, int,string>(3,"Eolica NE",3,"NE_EOL"),
+                        new Tuple<int, string, int,string>(4,"Eolica N",4,"N_EOL"),
+                        new Tuple<int, string, int,string>(11,"Fotovoltaica SECO",1,"SECO_UFV"),
+                        new Tuple<int, string, int,string>(12,"Fotovoltaica S",2,"SUL_UFV"),
+                        new Tuple<int, string, int,string>(13,"Fotovoltaica NE",3,"NE_UFV"),
+                        new Tuple<int, string, int,string>(14,"Fotovoltaica N",4,"N_UFV")
+
+                    };
+
+
+            //apaga todas as linahs de cada bloco mantendo apenas uma para re-inserir as infos na forma padrão
+            //Pee-Cad
+            string linha1 = renovaveisDc.BlocoPeeCad.First().LineCSV;
+            string comment = renovaveisDc.BlocoPeeCad.First().Comment;
+            renovaveisDc.BlocoPeeCad.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeeCad.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.NomePEE = cad.Item2;
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeeCad.Add(newline);
+            }
+
+            //Pee-CONFIG
+            linha1 = renovaveisDc.BlocoPeeConfig.First().LineCSV;
+            comment = renovaveisDc.BlocoPeeConfig.First().Comment;
+
+            renovaveisDc.BlocoPeeConfig.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeeConfig.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.EstIni = 1;
+                newline.EstFin = estagioMesSeguinte;
+                newline.EstadoOper = "centralizado";
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeeConfig.Add(newline);
+            }
+
+            //Pee-SUBM
+
+            linha1 = renovaveisDc.BlocoPeeSubm.First().LineCSV;
+            comment = renovaveisDc.BlocoPeeSubm.First().Comment;
+
+            renovaveisDc.BlocoPeeSubm.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeeSubm.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.CodSubm = cad.Item3;
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeeSubm.Add(newline);
+            }
+
+            //Pee-POT
+
+            linha1 = renovaveisDc.BlocoPeePotInst.First().LineCSV;
+            comment = renovaveisDc.BlocoPeePotInst.First().Comment;
+
+            renovaveisDc.BlocoPeePotInst.Clear();
+
+            foreach (var cad in cadastro)
+            {
+                var newline = renovaveisDc.BlocoPeePotInst.CreateLineCSV(linha1);
+                newline.CodPEE = cad.Item1;
+                newline.EstIni = 1;
+                newline.EstFin = estagioMesSeguinte;
+                newline.PotInst = 99999;
+                newline.Comment = cad == cadastro.First() ? comment : "";
+
+                renovaveisDc.BlocoPeePotInst.Add(newline);
+            }
         }
         public static void AtualizaCargaMensal(Compass.CommomLibrary.Newave.Deck Deck, string filePath)
         {
