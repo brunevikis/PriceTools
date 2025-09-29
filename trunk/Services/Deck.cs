@@ -546,6 +546,50 @@ namespace Compass.Services
                 }
             }
 
+            #region restrições eletricas csv
+            var restsEletricasCSV = cceeDeck[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv] != null ? cceeDeck[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv].Document as Compass.CommomLibrary.RestElCSV.RestElCSV : null;
+            var restsEletricasCSV_Anterior = deckCCEEAnterior[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv] != null ? deckCCEEAnterior[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv].Document as Compass.CommomLibrary.RestElCSV.RestElCSV : null;
+
+            if (restsEletricasCSV != null && restsEletricasCSV_Anterior != null)
+            {
+                //var CSVFile = cceeDeck[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv].Path;
+                //var CSVFile_Anterior = deckCCEEAnterior[Compass.CommomLibrary.Newave.Deck.DeckDocument.restelcsv].Path;
+                var CSVFile = Directory.GetFiles(cceeDeck.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("restricao-eletrica.csv", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                var CSVFile_Anterior = Directory.GetFiles(deckCCEEAnterior.BaseFolder).Where(x => Path.GetFileName(x).StartsWith("restricao-eletrica.csv", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+
+                List<int> restComment = new List<int>();
+
+                File.ReadAllLines(CSVFile_Anterior).Where(x => x.Trim().StartsWith("&") && x.ToUpper().Contains("RE-LIM-FORM-PER-PAT") ).ToList().ForEach(x =>
+                {
+                    int rest;
+                    var lineSplit = x.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    if (lineSplit.Count() > 1)
+                    {
+                        if (int.TryParse(lineSplit[1], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out rest))
+                        {
+                            if (restComment.All(y => y != rest))
+                            {
+                                restComment.Add(rest);//adiciona as restrições a serem comentadas
+                            }
+                        }
+                    }
+
+                });
+
+                foreach (var r in restComment)//comenta as restrições
+                {
+                    restsEletricasCSV.BlocoRe.Where(x => x.CodRE == r).ToList().ForEach(x => x.ID = ("&" + x.ID));
+                    restsEletricasCSV.BlocoReHoriz.Where(x => x.CodRE == r).ToList().ForEach(x => x.ID = ("&" + x.ID));
+                    restsEletricasCSV.BlocoReLimFormPat.Where(x => x.CodRE == r).ToList().ForEach(x => x.ID = ("&" + x.ID));
+                }
+
+                restsEletricasCSV.SaveToFile(filePath: CSVFile);
+
+            }
+
+
+            #endregion
+
             try
             {
                 dger.SetaTendenciaHidrologia = 2;

@@ -40,7 +40,7 @@ namespace Compass.CommomLibrary.PtoperDat
                 new BaseField(34  , 35 ,"A2"    , "Dia Final"),//será representado como string, pois pode ter "F" indicando ultimo dia
                 new BaseField(37  , 38 ,"I1"    , "Hora dia Final"),//
                 new BaseField(40  , 40 ,"I1"    , "Flag Meia Hora Final"),
-                new BaseField(42  , 51 ,"F10.0"    , "Valor fixado"),
+                new BaseField(42  , 51 ,"F10.4"    , "Valor fixado"),//99999.0000
             };
     }
 }
