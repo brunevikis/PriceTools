@@ -5521,7 +5521,7 @@ namespace Compass.DecompToolsShellX
                 //var usinas = ptoper.BlocoPtoper.Where(x => x.usina == 15).ToList();
                 foreach (var usina in ptoper.BlocoPtoper.Where(x => x.usina == 15).ToList())
                 {
-                    usina.ValorFixado = 0;
+                    //usina.ValorFixado = 0;
                 }
 
                 ptoper.SaveToFile(createBackup: true);
