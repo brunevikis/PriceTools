@@ -67,6 +67,7 @@ namespace Compass.CommomLibrary.Dessem
             {"dessopc.dat", null },
             {"indice.csv", null },
             {"polinjus.csv", null },
+            {"rmpflx.dat", null },
             {"vazaolateral.csv", null }
 
 

@@ -5508,8 +5508,8 @@ namespace Compass.DecompToolsShellX
                 // var usinas = operut.BlocoInit.Where(x => x.Usina == 15).ToList();
                 foreach (var usina in operut.BlocoInit.Where(x => x.Usina == 15).ToList())
                 {
-                    usina.Status = 0;
-                    usina.Geracao = 0;
+                    //usina.Status = 0;
+                    //usina.Geracao = 0;
                 }
 
                 operut.SaveToFile(createBackup: true);
