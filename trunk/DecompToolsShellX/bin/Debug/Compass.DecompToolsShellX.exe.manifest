@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.CommomLibrary.dll" size="860672">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.CommomLibrary.dll" size="861184">
       <assemblyIdentity name="Compass.CommomLibrary" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>W7KR4YkDr3MlGSJNhoUMvwKm+uQ=</dsig:DigestValue>
+        <dsig:DigestValue>HQn1jtki9y3Qpf+vaOji7Q8B5UM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -61,19 +61,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>l+Jw5U4tZC0JEModOxjeUz46ItQ=</dsig:DigestValue>
+        <dsig:DigestValue>xXzsT6oLRMXKjCeq7ImUp3Uxy3o=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.ExcelTools.dll" size="247296">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Compass.ExcelTools.dll" size="251904">
       <assemblyIdentity name="Compass.ExcelTools" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>LojD6TU5teVs+wDIiJBiOBSQJsM=</dsig:DigestValue>
+        <dsig:DigestValue>QUE/5oUl3Y68saqgMbT0m7go6O4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -85,19 +85,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>83ex5Q2ZQRwDnJ5Ariu7IQi7v8Y=</dsig:DigestValue>
+        <dsig:DigestValue>5cHVFkRpj2eDVXY8jTjVtMg6WeQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Encadeado.dll" size="93184">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Encadeado.dll" size="100352">
       <assemblyIdentity name="Encadeado" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>3irUXRJMmmDbELBODlggZctIi0M=</dsig:DigestValue>
+        <dsig:DigestValue>K+ERTrUWFbi20pH+U/CcWfJ+2XE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

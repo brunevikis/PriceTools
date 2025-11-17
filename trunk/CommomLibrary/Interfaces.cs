@@ -58,6 +58,28 @@ namespace Compass.CommomLibrary
         List<double> ModifCampos { get; set; }
     }
 
+    public interface IEXPT
+    {
+        int MesEstudo { get; set; }
+
+        int Usina { get; set; }
+
+        int MesIni { get; set; }
+
+        int AnoIni { get; set; }
+
+        int MesFin { get; set; }
+
+        int AnoFin { get; set; }
+
+        double Valor { get; set; }
+
+        string Minemonico { get; set; }
+        DateTime DataIni { get; set; }
+
+        DateTime DataFin { get; set; }
+
+    }
     public interface IREMODIF
     {
         int Usina { get; set; }

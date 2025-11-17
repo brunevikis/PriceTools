@@ -275,6 +275,7 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                     estudo.MERCADO = w.MercadosSisdat ?? new List<IMERCADO>();
 
                     estudo.Modifs = w.Modifwb ?? new List<IMODIF>();
+                    estudo.Expts = w.Exptwb ?? new List<IEXPT>();
                     estudo.ReModifs = w.ReModifwb ?? new List<IREMODIF>();
                     estudo.Curva = w.CurvasReedat ?? new List<ICURVA>();
                     estudo.Adtermdad = w.AdtremDadd ?? new List<IADTERMDAD>();

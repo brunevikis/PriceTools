@@ -66,6 +66,7 @@ namespace Encadeado
         public List<IADTERMDAD> Adtermdad { get; set; }
         public List<IINTERCAMBIO> Intercambios { get; set; }
         public List<IMODIF> Modifs { get; set; }
+        public List<IEXPT> Expts { get; set; }
         public List<IREMODIF> ReModifs { get; set; }
         public List<IREEDAT> Reedads { get; set; }
         public List<IRESTELECSV> Restelecsv { get; set; }
@@ -123,6 +124,9 @@ namespace Encadeado
                 File.Copy(planMemo, Path.Combine(cam, Path.GetFileName(planMemo)), true);
             }
             AlterarModif(DeckMedia);
+
+            SobescreverExpt(DeckMedia);
+
             IncrementarREEDAT(DeckMedia, true);
 
             DeckMedia.EscreverListagemNwlistop();
@@ -191,6 +195,8 @@ namespace Encadeado
             IncrementarRE(deck);
         }
 
+
+
         private void IncrementarTermicas(DeckNewave deck)
         {
 
@@ -198,6 +204,8 @@ namespace Encadeado
             var manutts = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.manutt].Document as Compass.CommomLibrary.ManuttDat.ManuttDat;
             var confts = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.conft].Document as Compass.CommomLibrary.ConftDat.ConftDat;
             var clasts = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.clast].Document as Compass.CommomLibrary.ClastDat.ClastDat;
+
+            List<int> exptAux = new List<int>();
 
             foreach (var modif in clasts.Modifs.ToList())
             {
@@ -240,7 +248,63 @@ namespace Encadeado
                 }
                 else if (expt.DataFim < deck.Dger.DataEstudo)
                 {
-                    expts.Remove(expt);
+                    if (expt.Tipo.ToUpper() == "POTEF")
+                    {
+                        exptAux.Add(expt.Cod);
+                        expt.DataInicio = deck.Dger.DataEstudo;
+                        expt.DataFim = DateTime.MaxValue;//deixa o campo em branco no arquivo
+
+
+                    }
+                    else
+                    {
+                        expts.Remove(expt);
+                    }
+                }
+            }
+
+            foreach (var aux in exptAux)
+            {
+                var exptsFcmax = expts.Where(x => x.Cod == aux && x.Tipo == "FCMAX" && (x.DataInicio >= deck.Dger.DataEstudo && x.DataFim >= deck.Dger.DataEstudo)).OrderBy(x => x.DataInicio).FirstOrDefault();
+                if (exptsFcmax != null)
+                {
+                    if (exptsFcmax.DataInicio == deck.Dger.DataEstudo && exptsFcmax.DataFim == deck.Dger.DataEstudo)
+                    {
+                        continue;//o registro fcmax ja tem a data do deck, não é necessario mudar
+                    }
+                    else
+                    {
+                        int idx = expts.IndexOf(exptsFcmax);
+
+                        var newLINE = new Compass.CommomLibrary.ExptDat.ExptLine()
+                        {
+                            Cod = exptsFcmax.Cod,
+                            Tipo = "FCMAX",
+                            Valor = 0.00,
+                            DataInicio = deck.Dger.DataEstudo,
+                            DataFim = exptsFcmax.DataInicio > deck.Dger.DataEstudo ? exptsFcmax.DataInicio.AddMonths(-1) : deck.Dger.DataEstudo
+                        };
+
+                        exptsFcmax.DataInicio = exptsFcmax.DataInicio == deck.Dger.DataEstudo ? deck.Dger.DataEstudo.AddMonths(1) : exptsFcmax.DataInicio;
+
+                        expts.Insert(idx, newLINE);
+                    }
+               
+                }
+                else
+                {
+                    var exptsPotef = expts.Where(x => x.Cod == aux && x.Tipo == "POTEF").Last();
+                    int idx = expts.IndexOf(exptsPotef) + 1;
+
+                    var newLINE = new Compass.CommomLibrary.ExptDat.ExptLine()
+                    {
+                        Cod = aux,
+                        Tipo = "FCMAX",
+                        Valor = 0.00,
+                        DataInicio = deck.Dger.DataEstudo,
+                        DataFim = DateTime.MaxValue
+                    };
+                    expts.Insert(idx, newLINE);
                 }
             }
 
@@ -1281,6 +1345,157 @@ namespace Encadeado
             }
         }
 
+        private void SobescreverExpt(DeckNewave deck)
+        {
+            var expts = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.expt].Document as Compass.CommomLibrary.ExptDat.ExptDat;
+            var exptFile = deck[Compass.CommomLibrary.Newave.Deck.DeckDocument.expt].Path;
+            DateTime dataEstudo = deck.Dger.DataEstudo;
+
+            foreach (var xExpt in this.Expts.Where(x => x.MesEstudo == dataEstudo.Month && x.DataIni >= dataEstudo).OrderBy(x => x.Usina).ThenBy(x => x.Minemonico).ThenBy(x => x.DataIni).ToList())
+            {//48 176 
+                if (expts.Any(x => x.Cod == xExpt.Usina))// ja existe a usina no arquivo
+                {
+                    int idxInicial = expts.IndexOf(expts.Where(x => x.Cod == xExpt.Usina).First());
+
+                    //remove registros com data incial e final dentro do periodo a ser sobescrito
+                    expts.Where(x => x.Cod == xExpt.Usina && x.Tipo == xExpt.Minemonico && x.DataInicio >= xExpt.DataIni && x.DataFim <= xExpt.DataFin).ToList().ForEach(x => expts.Remove(x));
+
+                    var exptsEntre = expts.Where(x => x.Cod == xExpt.Usina && x.Tipo == xExpt.Minemonico && x.DataInicio > xExpt.DataIni && x.DataInicio <= xExpt.DataFin && x.DataFim > xExpt.DataFin).OrderBy(x => x.DataInicio).FirstOrDefault();
+                    if (exptsEntre != null)
+                    {
+                        exptsEntre.DataInicio = xExpt.DataFin.AddMonths(1);
+                    }
+
+                    var exptAnterior = expts.Where(x => x.Cod == xExpt.Usina && x.Tipo == xExpt.Minemonico && x.DataInicio <= xExpt.DataIni && x.DataFim >= xExpt.DataIni).OrderByDescending(x => x.DataInicio).FirstOrDefault();
+
+                    if (exptAnterior != null)
+                    {
+                        if (exptAnterior.DataInicio< xExpt.DataIni)
+                        {
+                            if (exptAnterior.DataFim <= xExpt.DataFin)//começa antes do incio da planilha e termina antes ou igual ao fim logo tem que setar o fim sendo antes do inicio da planilha
+                            {
+                                int idx = expts.IndexOf(exptAnterior);
+                                exptAnterior.DataFim = xExpt.DataIni.AddMonths(-1);
+                                expts.Insert(idx + 1,
+
+                                   new Compass.CommomLibrary.ExptDat.ExptLine()
+                                   {
+                                       Cod = xExpt.Usina,
+                                       Tipo = xExpt.Minemonico,
+                                       Valor = xExpt.Valor,
+                                       DataInicio = xExpt.DataIni,
+                                       DataFim = xExpt.DataFin,
+                                   }
+                                   );
+                            }
+                            else if (exptAnterior.DataFim > xExpt.DataFin && exptAnterior.DataFim < DateTime.MaxValue)
+                            {
+                                int idx = expts.IndexOf(exptAnterior);
+
+                                DateTime dataAux = exptAnterior.DataFim;
+
+                                exptAnterior.DataFim = xExpt.DataIni.AddMonths(-1);
+                                double valor = exptAnterior.Valor;
+
+                                expts.Insert(idx + 1,
+
+                                   new Compass.CommomLibrary.ExptDat.ExptLine()
+                                   {
+                                       Cod = xExpt.Usina,
+                                       Tipo = xExpt.Minemonico,
+                                       Valor = xExpt.Valor,
+                                       DataInicio = xExpt.DataIni,
+                                       DataFim = xExpt.DataFin,
+                                   }
+                                   );
+                                expts.Insert(idx + 2,
+
+                                   new Compass.CommomLibrary.ExptDat.ExptLine()
+                                   {
+                                       Cod = xExpt.Usina,
+                                       Tipo = xExpt.Minemonico,
+                                       Valor = valor,
+                                       DataInicio = xExpt.DataFin.AddMonths(1),
+                                       DataFim = dataAux,
+                                   }
+                                   );
+                            }
+                        }
+                        else if (exptAnterior.DataInicio == xExpt.DataIni)
+                        {
+                            if (exptAnterior.DataFim <= xExpt.DataFin)
+                            {
+                                exptAnterior.DataFim = xExpt.DataFin;
+                                exptAnterior.Valor = xExpt.Valor;
+
+                                  
+                            }
+                            else if (exptAnterior.DataFim > xExpt.DataFin /*&& exptAnterior.DataFim < DateTime.MaxValue*/)
+                            {
+                                int idx = expts.IndexOf(exptAnterior);
+
+                                DateTime dataAux = exptAnterior.DataFim;
+
+                                exptAnterior.DataFim = xExpt.DataFin;
+
+                                double valorAux = exptAnterior.Valor;
+
+                                exptAnterior.Valor = xExpt.Valor;
+
+                                expts.Insert(idx + 1,
+
+                                   new Compass.CommomLibrary.ExptDat.ExptLine()
+                                   {
+                                       Cod = xExpt.Usina,
+                                       Tipo = xExpt.Minemonico,
+                                       Valor = valorAux,
+                                       DataInicio = xExpt.DataFin.AddMonths(1),
+                                       DataFim = dataAux,
+                                   }
+                                   );
+                            }
+                        }
+                    }
+                    else//insere os dados do tipo novo 
+                    {
+                        int idxF = expts.IndexOf(expts.Where(x => x.Cod == xExpt.Usina).First());
+                        if (expts.Where(x => x.Cod == xExpt.Usina).Any(x => x.Tipo == xExpt.Minemonico))
+                        {
+                            int idx = expts.IndexOf(expts.Where(x => x.Cod == xExpt.Usina && x.Tipo == xExpt.Minemonico && x.DataInicio < xExpt.DataIni).OrderByDescending(x =>x.DataInicio).FirstOrDefault());
+                            idxF = idx <= 0 ? idxF : idx;
+                        }
+                        expts.Insert(idxF+1,
+
+                                   new Compass.CommomLibrary.ExptDat.ExptLine()
+                                   {
+                                       Cod = xExpt.Usina,
+                                       Tipo = xExpt.Minemonico,
+                                       Valor = xExpt.Valor,
+                                       DataInicio = xExpt.DataIni,
+                                       DataFim = xExpt.DataFin,
+                                   }
+                                   );
+                    }
+                }
+                else//não existe usina no arquivo
+                {
+                    expts.Add(
+
+                                  new Compass.CommomLibrary.ExptDat.ExptLine()
+                                  {
+                                      Cod = xExpt.Usina,
+                                      Tipo = xExpt.Minemonico,
+                                      Valor = xExpt.Valor,
+                                      DataInicio = xExpt.DataIni,
+                                      DataFim = xExpt.DataFin,
+                                  }
+                                  );
+                }
+            }
+            expts.SaveToFile(filePath: exptFile);
+
+        }
+
         private void AlterarModif(DeckNewave deck)
         {//TODO colocar logica para inserir linhas ou mudar com os minemonicos sem a data de duração ex NUMMAQ
             bool nwHibrido = this.NwHibrido;
@@ -2147,6 +2362,7 @@ namespace Encadeado
             SobrescreverSistemas(DeckMedia);
             DeckMedia.SaveFilesToFolder(DeckMedia.BaseFolder);
             AlterarModif(DeckMedia);
+            SobescreverExpt(DeckMedia);
             DeckMedia.EscreverListagemNwlistop();
             Compass.Services.Deck.CorrigeArquivosdat(DeckMedia.BaseFolder);
 

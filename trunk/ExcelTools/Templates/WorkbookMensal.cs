@@ -671,11 +671,39 @@ namespace Compass.ExcelTools.Templates
 
                         for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
                         {
-                            modifwb.Add(new ModifWb(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 9]]));
+                            modifwb.Add(new ModifWb(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 7]]));
                         }
                     }
 
                     return modifwb;
+                }
+                else return null;
+            }
+        }
+
+        List<Compass.CommomLibrary.IEXPT> exptwb = null;
+
+        public List<Compass.CommomLibrary.IEXPT> Exptwb
+        {
+            get
+            {
+                if (Names.ContainsKey("_expt"))
+                {
+                    if (exptwb == null)
+                    {
+                        exptwb = new List<Compass.CommomLibrary.IEXPT>();
+
+                        var ws = Names["_expt"].Worksheet;
+                        var row = Names["_expt"].Row;
+                        var col = Names["_expt"].Column;
+
+                        for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                        {
+                            exptwb.Add(new ExptWb(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 8]]));
+                        }
+                    }
+
+                    return exptwb;
                 }
                 else return null;
             }
@@ -1111,6 +1139,63 @@ namespace Compass.ExcelTools.Templates
                     //if (rng[1, 9].Value is double) LimSup3 = rng[1, 9].Value;
                 }
 
+
+            }
+        }
+
+        public class ExptWb : Compass.CommomLibrary.IEXPT
+        {
+            public int Usina { get; set; }
+
+            public int MesEstudo { get; set; }
+
+            public int MesIni { get; set; }
+
+            public int AnoIni { get; set; }
+
+            public int MesFin { get; set; }
+
+            public int AnoFin { get; set; }
+
+            public double Valor { get; set; }
+
+            public string Minemonico { get; set; }
+            public DateTime DataIni { get; set; }
+            public DateTime DataFin { get; set; }
+
+            public ExptWb(Range rng)
+            {
+
+               
+
+                if (rng[1, 1].Value is double) Usina = (int)rng[1, 1].Value;
+                if (rng[1, 2].Value is double) MesEstudo = (int)rng[1, 2].Value;
+                if (rng[1, 3].Value is double) MesIni = (int)rng[1, 3].Value;
+                if (rng[1, 4].Value is double) AnoIni = (int)rng[1, 4].Value;
+
+                if (rng[1, 5].Value is double)
+                {
+                    MesFin = (int)rng[1, 5].Value;
+                }
+                else
+                {
+                    MesFin = 0;
+                }
+
+                if (rng[1, 6].Value is double)
+                {
+                    AnoFin = (int)rng[1, 6].Value;
+                }
+                else
+                {
+                    AnoFin = 0;
+                }
+
+                if (rng[1, 7].Value is double) Valor = rng[1, 7].Value;
+                Minemonico = ((string)rng[1, 8].Text).ToUpper();
+
+                DataIni = new DateTime(AnoIni, MesIni, 01);
+                DataFin = (MesFin == 0 || AnoFin == 0) ? DateTime.MaxValue : new DateTime(AnoFin, MesFin, 01);// maxvalue é usado para depois na formação do campo no arquivo ser identificado para colocar em branco(olha o classe do exptline)
 
             }
         }
