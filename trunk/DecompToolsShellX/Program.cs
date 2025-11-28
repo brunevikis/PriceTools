@@ -5565,36 +5565,36 @@ namespace Compass.DecompToolsShellX
                 #endregion
 
                 #region renovaveis.dat
+                    //região comentada por não ser mais aplicavel a mudança de flag de rede, caso voltar a ser aplicavel , descomentar região 
+                //var renovaveis = deckestudo[CommomLibrary.Dessem.DeckDocument.renovaveis].Document.File;
+                //var renoLines = File.ReadAllLines(renovaveis);
+                //List<string> modifReno = new List<string>();
+                //foreach (var item in renoLines)
+                //{
+                //    if (item.Split(';').First().Trim() == "EOLICA")
+                //    {
+                //        var textos = item.Split(';').ToList();
 
-                var renovaveis = deckestudo[CommomLibrary.Dessem.DeckDocument.renovaveis].Document.File;
-                var renoLines = File.ReadAllLines(renovaveis);
-                List<string> modifReno = new List<string>();
-                foreach (var item in renoLines)
-                {
-                    if (item.Split(';').First().Trim() == "EOLICA")
-                    {
-                        var textos = item.Split(';').ToList();
+                //        textos[textos.IndexOf(textos.Last()) - 1] = "0";
+                //        string linha = "";
+                //        foreach (var parte in textos)
+                //        {
+                //            linha += parte;
+                //            if (parte != textos.Last())
+                //            {
+                //                linha += ";";
+                //            }
 
-                        textos[textos.IndexOf(textos.Last()) - 1] = "0";
-                        string linha = "";
-                        foreach (var parte in textos)
-                        {
-                            linha += parte;
-                            if (parte != textos.Last())
-                            {
-                                linha += ";";
-                            }
+                //        }
 
-                        }
-
-                        modifReno.Add(linha);
-                    }
-                    else
-                    {
-                        modifReno.Add(item);
-                    }
-                }
-                File.WriteAllLines(renovaveis, modifReno);
+                //        modifReno.Add(linha);
+                //    }
+                //    else
+                //    {
+                //        modifReno.Add(item);
+                //    }
+                //}
+                //File.WriteAllLines(renovaveis, modifReno);
 
                 #endregion
 
