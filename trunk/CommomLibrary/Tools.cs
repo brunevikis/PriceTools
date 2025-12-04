@@ -385,6 +385,7 @@ new DateTime(2033,12,25),
         public static Tuple<int, int, int> GetHorasPatamares(DateTime ini, DateTime fim, bool patamares2019, bool patamares2023 = false, bool patamares2024 = false, bool patamares2025 = false)
         {
             Tuple<int, int, int>[,] horasPatamares;
+            bool patamares2026 = false;
 
             // var horasPatamares = new Tuple<int, int, int>[] {
             //                new Tuple<int,int,int>(3,14,7),
@@ -488,7 +489,8 @@ new DateTime(2033,12,25),
                 patamares2019 = year <= 2022 ? true : false;
                 patamares2023 = year == 2023 ? true : false;
                 patamares2024 = year == 2024 ? true : false;
-                patamares2025 = year >= 2025 ? true : false;
+                patamares2025 = year == 2025 ? true : false;
+                patamares2026 = year >= 2026 ? true : false;
 
                 if (patamares2019)
                 {
@@ -556,6 +558,23 @@ new DateTime(2033,12,25),
                     { new Tuple<int,int,int>(07,10,07), new Tuple<int,int,int>(00,07,17) },////out
                     { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) },////nov
                     { new Tuple<int,int,int>(08,09,07), new Tuple<int,int,int>(00,07,17) }/////dez
+                        };
+                }
+                else if (patamares2026)
+                {
+                    horasPatamares = new Tuple<int, int, int>[,] {
+                    { new Tuple<int,int,int>(06,12,06), new Tuple<int,int,int>(00,07,17) },//jan
+                    { new Tuple<int,int,int>(06,12,06), new Tuple<int,int,int>(00,07,17) },////fev
+                    { new Tuple<int,int,int>(06,12,06), new Tuple<int,int,int>(00,07,17) },////mar
+                    { new Tuple<int,int,int>(06,11,07), new Tuple<int,int,int>(00,07,17) },////abr
+                    { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////mai
+                    { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////jun
+                    { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////jul
+                    { new Tuple<int,int,int>(05,10,11), new Tuple<int,int,int>(00,07,17) },////ago
+                    { new Tuple<int,int,int>(06,11,07), new Tuple<int,int,int>(00,07,17) },////set
+                    { new Tuple<int,int,int>(06,11,07), new Tuple<int,int,int>(00,07,17) },////out
+                    { new Tuple<int,int,int>(06,12,06), new Tuple<int,int,int>(00,07,17) },////nov
+                    { new Tuple<int,int,int>(06,12,06), new Tuple<int,int,int>(00,07,17) }/////dez
                         };
                 }
                 else
@@ -707,11 +726,19 @@ new DateTime(2033,12,25),
         {
             var feriados = Tools.feriados;
             Boolean ehFeriado = false;
+            bool pat2026 = false;
 
             if (feriados.Any(x => x.Date == data.Date))
             {
                 ehFeriado = true;
             }
+
+            int year = data.Year;
+
+            pat2023 = year <= 2023 ? true : false;
+            pat2024 = year == 2024 ? true : false;
+            pat2025 = year == 2025 ? true : false;
+            pat2026 = year >= 2026 ? true : false;
 
             //listas com as horas do dia separadas em patamares
             List<Tuple<int, int>> NOVaMARutil = new List<Tuple<int, int>> {
@@ -743,6 +770,14 @@ new DateTime(2033,12,25),
                 new Tuple<int, int>(24,24)
             };
 
+            List<Tuple<int, int>> NOVaMARutil2026 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 2),
+                new Tuple<int, int>(3, 8),
+                new Tuple<int, int>(9,16),
+                new Tuple<int, int>(17,22),
+                new Tuple<int, int>(23,24)
+            };
+
             List<Tuple<int, int>> NOVaMARfer = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 19),
                 new Tuple<int, int>(20, 23),
@@ -762,6 +797,13 @@ new DateTime(2033,12,25),
             };
 
             List<Tuple<int, int>> NOVaMARfer2025 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 1),
+                new Tuple<int, int>(2, 18),
+                new Tuple<int, int>(19, 24)
+
+            };
+
+            List<Tuple<int, int>> NOVaMARfer2026 = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 1),
                 new Tuple<int, int>(2, 18),
                 new Tuple<int, int>(19, 24)
@@ -798,6 +840,15 @@ new DateTime(2033,12,25),
 
             };
 
+            List<Tuple<int, int>> ABRSETOUTutil2026 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 1),
+                new Tuple<int, int>(2, 8),
+                new Tuple<int, int>(9, 16),
+                new Tuple<int, int>(17, 22),
+                new Tuple<int, int>(23, 24)
+
+            };
+
             List<Tuple<int, int>> ABRSETOUTfer = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 18),
                 new Tuple<int, int>(19, 22),
@@ -817,6 +868,12 @@ new DateTime(2033,12,25),
             };
 
             List<Tuple<int, int>> ABRSETOUTfer2025 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 17),
+                new Tuple<int, int>(18, 24)
+
+            };
+
+            List<Tuple<int, int>> ABRSETOUTfer2026 = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1, 17),
                 new Tuple<int, int>(18, 24)
 
@@ -851,6 +908,16 @@ new DateTime(2033,12,25),
 
             };
 
+            List<Tuple<int, int>> MAIaAGOutil2026 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1, 8),
+                new Tuple<int, int>(9, 10),
+                new Tuple<int, int>(11, 13),
+                new Tuple<int, int>(14, 18),
+                new Tuple<int, int>(19, 21),
+                new Tuple<int, int>(22, 24)
+
+            };
+
             List<Tuple<int, int>> MAIaAGOfer = new List<Tuple<int, int>> {
                 new Tuple<int, int>(1,18),
                 new Tuple<int, int>(19,22),
@@ -876,6 +943,12 @@ new DateTime(2033,12,25),
 
             };
 
+            List<Tuple<int, int>> MAIaAGOfer2026 = new List<Tuple<int, int>> {
+                new Tuple<int, int>(1,17),
+                new Tuple<int, int>(18,24)
+
+            };
+
             switch (data.Month)
             {
                 case 1:
@@ -897,6 +970,10 @@ new DateTime(2033,12,25),
                         {
                             return NOVaMARfer2025;
                         }
+                        else if (pat2026)
+                        {
+                            return NOVaMARfer2026;
+                        }
                         else
                             return NOVaMARfer;
                     }
@@ -913,6 +990,10 @@ new DateTime(2033,12,25),
                         else if (pat2025)
                         {
                             return NOVaMARutil2025;
+                        }
+                        else if (pat2026)
+                        {
+                            return NOVaMARutil2026;
                         }
                         else
                             return NOVaMARutil;
@@ -934,6 +1015,10 @@ new DateTime(2033,12,25),
                         {
                             return ABRSETOUTfer2025;
                         }
+                        else if (pat2026)
+                        {
+                            return ABRSETOUTfer2026;
+                        }
                         else
                             return ABRSETOUTfer;
                     }
@@ -950,6 +1035,10 @@ new DateTime(2033,12,25),
                         else if (pat2025)
                         {
                             return ABRSETOUTutil2025;
+                        }
+                        else if (pat2026)
+                        {
+                            return ABRSETOUTutil2026;
                         }
                         else
                             return ABRSETOUTutil;
@@ -972,6 +1061,10 @@ new DateTime(2033,12,25),
                         {
                             return MAIaAGOfer2025;
                         }
+                        else if (pat2026)
+                        {
+                            return MAIaAGOfer2026;
+                        }
                         else
                             return MAIaAGOfer;
                     }
@@ -989,6 +1082,10 @@ new DateTime(2033,12,25),
                         {
                             return MAIaAGOutil2025;
                         }
+                        else if (pat2026)
+                        {
+                            return MAIaAGOutil2026;
+                        }
                         else
                             return MAIaAGOutil;
                     }
@@ -1002,11 +1099,19 @@ new DateTime(2033,12,25),
         {
             var feriados = Tools.feriados;
             Boolean ehFeriado = false;
+            bool pat2026 = false;
 
             if (feriados.Any(x => x.Date == data.Date))
             {
                 ehFeriado = true;
             }
+
+            int year = data.Year;
+
+            pat2023 = year <= 2023 ? true : false;
+            pat2024 = year == 2024 ? true : false;
+            pat2025 = year == 2025 ? true : false;
+            pat2026 = year >= 2026 ? true : false;
 
             Dictionary<int, string> NOVaMARutil = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
@@ -1120,6 +1225,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> NOVaMARutil2026 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "MEDIA"},
+                    {1, "MEDIA"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "MEDIA"},
+                    {9, "MEDIA"},
+                    {10, "MEDIA"},
+                    {11, "MEDIA"},
+                    {12, "MEDIA"},
+                    {13, "MEDIA"},
+                    {14, "MEDIA"},
+                    {15, "MEDIA"},
+                    {16, "PESADA"},
+                    {17, "PESADA"},
+                    {18, "PESADA"},
+                    {19, "PESADA"},
+                    {20, "PESADA"},
+                    {21, "PESADA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             Dictionary<int, string> NOVaMARfer = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
@@ -1205,6 +1338,34 @@ new DateTime(2033,12,25),
                 };
 
             Dictionary<int, string> NOVaMARfer2025 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "MEDIA"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "LEVE"},
+                    {9, "LEVE"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "LEVE"},
+                    {14, "LEVE"},
+                    {15, "LEVE"},
+                    {16, "LEVE"},
+                    {17, "LEVE"},
+                    {18, "MEDIA"},
+                    {19, "MEDIA"},
+                    {20, "MEDIA"},
+                    {21, "MEDIA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
+            Dictionary<int, string> NOVaMARfer2026 = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "MEDIA"},
                     {1, "LEVE"},
                     {2, "LEVE"},
@@ -1344,6 +1505,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> MAIOaAGOutil2026 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "MEDIA"},
+                    {9, "MEDIA"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "MEDIA"},
+                    {14, "MEDIA"},
+                    {15, "MEDIA"},
+                    {16, "MEDIA"},
+                    {17, "MEDIA"},
+                    {18, "PESADA"},
+                    {19, "PESADA"},
+                    {20, "PESADA"},
+                    {21, "MEDIA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             Dictionary<int, string> MAIOaAGOfer = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
@@ -1456,6 +1645,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> MAIOaAGOfer2026 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "LEVE"},
+                    {9, "LEVE"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "LEVE"},
+                    {14, "LEVE"},
+                    {15, "LEVE"},
+                    {16, "LEVE"},
+                    {17, "MEDIA"},
+                    {18, "MEDIA"},
+                    {19, "MEDIA"},
+                    {20, "MEDIA"},
+                    {21, "MEDIA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             Dictionary<int, string> ABRSETOUTutil = new Dictionary<int, string>() {//<hora,patamar>
                     {0, "LEVE"},
                     {1, "LEVE"},
@@ -1557,6 +1774,34 @@ new DateTime(2033,12,25),
                     {13, "MEDIA"},
                     {14, "MEDIA"},
                     {15, "PESADA"},
+                    {16, "PESADA"},
+                    {17, "PESADA"},
+                    {18, "PESADA"},
+                    {19, "PESADA"},
+                    {20, "PESADA"},
+                    {21, "PESADA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
+            Dictionary<int, string> ABRSETOUTutil2026 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "MEDIA"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "MEDIA"},
+                    {9, "MEDIA"},
+                    {10, "MEDIA"},
+                    {11, "MEDIA"},
+                    {12, "MEDIA"},
+                    {13, "MEDIA"},
+                    {14, "MEDIA"},
+                    {15, "MEDIA"},
                     {16, "PESADA"},
                     {17, "PESADA"},
                     {18, "PESADA"},
@@ -1680,6 +1925,34 @@ new DateTime(2033,12,25),
 
                 };
 
+            Dictionary<int, string> ABRSETOUTfer2026 = new Dictionary<int, string>() {//<hora,patamar>
+                    {0, "LEVE"},
+                    {1, "LEVE"},
+                    {2, "LEVE"},
+                    {3, "LEVE"},
+                    {4, "LEVE"},
+                    {5, "LEVE"},
+                    {6, "LEVE"},
+                    {7, "LEVE"},
+                    {8, "LEVE"},
+                    {9, "LEVE"},
+                    {10, "LEVE"},
+                    {11, "LEVE"},
+                    {12, "LEVE"},
+                    {13, "LEVE"},
+                    {14, "LEVE"},
+                    {15, "LEVE"},
+                    {16, "LEVE"},
+                    {17, "MEDIA"},
+                    {18, "MEDIA"},
+                    {19, "MEDIA"},
+                    {20, "MEDIA"},
+                    {21, "MEDIA"},
+                    {22, "MEDIA"},
+                    {23, "MEDIA"},
+
+                };
+
             switch (data.Month)
             {
                 case 1:
@@ -1701,6 +1974,10 @@ new DateTime(2033,12,25),
                         {
                             return NOVaMARfer2025;
                         }
+                        else if (pat2026)
+                        {
+                            return NOVaMARfer2026;
+                        }
                         else
                             return NOVaMARfer;
                     }
@@ -1717,6 +1994,10 @@ new DateTime(2033,12,25),
                         else if (pat2025)
                         {
                             return NOVaMARutil2025;
+                        }
+                        else if (pat2026)
+                        {
+                            return NOVaMARutil2026;
                         }
                         else
                             return NOVaMARutil;
@@ -1738,6 +2019,10 @@ new DateTime(2033,12,25),
                         {
                             return ABRSETOUTfer2025;
                         }
+                        else if (pat2026)
+                        {
+                            return ABRSETOUTfer2026;
+                        }
                         else
                             return ABRSETOUTfer;
                     }
@@ -1754,6 +2039,10 @@ new DateTime(2033,12,25),
                         else if (pat2025)
                         {
                             return ABRSETOUTutil2025;
+                        }
+                        else if (pat2026)
+                        {
+                            return ABRSETOUTutil2026;
                         }
                         else
                             return ABRSETOUTutil;
@@ -1776,6 +2065,10 @@ new DateTime(2033,12,25),
                         {
                             return MAIOaAGOfer2025;
                         }
+                        else if (pat2026)
+                        {
+                            return MAIOaAGOfer2026;
+                        }
                         else
                             return MAIOaAGOfer;
                     }
@@ -1792,6 +2085,10 @@ new DateTime(2033,12,25),
                         else if (pat2025)
                         {
                             return MAIOaAGOutil2025;
+                        }
+                        else if (pat2026)
+                        {
+                            return MAIOaAGOutil2026;
                         }
                         else
                             return MAIOaAGOutil;
