@@ -570,7 +570,7 @@ new DateTime(2033,12,25),
                     { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////mai
                     { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////jun
                     { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////jul
-                    { new Tuple<int,int,int>(05,10,11), new Tuple<int,int,int>(00,07,17) },////ago
+                    { new Tuple<int,int,int>(03,10,11), new Tuple<int,int,int>(00,07,17) },////ago
                     { new Tuple<int,int,int>(06,11,07), new Tuple<int,int,int>(00,07,17) },////set
                     { new Tuple<int,int,int>(06,11,07), new Tuple<int,int,int>(00,07,17) },////out
                     { new Tuple<int,int,int>(06,12,06), new Tuple<int,int,int>(00,07,17) },////nov
