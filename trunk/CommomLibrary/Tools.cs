@@ -489,8 +489,8 @@ new DateTime(2033,12,25),
                 patamares2019 = year <= 2022 ? true : false;
                 patamares2023 = year == 2023 ? true : false;
                 patamares2024 = year == 2024 ? true : false;
-                patamares2025 = year == 2025 ? true : false;
-                patamares2026 = year >= 2026 ? true : false;
+                patamares2025 = year == 2025 ? false : false;//todo: a partir do pmo de janeiro consertar isso e voltar pra verificar os anos corretamente 
+                patamares2026 = year >= 2025 ? true : false;
 
                 if (patamares2019)
                 {
