@@ -133,7 +133,7 @@ namespace Compass.Services
 
                 Dictionary<DateTime, Tuple<string, string>> configs = new Dictionary<DateTime, Tuple<string, string>>();
 
-
+                string DCGNLpath = "";
 
                 foreach (var cenario in w.Cenarios)
                 {
@@ -147,6 +147,7 @@ namespace Compass.Services
                         var dcNome = cenario.NomeDoEstudo;
                         var dcGNLnome = dcNome.Replace("DC", "DCGNL");
                         outPath = Path.Combine(w.NewaveBase, dcGNLnome);
+                        DCGNLpath = outPath;
 
                     }
                     Directory.CreateDirectory(outPath);
@@ -160,6 +161,8 @@ namespace Compass.Services
                         var dtEstudoSeguinte = dtEstudo.AddMonths(1);
 
                         var estudoPath = Path.Combine(outPath, dtEstudo.ToString("yyyyMM"));
+                        var DCGNLestudoPath = Path.Combine(DCGNLpath, dtEstudo.ToString("yyyyMM"));
+
                         var nwPath = Path.Combine(w.NewaveBase, dtEstudo.ToString("yyyyMM"));
 
                         Directory.CreateDirectory(estudoPath);
@@ -244,6 +247,13 @@ namespace Compass.Services
                             dadger = dadgers[dtEstudo];
                             dadger.File = Path.Combine(estudoPath, Path.GetFileName(dadger.File));
                             dadger.SaveToFile();
+
+                            string renovaviesFile = Directory.GetFiles(DCGNLestudoPath).Where(x => Path.GetFileName(x).ToLower().Contains("renovaveis.csv")).FirstOrDefault();
+
+                            if (File.Exists(renovaviesFile))
+                            {
+                                File.Copy(renovaviesFile, Path.Combine(estudoPath, "renovaveis.csv"), true);
+                            }
 
                             File.WriteAllText(Path.Combine(estudoPath, "configh.dat"), configs[dtEstudo].Item1 /*earmconfig*/);
                             File.WriteAllText(Path.Combine(estudoPath, "configm.dat"), configs[dtEstudo].Item2 /*config2*/);
