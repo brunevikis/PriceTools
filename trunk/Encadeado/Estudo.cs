@@ -1983,10 +1983,25 @@ namespace Encadeado
             foreach (var p in postosdat.Data) p.FinalHistorico = data.Year - 2;
 
 
-            foreach (var vp in vaspast.Conteudo)
+            //foreach (var vp in vaspast.Conteudo)
+            //{
+            //    vp[data] = this.PrevisaoVazao[vp.Posto][data.Month - 1];
+            //}
+
+            foreach (var vp in vaspast.Conteudo)//altera somente até 2 meses anteriores ao mes do deck de estudo, o mes atual não é alterado
             {
-                vp[data] = this.PrevisaoVazao[vp.Posto][data.Month - 1];
+                for (int m = 1; m <= 2; m++)
+                {
+                    DateTime dataAnt = data.AddMonths(-m);//meses anteriores a data do deckestudo
+
+                    if (dataAnt.Month < data.Month)//ainda esta no mesmo ano do deck de estudo 
+                    {
+                        vp[dataAnt] = this.PrevisaoVazao[vp.Posto][dataAnt.Month - 1];
+
+                    }
+                }
             }
+
         }
 
         public void IncrementarCSV_LIBS(DeckNewave deck)
