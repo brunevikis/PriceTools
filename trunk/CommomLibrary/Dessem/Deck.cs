@@ -63,6 +63,7 @@ namespace Compass.CommomLibrary.Dessem
             {"restseg.dat", null },
             {"rstlpp.dat", null },
             {"termdat.dat", null },
+            {"pdo_sist.dat", null },
             //
             {"dessopc.dat", null },
             {"indice.csv", null },

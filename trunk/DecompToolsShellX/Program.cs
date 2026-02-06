@@ -1301,7 +1301,7 @@ namespace Compass.DecompToolsShellX
             //TODO: logica de pular execução caso processo em andamento, 
             Directory.CreateDirectory(commands);
             string cenariosLog = Path.Combine(commands, "Exec.log");
-            var fileList= Directory.GetFiles(commands).OrderBy(x => x).ToList();
+            var fileList = Directory.GetFiles(commands).OrderBy(x => x).ToList();
 
             string xlFile = Directory.GetFiles(commands).OrderBy(x => x).FirstOrDefault();
             if (File.Exists(xlFile))
@@ -1331,7 +1331,7 @@ namespace Compass.DecompToolsShellX
                             //var wbxls = xlApp.Workbooks.Open(xlFile);
                             //var wbxls = workbooks.Open(xlFile);
                             //Workbook wb = xlApp.ActiveWorkbook;
-                             wb = workbooks.Open(xlFile);
+                            wb = workbooks.Open(xlFile);
                             WorkbookMensal w;
                             if (wb.Application.ActiveWorkbook == null ||
                                 !WorkbookMensal.TryCreate(wb.Application.ActiveWorkbook, out w))
@@ -2674,7 +2674,7 @@ namespace Compass.DecompToolsShellX
                         {
                             float d = 0;
                             var campos = pdoOper[i].Split(';').ToList();
-                            if (int.TryParse(campos[0],out int r))
+                            if (int.TryParse(campos[0], out int r))
                             {
                                 var hora = Convert.ToInt32(campos[0]);
                                 var usina = Convert.ToInt32(campos[2]);
@@ -2682,7 +2682,7 @@ namespace Compass.DecompToolsShellX
                                 var volFim = float.TryParse(campos[8], System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out d) ? d : 0;
                                 UHS.Add(new Tuple<int, int, float, float>(hora, usina, volIni, volFim));
                             }
-                            
+
                         }
 
                     }
@@ -5560,12 +5560,12 @@ namespace Compass.DecompToolsShellX
                 //    lines[indice] = frase;
                 //    File.WriteAllLines(dessemArq, lines);
                 //}
-               
+
 
                 #endregion
 
                 #region renovaveis.dat
-                    //região comentada por não ser mais aplicavel a mudança de flag de rede, caso voltar a ser aplicavel , descomentar região 
+                //região comentada por não ser mais aplicavel a mudança de flag de rede, caso voltar a ser aplicavel , descomentar região 
                 //var renovaveis = deckestudo[CommomLibrary.Dessem.DeckDocument.renovaveis].Document.File;
                 //var renoLines = File.ReadAllLines(renovaveis);
                 //List<string> modifReno = new List<string>();
@@ -5631,8 +5631,8 @@ namespace Compass.DecompToolsShellX
 
                 TrataRhe(entdados, dataEstudo, entdadosCCEEref, entdadosCCEErefFile, entdadosFile);
 
-                //TrataDP(entdados, dataEstudo);//foi uma demanda temporaria em que se somava um valor fixo na demanda durante a conversão, caso a demanda volte apenas descomente a chamada da função
-                //entdados.SaveToFile(createBackup: true);
+                TrataDP(entdados, dataEstudo,dir);
+                entdados.SaveToFile(createBackup: true);
                 if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
                 {
                     //TrataRheSexta(dataEstudo, dir);
@@ -5989,30 +5989,75 @@ namespace Compass.DecompToolsShellX
         }
 
 
-        public static void TrataDP(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo)
+        public static void TrataDP(Compass.CommomLibrary.EntdadosDat.EntdadosDat entdados, DateTime dataEstudo, string dirBase)
         {
             var Culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
             List<Tuple<int, int, int, float>> dadosDP = new List<Tuple<int, int, int, float>>();//subsist,hora,meiahora,valor
-            var linhasDPFixo = File.ReadAllLines(@"H:\TI - Sistemas\UAT\PricingExcelTools\files\CargaDP_ONS-CCEE.txt").ToList();
-            foreach (var linha in linhasDPFixo)
+
+            var pdo_sist = Directory.GetFiles(dirBase).Where(x => Path.GetFileName(x).ToUpper().Contains("PDO_SIST.DAT")).FirstOrDefault();
+
+
+            if (File.Exists(pdo_sist))
             {
-                var dados = linha.Split('\t').ToList();
-                dadosDP.Add(new Tuple<int, int, int, float>(Convert.ToInt32(dados[0]), Convert.ToInt32(dados[1]), Convert.ToInt32(dados[2]), float.Parse(dados[3].Replace('.', ','))));
-            }
-            string dia = dataEstudo.Day.ToString();
-            var entdadosDPs = entdados.BlocoDp.Where(x => x.DiaInic.Trim() == dia).ToList();
-            for (int subS = 1; subS <= 4; subS++)
-            {
-                foreach (var ent in entdadosDPs.Where(x => x.Subsist == subS).ToList())
+                var infos = File.ReadAllLines(pdo_sist).ToList();
+
+
+                int index = infos.IndexOf(infos.Where(x => x != "" && x.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).First().Trim() == "IPER").First()) + 2;
+                for (int i = index; i < infos.Count(); i++)
                 {
-                    float valorAdic = dadosDP.Where(x => x.Item1 == subS && x.Item2 == ent.HoraInic && x.Item3 == ent.MeiaHoraInic).Select(x => x.Item4).FirstOrDefault();
-                    if (valorAdic != 0)
+                    var ls = infos[i].Split(';').Select(x => x.Trim()).ToArray();
+                    if (ls.Length > 19)
                     {
-                        ent.Demanda = ent.Demanda + valorAdic;
+                        if (Convert.ToInt32(ls[0]) <= 48 && ls[2].Trim() != "FC")
+                        {
+                            int sub = 0;
+
+                            string mercado = ls[2].Trim();
+                            int estag = Convert.ToInt32(ls[0]);
+
+                            switch (mercado)
+                            {
+                                case "SE":
+                                    sub = 1;
+                                    break;
+                                case "S":
+                                    sub = 2;
+                                    break;
+                                case "NE":
+                                    sub = 3;
+                                    break;
+                                case "N":
+                                    sub = 4;
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                            int meiaH = estag % 2 != 0 ? 0 : 1;
+                            int hora = (estag - 1) / 2;
+                            float valor = float.Parse(ls[4].Replace('.', ','));
+
+                            dadosDP.Add(new Tuple<int, int, int, float>(sub, hora, meiaH, valor));
+                        }
                     }
                 }
+                string dia = dataEstudo.Day.ToString();
+                var entdadosDPs = entdados.BlocoDp.Where(x => x.DiaInic.Trim() == dia).ToList();
+                for (int subS = 1; subS <= 4; subS++)
+                {
+                    foreach (var ent in entdadosDPs.Where(x => x.Subsist == subS).ToList())
+                    {
+                        float valorAdic = dadosDP.Where(x => x.Item1 == subS && x.Item2 == ent.HoraInic && x.Item3 == ent.MeiaHoraInic).Select(x => x.Item4).FirstOrDefault();
+                        if (valorAdic != 0)
+                        {
+                            ent.Demanda = valorAdic;
+                        }
+                    }
 
+                }
             }
+
+            
         }
 
         public static void TrataRheSexta(DateTime dataEstudo, string dir)
@@ -6151,6 +6196,10 @@ namespace Compass.DecompToolsShellX
                     {
                         //&( Usi: ANGRA 2 - Qtd. Orig:1 - Gerador:RJUSAN0UG2 - SGI:202300053695 - Ini:29/09/2023 08:00 - Fim:14/10/2023 23:59
                         var usiName = usil.Split(new string[] { "Usi:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split(new string[] { " -" }, StringSplitOptions.RemoveEmptyEntries).First().Replace("230", "").Trim();//230 é tratamento pra L.LACERDA-A 230
+                        if (usiName.Length > 12)//limita o nome da usina ao espaço disponivel para o nome no bloco UT
+                        {
+                            usiName = usiName.Substring(0, 12);
+                        }
                         int usiNum = entdados.BlocoUt.Where(x => x.NomeUsina.Trim().ToUpper() == usiName.Trim().ToUpper()).Select(x => x.Usina).First();
                         int unidGer = Convert.ToInt32(usil.Split(new string[] { "Qtd. Orig:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split('-').First().Trim());
                         DateTime dataIni = Convert.ToDateTime(usil.Split(new string[] { "Ini:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split('-').First().Trim(), Culture.DateTimeFormat);

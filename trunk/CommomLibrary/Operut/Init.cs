@@ -47,7 +47,7 @@ namespace Compass.CommomLibrary.Operut
 
         static readonly BaseField[] InitCampos = new BaseField[] {
                 new BaseField(1  , 3 ,"I3"    , "Usina"),
-                new BaseField(5  , 16 ,"A12"    , "Nome Usina"),
+                new BaseField(5  , 17 ,"A13"    , "Nome Usina"),
                 new BaseField(19 , 21,"I3"    , "Indice"),
                 new BaseField(25 , 26,"I2"    , "Status"),
                 new BaseField(30 , 39,"F10.3" , "Geracao"),

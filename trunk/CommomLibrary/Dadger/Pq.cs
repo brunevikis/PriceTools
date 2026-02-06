@@ -21,10 +21,10 @@ namespace Compass.CommomLibrary.Dadger {
                 new BaseField( 5 , 14 ,"A10"  , "Usina"),
                 new BaseField( 15 , 16 ,"I2", "Mercado"  ),
                 new BaseField( 20 , 21 ,"I2", "Estagio"  ),
-                new BaseField( 25 , 29 ,"F5.0", "Pat 1"  ),
-                new BaseField( 30 , 34 ,"F5.0", "Pat 2"  ),
-                new BaseField( 35 , 39 ,"F5.0", "Pat 3"  ),                
-                new BaseField( 60 , 64 ,"F5.0", "Fator de Perda"  ),
+                new BaseField( 25 , 29 ,"F5.3", "Pat 1"  ),
+                new BaseField( 30 , 34 ,"F5.3", "Pat 2"  ),
+                new BaseField( 35 , 39 ,"F5.3", "Pat 3"  ),                
+                new BaseField( 60 , 64 ,"F5.3", "Fator de Perda"  ),
 
             };
 
