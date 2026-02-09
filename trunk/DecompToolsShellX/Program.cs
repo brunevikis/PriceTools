@@ -5286,6 +5286,15 @@ namespace Compass.DecompToolsShellX
 
                 deck.CopyFilesToFolder(cloneDir);
 
+                //copia pdo sist caso exista pra fazer tratamento no bloco dp 
+                var pdo_sist = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToUpper().Contains("PDO_SIST.DAT")).FirstOrDefault();
+                if (File.Exists(pdo_sist))
+                {
+                    File.Copy(pdo_sist, Path.Combine(cloneDir, pdo_sist.Split('\\').Last()),true);
+                }
+
+                //
+
                 dynamic cceeDeck = DeckFactory.CreateDeck(cloneDir);
 
                 Boolean status = ConverteDessem(cloneDir, command);
@@ -6053,6 +6062,12 @@ namespace Compass.DecompToolsShellX
                             ent.Demanda = valorAdic;
                         }
                     }
+
+                }
+
+                if (File.Exists(pdo_sist))
+                {
+                    File.Delete(pdo_sist);
 
                 }
             }
