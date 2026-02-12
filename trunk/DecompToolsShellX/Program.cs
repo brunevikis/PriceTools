@@ -5638,10 +5638,11 @@ namespace Compass.DecompToolsShellX
                 ComentaCICE(entdados);
                 //TrataIa(entdados, dataEstudo);
 
+                TrataDP(entdados, dataEstudo, dir);
+
                 TrataRhe(entdados, dataEstudo, entdadosCCEEref, entdadosCCEErefFile, entdadosFile);
 
-                TrataDP(entdados, dataEstudo,dir);
-                entdados.SaveToFile(createBackup: true);
+                //entdados.SaveToFile(createBackup: true);
                 if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
                 {
                     //TrataRheSexta(dataEstudo, dir);
@@ -6186,7 +6187,10 @@ namespace Compass.DecompToolsShellX
             {
                 foreach (var pat in patsFiles)
                 {
+                    //byte[] bytes = Encoding.Default.GetBytes(File.ReadAllText(pat));
+                    //string texto = Encoding.UTF8.GetString(bytes);
                     var linhas = File.ReadAllLines(pat).ToList();
+                    //var linhasU = File.ReadAllLines(pat, encoding: Encoding.UTF8).ToList();
                     int start = linhas.IndexOf(linhas.Where(x => x.StartsWith("( *** USINAS TERMELETRICAS *** )")).First()) + 1;
                     int end = start;
                     while (!linhas[end].StartsWith("( *** ") && !linhas[end].StartsWith("FIM"))
@@ -6211,6 +6215,8 @@ namespace Compass.DecompToolsShellX
                     {
                         //&( Usi: ANGRA 2 - Qtd. Orig:1 - Gerador:RJUSAN0UG2 - SGI:202300053695 - Ini:29/09/2023 08:00 - Fim:14/10/2023 23:59
                         var usiName = usil.Split(new string[] { "Usi:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split(new string[] { " -" }, StringSplitOptions.RemoveEmptyEntries).First().Replace("230", "").Trim();//230 é tratamento pra L.LACERDA-A 230
+                        //usiName = Encoding.UTF8.GetString(Encoding.Default.GetBytes(usiName));
+
                         if (usiName.Length > 12)//limita o nome da usina ao espaço disponivel para o nome no bloco UT
                         {
                             usiName = usiName.Substring(0, 12);

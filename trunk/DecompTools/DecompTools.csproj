@@ -42,7 +42,7 @@
     <PublishUrl>C:\Development\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.5.0.427</ApplicationVersion>
+    <ApplicationVersion>1.5.0.428</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
