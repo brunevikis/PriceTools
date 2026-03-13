@@ -82,6 +82,10 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<Operut.Operut>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
+            else if (fileName.StartsWith("rmpflx"))
+            {
+                doc = BaseDocument.Create<RmpflxDat.Rmpflx>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
             else if (fileName.StartsWith("ptoper"))
             {
                 doc = BaseDocument.Create<PtoperDat.PtoperDat>(System.IO.File.ReadAllText(filePath, Encoding.Default));

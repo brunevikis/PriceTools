@@ -5537,6 +5537,46 @@ namespace Compass.DecompToolsShellX
                 ptoper.SaveToFile(createBackup: true);
                 #endregion
 
+                #region trata rmpflx
+                DateTime dataDeck = deckestudo.GetDeckDate();
+                var rmpflx = deckestudo[CommomLibrary.Dessem.DeckDocument.rmpflx].Document as Compass.CommomLibrary.RmpflxDat.Rmpflx;
+                foreach (var rest in rmpflx.BlocoRest)
+                {
+                    if (rest.DREnum == 9003)//comenta essa rest
+                    {
+                        rest.Id = "&" + rest.Id;
+                    }
+                    if (rest.DREnum == 9058)//muda o codigo e a flag para ser usado com referencia ao bloco RE do entdados 
+                    {
+                        rest.DREnum = 958;
+                        rest.Tipo = 1;
+                    }
+                }
+
+                foreach (var limi in rmpflx.BlocoLimi)
+                {
+                    if (limi.DREnum == 9003)//comenta essa rest
+                    {
+                        limi.Id = "&" + limi.Id;
+                    }
+                    if (limi.DREnum == 9058)//muda o codigo e a flag para ser usado com referencia ao bloco RE do entdados e altera os padões dos dias para DI = dia do deck e DF = dia seguinte com hora e meia hora em 0
+                    {
+                        limi.DREnum = 958;
+                        limi.Tipo = 1;
+
+                        limi.DiaInic = $"{dataDeck.Day:00}";
+                        limi.HoraInic = 0;
+                        limi.MeiaHoraInic = 0;
+
+                        limi.DiaFinal = $"{dataDeck.AddDays(1).Day:00}";
+                        limi.HoraFinal = 0;
+                        limi.MeiaHoraFinal = 0;
+                    }
+                }
+                rmpflx.SaveToFile(createBackup: true);
+
+                #endregion
+
                 #region dessem.arq
                 var dessemArq = deckestudo[CommomLibrary.Dessem.DeckDocument.dessem].Document.File;
                 var lines = File.ReadAllLines(dessemArq).ToList();
@@ -5545,7 +5585,7 @@ namespace Compass.DecompToolsShellX
                 //int indice = 0;
                 foreach (var lin in lines)
                 {
-                    if (lin.StartsWith("INDELET") || lin.StartsWith("RMPFLX"))
+                    if (lin.StartsWith("INDELET") /*|| lin.StartsWith("RMPFLX")*/)
                     {
 
 

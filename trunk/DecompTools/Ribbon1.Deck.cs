@@ -309,6 +309,9 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
 
                     }
                     estudo.ExecucaoPrincipal();
+
+                    //todo: criar arq simulacao
+
                 }
 
                 if (System.Windows.Forms.MessageBox.Show(@"Criar decks Decomp?

@@ -3,4 +3,3 @@ C:\Development\price_tools\trunk\VazoesApp\bin\Debug\Compass.VazoesApp.pdb
 C:\Development\price_tools\trunk\VazoesApp\obj\Debug\VazoesApp.csproj.CoreCompileInputs.cache
 C:\Development\price_tools\trunk\VazoesApp\obj\Debug\Compass.VazoesApp.exe
 C:\Development\price_tools\trunk\VazoesApp\obj\Debug\Compass.VazoesApp.pdb
-C:\Development\price_tools\trunk\VazoesApp\obj\Debug\VazoesApp.csproj.AssemblyReference.cache

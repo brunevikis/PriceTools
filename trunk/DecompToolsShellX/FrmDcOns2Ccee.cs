@@ -77,6 +77,10 @@ namespace Compass.DecompToolsShellX
             var dagerCCEE = ((Compass.CommomLibrary.Decomp.Deck)deckCCEE)[CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
             var dadgerBase = ((Compass.CommomLibrary.Decomp.Deck)deck)[CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
 
+            var linhasPrev = File.ReadAllLines(deck[CommomLibrary.Decomp.DeckDocument.dadger].BasePath).ToList();
+            int idxPrevIni = linhasPrev.IndexOf(linhasPrev.Where(x => x.ToUpper().StartsWith("PQ")).First());
+            int idxPrevFim = linhasPrev.IndexOf(linhasPrev.Where(x => x.ToUpper().StartsWith("PQ")).Last());
+
             //buscar restrições retiradas.
             var resONS = dagerONS.BlocoRhe.RheGrouped;
             var resCCEE = dagerCCEE.BlocoRhe.RheGrouped;
@@ -184,6 +188,26 @@ namespace Compass.DecompToolsShellX
 
             dadgerBase.SaveToFile(createBackup: true);
             Program.AutoClosingMessageBox.Show("Dadger alterado!", "Caption", 3000);
+
+            //replace bloco pq 
+
+            var linhasSeg = File.ReadAllLines(deck[CommomLibrary.Decomp.DeckDocument.dadger].BasePath).ToList();
+            int idxSegIni = linhasSeg.IndexOf(linhasSeg.Where(x => x.ToUpper().StartsWith("PQ")).First());
+            int idxSegFim = linhasSeg.IndexOf(linhasSeg.Where(x => x.ToUpper().StartsWith("PQ")).Last());
+
+            int loop = idxSegFim - idxSegIni;
+            for (int l = 0; l <= loop; l++)
+            {
+                linhasSeg.Remove(linhasSeg[idxSegIni]);
+            }
+            int i = 0;
+            for (int ix = idxPrevIni; ix <= idxPrevFim; ix++)
+            {
+                linhasSeg.Insert(idxSegIni+i, linhasPrev[ix]);
+                i++;
+            }
+            File.WriteAllLines(deck[CommomLibrary.Decomp.DeckDocument.dadger].BasePath, linhasSeg);
+            //
 
 
             //COMENTAR DESPACHO POR RAZAO ELETRICA

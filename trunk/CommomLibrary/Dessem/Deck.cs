@@ -30,7 +30,8 @@ namespace Compass.CommomLibrary.Dessem
         respotele,
         restseg,
         rstlpp,
-        termdat
+        termdat,
+        rmpflx
 
 
 
@@ -96,6 +97,8 @@ namespace Compass.CommomLibrary.Dessem
                         return Documents["dadvaz.dat"];
                     case DeckDocument.operuh:
                         return Documents["operuh.dat"];
+                    case DeckDocument.rmpflx:
+                        return Documents["rmpflx.dat"];
                     default:
                         return null;
                 }
@@ -124,6 +127,9 @@ namespace Compass.CommomLibrary.Dessem
                         break;
                     case DeckDocument.operuh:
                         documents["operuh.dat"] = value;
+                        break;
+                    case DeckDocument.rmpflx:
+                        documents["rmpflx.dat"] = value;
                         break;
                     default:
                         break;
