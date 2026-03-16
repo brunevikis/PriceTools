@@ -1399,6 +1399,51 @@ namespace Compass.DecompToolsShellX
 
                             }
                             estudo.ExecucaoPrincipal();
+
+                            //todo: criar arq simulacao
+                            var simFolders = w.Simula;
+                            string simArq = Path.Combine(nw, "simulacao");
+
+                            if (Directory.Exists(nw))
+                            {
+                                List<string> folders = new List<string>();
+                                if (simFolders.Count() > 0)
+                                {
+                                    foreach (var item in simFolders)
+                                    {
+                                        if (Directory.Exists(Path.Combine(nw, item.Ano)))
+                                        {
+                                            folders.Add(item.Ano);
+                                        }
+                                    }
+                                    File.WriteAllLines(simArq, folders);
+                                }
+                                else
+                                {
+                                    var nwMeses = Directory.GetDirectories(nw).Select(x => x.Split('\\').Last()).OrderBy(x => x)
+                                                .Where(x =>
+                                                {
+                                                    int anoEstudo, mesEstudo;
+
+                                                    if (x.Length != 6
+                                                        || !int.TryParse(x.Substring(0, 4), out anoEstudo)
+                                                        || !int.TryParse(x.Substring(4, 2), out mesEstudo)
+                                                        ) return false;
+                                                    else
+                                                        return true;
+
+                                                })
+                                                .Select(x => new DateTime(int.Parse(x.Substring(0, 4)), int.Parse(x.Substring(4, 2)), 1))
+                                                .OrderBy(x => x);
+                                    foreach (var mes in nwMeses)
+                                    {
+                                        folders.Add(mes.ToString("yyyyMM"));
+                                    }
+                                    File.WriteAllLines(simArq, folders);
+
+                                }
+                            }
+
                             consistFolders = Services.GeraCenarios.GeraMensal(w, dc, nw, true);
 
                             if (consistFolders.Count() > 0)

@@ -411,6 +411,29 @@ namespace Compass.ExcelTools.Templates
             }
         }
 
+        List<SIMULA> simula = null;
+        public List<SIMULA> Simula
+        {
+            get
+            {
+                if (simula == null)
+                {
+                    simula = new List<SIMULA>();
+
+                    var ws = Names["_simulacao"].Worksheet;
+                    var row = Names["_simulacao"].Row;
+                    var col = Names["_simulacao"].Column;
+
+                    for (var r = row; !string.IsNullOrWhiteSpace(ws.Cells[r, col].Text); r++)
+                    {
+                        simula.Add(new SIMULA(ws.Range[ws.Cells[r, col], ws.Cells[r, col + 3]]));
+                    }
+                }
+
+                return simula;
+            }
+        }
+
         List<FAIXALIMITES> faixalimites = null;
         public List<FAIXALIMITES> Faixalimites
         {
@@ -1308,6 +1331,35 @@ namespace Compass.ExcelTools.Templates
                 if (rng[1, 13].Value is double) VolMes[10] = rng[1, 13].Value;
                 if (rng[1, 14].Value is double) VolMes[11] = rng[1, 14].Value;
                 if (rng[1, 15].Value is double) VolMes[12] = rng[1, 15].Value;
+
+            }
+        }
+
+        public class SIMULA
+        {
+            //public int Ano { get; set; }
+            public string Ano { get; set; }
+            //public int Usina { get; set; }
+
+            //public double?[] VolMes = new double?[13];
+            public SIMULA(Range rng)
+            {
+                //if (rng[1, 1].Value is double) Ano = (int)rng[1, 1].Value;
+                Ano = ((string)rng[1, 1].Text).ToUpper();
+                //if (rng[1, 2].Value is double) Usina = (int)rng[1, 1].Value;
+                //if (rng[1, 3].Value is double) VolMes[0] = rng[1, 3].Value;
+                //if (rng[1, 4].Value is double) VolMes[1] = rng[1, 4].Value;
+                //if (rng[1, 5].Value is double) VolMes[2] = rng[1, 5].Value;
+                //if (rng[1, 6].Value is double) VolMes[3] = rng[1, 6].Value;
+                //if (rng[1, 7].Value is double) VolMes[4] = rng[1, 7].Value;
+                //if (rng[1, 8].Value is double) VolMes[5] = rng[1, 8].Value;
+                //if (rng[1, 9].Value is double) VolMes[6] = rng[1, 9].Value;
+                //if (rng[1, 10].Value is double) VolMes[7] = rng[1, 10].Value;
+                //if (rng[1, 11].Value is double) VolMes[8] = rng[1, 11].Value;
+                //if (rng[1, 12].Value is double) VolMes[9] = rng[1, 12].Value;
+                //if (rng[1, 13].Value is double) VolMes[10] = rng[1, 13].Value;
+                //if (rng[1, 14].Value is double) VolMes[11] = rng[1, 14].Value;
+                //if (rng[1, 15].Value is double) VolMes[12] = rng[1, 15].Value;
 
             }
         }
