@@ -321,10 +321,10 @@ Sobrescreverá os decks Newave existentes na pasta de resultados. Caso selecione
                         {
                             foreach (var item in simFolders)
                             {
-                                if (Directory.Exists(Path.Combine(nw, item.Ano)))
-                                {
+                                //if (Directory.Exists(Path.Combine(nw, item.Ano)))//essa segurança foi cancela por motivos operecionais da equipe , logo a ferramenta ria escrever tudo que consta na tabela independente da existenciia do deck NW 
+                                //{
                                     folders.Add(item.Ano);
-                                }
+                                //}
                             }
                             File.WriteAllLines(simArq, folders);
                         }
