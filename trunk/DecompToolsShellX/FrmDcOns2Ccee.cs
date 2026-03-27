@@ -62,7 +62,7 @@ namespace Compass.DecompToolsShellX
         }
 
 
-        public void Salvar()
+        public void Salvar(string dirPadrao = "")
         {
             var deckONS = DeckFactory.CreateDeck(TextBoxONS.Text);
             var deckCCEE = DeckFactory.CreateDeck(TextBoxCCEE.Text);
@@ -77,7 +77,20 @@ namespace Compass.DecompToolsShellX
             var dagerCCEE = ((Compass.CommomLibrary.Decomp.Deck)deckCCEE)[CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
             var dadgerBase = ((Compass.CommomLibrary.Decomp.Deck)deck)[CommomLibrary.Decomp.DeckDocument.dadger].Document as Compass.CommomLibrary.Dadger.Dadger;
 
-            var linhasPrev = File.ReadAllLines(deck[CommomLibrary.Decomp.DeckDocument.dadger].BasePath).ToList();
+            string dadgerPadrão = "";
+            if (dirPadrao != "" && Directory.Exists(dirPadrao))
+            {
+                dadgerPadrão = Directory.GetFiles(dirPadrao).Where(x => Path.GetFileName(x).ToLower().Contains("dadger")).First();
+            }
+            else
+            {
+                dadgerPadrão = deck[CommomLibrary.Decomp.DeckDocument.dadger].BasePath;
+            }
+
+
+            //var linhasPrev = File.ReadAllLines(deck[CommomLibrary.Decomp.DeckDocument.dadger].BasePath).ToList();
+
+            var linhasPrev = File.ReadAllLines(dadgerPadrão).ToList();
             int idxPrevIni = linhasPrev.IndexOf(linhasPrev.Where(x => x.ToUpper().StartsWith("PQ")).First());
             int idxPrevFim = linhasPrev.IndexOf(linhasPrev.Where(x => x.ToUpper().StartsWith("PQ")).Last());
 

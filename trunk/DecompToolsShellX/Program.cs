@@ -1205,11 +1205,13 @@ namespace Compass.DecompToolsShellX
                 }
                 else if (cceeDeck is Compass.CommomLibrary.Decomp.Deck && (command.Length > 1 && command[1] == "true"))
                 {
-                    var frm = new FrmDcOns2Ccee(cceeDeck);
-                    frm.Salvar();
-
                     var frmCortes = new FrmCortes(new string[] { cceeDeck.BaseFolder });
                     frmCortes.OK(true);
+
+                    var frm = new FrmDcOns2Ccee(cceeDeck);
+                    frm.Salvar(dir);
+
+                    
 
                     //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decomp31Viab.sh preliminar");
                     PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decomp_AUTORUN.sh preliminar");
