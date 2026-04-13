@@ -713,6 +713,7 @@ namespace Compass.CommomLibrary
                 {
                     case 'F':
                     case 'f':
+                    case 'X':
 
                         double fVal;
                         var fmt = Formato.Substring(1).Split('.');
@@ -733,6 +734,31 @@ namespace Compass.CommomLibrary
                                 else
                                 {
                                     strValue = fVal.ToString("0.0" + new string('#', dec - 1), System.Globalization.NumberFormatInfo.InvariantInfo);
+                                }
+                            }
+                            else if ((Formato + " ")[0] == 'X')
+                            {
+                                if (fVal < 1)
+                                {
+                                    if (dec == 0)
+                                    {
+                                        strValue = fVal.ToString("0.##", System.Globalization.NumberFormatInfo.InvariantInfo).Substring(1);
+                                    }
+                                    else
+                                    {
+                                        strValue = fVal.ToString("F" + dec.ToString(), System.Globalization.NumberFormatInfo.InvariantInfo).Substring(1);
+                                    }
+                                }
+                                else
+                                {
+                                    if (dec == 0)
+                                    {
+                                        strValue = fVal.ToString("0.##", System.Globalization.NumberFormatInfo.InvariantInfo);
+                                    }
+                                    else
+                                    {
+                                        strValue = fVal.ToString("F" + dec.ToString(), System.Globalization.NumberFormatInfo.InvariantInfo);
+                                    }
                                 }
                             }
                             else
@@ -840,6 +866,7 @@ namespace Compass.CommomLibrary
                     }
                 case 'F':
                 case 'E':
+                case 'X':
                     double f;
                     if (value == null)
                         return (double?)null;
@@ -909,6 +936,7 @@ namespace Compass.CommomLibrary
                     break;
                 case 'F':
                 case 'f':
+                case 'X':
                     result = BitConverter.ToSingle(regBytes, Inicio - 1);
                     break;
                 default:
@@ -945,6 +973,7 @@ namespace Compass.CommomLibrary
                     break;
                 case 'F':
                 case 'f':
+                case 'X':
                     result = BitConverter.GetBytes((float)value);
                     for (int i = 0; i < result.Length; i++)
                     {
