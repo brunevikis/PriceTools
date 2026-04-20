@@ -4127,6 +4127,25 @@ namespace Compass.Services
                         }
 
                     }
+
+                    //fozprata
+                    else if (p.IdPosto == 96)
+                    {
+                        var p97 = GetMediaSemanal(97, d);
+                        var p98 = GetMediaSemanal(98, d);
+
+                        p.calMedSemanal[d] = (p97 - p98) / (12113.7 - 7742.6) * 3765;
+
+                        if (p.calMedSemanal[d] <= 0)
+                        {
+                            p.calMedSemanal[d] = 0;
+                        }
+                        else if (p.calMedSemanal[d] <= 1)
+                        {
+                            p.calMedSemanal[d] = 1;
+                        }
+
+                    }
                 }
 
             }
