@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>previvaz "C:\Files\16_Chuva_Vazao\2026_05\RV0\26-04-20\CV_ACOMPH_FUNC_ECENS45\Propagacoes_Automaticas.txt"|ext</StartArguments>
+    <StartArguments>abrir "K:\teste\ons2ccee\DEC_ONS_042026_RV0_VE_cceeDEBUG\dadger.rv0"</StartArguments>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup>

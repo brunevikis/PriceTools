@@ -105,7 +105,10 @@ namespace Compass.ExcelTools {
 
             foreach (var block in doc.Blocos) {
                 var xlWs = xlWb.GetWorksheet(block.Key);
+                if (block.Key == "PQ")
+                {
 
+                }
 
                 if (xlWs != null && (blockKey == null || xlWs.Name == blockKey)) {
 

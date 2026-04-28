@@ -20,6 +20,10 @@ namespace Compass.CommomLibrary
             StringBuilder sb = new StringBuilder();
             foreach (var block in Blocos)
             {
+                if (block.Key == "PQ")
+                {
+
+                }
                 sb.Append(block.Value.ToText());
             }
 
@@ -911,7 +915,7 @@ namespace Compass.CommomLibrary
             {
                 return (int)value;
             }
-            else if (f == 'F' || f == 'E')
+            else if (f == 'F' || f == 'E' || f == 'X')//colocar formato x
             {
                 return value;
             }
