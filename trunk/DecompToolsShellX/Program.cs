@@ -1211,7 +1211,7 @@ namespace Compass.DecompToolsShellX
                     var frm = new FrmDcOns2Ccee(cceeDeck);
                     frm.Salvar(dir);
 
-                    
+
 
                     //PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decomp31Viab.sh preliminar");
                     PreliminarAutorun(cceeDeck.BaseFolder, "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/decomp_AUTORUN.sh preliminar");
@@ -1415,7 +1415,7 @@ namespace Compass.DecompToolsShellX
                                     {
                                         //if (Directory.Exists(Path.Combine(nw, item.Ano)))//essa segurança foi cancela por motivos operecionais da equipe , logo a ferramenta ria escrever tudo que consta na tabela independente da existenciia do deck NW 
                                         //{
-                                            folders.Add(item.Ano);
+                                        folders.Add(item.Ano);
                                         //}
                                     }
                                     File.WriteAllLines(simArq, folders);
@@ -5337,7 +5337,7 @@ namespace Compass.DecompToolsShellX
                 var pdo_sist = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToUpper().Contains("PDO_SIST.DAT")).FirstOrDefault();
                 if (File.Exists(pdo_sist))
                 {
-                    File.Copy(pdo_sist, Path.Combine(cloneDir, pdo_sist.Split('\\').Last()),true);
+                    File.Copy(pdo_sist, Path.Combine(cloneDir, pdo_sist.Split('\\').Last()), true);
                 }
 
                 //
@@ -5354,17 +5354,26 @@ namespace Compass.DecompToolsShellX
                         Program.AutoClosingMessageBox.Show(texto, "Caption", 5000);
                         string comandoDS = "/home/producao/PrevisaoPLD/enercore_ctl_common/scripts/dessem.sh";
 
-                        bool sucesso = DessemAutorun(cloneDir, comandoDS);
-                        if (sucesso)
+                        if (File.Exists(Path.Combine(cloneDir, "bloqueio_rstlpp.bak")))
                         {
-                            string frase = "Deck convertido ONS->CCEE encaminhado para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "AUTORUN DESSEM ONS->CCEE");
+                            string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução devido a alterações de restrições no arquivo rstlpp.dat em relação ao deck do dia anterior. Verificar arquivo bloqueio_rstlpp.bak Caminho = " + cloneDir;
+                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "[ALERTA]AUTORUN DESSEM ONS->CCEE");
                         }
                         else
                         {
-                            string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução. Caminho = " + cloneDir;
-                            Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
+                            bool sucesso = DessemAutorun(cloneDir, comandoDS);
+                            if (sucesso)
+                            {
+                                string frase = "Deck convertido ONS->CCEE encaminhado para fila de execução. Caminho = " + cloneDir;
+                                Compass.CommomLibrary.Tools.SendMail(frase, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "AUTORUN DESSEM ONS->CCEE");
+                            }
+                            else
+                            {
+                                string info = "Conversão ONS->CCEE realizada sem direcionamento para fila de execução. Caminho = " + cloneDir;
+                                Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
+                            }
                         }
+                        
 
                     }
                     else
@@ -5866,16 +5875,24 @@ namespace Compass.DecompToolsShellX
             var novoRestseg = new List<string>();
             var novoRstlpp = new List<string>();
 
-            DateTime dat = dataEstudo;
-            DateTime datVE = dataEstudo;
+            DateTime dat = dataEstudo.AddDays(-1);//dia anterior ap do deck de estudo
+            DateTime datVE = dataEstudo.AddDays(-1);
 
-            //if (dataEstudo.DayOfWeek == DayOfWeek.Friday)
-            //{
-            //    datVE = dat.AddDays(-1);
-            //}
-            //var rev = Tools.GetCurrRev(datVE);
+            if (dat.DayOfWeek == DayOfWeek.Friday)//ajusta numero da rev em caso do dia cair em uma sexta feira
+            {
+                datVE = dat.AddDays(-1);
+            }
+            var rev = Tools.GetCurrRev(datVE);
 
-            //var camRef = Services.GeraDessem.GetPastaRecente(rev.revDate);
+            var deckONSant = $@"K:\5_dessem\{rev.revDate:yyyy_MM}\RV{rev.rev}\DS_ONS_{rev.revDate:MMyyyy}_RV{rev.rev}D{dat:dd}";
+
+            string rstlppANTERIOR = null;
+            List<string> restricoesAlteradas = new List<string>();
+
+            if (Directory.Exists(deckONSant))
+            {
+                rstlppANTERIOR = Directory.GetFiles(deckONSant).Where(x => Path.GetFileName(x).ToLower().Contains("rstlpp")).FirstOrDefault();
+            }
 
             var dtAtual = DateTime.Today.AddDays(1);
             var datalimite = DateTime.Today.AddDays(-180);
@@ -5898,6 +5915,33 @@ namespace Compass.DecompToolsShellX
                 {
                     File.Move(restseg, Path.Combine(dir, restONSbak));
                     File.Move(rstlpp, Path.Combine(dir, rstlppONSbak));
+
+                    if (File.Exists(rstlppANTERIOR) && File.Exists(Path.Combine(dir, rstlppONSbak)))//compara as reslpp com o arquivo do dia anterior e caso tenha diferenças nas de numero menor que 200 adiciona na lista 
+                    {
+                        var linhasRestAnterior = File.ReadAllLines(rstlppANTERIOR).Where(x => x.StartsWith("RESLPP")).ToList();
+                        var linhasRestBak = File.ReadAllLines(Path.Combine(dir, rstlppONSbak)).Where(x => x.StartsWith("RESLPP")).ToList();
+
+                        foreach (var lin in linhasRestBak)
+                        {
+                            if (linhasRestAnterior.All(x => !x.Equals(lin)))
+                            {
+                                string numString = lin.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[1];
+                                int numrest = Convert.ToInt32(numString);
+
+                                if (numrest < 200 && restricoesAlteradas.All(x => !x.Equals(numString)))
+                                {
+                                    restricoesAlteradas.Add(numString);
+                                }
+                            }
+                        }
+                    }
+                    if (restricoesAlteradas.Count() > 0)//se existir restricoes na lista então cria um arquivo que serve como aviso para a ferramenta não colocar o caso para executar 
+                    {
+                        restricoesAlteradas.Insert(0, "NUMERO DE RESLPP COM ALTERAÇÃO:");
+
+                        File.WriteAllLines(Path.Combine(dir, "bloqueio_rstlpp.bak"),restricoesAlteradas);
+                    }
+
                 }
 
                 restsegRef = Directory.GetFiles(folderCCEEref).Where(x => Path.GetFileName(x).ToLower().Contains("restseg")).FirstOrDefault();
@@ -6160,7 +6204,7 @@ namespace Compass.DecompToolsShellX
                 }
             }
 
-            
+
         }
 
         public static void TrataRheSexta(DateTime dataEstudo, string dir)

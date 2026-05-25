@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>abrir "K:\teste\ons2ccee\DEC_ONS_042026_RV0_VE_cceeDEBUG\dadger.rv0"</StartArguments>
+    <StartArguments>dessem2ccee "K:\5_dessem\2026_05\RV4\DS_ONS_052026_RV4D25"|true</StartArguments>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup>
