@@ -182,6 +182,10 @@ namespace Compass.CommomLibrary
             {
                 doc = BaseDocument.Create<Operuh.Operuh>(System.IO.File.ReadAllText(filePath, Encoding.Default));
             }
+            else if (fileName.StartsWith("infofcf"))
+            {
+                doc = BaseDocument.Create<Infofcf.Infofcf>(System.IO.File.ReadAllText(filePath, Encoding.Default));
+            }
             else if (fileName.StartsWith("deflant"))
             {
                 doc = BaseDocument.Create<Deflant.Deflant>(System.IO.File.ReadAllText(filePath, Encoding.Default));

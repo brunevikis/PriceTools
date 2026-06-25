@@ -2661,7 +2661,7 @@ namespace Compass.DecompToolsShellX
                     foreach (var arq in arqs)
                     {
                         var filename = Path.GetFileName(arq);
-                        if ((filename.ToLower().Contains(mapcut)) || (filename.ToLower().Contains(cortdeco)))
+                        if ((filename.ToLower().Contains(mapcut)) || (filename.ToLower().Contains(cortdeco)) || (filename.ToLower().Contains("relato")) || (filename.ToLower().Contains("relgnl")))
                         {
                             File.Copy(arq, Path.Combine(caminho.ToString(), filename), true);
                             contArq++;
@@ -5373,7 +5373,7 @@ namespace Compass.DecompToolsShellX
                                 Compass.CommomLibrary.Tools.SendMail(info, "bruno.araujo@enercore.com.br; pedro.modesto@enercore.com.br; natalia.biondo@enercore.com.br;", "Sucesso ao converter deckDessem");
                             }
                         }
-                        
+
 
                     }
                     else
@@ -5764,6 +5764,159 @@ namespace Compass.DecompToolsShellX
 
                 #endregion
 
+                #region Trata INFOFCF
+
+                List<Tuple<int, double>> ProbCen = new List<Tuple<int, double>>();
+                List<Tuple<string, double>> CmoSub = new List<Tuple<string, double>>();
+
+                List<string> subMercados = new List<string>
+                {
+                    "SE",
+                    "S",
+                    "NE",
+                    "N",
+                    "FC"
+                };
+
+                var infofcf = deckestudo[CommomLibrary.Dessem.DeckDocument.infofcf].Document as Compass.CommomLibrary.Infofcf.Infofcf;
+                string relato = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("relato.rv")).FirstOrDefault();
+                string relato2 = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("relato2.rv")).FirstOrDefault();
+                string relgnl = Directory.GetFiles(dir).Where(x => Path.GetFileName(x).ToLower().Contains("relgnl.rv")).FirstOrDefault();
+
+                List<Tuple<int, string, int>> lags = new List<Tuple<int, string, int>>();
+
+                using (var fs = System.IO.File.OpenRead(relgnl))
+                using (var tr = new System.IO.StreamReader(fs))
+                {
+                    string line = "";
+                    do
+                    {
+                        line = tr.ReadLine();
+
+                    } while (!line.ToUpper().Contains("LAGS"));
+                    tr.ReadLine();
+                    tr.ReadLine();
+                    tr.ReadLine();
+                    do
+                    {
+                        line = tr.ReadLine();
+                        if (!line.ToUpper().Contains("X-"))
+                        {
+                            lags.Add(new Tuple<int, string, int>(Convert.ToInt32(line.Substring(0, 7)), line.Substring(8, 11).Trim(), Convert.ToInt32(line.Substring(20))));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    } while (!tr.EndOfStream);
+
+                }
+
+                var relgnlBloco = File.ReadAllText(relgnl).Split(new string[] { "RELATORIO  DA  OPERACAO  TERMICA E CONTRATOS" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                var fcfUsi = infofcf.BlocoFcffix.Select(x => x.Usina).Distinct().ToList();
+                foreach (var usi in fcfUsi)
+                {
+                    var usina = lags.Where(x => x.Item1 == usi).Select(x => x.Item2).FirstOrDefault();
+                    var relgnLine = relgnlBloco.Where(x => x.Contains(usina) && x.ToUpper().Contains("MENSAL")).FirstOrDefault();
+                    var relPartes = relgnLine.Substring(relgnLine.ToUpper().IndexOf("MENSAL")).Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    for (int p = 1; p <= 3; p++)
+                    {
+                        var fcffixline = infofcf.BlocoFcffix.Where(x => x.Usina == usi && x.Patamar == p).FirstOrDefault();
+                        fcffixline.Valor = Convert.ToDouble(relPartes[p * 2 - 1].Replace(".", ","));
+                    }
+                }
+
+
+                var relatoArq = DocumentFactory.Create(relato) as Compass.CommomLibrary.Relato.Relato;
+
+                var probLines = File.ReadAllLines(relato2).Where(x => x.Contains("PROB SUBPROB:")).ToList();
+                foreach (var lin in probLines)
+                {
+                    var partes = lin.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    if (partes.Count() >= 14)
+                    {
+                        int cenario = Convert.ToInt32(partes[6]);
+                        double prob = Convert.ToDouble(partes.Last().Replace(".", ","));
+                        if (ProbCen.All(x => x.Item1 != cenario))
+                        {
+                            ProbCen.Add(new Tuple<int, double>(cenario, prob));
+                        }
+                    }
+                }
+
+                foreach (var subM in subMercados)
+                {
+                    List<double> CmoCont = new List<double>();
+                    double cmoTotal = 0;
+
+                    var cmos = File.ReadAllLines(relato2).Where(x => x.Contains("Custo marginal de operacao do subsistema " + subM)).ToList();
+                    foreach (var cm in cmos)
+                    {
+                        var partes = cm.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        if (partes.Count() >= 9 && partes[6].Replace(":", "") == subM)
+                        {
+                            double valor = Convert.ToDouble(partes[partes.Count() - 2].Replace(".", ","));
+
+                            CmoCont.Add(valor);
+                        }
+
+
+                    }
+                    for (int i = 1; i <= CmoCont.Count(); i++)
+                    {
+                        cmoTotal += CmoCont[i - 1] * ProbCen.Where(x => x.Item1 == i).Select(x => x.Item2).FirstOrDefault();
+                    }
+
+                    CmoSub.Add(new Tuple<string, double>(subM, cmoTotal));
+                }
+
+                int ultimoEstagio = infofcf.BlocoBenfut.Select(x => x.Estagio).Max();
+                foreach (var subM in subMercados)
+                {
+                    int subNum = 0;
+                    switch (subM)
+                    {
+                        case "SE":
+                            subNum = 1;
+                            break;
+                        case "S":
+                            subNum = 2;
+                            break;
+                        case "NE":
+                            subNum = 3;
+                            break;
+                        case "N":
+                            subNum = 4;
+                            break;
+                        case "FC":
+                            subNum = 11;
+                            break;
+
+                        default:
+                            subNum = 0;
+                            break;
+                    }
+                    for (int est = 1; est <= ultimoEstagio; est++)
+                    {
+                        var benLine = infofcf.BlocoBenfut.Where(x => x.Estagio == est && x.SubMercado == subNum).FirstOrDefault();
+
+                        if (est == ultimoEstagio)
+                        {
+                            benLine.CMO = CmoSub.Where(x => x.Item1 == subM).Select(x => x.Item2).FirstOrDefault();
+                        }
+                        else
+                        {
+                            double cmoEst = relatoArq.CMO.Where(x => x.Valores[0] == subM).Select(x => x.Valores[est]).FirstOrDefault();
+                            benLine.CMO = cmoEst;
+                        }
+                    }
+                }
+                infofcf.SaveToFile(createBackup: true);
+
+                #endregion
+
+
                 return continua;
             }
             else
@@ -5831,6 +5984,11 @@ namespace Compass.DecompToolsShellX
                         {
                             File.Copy(arq, Path.Combine(dirTosave, filename), true);
                             contArq++;
+                        }
+                        if ((filename.ToLower().Contains("relato")) || (filename.ToLower().Contains("relgnl")))
+                        {
+                            File.Copy(arq, Path.Combine(dirTosave, filename), true);
+
                         }
                     }
                     if (contArq == 2)
@@ -5939,7 +6097,7 @@ namespace Compass.DecompToolsShellX
                     {
                         restricoesAlteradas.Insert(0, "NUMERO DE RESLPP COM ALTERAÇÃO:");
 
-                        File.WriteAllLines(Path.Combine(dir, "bloqueio_rstlpp.bak"),restricoesAlteradas);
+                        File.WriteAllLines(Path.Combine(dir, "bloqueio_rstlpp.bak"), restricoesAlteradas);
                     }
 
                 }

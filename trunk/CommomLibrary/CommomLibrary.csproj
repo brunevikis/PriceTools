@@ -204,6 +204,11 @@
     <Compile Include="EolicaNW\VentHist.cs" />
     <Compile Include="EolicaNW\VentHorizonte.cs" />
     <Compile Include="GhminDat\GhminDat.cs" />
+    <Compile Include="Infofcf\Benfut.cs" />
+    <Compile Include="Infofcf\Dummy.cs" />
+    <Compile Include="Infofcf\Fcffix.cs" />
+    <Compile Include="Infofcf\Infofcf.cs" />
+    <Compile Include="Infofcf\Mapfcf.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Model1.Context.cs">
       <AutoGen>True</AutoGen>
