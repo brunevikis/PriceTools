@@ -1326,6 +1326,10 @@ namespace Compass.CommomLibrary.Decomp
                 CanalFugaMed = hidCad.CanalFugaMed;
                 VolMax = hidCad.VolMax;
                 VolMin = hidCad.VolMin;
+                if (hidCad.Cod == 287)
+                {
+
+                }
                 CotaMax = hidCad.CotaMax;
                 PCV0 = hidCad.PCV0;
                 PCV1 = hidCad.PCV1;

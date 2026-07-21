@@ -6501,7 +6501,8 @@ namespace Compass.DecompToolsShellX
                 foreach (var usil in UsiLInes)
                 {
                     try
-                    {
+                    {//todo: criar uma lista separada com olhando as usinas com comentario no numero e pegar a linha anteirar pra ver do mesmo jeito que esta sendo feiots pra numerar a MT e colocar na lista pra comentar no MT 
+                        //pega a linha de cima pra ver o noem da usina referir no UT e colocar na lista de comentar 
                         //&( Usi: ANGRA 2 - Qtd. Orig:1 - Gerador:RJUSAN0UG2 - SGI:202300053695 - Ini:29/09/2023 08:00 - Fim:14/10/2023 23:59
                         var usiName = usil.Split(new string[] { "Usi:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split(new string[] { " -" }, StringSplitOptions.RemoveEmptyEntries).First().Replace("230", "").Trim();//230 é tratamento pra L.LACERDA-A 230
                         //usiName = Encoding.UTF8.GetString(Encoding.Default.GetBytes(usiName));

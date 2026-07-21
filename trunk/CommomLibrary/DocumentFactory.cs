@@ -270,7 +270,17 @@ namespace Compass.CommomLibrary
             }
             else if (fileName.StartsWith("hidr"))
             {
-                doc = new Compass.CommomLibrary.HidrDat.HidrDat(System.IO.File.ReadAllBytes(filePath));
+                System.IO.FileInfo fileInfo = new System.IO.FileInfo(filePath);
+                double tamanho = fileInfo.Length /792;
+                if (tamanho > 320)//se houver mais de 320 (registros)significa que é o formato novo 
+                {
+                    doc = new Compass.CommomLibrary.HidrDat.HidrDat(System.IO.File.ReadAllBytes(filePath),true);
+
+                }
+                else
+                {
+                    doc = new Compass.CommomLibrary.HidrDat.HidrDat(System.IO.File.ReadAllBytes(filePath));
+                }
             }
             else if (fileName.StartsWith("postos"))
             {

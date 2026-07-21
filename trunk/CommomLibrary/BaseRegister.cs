@@ -871,6 +871,7 @@ namespace Compass.CommomLibrary
                 case 'F':
                 case 'E':
                 case 'X':
+                case 'G':
                     double f;
                     if (value == null)
                         return (double?)null;
@@ -915,7 +916,7 @@ namespace Compass.CommomLibrary
             {
                 return (int)value;
             }
-            else if (f == 'F' || f == 'E' || f == 'X')//colocar formato x
+            else if (f == 'F' || f == 'E' || f == 'X' || f == 'G')//colocar formato x
             {
                 return value;
             }
@@ -936,12 +937,15 @@ namespace Compass.CommomLibrary
                     break;
                 case 'I':
                 case 'Z':
-                    result = BitConverter.ToInt32(regBytes, Inicio - 1);
+                    result = BitConverter.ToInt32(regBytes, Inicio - 1);////
                     break;
                 case 'F':
                 case 'f':
                 case 'X':
                     result = BitConverter.ToSingle(regBytes, Inicio - 1);
+                    break;
+                case 'G':
+                    result = BitConverter.ToDouble(regBytes, Inicio - 1);
                     break;
                 default:
                     result = null;
@@ -978,6 +982,7 @@ namespace Compass.CommomLibrary
                 case 'F':
                 case 'f':
                 case 'X':
+                case 'G':
                     result = BitConverter.GetBytes((float)value);
                     for (int i = 0; i < result.Length; i++)
                     {

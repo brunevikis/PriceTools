@@ -15,6 +15,7 @@ namespace Compass.ExcelTools.Templates {
 
         public string DocPath { get { return ws.Cells[2, 2].Text; } set { ws.Cells[2, 2].Value = value; } }
         public string DocType { get { return ws.Cells[1, 2].Text; } set { ws.Cells[1, 2].Value = value; } }
+        public string ModelType { get { return ws.Cells[1, 4].Text; } set { ws.Cells[1, 4].Value = value; } }
 
         public string DocBase { get { return ws.Cells[2, 19].Text; } set { ws.Cells[2, 19].Value = value; } }
 
@@ -28,6 +29,7 @@ namespace Compass.ExcelTools.Templates {
 
         public void Initialize() {
             ws.Cells[1, 1].Value = "Tipo";
+            ws.Cells[1, 3].Value = "Modelo";
             ws.Cells[2, 1].Value = "Caminho Original";
 
             ws.Cells[1, 7].Value = "Sistema";

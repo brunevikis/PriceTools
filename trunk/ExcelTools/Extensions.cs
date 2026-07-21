@@ -52,10 +52,18 @@ namespace Compass.ExcelTools {
             return xlWS;
         }
 
-        public static BaseDocument LoadDocumentFromWorkbook(this Workbook xlWb, string docType, string blockKey = null) {
+        public static BaseDocument LoadDocumentFromWorkbook(this Workbook xlWb, string docType, string blockKey = null,string modelo = null) {
             switch (docType.ToLowerInvariant()) {
                 case "hidrdat":
-                    return LoadSistemaDatFromWorkbook<Compass.CommomLibrary.HidrDat.HidrDat>(xlWb, blockKey);
+                    if (!string.IsNullOrWhiteSpace(modelo))
+                    {
+                        return LoadSistemaDatFromWorkbook<Compass.CommomLibrary.HidrDat.HidrDat>(xlWb, blockKey, true);
+                    }
+                    else
+                    {
+                        return LoadSistemaDatFromWorkbook<Compass.CommomLibrary.HidrDat.HidrDat>(xlWb, blockKey);
+                    }
+
                 case "postosdat":
                     return LoadSistemaDatFromWorkbook<Compass.CommomLibrary.PostosDat.PostosDat>(xlWb, blockKey);
                 case "dadger":
@@ -196,9 +204,9 @@ namespace Compass.ExcelTools {
             return doc;
         }
 
-        static T LoadSistemaDatFromWorkbook<T>(this Workbook xlWb, string blockKey = null) where T : BaseDocument {
+        static T LoadSistemaDatFromWorkbook<T>(this Workbook xlWb, string blockKey = null, bool hidrNovo = false) where T : BaseDocument {
             var doc = Activator.CreateInstance<T>();
-
+            //hidrnovo
             foreach (var block in doc.Blocos) {
                 var xlWs = (Microsoft.Office.Interop.Excel.Worksheet)xlWb.Worksheets[block.Key];
 
@@ -223,7 +231,7 @@ namespace Compass.ExcelTools {
 
                             if (string.IsNullOrEmpty(cellVal) && r == re) continue;
 
-                            var newLine = (BaseLine)block.Value.CreateLine(cellVal);
+                            var newLine = hidrNovo == true? new Compass.CommomLibrary.HidrDat.HidrLine(hidrNovo) : (BaseLine)block.Value.CreateLine(cellVal);
 
                             if (newLine.Campos.Length > 1) {
 
@@ -432,6 +440,22 @@ namespace Compass.ExcelTools {
             infoSheet.Initialize();
             infoSheet.DocType = doc.GetType().Name;
             infoSheet.DocPath = doc.File;
+
+            if (File.Exists( doc.File))
+            {
+                var fileName = System.IO.Path.GetFileName(doc.File).ToLowerInvariant();
+                if (fileName.StartsWith("hidr"))
+                {
+                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(doc.File);
+                    double tamanho = fileInfo.Length / 792;
+                    if (tamanho > 320)
+                    {
+                        infoSheet.ModelType = "Novo";
+                    }
+                }
+                
+            }
+            
 
             if (doc is Compass.CommomLibrary.Dadger.Dadger) {
                 var sistemas = ((Compass.CommomLibrary.Dadger.Dadger)doc).BlocoSb.Select(x => (string)x[2]).ToArray();

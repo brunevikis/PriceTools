@@ -126,7 +126,7 @@ namespace Compass.DecompTools
 
                 var fileName = info.DocPath;
                 var type = info.DocType;
-
+                var modelType = info.ModelType;
 
                 if (String.IsNullOrWhiteSpace(type))
                 {
@@ -144,7 +144,7 @@ namespace Compass.DecompTools
 
                 if (sf.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    var doc = xlWB.LoadDocumentFromWorkbook((string)type);
+                    var doc = xlWB.LoadDocumentFromWorkbook((string)type, modelo: modelType);//mandar parametro aqui
 
                     doc.File = sf.FileName;
                     doc.BottonComments = info.BottonComments;

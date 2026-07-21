@@ -283,7 +283,14 @@ namespace Compass.CommomLibrary.Newave
             {
 
                 doc.Value.Folder = folder;
-                doc.Value.Document.SaveToFile(doc.Value.Path);
+                if (doc.Value.BaseFileName.ToLower() == "hidr.dat")
+                {
+                    File.Copy(doc.Value.BasePath, doc.Value.Path, true);
+                }
+                else
+                {
+                    doc.Value.Document.SaveToFile(doc.Value.Path);
+                }
             }
 
         }
