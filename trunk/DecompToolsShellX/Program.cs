@@ -68,6 +68,7 @@ namespace Compass.DecompToolsShellX
             actions.Add("atualizaweol", UpdateWeolNWDC);
             actions.Add("cenariosauto", CenariosAuto);//cenarios
 
+            // previvaz "C:\Files\16_Chuva_Vazao\2026_09\RV2\26-09-09\CV_ACOMPH_FUNC_ECENS45_shadow\Propagacoes_Automaticas.txt"|ext|csv
             //atualizacarga "C:\Files\Implementacoes\atualizaCarga\NW202408"
             //atualizacarga "K:\teste\AtualizaCargaNW\NW202508_DEBUG"
 
@@ -259,18 +260,21 @@ namespace Compass.DecompToolsShellX
             Previvaz previvaz = null;
             bool encad = false;
             bool smapExt = false;
+            bool csv = false;
             if (path.Contains("true"))
             {
                 var command = path.Split('|');
                 path = command[0];
                 encad = Convert.ToBoolean(command[1]);
                 smapExt = command.Any(x => x.Contains("ext")) ? true : false;
+                csv = command.Any(x => x.Contains("csv")) ? true : false;
             }
 
             if (path.Contains("ext"))
             {
                 smapExt = true;
                 var command = path.Split('|');
+                csv = command.Any(x => x.Contains("csv")) ? true : false;
                 path = command[0];
             }
 
@@ -279,7 +283,14 @@ namespace Compass.DecompToolsShellX
                 if (!string.IsNullOrWhiteSpace(path) && File.Exists(path) && path.EndsWith("Propagacoes_Automaticas.txt"))
                 {
                     path = path.Substring(0, path.IndexOf("Propagacoes_Automaticas.txt"));
-                    Previvaz.ProcessResultsPart2(path, encad, smapExt);
+                    if (csv == true)
+                    {
+                        Previvaz.ProcessResultsPart2CSV(path, encad, smapExt,csv);
+                    }
+                    else
+                    {
+                        Previvaz.ProcessResultsPart2(path, encad, smapExt);
+                    }
                 }
                 else
                 {
