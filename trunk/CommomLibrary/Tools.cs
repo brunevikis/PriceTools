@@ -45,7 +45,8 @@ namespace Compass.CommomLibrary
 
             msg.Subject = subject;
 
-            msg.Sender = msg.From = new System.Net.Mail.MailAddress("cpas.robot@gmail.com");
+            //msg.Sender = msg.From = new System.Net.Mail.MailAddress("cpas.robot@gmail.com");
+            msg.Sender = msg.From = new System.Net.Mail.MailAddress("robot.enercore@gmail.com");
 
             msg.ReplyToList.Add(new System.Net.Mail.MailAddress("bruno.araujo@enercore.com.br"));
 
@@ -62,7 +63,8 @@ namespace Compass.CommomLibrary
             cli.Host = "smtp.gmail.com";
             cli.Port = 587;
             //cli.Credentials = new System.Net.NetworkCredential("cpas.robot@gmail.com", "cp@s9876");
-            cli.Credentials = new System.Net.NetworkCredential("cpas.robot@gmail.com", "ujkuiwpbeqerumvs");
+            //cli.Credentials = new System.Net.NetworkCredential("cpas.robot@gmail.com", "ujkuiwpbeqerumvs");
+            cli.Credentials = new System.Net.NetworkCredential("robot.enercore@gmail.com", "jhfjmwblvhqqerfp");
 
             cli.EnableSsl = true;
 
