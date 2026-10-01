@@ -280,7 +280,7 @@ namespace Compass.CommomLibrary.EntdadosDat
                 new BaseField( 5  , 7 ,"I3"    , "Usina"),
                 new BaseField( 10 , 15,"A6"    , "Mnemonico"),
                 new BaseField( 20 , 24,"I5"    , "p1"), // replace
-                new BaseField( 25 , 34,"F10.2" , "p2"), // replace
+                new BaseField( 25 , 34,"F10.3" , "p2"), // replace
             };
 
         public override BaseField[] Campos

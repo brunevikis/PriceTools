@@ -4,30 +4,39 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Compass.CommomLibrary.Relato {
-    public class RelatoCmoBlock : BaseBlock<RelatoCmoLine> {
+namespace Compass.CommomLibrary.Relato
+{
+    public class RelatoCmoBlock : BaseBlock<RelatoCmoLine>
+    {
 
-        public RelatoCmoLine this[string subsistema] {
-            get {
+        public RelatoCmoLine this[string subsistema]
+        {
+            get
+            {
                 return this.FirstOrDefault(x => x.Valores[0] == subsistema);
             }
         }
 
-        internal void Load(string fileContent) {
+        internal void Load(string fileContent)
+        {
             var cmoPat = @"Custo marginal de operacao do subsistema (\w{1,2})\s?:\s+(\d*,?\d{1,3}\.\d{2})";
 
-            foreach (Match match in Regex.Matches(fileContent, cmoPat)) {
-
+            foreach (Match match in Regex.Matches(fileContent, cmoPat))
+            {
                 var line = this[match.Groups[1].Value];
 
-                if (line == null) {
+                if (line == null)
+                {
                     line = this.CreateLine();
                     line.SetValue(0, match.Groups[1].Value);
                     this.Add(line);
                 }
 
-                for (int sem = 1; sem <= 5; sem++) {
-                    if (line[sem] == null) {
+                //for (int sem = 1; sem <= 5; sem++) {
+                for (int sem = 1; sem <= 7; sem++)
+                {
+                    if (line[sem] == null)
+                    {
 
                         line.SetValue(sem, match.Groups[2].Value);
                         break;
@@ -37,19 +46,22 @@ namespace Compass.CommomLibrary.Relato {
         }
     }
 
-    public class RelatoCmoLine : BaseLine {
+    public class RelatoCmoLine : BaseLine
+    {
 
         public static readonly BaseField[] campos = new BaseField[] {
-           new BaseField(5 , 8 ,"A2"  , "Subsistema"),                                
+           new BaseField(5 , 8 ,"A2"  , "Subsistema"),
            new BaseField(31  , 36 ,"F5.2"  , "Sem 1"),
            new BaseField(38  , 43 ,"F5.2"  , "Sem 2"),
            new BaseField(45  , 50 ,"F5.2"  , "Sem 3"),
            new BaseField(52  , 57 ,"F5.2"  , "Sem 4"),
-           new BaseField(59  , 64 ,"F5.2"  , "Sem 5"),            
+           new BaseField(59  , 64 ,"F5.2"  , "Sem 5"),
+           new BaseField(66  , 71 ,"F5.2"  , "Sem 6"),
 
         };
 
-        public override BaseField[] Campos {
+        public override BaseField[] Campos
+        {
             get { return campos; }
         }
 

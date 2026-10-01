@@ -6482,6 +6482,8 @@ namespace Compass.DecompToolsShellX
             //
             List<string> UsiLInes = new List<string>();
             List<string> UsiLInesERRO = new List<string>();
+            List<Tuple<int, int, bool>> comentarMT = new List<Tuple<int, int, bool>>();
+
             var patsFiles = System.IO.Directory.GetFiles(diretorioBase, "pat*", SearchOption.AllDirectories).ToList();
             if (patsFiles.Count() > 0)
             {
@@ -6501,9 +6503,26 @@ namespace Compass.DecompToolsShellX
                     {
                         int n;
                         n = linhas.IndexOf(x);
+                        string verificaComent = linhas[n + 1];
+
                         string lComment = "&" + x;
                         if (n > start && n < end && UsiLInes.All(y => y != lComment))
                         {
+                            if (verificaComent.StartsWith("(") && !verificaComent.StartsWith("( Usi:"))//é um comentario 
+                            {
+                                var usiName = x.Split(new string[] { "Usi:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split(new string[] { " -" }, StringSplitOptions.RemoveEmptyEntries).First().Replace("230", "").Trim();//230 é tratamento pra L.LACERDA-A 230
+                                                                                                                                                                                                                                      //usiName = Encoding.UTF8.GetString(Encoding.Default.GetBytes(usiName));
+
+                                if (usiName.Length > 12)//limita o nome da usina ao espaço disponivel para o nome no bloco UT
+                                {
+                                    usiName = usiName.Substring(0, 12);
+                                }
+                                int usiNum = entdados.BlocoUt.Where(u => u.NomeUsina.Trim().ToUpper() == usiName.Trim().ToUpper()).Select(u => u.Usina).First();
+
+                                int unidGer = Convert.ToInt32(x.Split(new string[] { "Qtd. Orig:" }, StringSplitOptions.RemoveEmptyEntries).Last().Split('-').First().Trim());
+                                comentarMT.Add(new Tuple<int, int, bool>(usiNum, unidGer, true));
+                            }
+
                             UsiLInes.Add("&" + x);
                         }
                     }
@@ -6552,6 +6571,19 @@ namespace Compass.DecompToolsShellX
                             mtl.DiaFinal = dataFim.Day.ToString("00");
                             mtl.HoraFinal = dataFim.Hour;
                             mtl.MeiaHoraFinal = dataFim.Minute < 29 ? 0 : dataFim.Minute < 59 ? 1 : 0;
+
+                            if (dataFim > dataEstudo.AddDays(1))//limita a duração até o fim do primeiro dia do deck
+                            {
+                                mtl.DiaFinal = dataEstudo.AddDays(1).Day.ToString("00");
+                                mtl.HoraFinal = dataEstudo.AddDays(1).Hour;
+                                mtl.MeiaHoraFinal = dataEstudo.AddDays(1).Minute;
+                            }
+
+                            if (comentarMT.Any(x => x.Item1 == usiNum && x.Item2 == unidGer))
+                            {
+                                mtl.IdBloco = "&" + "MT";
+                            }
+
                             entdados.BlocoMt.Add(mtl);
 
                             // UsiLInes.Remove(usil);
